@@ -27,7 +27,7 @@ class Body extends StatelessWidget {
             SizedBox(height: size.height * 0.03),
             Image.asset(
               "assets/icons/logo.png",
-              height: size.height * 0.20,
+              height: size.height * 0.15,
             ),
             SizedBox(height: size.height * 0.03),
             RoundedInputField(
