@@ -4,7 +4,6 @@ import 'package:dima_colombo_ghiazzi/Screens/Signup/signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Screens/Welcome/components/background.dart';
 import 'package:dima_colombo_ghiazzi/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
-import 'package:flutter_svg/svg.dart';
 
 class Body extends StatelessWidget {
   @override
