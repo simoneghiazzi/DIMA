@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       builder: (context, snapshot) {
         // Check for errors
         if (snapshot.hasError) {
-          return SomethingWentWrong();
+          //return SomethingWentWrong();
         }
 
         // Once complete, show your application
@@ -38,7 +38,11 @@ class MyApp extends StatelessWidget {
           );
         }
         // Otherwise, show something whilst waiting for initialization to complete
-        return Loading();
+        return Center(
+          child: Image.asset(
+            "assets/icons/logo.png",
+          ),
+        );
       },
     );
   }
