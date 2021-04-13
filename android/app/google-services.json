@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "1001306102848",
-    "project_id": "dima-colombo-ghiazzi",
-    "storage_bucket": "dima-colombo-ghiazzi.appspot.com"
+    "project_number": "514204178452",
+    "project_id": "dima-colomboghiazzi",
+    "storage_bucket": "dima-colomboghiazzi.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1001306102848:android:1abd6b139967111eeb93a5",
+        "mobilesdk_app_id": "1:514204178452:android:8e992a843a31ff95e1ef01",
         "android_client_info": {
           "package_name": "com.example.dima_colombo_ghiazzi"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1001306102848-m2s34hobcqdrqc8mjp55k5p169e9io6r.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.dima_colombo_ghiazzi",
-            "certificate_hash": "56ec7dd5fe54d216c2f945a692a4071cbedea1b8"
-          }
-        },
-        {
-          "client_id": "1001306102848-t6mtqm0moabjdrtdj9ta3ld9u2lpmqi8.apps.googleusercontent.com",
+          "client_id": "514204178452-i44rl2lku8pbj95flk7cqfph87seemjo.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAD1iXII3NdZvTvPjcJ4m9gGgJ2vvBEWZ0"
+          "current_key": "AIzaSyCPLngSTNBypOXC4cMMOftI9AwdM-Eo9sM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1001306102848-t6mtqm0moabjdrtdj9ta3ld9u2lpmqi8.apps.googleusercontent.com",
+              "client_id": "514204178452-i44rl2lku8pbj95flk7cqfph87seemjo.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
