@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Screens/Login/login_screen.dart';
-import 'package:dima_colombo_ghiazzi/Screens/Signup/signup_screen.dart';
-import 'package:dima_colombo_ghiazzi/Screens/Welcome/components/background.dart';
+import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/signup_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
 import 'package:dima_colombo_ghiazzi/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 

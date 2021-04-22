@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Screens/Welcome/welcome_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 // Import the firebase_core plugin
 import 'package:firebase_core/firebase_core.dart';

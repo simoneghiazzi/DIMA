@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Screens/Login/login_screen.dart';
-import 'package:dima_colombo_ghiazzi/Screens/Signup/components/background.dart';
-import 'package:dima_colombo_ghiazzi/Screens/Signup/components/or_divider.dart';
-import 'package:dima_colombo_ghiazzi/Screens/Signup/components/social_icon.dart';
+import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/components/background.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/components/or_divider.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/components/social_icon.dart';
 import 'package:dima_colombo_ghiazzi/components/already_have_an_account_acheck.dart';
 import 'package:dima_colombo_ghiazzi/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/components/rounded_input_field.dart';

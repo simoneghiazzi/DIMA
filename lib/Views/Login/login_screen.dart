@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Screens/Signup/components/body.dart';
+import 'package:dima_colombo_ghiazzi/Views/Login/components/body.dart';
 
-class SignUpScreen extends StatelessWidget {
+class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
