@@ -15,7 +15,7 @@ class Grid extends StatelessWidget {
           children: <Widget>[
             DashCard(
               imagePath: "assets/icons/psychologist.png",
-              text: "Expters chats",
+              text: "Experts chats",
               press: () {
                 print("hola");
               },
