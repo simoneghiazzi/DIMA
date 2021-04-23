@@ -15,24 +15,28 @@ class Grid extends StatelessWidget {
           children: <Widget>[
             DashCard(
               imagePath: "assets/icons/psychologist.png",
+              text: "Expters chats",
               press: () {
                 print("hola");
               },
             ),
             DashCard(
               imagePath: "assets/icons/anonymous.png",
+              text: "Anonymous chats",
               press: () {
                 print("hola");
               },
             ),
             DashCard(
               imagePath: "assets/icons/map.png",
+              text: "Map",
               press: () {
                 print("hola");
               },
             ),
             DashCard(
               imagePath: "assets/icons/report.png",
+              text: "Anonymous report",
               press: () {
                 print("hola");
               },

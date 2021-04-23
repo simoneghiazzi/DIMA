@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class DashCard extends StatelessWidget {
   final String imagePath;
+  final String text;
   final Function press;
-  const DashCard({Key key, this.imagePath, this.press}) : super(key: key);
+  const DashCard({Key key, this.imagePath, this.text, this.press})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class DashCard extends StatelessWidget {
               imagePath,
               height: size.height * 0.15,
             ),
-            Text('Experts chats')
+            Text(text)
           ],
         ),
       ),
