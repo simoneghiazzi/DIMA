@@ -6,7 +6,13 @@ class DashBg extends StatelessWidget {
     return Column(
       children: <Widget>[
         Expanded(
-          child: Container(color: Colors.deepPurple),
+          child: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.indigo[400], Colors.cyan[200]])),
+          ),
           flex: 2,
         ),
         Expanded(

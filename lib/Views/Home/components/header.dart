@@ -11,6 +11,7 @@ class Header extends StatelessWidget {
       ),
       trailing: CircleAvatar(
         radius: 50,
+        backgroundColor: Colors.purple,
       ),
     );
   }

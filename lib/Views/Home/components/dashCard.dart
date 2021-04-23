@@ -1,0 +1,29 @@
+import 'package:flutter/material.dart';
+
+class DashCard extends StatelessWidget {
+  final String imagePath;
+  final Function press;
+  const DashCard({Key key, this.imagePath, this.press}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.indigo[300],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            Image.asset(
+              imagePath,
+              height: size.height * 0.15,
+            ),
+            Text('Experts chats')
+          ],
+        ),
+      ),
+    );
+  }
+}
