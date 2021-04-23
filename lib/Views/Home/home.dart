@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/components/HomeComponents/dashBg.dart';
-import 'package:dima_colombo_ghiazzi/components/HomeComponents/homeBody.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/components/dashBg.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/components/homeBody.dart';
 
 class Home extends StatelessWidget {
   @override
