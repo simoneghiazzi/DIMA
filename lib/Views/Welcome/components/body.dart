@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-//import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
 import 'package:dima_colombo_ghiazzi/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
-
-import 'package:dima_colombo_ghiazzi/Views/Home/home.dart';
 
 class Body extends StatelessWidget {
   @override
@@ -34,9 +32,7 @@ class Body extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      ///CAMBIARE POI E METTERE LoginScreen()///
-                      //return LoginScreen();
-                      return Home();
+                      return LoginScreen();
                     },
                   ),
                 );
