@@ -6,9 +6,15 @@ import 'package:dima_colombo_ghiazzi/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 
 class Body extends StatelessWidget {
+
+  final authViewModel;
+
+  Body({Key key, @required this.authViewModel}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     // This size provide us total height and width of our screen
     return Background(
       child: SingleChildScrollView(
@@ -32,7 +38,7 @@ class Body extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return LoginScreen();
+                      return LoginScreen(authViewModel: authViewModel,);
                     },
                   ),
                 );
@@ -47,7 +53,7 @@ class Body extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return SignUpScreen();
+                      return SignUpScreen(authViewModel: authViewModel,);
                     },
                   ),
                 );

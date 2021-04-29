@@ -10,14 +10,14 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // Create the initialization Future outside of `build`:
+  // Creation of the initialization Future for FirebaseApp
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
-  // This widget is the root of your application.
+  // This widget is the root of the application.
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      // Initialize FlutterFire:
+      // Initialization of FlutterFire:
       future: _initialization,
       builder: (context, snapshot) {
         // Check for errors

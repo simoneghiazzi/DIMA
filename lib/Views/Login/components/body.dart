@@ -1,4 +1,3 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/components/background.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/signup_screen.dart';
@@ -8,21 +7,16 @@ import 'package:dima_colombo_ghiazzi/components/rounded_input_field.dart';
 import 'package:dima_colombo_ghiazzi/components/rounded_password_field.dart';
 
 class Body extends StatefulWidget {
+
+  final authViewModel;
+
+  Body({Key key, @required this.authViewModel}) : super(key: key);
+
   @override
   _BodyState createState() => _BodyState();
 }
 
 class _BodyState extends State<Body> {
-
-  final _authViewModel = AuthViewModel();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  @override
-  void initState(){
-    _emailController.addListener(() => _authViewModel.emailText.add(_emailController.text));
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,20 +38,20 @@ class _BodyState extends State<Body> {
             ),
             SizedBox(height: size.height * 0.03),
             StreamBuilder<String>(
-              stream: _authViewModel.errorText,
+              stream: widget.authViewModel.getLoginForm().errorEmailText,
               builder: (context, snapshot) {
                 return RoundedInputField(
                   hintText: "Your Email",
-                  controller: _emailController,
+                  controller: widget.authViewModel.emailController,
                   errorText: snapshot.data,
                 );
               }
             ),
             RoundedPasswordField(
-              controller: _passwordController,
+                  controller: widget.authViewModel.passwordController,
             ),
             StreamBuilder(
-              stream: _authViewModel.isButtonEnabled,
+              stream: widget.authViewModel.getLoginForm().isButtonEnabled,
               builder: (context, snapshot) {
                 return RoundedButton(text: "LOGIN", press: () {}, enabled: snapshot.data ?? false,);
             }),
@@ -68,7 +62,7 @@ class _BodyState extends State<Body> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return SignUpScreen();
+                      return SignUpScreen(authViewModel: widget.authViewModel,);
                     },
                   ),
                 );

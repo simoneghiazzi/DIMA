@@ -1,39 +1,33 @@
 import 'dart:async';
-import 'package:email_validator/email_validator.dart';
 import 'package:dima_colombo_ghiazzi/Model/User.dart';
-import 'package:dima_colombo_ghiazzi/Services/Auth.dart';
+import 'package:dima_colombo_ghiazzi/Model/Services/AuthService.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/ObserverForms/AuthForm.dart';
+import 'package:flutter/material.dart';
 
-abstract class AuthViewModelInterface{
-  Sink get emailText;
-  Stream<bool> get isButtonEnabled;
-  //Stream<bool> get isUserLogged;
-  Stream<String> get errorText;
-
-  void dispose();
-}
-
-class AuthViewModel implements AuthViewModelInterface{
+class AuthViewModel{
   
-  Auth auth = Auth();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final AuthService auth = AuthService();
+  final LoginForm loginForm = LoginForm();
+  var _loginController = StreamController<bool>.broadcast();
   User currentUser;
-  var _emailController = StreamController<String>.broadcast();
 
-  @override
-  Sink get emailText => _emailController;
+  AuthViewModel(){
+    emailController.addListener(() => loginForm.emailText.add(emailController.text));
+    passwordController.addListener(() => loginForm.passwordText.add(passwordController.text));
+    alreadyLogged();
+  }
 
-  @override
-  Stream<bool> get isButtonEnabled => _emailController.stream.map((email) => EmailValidator.validate(email));
-
-  @override
-  Stream<String> get errorText => isButtonEnabled.map((isEnabled) => isEnabled ? null : "Invalid email");
-
-  @override
-  void dispose() => _emailController.close();
-
-  
   void alreadyLogged(){
     String uid = auth.currentUser();
-    uid != null ? currentUser = User(uid: uid) : currentUser = null;
+    if(uid != null){
+      currentUser = User(uid: uid);
+      _loginController.add(true);
+      loginForm.dispose();
+    }
+    else 
+      _loginController.add(false);
   }
 
   void createUser(String _email, String _password) async{
@@ -44,10 +38,14 @@ class AuthViewModel implements AuthViewModelInterface{
   void logIn(String _email, String _password) async{
     String uid = await auth.signInWithEmailAndPassword(_email, _password);
     uid != null ? currentUser = User(uid: uid) : currentUser = null;
-  }
+  } 
 
   void logOut() async{
     await auth.signOut();
     currentUser = null;
   }
+
+  Stream<bool> get isUserLogged => _loginController.stream;
+
+  LoginForm getLoginForm() => loginForm;
 }

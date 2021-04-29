@@ -6,7 +6,7 @@ abstract class BaseAuth{
   String currentUser();
 }
 
-class Auth implements BaseAuth{
+class AuthService implements BaseAuth{
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
