@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/Home.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +26,7 @@ class _BodyState extends State<Body> {
   @override
   void initState() {
     subscriber = subscribeToViewModel();
+    WidgetsBinding.instance.addPostFrameCallback((_) => widget.authViewModel.getData());
     super.initState();
   }
   

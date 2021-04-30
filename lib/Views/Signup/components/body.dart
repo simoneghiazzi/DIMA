@@ -29,6 +29,7 @@ class _BodyState extends State<Body> {
   @override
   void initState() {
     subscriber = subscribeToViewModel();
+    WidgetsBinding.instance.addPostFrameCallback((_) => widget.authViewModel.getData());
     super.initState();
   }
 

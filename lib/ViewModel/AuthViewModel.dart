@@ -18,6 +18,13 @@ class AuthViewModel{
     passwordController.addListener(() => loginForm.passwordText.add(passwordController.text));
   }
 
+  void getData(){
+    if(emailController.text.isNotEmpty)
+      loginForm.emailText.add(emailController.text);
+    if(passwordController.text.isNotEmpty)
+      loginForm.passwordText.add(emailController.text);
+  }
+
   void alreadyLogged(){
     String uid = auth.currentUser();
     if(uid != null){
