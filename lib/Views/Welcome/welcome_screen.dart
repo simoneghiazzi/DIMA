@@ -4,7 +4,9 @@ import 'package:dima_colombo_ghiazzi/Views/Welcome/components/body.dart';
 
 class WelcomeScreen extends StatelessWidget {
 
-  final AuthViewModel authViewModel = AuthViewModel();
+  final AuthViewModel authViewModel;
+
+  WelcomeScreen({Key key, @required this.authViewModel}) : super(key: key);
   
   @override
   Widget build(BuildContext context) {

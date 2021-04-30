@@ -5,7 +5,7 @@ class SignUpScreen extends StatelessWidget {
 
   final authViewModel;
 
-  SignUpScreen({Key key, @required this.authViewModel}) : super(key: key);
+  SignUpScreen({Key key, this.authViewModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
@@ -12,7 +13,7 @@ void main() {
 class MyApp extends StatelessWidget {
   // Creation of the initialization Future for FirebaseApp
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-
+    
   // This widget is the root of the application.
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
 
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
+          final AuthViewModel authViewModel = AuthViewModel();
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'DIMA_COLOMBO_GHIAZZI',
@@ -34,7 +36,7 @@ class MyApp extends StatelessWidget {
               primaryColor: kPrimaryColor,
               scaffoldBackgroundColor: Colors.white,
             ),
-            home: WelcomeScreen(),
+            home: WelcomeScreen(authViewModel: authViewModel,),
           );
         }
         // Otherwise, show something whilst waiting for initialization to complete

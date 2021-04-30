@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:dima_colombo_ghiazzi/Views/Home/Home.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/components/background.dart';
@@ -10,7 +14,7 @@ import 'package:dima_colombo_ghiazzi/components/rounded_password_field.dart';
 
 class Body extends StatefulWidget {
 
-  final authViewModel;
+  final AuthViewModel authViewModel;
 
   Body({Key key, @required this.authViewModel}) : super(key: key);
 
@@ -19,6 +23,14 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+
+  StreamSubscription<bool> subscriber;
+
+  @override
+  void initState() {
+    subscriber = subscribeToViewModel();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +71,7 @@ class _BodyState extends State<Body> {
             StreamBuilder(
               stream: widget.authViewModel.getLoginForm().isButtonEnabled,
               builder: (context, snapshot) {
-                return RoundedButton(text: "SIGN UP", press: () {}, enabled: snapshot.data ?? false,);
+                return RoundedButton(text: "SIGN UP", press: () => widget.authViewModel.createUser(), enabled: snapshot.data ?? false,);
             }),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
@@ -94,4 +106,26 @@ class _BodyState extends State<Body> {
       ),
     );
   }
+
+  StreamSubscription<bool> subscribeToViewModel(){
+    return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
+      if(isSuccessfulLogin){
+        Navigator.push(
+          context, 
+          MaterialPageRoute(
+            builder: (context) {
+              return Home(authViewModel: widget.authViewModel,);
+            }
+          )
+        );
+        }
+    });
+  }
+
+  @override
+  void dispose() {
+    subscriber.cancel();
+    super.dispose();
+  }
+
 }

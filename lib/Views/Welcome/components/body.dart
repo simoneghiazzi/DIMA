@@ -1,15 +1,34 @@
+import 'dart:async';
+
+import 'package:dima_colombo_ghiazzi/Views/Home/Home.dart';
 import 'package:flutter/material.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
 import 'package:dima_colombo_ghiazzi/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
 
-  final authViewModel;
+  final AuthViewModel authViewModel;
 
   Body({Key key, @required this.authViewModel}) : super(key: key);
+
+  @override
+  _BodyState createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+
+  StreamSubscription<bool> subscriber;
+
+  @override
+  void initState() {
+    subscriber = subscribeToViewModel();
+    widget.authViewModel.alreadyLogged();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +57,7 @@ class Body extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return LoginScreen(authViewModel: authViewModel,);
+                      return LoginScreen(authViewModel: widget.authViewModel,);
                     },
                   ),
                 );
@@ -53,7 +72,7 @@ class Body extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return SignUpScreen(authViewModel: authViewModel,);
+                      return SignUpScreen(authViewModel: widget.authViewModel,);
                     },
                   ),
                 );
@@ -63,5 +82,26 @@ class Body extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  StreamSubscription<bool> subscribeToViewModel(){
+    return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
+      if(isSuccessfulLogin){
+        Navigator.push(
+          context, 
+          MaterialPageRoute(
+            builder: (context) {
+              return Home(authViewModel: widget.authViewModel,);
+            }
+          )
+        );
+        }
+    });
+  }
+
+  @override
+  void dispose() {
+    subscriber.cancel();
+    super.dispose();
   }
 }

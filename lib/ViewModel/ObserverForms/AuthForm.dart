@@ -34,10 +34,10 @@ class LoginForm  implements AuthFormInterface{
   Stream<bool> get isButtonEnabled => Rx.combineLatest2(emailController, passwordController, (a, b) => a && b);
 
   @override
-  Stream<String> get errorEmailText => emailController.map((isCorrect) => isCorrect ? null : "Invalid email");
+  Stream<String> get errorEmailText => emailController.map((isCorrect) => isCorrect ? false : "Invalid email");
 
   @override
-  Stream<String> get errorPasswordText => passwordController.map((isEmpty) => isEmpty ? null : "Invalid password");
+  Stream<String> get errorPasswordText => passwordController.map((isEmpty) => isEmpty ? false : "Invalid password");
 
   @override
   void dispose() {

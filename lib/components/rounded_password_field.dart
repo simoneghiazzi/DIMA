@@ -6,6 +6,7 @@ class RoundedPasswordField extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final TextEditingController controller;
   final String errorText;
+
   const RoundedPasswordField({
     Key key,
     this.onChanged,

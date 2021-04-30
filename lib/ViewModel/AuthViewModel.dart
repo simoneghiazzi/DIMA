@@ -16,7 +16,6 @@ class AuthViewModel{
   AuthViewModel(){
     emailController.addListener(() => loginForm.emailText.add(emailController.text));
     passwordController.addListener(() => loginForm.passwordText.add(passwordController.text));
-    alreadyLogged();
   }
 
   void alreadyLogged(){
@@ -24,25 +23,43 @@ class AuthViewModel{
     if(uid != null){
       currentUser = User(uid: uid);
       _loginController.add(true);
-      loginForm.dispose();
     }
     else 
       _loginController.add(false);
   }
 
-  void createUser(String _email, String _password) async{
-    String uid = await auth.createUserWithEmailAndPassword(_email, _password);
-    uid != null ? currentUser = User(uid: uid) : currentUser = null;
+  void createUser() async{
+    String uid = await auth.createUserWithEmailAndPassword(emailController.text, passwordController.text);
+    if(uid != null){
+      currentUser = User(uid: uid);
+      _loginController.add(true);
+    }
+    else 
+      _loginController.add(false);
   }
   
-  void logIn(String _email, String _password) async{
-    String uid = await auth.signInWithEmailAndPassword(_email, _password);
-    uid != null ? currentUser = User(uid: uid) : currentUser = null;
+  void logIn( ) async{
+    String uid = await auth.signInWithEmailAndPassword(emailController.text, passwordController.text);
+    if(uid != null){
+      currentUser = User(uid: uid);
+      _loginController.add(true);
+    }
+    else 
+      _loginController.add(false);
   } 
 
   void logOut() async{
     await auth.signOut();
     currentUser = null;
+    _loginController.add(false);
+    clearControllers();
+  }
+
+  void clearControllers(){
+    passwordController.clear();
+    emailController.clear();
+    getLoginForm().emailText.add(null);
+    getLoginForm().passwordText.add(null);
   }
 
   Stream<bool> get isUserLogged => _loginController.stream;

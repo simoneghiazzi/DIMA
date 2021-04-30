@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/Home.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/components/background.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/signup_screen.dart';
@@ -8,7 +12,7 @@ import 'package:dima_colombo_ghiazzi/components/rounded_password_field.dart';
 
 class Body extends StatefulWidget {
 
-  final authViewModel;
+  final AuthViewModel authViewModel;
 
   Body({Key key, @required this.authViewModel}) : super(key: key);
 
@@ -18,10 +22,17 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
 
+  StreamSubscription<bool> subscriber;
+
+  @override
+  void initState() {
+    subscriber = subscribeToViewModel();
+    super.initState();
+  }
+  
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
     return Background(
       child: SingleChildScrollView(
         child: Column(
@@ -47,13 +58,19 @@ class _BodyState extends State<Body> {
                 );
               }
             ),
-            RoundedPasswordField(
+            StreamBuilder<String>(
+              stream: widget.authViewModel.getLoginForm().errorPasswordText,
+              builder: (context, snapshot) {
+                return RoundedPasswordField(
                   controller: widget.authViewModel.passwordController,
+                  errorText: snapshot.data,
+                );
+              }
             ),
             StreamBuilder(
               stream: widget.authViewModel.getLoginForm().isButtonEnabled,
               builder: (context, snapshot) {
-                return RoundedButton(text: "LOGIN", press: () {}, enabled: snapshot.data ?? false,);
+                return RoundedButton(text: "LOGIN", press: () => widget.authViewModel.logIn(), enabled: snapshot.data ?? false,);
             }),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
@@ -72,5 +89,27 @@ class _BodyState extends State<Body> {
         ),
       ),
     );
+  }
+
+  StreamSubscription<bool> subscribeToViewModel(){
+    return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
+      if(isSuccessfulLogin){
+        FocusScope.of(context).unfocus();
+        Navigator.push(
+          context, 
+          MaterialPageRoute(
+            builder: (context) {
+              return Home(authViewModel: widget.authViewModel,);
+            }
+          )
+        );
+        }
+    });
+  }
+
+  @override
+  void dispose() {
+    subscriber.cancel();
+    super.dispose();
   }
 }
