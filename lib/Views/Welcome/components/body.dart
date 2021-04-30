@@ -5,6 +5,8 @@ import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
 import 'package:dima_colombo_ghiazzi/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 
+import 'package:dima_colombo_ghiazzi/Views/Map/map.dart';
+
 class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,8 @@ class Body extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return LoginScreen();
+                      //return LoginScreen();
+                      return Map();
                     },
                   ),
                 );

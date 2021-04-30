@@ -3,6 +3,10 @@
    <application
         android:label="dima_colombo_ghiazzi"
         android:icon="@mipmap/ic_launcher">
+        <meta-data 
+          android:name="com.google.android.geo.API_KEY"
+          android:value="AIzaSyC0qoobHhQWbXbSVK_AalY6R7h3mf4rlkQ"
+        />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
