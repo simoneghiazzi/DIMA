@@ -4,9 +4,14 @@ import 'package:dima_colombo_ghiazzi/constants.dart';
 
 class RoundedPasswordField extends StatelessWidget {
   final ValueChanged<String> onChanged;
+  final TextEditingController controller;
+  final String errorText;
+
   const RoundedPasswordField({
     Key key,
     this.onChanged,
+    this.controller,
+    this.errorText
   }) : super(key: key);
 
   @override
@@ -14,7 +19,8 @@ class RoundedPasswordField extends StatelessWidget {
     return TextFieldContainer(
       child: TextField(
         obscureText: true,
-        onChanged: onChanged,
+        onChanged: onChanged,  
+        controller: controller,
         cursorColor: kPrimaryColor,
         decoration: InputDecoration(
           hintText: "Password",
@@ -27,6 +33,7 @@ class RoundedPasswordField extends StatelessWidget {
             color: kPrimaryColor,
           ),
           border: InputBorder.none,
+          errorText: errorText,
         ),
       ),
     );

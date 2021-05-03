@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:dima_colombo_ghiazzi/Views/Home/Home.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/components/background.dart';
@@ -8,7 +12,27 @@ import 'package:dima_colombo_ghiazzi/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/components/rounded_input_field.dart';
 import 'package:dima_colombo_ghiazzi/components/rounded_password_field.dart';
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
+
+  final AuthViewModel authViewModel;
+
+  Body({Key key, @required this.authViewModel}) : super(key: key);
+
+  @override
+  _BodyState createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+
+  StreamSubscription<bool> subscriber;
+
+  @override
+  void initState() {
+    subscriber = subscribeToViewModel();
+    WidgetsBinding.instance.addPostFrameCallback((_) => widget.authViewModel.getData());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -26,17 +50,30 @@ class Body extends StatelessWidget {
               "assets/icons/logo.png",
               height: size.height * 0.15,
             ),
-            RoundedInputField(
-              hintText: "Your Email",
-              onChanged: (value) {},
+            StreamBuilder<String>(
+              stream: widget.authViewModel.getLoginForm().errorEmailText,
+              builder: (context, snapshot) {
+                return RoundedInputField(
+                  hintText: "Your Email",
+                  controller: widget.authViewModel.emailController,
+                  errorText: snapshot.data,
+                );
+              }
             ),
-            RoundedPasswordField(
-              onChanged: (value) {},
+            StreamBuilder<String>(
+              stream: widget.authViewModel.getLoginForm().errorPasswordText,
+              builder: (context, snapshot) {
+                return RoundedPasswordField(
+                  controller: widget.authViewModel.passwordController,
+                  errorText: snapshot.data,
+                );
+              }
             ),
-            RoundedButton(
-              text: "SIGNUP",
-              press: () {},
-            ),
+            StreamBuilder(
+              stream: widget.authViewModel.getLoginForm().isButtonEnabled,
+              builder: (context, snapshot) {
+                return RoundedButton(text: "SIGN UP", press: () => widget.authViewModel.createUser(), enabled: snapshot.data ?? false,);
+            }),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
               login: false,
@@ -45,7 +82,7 @@ class Body extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return LoginScreen();
+                      return LoginScreen(authViewModel: widget.authViewModel,);
                     },
                   ),
                 );
@@ -70,4 +107,26 @@ class Body extends StatelessWidget {
       ),
     );
   }
+
+  StreamSubscription<bool> subscribeToViewModel(){
+    return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
+      if(isSuccessfulLogin){
+        Navigator.push(
+          context, 
+          MaterialPageRoute(
+            builder: (context) {
+              return Home(authViewModel: widget.authViewModel,);
+            }
+          )
+        );
+        }
+    });
+  }
+
+  @override
+  void dispose() {
+    subscriber.cancel();
+    super.dispose();
+  }
+
 }
