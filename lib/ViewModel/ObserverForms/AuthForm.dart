@@ -9,7 +9,6 @@ abstract class AuthFormInterface{
   Stream<bool> get passwordController;
   Stream<bool> get isButtonEnabled;
   Stream<String> get errorEmailText;
-  Stream<String> get errorPasswordText;
 
   void dispose();
 }
@@ -35,9 +34,6 @@ class LoginForm  implements AuthFormInterface{
 
   @override
   Stream<String> get errorEmailText => emailController.map((isCorrect) => isCorrect ? false : "Invalid email");
-
-  @override
-  Stream<String> get errorPasswordText => passwordController.map((isEmpty) => isEmpty ? false : "Invalid password");
 
   @override
   void dispose() {
