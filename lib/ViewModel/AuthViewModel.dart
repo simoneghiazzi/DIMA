@@ -10,7 +10,8 @@ class AuthViewModel{
   final TextEditingController passwordController = TextEditingController();
   final AuthService auth = AuthService();
   final LoginForm loginForm = LoginForm();
-  var _loginController = StreamController<bool>.broadcast();
+  var _isUserLogged = StreamController<bool>.broadcast();
+  var _authErrorMessage = StreamController<String>.broadcast();
   User currentUser;
 
   AuthViewModel(){
@@ -29,36 +30,44 @@ class AuthViewModel{
     String uid = auth.currentUser();
     if(uid != null){
       currentUser = User(uid: uid);
-      _loginController.add(true);
+      _isUserLogged.add(true);
     }
     else 
-      _loginController.add(false);
+      _isUserLogged.add(false);
   }
 
   void createUser() async{
-    String uid = await auth.createUserWithEmailAndPassword(emailController.text, passwordController.text);
-    if(uid != null){
+    try{
+      String uid = await auth.createUserWithEmailAndPassword(emailController.text, passwordController.text);
       currentUser = User(uid: uid);
-      _loginController.add(true);
+      _isUserLogged.add(true);
+      _authErrorMessage.add("");
+    } catch(e){
+      _isUserLogged.add(false);
+      if (e.code == 'email-already-in-use') 
+        _authErrorMessage.add('The account already exists.');
+      else if (e.code == 'weak-password')
+        _authErrorMessage.add('The password is too weak.\nIt has to be at least 6 chars.');
     }
-    else 
-      _loginController.add(false);
   }
   
   void logIn( ) async{
-    String uid = await auth.signInWithEmailAndPassword(emailController.text, passwordController.text);
-    if(uid != null){
+    try{
+      String uid = await auth.signInWithEmailAndPassword(emailController.text, passwordController.text);
       currentUser = User(uid: uid);
-      _loginController.add(true);
+      _isUserLogged.add(true);
+      _authErrorMessage.add("");
+    } catch(e){
+      _isUserLogged.add(false);
+      if (e.code == 'user-not-found' || e.code == 'wrong-password')
+        _authErrorMessage.add("Wrong email or password.");
     }
-    else 
-      _loginController.add(false);
-  } 
+  }
 
-  void logOut() async{
-    await auth.signOut();
+  void logOut() {
+    auth.signOut();
     currentUser = null;
-    _loginController.add(false);
+    _isUserLogged.add(false);
     clearControllers();
   }
 
@@ -69,7 +78,9 @@ class AuthViewModel{
     getLoginForm().passwordText.add(null);
   }
 
-  Stream<bool> get isUserLogged => _loginController.stream;
+  Stream<bool> get isUserLogged => _isUserLogged.stream;
+
+  Stream<String> get authErrorMessage => _authErrorMessage.stream;
 
   LoginForm getLoginForm() => loginForm;
 }

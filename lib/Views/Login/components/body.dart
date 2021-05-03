@@ -58,24 +58,29 @@ class _BodyState extends State<Body> {
                 );
               }
             ),
-            StreamBuilder<String>(
-              stream: widget.authViewModel.getLoginForm().errorPasswordText,
-              builder: (context, snapshot) {
-                return RoundedPasswordField(
-                  controller: widget.authViewModel.passwordController,
-                  errorText: snapshot.data,
-                );
-              }
+            RoundedPasswordField(
+                  controller: widget.authViewModel.passwordController,             
             ),
             StreamBuilder(
               stream: widget.authViewModel.getLoginForm().isButtonEnabled,
               builder: (context, snapshot) {
                 return RoundedButton(text: "LOGIN", press: () => widget.authViewModel.logIn(), enabled: snapshot.data ?? false,);
             }),
+            SizedBox(height: size.height * 0.01),
+            StreamBuilder<String>(
+              stream: widget.authViewModel.authErrorMessage,
+              builder: (context, snapshot) {
+                return RichText(
+                  text: TextSpan(
+                    text: snapshot.data, 
+                    style: TextStyle(color: Colors.red, fontSize: 15))
+                );
+              }
+            ),            
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
               press: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
