@@ -21,6 +21,7 @@ class _BodyState extends State<Body> {
   void initState() {
     subscriber = subscribeToViewModel();
     widget.mapViewModel.uploadPosition();
+    super.initState();
   }
 
   @override
