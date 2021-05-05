@@ -11,7 +11,8 @@ class AuthViewModel{
   final AuthService auth = AuthService();
   final LoginForm loginForm = LoginForm();
   var _isUserLogged = StreamController<bool>.broadcast();
-  var _authErrorMessage = StreamController<String>.broadcast();
+  var _isUserCreated = StreamController<bool>.broadcast();
+  var _authMessage = StreamController<String>.broadcast();
   User currentUser;
 
   AuthViewModel(){
@@ -36,31 +37,36 @@ class AuthViewModel{
       _isUserLogged.add(false);
   }
 
-  void createUser() async{
+  Future<void> createUser() async{
     try{
       String uid = await auth.createUserWithEmailAndPassword(emailController.text, passwordController.text);
+      await auth.sendEmailVerification();
       currentUser = User(uid: uid);
-      _isUserLogged.add(true);
-      _authErrorMessage.add("");
+      _authMessage.add("");
+      _isUserCreated.add(true);
     } catch(e){
-      _isUserLogged.add(false);
+      _isUserCreated.add(false);
       if (e.code == 'email-already-in-use') 
-        _authErrorMessage.add('The account already exists.');
+        _authMessage.add('The account already exists.');
       else if (e.code == 'weak-password')
-        _authErrorMessage.add('The password is too weak.\nIt has to be at least 6 chars.');
+        _authMessage.add('The password is too weak.\nIt has to be at least 6 chars.');
     }
   }
   
-  void logIn( ) async{
+  Future<void> logIn( ) async{
     try{
       String uid = await auth.signInWithEmailAndPassword(emailController.text, passwordController.text);
-      currentUser = User(uid: uid);
-      _isUserLogged.add(true);
-      _authErrorMessage.add("");
+      if(uid != null){
+        currentUser = User(uid: uid);
+        _isUserLogged.add(true);
+        _authMessage.add("");
+      } else{
+        _authMessage.add("The email is not verified");
+      }
     } catch(e){
       _isUserLogged.add(false);
       if (e.code == 'user-not-found' || e.code == 'wrong-password')
-        _authErrorMessage.add("Wrong email or password.");
+        _authMessage.add("Wrong email or password.");
     }
   }
 
@@ -78,9 +84,20 @@ class AuthViewModel{
     getLoginForm().passwordText.add(null);
   }
 
+  void resendEmailVerification() async{
+    await deleteUser();
+    await createUser();
+  }
+
+  Future<void> deleteUser() async{
+    await auth.deleteUser();
+  }
+
   Stream<bool> get isUserLogged => _isUserLogged.stream;
 
-  Stream<String> get authErrorMessage => _authErrorMessage.stream;
+  Stream<bool> get isUserCreated => _isUserCreated.stream;
+
+  Stream<String> get authMessage => _authMessage.stream;
 
   LoginForm getLoginForm() => loginForm;
 }

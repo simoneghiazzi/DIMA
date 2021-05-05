@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:dima_colombo_ghiazzi/Views/Home/Home.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
@@ -70,7 +68,7 @@ class _BodyState extends State<Body> {
             }),
             SizedBox(height: size.height * 0.01),
             StreamBuilder<String>(
-              stream: widget.authViewModel.authErrorMessage,
+              stream: widget.authViewModel.authMessage,
               builder: (context, snapshot) {
                 return RichText(
                   text: TextSpan(
@@ -114,13 +112,28 @@ class _BodyState extends State<Body> {
   }
 
   StreamSubscription<bool> subscribeToViewModel(){
-    return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
-      if(isSuccessfulLogin){
+    return widget.authViewModel.isUserCreated.listen((isSuccessfulLogin) {
+      if(isSuccessfulLogin){ 
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('Please check your email for verification link.'),
+          action: SnackBarAction(
+            label: 'RESEND EMAIL',
+            onPressed: () {
+              widget.authViewModel.resendEmailVerification();
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: const Text('Please check again your email for verification link.'),
+                duration: const Duration(seconds: 100),
+              ));
+            },
+          ),
+          duration: const Duration(seconds: 100),
+        ));
         Navigator.push(
           context, 
           MaterialPageRoute(
             builder: (context) {
-              return Home(authViewModel: widget.authViewModel,);
+              return LoginScreen(authViewModel: widget.authViewModel,);
             }
           )
         );
