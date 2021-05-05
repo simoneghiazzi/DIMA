@@ -68,7 +68,7 @@ class _BodyState extends State<Body> {
             }),
             SizedBox(height: size.height * 0.01),
             StreamBuilder<String>(
-              stream: widget.authViewModel.authErrorMessage,
+              stream: widget.authViewModel.authMessage,
               builder: (context, snapshot) {
                 return RichText(
                   text: TextSpan(
@@ -100,6 +100,7 @@ class _BodyState extends State<Body> {
     return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
       if(isSuccessfulLogin){
         FocusScope.of(context).unfocus();
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
         Navigator.push(
           context, 
           MaterialPageRoute(
