@@ -10,7 +10,6 @@ import 'package:dima_colombo_ghiazzi/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 
 class Body extends StatefulWidget {
-
   final AuthViewModel authViewModel;
 
   Body({Key key, @required this.authViewModel}) : super(key: key);
@@ -20,7 +19,6 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-
   StreamSubscription<bool> subscriber;
 
   @override
@@ -57,7 +55,9 @@ class _BodyState extends State<Body> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return LoginScreen(authViewModel: widget.authViewModel,);
+                      return LoginScreen(
+                        authViewModel: widget.authViewModel,
+                      );
                     },
                   ),
                 );
@@ -72,7 +72,9 @@ class _BodyState extends State<Body> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return SignUpScreen(authViewModel: widget.authViewModel,);
+                      return SignUpScreen(
+                        authViewModel: widget.authViewModel,
+                      );
                     },
                   ),
                 );
@@ -84,18 +86,15 @@ class _BodyState extends State<Body> {
     );
   }
 
-  StreamSubscription<bool> subscribeToViewModel(){
+  StreamSubscription<bool> subscribeToViewModel() {
     return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
-      if(isSuccessfulLogin){
-        Navigator.push(
-          context, 
-          MaterialPageRoute(
-            builder: (context) {
-              return Home(authViewModel: widget.authViewModel,);
-            }
-          )
-        );
-        }
+      if (isSuccessfulLogin) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return Home(
+            authViewModel: widget.authViewModel,
+          );
+        }));
+      }
     });
   }
 
