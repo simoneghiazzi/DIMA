@@ -1,7 +1,13 @@
+import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/dashCard.dart';
 
-class Grid extends StatelessWidget {
+class Grid extends StatefulWidget {
+  @override
+  _GridState createState() => _GridState();
+}
+
+class _GridState extends State<Grid> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -31,7 +37,14 @@ class Grid extends StatelessWidget {
               imagePath: "assets/icons/map.png",
               text: "Map",
               press: () {
-                print("hola");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return MapScreen();
+                    },
+                  ),
+                );
               },
             ),
             DashCard(
