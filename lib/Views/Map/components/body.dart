@@ -20,44 +20,40 @@ class _BodyState extends State<Body> {
   @override
   void initState() {
     super.initState();
-    subscriber = subscribeToViewModel();
-    widget.mapViewModel.getLocation();
+    //subscriber = subscribeToViewModel();
+    widget.mapViewModel.uploadPosition();
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: userLocation == null
-          ? Container(
-              child: Center(
-                child: Text(
-                  'loading map..',
-                  style:
-                      TextStyle(fontFamily: 'Roboto', color: Colors.grey[400]),
-                ),
-              ),
-            )
-          : GoogleMap(
-              mapType: MapType.normal,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(userLocation.latitude, userLocation.longitude),
-                zoom: 16,
-              ),
-              myLocationButtonEnabled: true,
-              myLocationEnabled: true,
-              onMapCreated: (GoogleMapController controller) {
-                widget.mapViewModel.mapController.complete(controller);
-              }),
-    );
+        child: StreamBuilder<Position>(
+            stream: widget.mapViewModel.position,
+            builder: (context, snapshot) {
+              return snapshot.data == null
+                  ? CircularProgressIndicator()
+                  : GoogleMap(
+                      mapType: MapType.normal,
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(
+                            snapshot.data.latitude, snapshot.data.longitude),
+                        zoom: 16,
+                      ),
+                      myLocationButtonEnabled: true,
+                      myLocationEnabled: true,
+                      onMapCreated: (GoogleMapController controller) {
+                        widget.mapViewModel.mapController.complete(controller);
+                      });
+            }));
   }
 
-  StreamSubscription<Position> subscribeToViewModel() {
+  /*StreamSubscription<Position> subscribeToViewModel() {
     return widget.mapViewModel.position.listen((userPosition) {
       if (userPosition != null) {
         userLocation = userPosition;
       }
     });
-  }
+  }*/
 
   @override
   void dispose() {
