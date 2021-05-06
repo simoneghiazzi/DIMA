@@ -7,18 +7,18 @@ class MapViewModel {
   Completer<GoogleMapController> mapController = Completer();
 
   MapViewModel() {
-    _getLocation().then((userLocation) {
+    getLocation().then((userLocation) {
       _position.add(userLocation);
     });
   }
 
   void uploadPosition() {
-    _getLocation().then((userLocation) {
+    getLocation().then((userLocation) {
       _position.add(userLocation);
     });
   }
 
-  Future<Position> _getLocation() async {
+  Future<Position> getLocation() async {
     var currentLocation;
     try {
       currentLocation = await Geolocator.getCurrentPosition(

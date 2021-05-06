@@ -19,22 +19,32 @@ class _BodyState extends State<Body> {
 
   @override
   void initState() {
-    subscriber = subscribeToViewModel();
-    widget.mapViewModel.uploadPosition();
     super.initState();
+    subscriber = subscribeToViewModel();
+    widget.mapViewModel.getLocation();
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: userLocation == null
-          ? CircularProgressIndicator()
+          ? Container(
+              child: Center(
+                child: Text(
+                  'loading map..',
+                  style:
+                      TextStyle(fontFamily: 'Roboto', color: Colors.grey[400]),
+                ),
+              ),
+            )
           : GoogleMap(
               mapType: MapType.normal,
               initialCameraPosition: CameraPosition(
                 target: LatLng(userLocation.latitude, userLocation.longitude),
                 zoom: 16,
               ),
+              myLocationButtonEnabled: true,
+              myLocationEnabled: true,
               onMapCreated: (GoogleMapController controller) {
                 widget.mapViewModel.mapController.complete(controller);
               }),
