@@ -1,3 +1,4 @@
+import 'package:dima_colombo_ghiazzi/Model/place_search.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:dima_colombo_ghiazzi/ViewModel/MapViewModel.dart';
@@ -32,7 +33,7 @@ class _BodyState extends State<Body> {
               stream: widget.mapViewModel.position,
               builder: (context, snapshot) {
                 return snapshot.data == null
-                    ? CircularProgressIndicator()
+                    ? Center(child: CircularProgressIndicator())
                     : GoogleMap(
                         mapType: MapType.normal,
                         initialCameraPosition: CameraPosition(
@@ -62,17 +63,45 @@ class _BodyState extends State<Body> {
                   },
                 ),
                 Expanded(
-                  child: TextField(
-                    cursorColor: Colors.black,
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.go,
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
-                        hintText: "Search..."),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      cursorColor: Colors.black,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.go,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                          hintText: "Search place",
+                          suffixIcon: Icon(Icons.search)),
+                      onChanged: (value) =>
+                          widget.mapViewModel.searchPlaces(value),
+                    ),
                   ),
                 ),
-              ])))
+              ]))),
+      StreamBuilder<List<PlaceSearch>>(
+          stream: widget.mapViewModel.places,
+          builder: (context, snapshot) {
+            return snapshot.data == null
+                ? Container(width: 0.0, height: 0.0)
+                : Column(children: [
+                    Expanded(
+                        child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(.6),
+                                backgroundBlendMode: BlendMode.darken),
+                            child: ListView.builder(
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                      title: Text(
+                                    snapshot.data[index].description,
+                                    style: TextStyle(color: Colors.black),
+                                  ));
+                                })))
+                  ]);
+          }),
     ]);
   }
 
