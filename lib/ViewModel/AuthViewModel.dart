@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Model/User.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/AuthService.dart';
+import 'package:dima_colombo_ghiazzi/Model/Services/FirebaseAuthService.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/ObserverForms/AuthForm.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +8,7 @@ class AuthViewModel{
   
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final AuthService auth = AuthService();
+  final FirebaseAuthService auth = FirebaseAuthService();
   final LoginForm loginForm = LoginForm();
   var _isUserLogged = StreamController<bool>.broadcast();
   var _isUserCreated = StreamController<bool>.broadcast();
@@ -37,7 +37,7 @@ class AuthViewModel{
       _isUserLogged.add(false);
   }
 
-  Future<void> createUser() async{
+  Future createUser() async{
     try{
       String uid = await auth.createUserWithEmailAndPassword(emailController.text, passwordController.text);
       await auth.sendEmailVerification();
@@ -53,7 +53,7 @@ class AuthViewModel{
     }
   }
   
-  Future<void> logIn( ) async{
+  Future logIn() async{
     try{
       String uid = await auth.signInWithEmailAndPassword(emailController.text, passwordController.text);
       if(uid != null){
@@ -67,6 +67,20 @@ class AuthViewModel{
       _isUserLogged.add(false);
       if (e.code == 'user-not-found' || e.code == 'wrong-password')
         _authMessage.add("Wrong email or password.");
+    }
+  }
+
+  Future logInWithGoogle() async{
+    try{
+      String uid = await auth.signInWithGoogle();
+      if(uid != null){
+        currentUser = User(uid: uid);
+        _isUserLogged.add(true);
+        _authMessage.add("");
+      }
+    } catch(e){
+      _isUserLogged.add(false);
+      print(e);
     }
   }
 

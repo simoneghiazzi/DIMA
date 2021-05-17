@@ -26,6 +26,7 @@ dependencies:
   provider: ^5.0.0
   rxdart: ^0.26.0
   email_validator: ^2.0.1
+  google_sign_in: ^5.0.3
   firebase_auth: ^1.1.2
   firebase_core: ^1.1.0
 
