@@ -63,27 +63,24 @@ class _BodyState extends State<Body> {
                   },
                 ),
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      cursorColor: Colors.black,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.go,
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 15),
-                          hintText: "Search place",
-                          suffixIcon: Icon(Icons.search)),
-                      onChanged: (value) =>
-                          widget.mapViewModel.searchPlaces(value),
-                    ),
+                  child: TextField(
+                    cursorColor: Colors.black,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.go,
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        //contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                        hintText: "Search place",
+                        suffixIcon: Icon(Icons.search)),
+                    onChanged: (value) =>
+                        widget.mapViewModel.searchPlaces(value),
                   ),
                 ),
               ]))),
       StreamBuilder<List<PlaceSearch>>(
           stream: widget.mapViewModel.places,
           builder: (context, snapshot) {
-            return snapshot.data == null
+            return (snapshot.data == null || snapshot.data.length == 0)
                 ? Container(width: 0.0, height: 0.0)
                 : Column(children: [
                     Expanded(
@@ -92,12 +89,13 @@ class _BodyState extends State<Body> {
                                 color: Colors.black.withOpacity(.6),
                                 backgroundBlendMode: BlendMode.darken),
                             child: ListView.builder(
+                                padding: EdgeInsets.only(top: 100),
                                 itemCount: snapshot.data.length,
                                 itemBuilder: (context, index) {
                                   return ListTile(
                                       title: Text(
                                     snapshot.data[index].description,
-                                    style: TextStyle(color: Colors.black),
+                                    style: TextStyle(color: Colors.white),
                                   ));
                                 })))
                   ]);
