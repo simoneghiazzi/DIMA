@@ -13,7 +13,7 @@ class AuthViewModel{
   var _isUserLogged = StreamController<bool>.broadcast();
   var _isUserCreated = StreamController<bool>.broadcast();
   var _authMessage = StreamController<String>.broadcast();
-  User currentUser;
+  //User currentUser;
 
   AuthViewModel(){
     emailController.addListener(() => loginForm.emailText.add(emailController.text));
@@ -30,7 +30,6 @@ class AuthViewModel{
   void alreadyLogged(){
     String uid = auth.currentUser();
     if(uid != null){
-      currentUser = User(uid: uid);
       _isUserLogged.add(true);
     }
     else 
@@ -41,7 +40,6 @@ class AuthViewModel{
     try{
       String uid = await auth.createUserWithEmailAndPassword(emailController.text, passwordController.text);
       await auth.sendEmailVerification();
-      currentUser = User(uid: uid);
       _authMessage.add("");
       _isUserCreated.add(true);
     } catch(e){
@@ -57,7 +55,6 @@ class AuthViewModel{
     try{
       String uid = await auth.signInWithEmailAndPassword(emailController.text, passwordController.text);
       if(uid != null){
-        currentUser = User(uid: uid);
         _isUserLogged.add(true);
         _authMessage.add("");
       } else{
@@ -72,21 +69,32 @@ class AuthViewModel{
 
   Future logInWithGoogle() async{
     try{
-      String uid = await auth.signInWithGoogle();
-      if(uid != null){
-        currentUser = User(uid: uid);
-        _isUserLogged.add(true);
-        _authMessage.add("");
-      }
+      await auth.signInWithGoogle();
+      _isUserLogged.add(true);
+      _authMessage.add("");
     } catch(e){
       _isUserLogged.add(false);
+      if(e.code == 'account-exists-with-different-credential')
+        _authMessage.add("An account already exists with the same email address but different sign-in credentials.");
+      print(e);
+    }
+  }
+
+  Future logInWithFacebook() async{
+    try{
+      await auth.signInWithFacebook();
+      _isUserLogged.add(true);
+      _authMessage.add("");
+    } catch(e){
+      _isUserLogged.add(false);
+      if(e.code == 'account-exists-with-different-credential')
+        _authMessage.add("An account already exists with the same email address but different sign-in credentials.");
       print(e);
     }
   }
 
   void logOut() {
     auth.signOut();
-    currentUser = null;
     _isUserLogged.add(false);
     clearControllers();
   }

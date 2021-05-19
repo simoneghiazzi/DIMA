@@ -1,15 +1,14 @@
 import 'dart:async';
-
 import 'package:dima_colombo_ghiazzi/Views/Home/Home.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/components/or_divider.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/components/social_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
-import 'package:dima_colombo_ghiazzi/components/rounded_button.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'or_divider.dart';
+import 'social_icon.dart';
 
 class Body extends StatefulWidget {
   final AuthViewModel authViewModel;
@@ -88,14 +87,27 @@ class _BodyState extends State<Body> {
               children: <Widget>[
                 SocalIcon(
                   iconSrc: "assets/icons/facebook.png",
-                  press: () {},
+                  press: () => widget.authViewModel.logInWithFacebook(),
                 ),
                 SocalIcon(
                   iconSrc: "assets/icons/google.png",
                   press: () => widget.authViewModel.logInWithGoogle(),
                 ),
               ],
-            )
+            ),
+            StreamBuilder<String>(
+              stream: widget.authViewModel.authMessage,
+              builder: (context, snapshot) {
+                return Container(
+                  padding: EdgeInsets.all(20.0),
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                        text: snapshot.data, 
+                        style: TextStyle(color: Colors.red, fontSize: 15))
+                ));
+              }
+            ),
           ],
         ),
       ),
