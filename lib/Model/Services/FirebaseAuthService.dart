@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 abstract class BaseAuth{
   Future<String> signInWithEmailAndPassword(String email, String password);
@@ -34,6 +35,14 @@ class FirebaseAuthService implements BaseAuth{
       idToken: googleAuth.idToken,
     );
     _userCredential = await _firebaseAuth.signInWithCredential(credential);
+    return _userCredential.user.uid;
+  }
+
+  Future<String> signInWithFacebook() async{
+    LoginResult result = await FacebookAuth.instance.login();
+    AccessToken accessToken = result.accessToken;
+    var facebookAuthCredential = FacebookAuthProvider.credential(accessToken.token);
+    _userCredential = await _firebaseAuth.signInWithCredential(facebookAuthCredential);
     return _userCredential.user.uid;
   }
 
