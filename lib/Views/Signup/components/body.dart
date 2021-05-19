@@ -3,8 +3,6 @@ import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/components/background.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/components/or_divider.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/components/social_icon.dart';
 import 'package:dima_colombo_ghiazzi/components/already_have_an_account_acheck.dart';
 import 'package:dima_colombo_ghiazzi/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/components/rounded_input_field.dart';
@@ -91,20 +89,6 @@ class _BodyState extends State<Body> {
                 );
               },
             ),
-            OrDivider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SocalIcon(
-                  iconSrc: "assets/icons/facebook.png",
-                  press: () {},
-                ),
-                SocalIcon(
-                  iconSrc: "assets/icons/google.png",
-                  press: () {},
-                ),
-              ],
-            )
           ],
         ),
       ),

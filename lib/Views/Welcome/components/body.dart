@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:dima_colombo_ghiazzi/Views/Home/Home.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/components/or_divider.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/components/social_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
@@ -80,6 +82,20 @@ class _BodyState extends State<Body> {
                 );
               },
             ),
+            OrDivider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SocalIcon(
+                  iconSrc: "assets/icons/facebook.png",
+                  press: () {},
+                ),
+                SocalIcon(
+                  iconSrc: "assets/icons/google.png",
+                  press: () => widget.authViewModel.logInWithGoogle(),
+                ),
+              ],
+            )
           ],
         ),
       ),
@@ -88,7 +104,7 @@ class _BodyState extends State<Body> {
 
   StreamSubscription<bool> subscribeToViewModel() {
     return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
-      if (isSuccessfulLogin) {
+      if (isSuccessfulLogin){
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return Home(
             authViewModel: widget.authViewModel,
