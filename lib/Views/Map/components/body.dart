@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
 import 'package:flutter/material.dart';
-//import 'dart:async';
 import 'package:dima_colombo_ghiazzi/ViewModel/MapViewModel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -20,6 +19,7 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   //StreamSubscription<Position> subscriber;
   Position userLocation;
+  StreamSubscription<Place> subscriber;
 
   @override
   void initState() {
@@ -46,6 +46,10 @@ class _BodyState extends State<Body> {
                         ),
                         myLocationButtonEnabled: true,
                         myLocationEnabled: true,
+                        padding: EdgeInsets.only(
+                          top: 700.0,
+                        ),
+                        zoomControlsEnabled: false,
                         onMapCreated: (GoogleMapController controller) {
                           widget.mapViewModel.mapController
                               .complete(controller);
@@ -56,7 +60,10 @@ class _BodyState extends State<Body> {
           right: 15,
           left: 15,
           child: Container(
-              color: Colors.white,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25.0),
+              ),
               child: Row(children: <Widget>[
                 IconButton(
                   splashColor: Colors.grey,
@@ -117,7 +124,7 @@ class _BodyState extends State<Body> {
       if (place != null) {
         _goToPlace(place);
       } else {
-        print("NADA FRA");
+        print("Error, search again");
       }
     });
   }
@@ -130,9 +137,10 @@ class _BodyState extends State<Body> {
         CameraPosition(
             target: LatLng(
                 place.geometry.location.lat, place.geometry.location.lng),
-            zoom: 14.0),
+            zoom: 15.0),
       ),
     );
+    widget.mapViewModel.searchPlaces("");
   }
 
   @override

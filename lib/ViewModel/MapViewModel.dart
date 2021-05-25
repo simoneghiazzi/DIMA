@@ -14,6 +14,8 @@ class MapViewModel {
 
   var _selectedLocation = StreamController<Place>.broadcast();
 
+  Place searchedPlace;
+
   MapViewModel() {
     _getLocation().then((userLocation) {
       _position.add(userLocation);
@@ -46,6 +48,7 @@ class MapViewModel {
   setSelectedLocation(String place) async {
     placesSearch.getPlace(place).then((location) {
       _selectedLocation.add(location);
+      searchedPlace = location;
     });
   }
 
