@@ -24,7 +24,7 @@ class _BodyState extends State<Body> {
   @override
   void initState() {
     super.initState();
-    //subscriber = subscribeToViewModel();
+    subscriber = subscribeToViewModel();
     widget.mapViewModel.uploadPosition();
   }
 
@@ -103,7 +103,7 @@ class _BodyState extends State<Body> {
                                         style: TextStyle(color: Colors.white),
                                       ),
                                       onTap: () {
-                                        widget.mapViewModel.searchPlaces(
+                                        widget.mapViewModel.setSelectedLocation(
                                             snapshot.data[index].placeId);
                                       });
                                 })))
@@ -113,18 +113,11 @@ class _BodyState extends State<Body> {
   }
 
   StreamSubscription<Place> subscribeToViewModel() {
-    return widget.mapViewModel.location.listen((place) async {
+    return widget.mapViewModel.location.listen((place) {
       if (place != null) {
-        GoogleMapController controller =
-            await widget.mapViewModel.mapController.future;
-        controller.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-                target: LatLng(
-                    place.geometry.location.lat, place.geometry.location.lng),
-                zoom: 14.0),
-          ),
-        );
+        _goToPlace(place);
+      } else {
+        print("NADA FRA");
       }
     });
   }
@@ -142,9 +135,9 @@ class _BodyState extends State<Body> {
     );
   }
 
-  /*@override
+  @override
   void dispose() {
     subscriber.cancel();
     super.dispose();
-  }*/
+  }
 }

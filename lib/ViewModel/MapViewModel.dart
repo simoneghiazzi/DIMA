@@ -49,10 +49,6 @@ class MapViewModel {
     });
   }
 
-  Future<GoogleMapController> _goToPlace(Place place) async {
-    final GoogleMapController controller = await mapController.future;
-  }
-
   Stream<Position> get position => _position.stream;
   Stream<List<PlaceSearch>> get places => _placesSearch.stream;
   Stream<Place> get location => _selectedLocation.stream;
