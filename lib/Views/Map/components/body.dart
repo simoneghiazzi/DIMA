@@ -1,6 +1,9 @@
-import 'package:dima_colombo_ghiazzi/Model/place_search.dart';
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
+import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
+import 'package:flutter/material.dart';
+//import 'dart:async';
 import 'package:dima_colombo_ghiazzi/ViewModel/MapViewModel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -15,7 +18,7 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  StreamSubscription<Position> subscriber;
+  //StreamSubscription<Position> subscriber;
   Position userLocation;
 
   @override
@@ -93,27 +96,55 @@ class _BodyState extends State<Body> {
                                 itemCount: snapshot.data.length,
                                 itemBuilder: (context, index) {
                                   return ListTile(
+                                      contentPadding: EdgeInsets.only(
+                                          top: 10, left: 15, right: 5),
                                       title: Text(
-                                    snapshot.data[index].description,
-                                    style: TextStyle(color: Colors.white),
-                                  ));
+                                        snapshot.data[index].description,
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      onTap: () {
+                                        widget.mapViewModel.searchPlaces(
+                                            snapshot.data[index].placeId);
+                                      });
                                 })))
                   ]);
           }),
     ]);
   }
 
-  /*StreamSubscription<Position> subscribeToViewModel() {
-    return widget.mapViewModel.position.listen((userPosition) {
-      if (userPosition != null) {
-        userLocation = userPosition;
+  StreamSubscription<Place> subscribeToViewModel() {
+    return widget.mapViewModel.location.listen((place) async {
+      if (place != null) {
+        GoogleMapController controller =
+            await widget.mapViewModel.mapController.future;
+        controller.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+                target: LatLng(
+                    place.geometry.location.lat, place.geometry.location.lng),
+                zoom: 14.0),
+          ),
+        );
       }
     });
-  }*/
+  }
 
-  @override
+  Future<void> _goToPlace(Place place) async {
+    final GoogleMapController controller =
+        await widget.mapViewModel.mapController.future;
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: LatLng(
+                place.geometry.location.lat, place.geometry.location.lng),
+            zoom: 14.0),
+      ),
+    );
+  }
+
+  /*@override
   void dispose() {
     subscriber.cancel();
     super.dispose();
-  }
+  }*/
 }

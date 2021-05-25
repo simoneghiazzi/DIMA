@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Model/place_search.dart';
+import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
+import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/places_service.dart';
@@ -10,7 +11,8 @@ class MapViewModel {
 
   var _placesSearch = StreamController<List<PlaceSearch>>.broadcast();
   final placesSearch = PlacesService();
-  //List<PlaceSearch> searchResults;
+
+  var _selectedLocation = StreamController<Place>.broadcast();
 
   MapViewModel() {
     _getLocation().then((userLocation) {
@@ -36,12 +38,22 @@ class MapViewModel {
   }
 
   searchPlaces(String searchTerm) async {
-    //searchResults = await placesSearch.getAutocomplete(searchTerm);
     placesSearch.getAutocomplete(searchTerm).then((places) {
       _placesSearch.add(places);
     });
   }
 
+  setSelectedLocation(String place) async {
+    placesSearch.getPlace(place).then((location) {
+      _selectedLocation.add(location);
+    });
+  }
+
+  Future<GoogleMapController> _goToPlace(Place place) async {
+    final GoogleMapController controller = await mapController.future;
+  }
+
   Stream<Position> get position => _position.stream;
   Stream<List<PlaceSearch>> get places => _placesSearch.stream;
+  Stream<Place> get location => _selectedLocation.stream;
 }
