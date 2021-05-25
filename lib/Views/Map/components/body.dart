@@ -44,11 +44,8 @@ class _BodyState extends State<Body> {
                               snapshot.data.latitude, snapshot.data.longitude),
                           zoom: 16,
                         ),
-                        myLocationButtonEnabled: true,
+                        myLocationButtonEnabled: false,
                         myLocationEnabled: true,
-                        padding: EdgeInsets.only(
-                          top: 700.0,
-                        ),
                         zoomControlsEnabled: false,
                         onMapCreated: (GoogleMapController controller) {
                           widget.mapViewModel.mapController
@@ -112,6 +109,8 @@ class _BodyState extends State<Body> {
                                       onTap: () {
                                         widget.mapViewModel.setSelectedLocation(
                                             snapshot.data[index].placeId);
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
                                       });
                                 })))
                   ]);
@@ -137,7 +136,7 @@ class _BodyState extends State<Body> {
         CameraPosition(
             target: LatLng(
                 place.geometry.location.lat, place.geometry.location.lng),
-            zoom: 15.0),
+            zoom: 14.5),
       ),
     );
     widget.mapViewModel.searchPlaces("");
