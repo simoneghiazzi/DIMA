@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
+import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
+import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/MapViewModel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -14,13 +17,14 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  StreamSubscription<Position> subscriber;
+  //StreamSubscription<Position> subscriber;
   Position userLocation;
+  StreamSubscription<Place> subscriber;
 
   @override
   void initState() {
     super.initState();
-    //subscriber = subscribeToViewModel();
+    subscriber = subscribeToViewModel();
     widget.mapViewModel.uploadPosition();
   }
 
@@ -32,7 +36,7 @@ class _BodyState extends State<Body> {
               stream: widget.mapViewModel.position,
               builder: (context, snapshot) {
                 return snapshot.data == null
-                    ? CircularProgressIndicator()
+                    ? Center(child: CircularProgressIndicator())
                     : GoogleMap(
                         mapType: MapType.normal,
                         initialCameraPosition: CameraPosition(
@@ -40,8 +44,9 @@ class _BodyState extends State<Body> {
                               snapshot.data.latitude, snapshot.data.longitude),
                           zoom: 16,
                         ),
-                        myLocationButtonEnabled: true,
+                        myLocationButtonEnabled: false,
                         myLocationEnabled: true,
+                        zoomControlsEnabled: false,
                         onMapCreated: (GoogleMapController controller) {
                           widget.mapViewModel.mapController
                               .complete(controller);
@@ -52,7 +57,10 @@ class _BodyState extends State<Body> {
           right: 15,
           left: 15,
           child: Container(
-              color: Colors.white,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25.0),
+              ),
               child: Row(children: <Widget>[
                 IconButton(
                   splashColor: Colors.grey,
@@ -68,21 +76,71 @@ class _BodyState extends State<Body> {
                     textInputAction: TextInputAction.go,
                     decoration: InputDecoration(
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 15),
-                        hintText: "Search..."),
+                        //contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                        hintText: "Search place",
+                        suffixIcon: Icon(Icons.search)),
+                    onChanged: (value) =>
+                        widget.mapViewModel.searchPlaces(value),
                   ),
                 ),
-              ])))
+              ]))),
+      StreamBuilder<List<PlaceSearch>>(
+          stream: widget.mapViewModel.places,
+          builder: (context, snapshot) {
+            return (snapshot.data == null || snapshot.data.length == 0)
+                ? Container(width: 0.0, height: 0.0)
+                : Column(children: [
+                    Expanded(
+                        child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(.6),
+                                backgroundBlendMode: BlendMode.darken),
+                            child: ListView.builder(
+                                padding: EdgeInsets.only(top: 100),
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                      contentPadding: EdgeInsets.only(
+                                          top: 10, left: 15, right: 5),
+                                      title: Text(
+                                        snapshot.data[index].description,
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      onTap: () {
+                                        widget.mapViewModel.setSelectedLocation(
+                                            snapshot.data[index].placeId);
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
+                                      });
+                                })))
+                  ]);
+          }),
     ]);
   }
 
-  /*StreamSubscription<Position> subscribeToViewModel() {
-    return widget.mapViewModel.position.listen((userPosition) {
-      if (userPosition != null) {
-        userLocation = userPosition;
+  StreamSubscription<Place> subscribeToViewModel() {
+    return widget.mapViewModel.location.listen((place) {
+      if (place != null) {
+        _goToPlace(place);
+      } else {
+        print("Error, search again");
       }
     });
-  }*/
+  }
+
+  Future<void> _goToPlace(Place place) async {
+    final GoogleMapController controller =
+        await widget.mapViewModel.mapController.future;
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: LatLng(
+                place.geometry.location.lat, place.geometry.location.lng),
+            zoom: 14.5),
+      ),
+    );
+    widget.mapViewModel.searchPlaces("");
+  }
 
   @override
   void dispose() {
