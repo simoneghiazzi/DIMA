@@ -136,7 +136,7 @@ class _BodyState extends State<Body> {
         CameraPosition(
             target: LatLng(
                 place.geometry.location.lat, place.geometry.location.lng),
-            zoom: 14.5),
+            zoom: 15),
       ),
     );
     widget.mapViewModel.searchPlaces("");
