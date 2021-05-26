@@ -1,3 +1,4 @@
+import 'package:dima_colombo_ghiazzi/Views/Chats/chatsList_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/dashCard.dart';
@@ -23,7 +24,14 @@ class _GridState extends State<Grid> {
               imagePath: "assets/icons/psychologist.png",
               text: "Experts chats",
               press: () {
-                print("hola");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return ChatsScreen();
+                    },
+                  ),
+                );
               },
             ),
             DashCard(
