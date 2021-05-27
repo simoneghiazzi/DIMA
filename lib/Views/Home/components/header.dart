@@ -41,10 +41,7 @@ class _HeaderState extends State<Header> {
           ),
           onTap: () => _onAccountPressed(context),
         ),
-      ),
-      // IconButton(
-      //     icon: Icon(Icons.logout),
-      //     onPressed: () => widget.authViewModel.logOut()),
+      )
     ]);
   }
 
@@ -70,8 +67,8 @@ class _HeaderState extends State<Header> {
           ),
           onPressed: () {},
           gradient: LinearGradient(colors: [
-            Colors.indigo[500],
-            Colors.cyan[300],
+            Colors.indigo[400],
+            Colors.cyan[200],
           ]),
         ),
         DialogButton(
@@ -84,8 +81,8 @@ class _HeaderState extends State<Header> {
             Navigator.pop(context);
           },
           gradient: LinearGradient(colors: [
-            Colors.red[500],
-            Colors.red[300],
+            Colors.red[400],
+            Colors.red[200],
           ]),
         )
       ],
