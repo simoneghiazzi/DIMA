@@ -38,9 +38,9 @@ class _HeaderState extends State<Header> {
           ),
         ),
       ),
-      IconButton(
-          icon: Icon(Icons.logout),
-          onPressed: () => widget.authViewModel.logOut()),
+      // IconButton(
+      //     icon: Icon(Icons.logout),
+      //     onPressed: () => widget.authViewModel.logOut()),
     ]);
   }
 

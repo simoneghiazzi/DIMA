@@ -13,7 +13,7 @@ class _GridState extends State<Grid> {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 50),
+        padding: EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 90),
         child: GridView.count(
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
