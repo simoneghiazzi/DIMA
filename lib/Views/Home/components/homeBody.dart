@@ -4,7 +4,6 @@ import 'package:dima_colombo_ghiazzi/Views/Home/components/header.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/grid.dart';
 
 class HomeBody extends StatelessWidget {
-
   final AuthViewModel authViewModel;
 
   HomeBody({Key key, @required this.authViewModel}) : super(key: key);
@@ -14,7 +13,9 @@ class HomeBody extends StatelessWidget {
     return Container(
       child: Column(
         children: <Widget>[
-          Header(authViewModel: authViewModel,),
+          Header(
+            authViewModel: authViewModel,
+          ),
           Grid(),
         ],
       ),

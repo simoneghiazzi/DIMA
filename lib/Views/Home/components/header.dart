@@ -3,7 +3,6 @@ import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:flutter/material.dart';
 
 class Header extends StatefulWidget {
-
   final AuthViewModel authViewModel;
 
   Header({Key key, @required this.authViewModel}) : super(key: key);
@@ -13,7 +12,6 @@ class Header extends StatefulWidget {
 }
 
 class _HeaderState extends State<Header> {
-
   StreamSubscription<bool> subscriber;
 
   @override
@@ -24,28 +22,32 @@ class _HeaderState extends State<Header> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListTile(
-          contentPadding: EdgeInsets.only(left: 20, right: 20, top: 110),
-          title: Text(
-            'Homepage',
+    return Column(children: [
+      ListTile(
+        contentPadding: EdgeInsets.only(left: 20, right: 20, top: 100),
+        title: Text(
+          'Homepage',
+          style: TextStyle(color: Colors.white, fontSize: 32),
+        ),
+        trailing: CircleAvatar(
+          radius: 50,
+          backgroundColor: Colors.deepPurple[500],
+          child: Text(
+            "S",
             style: TextStyle(color: Colors.white, fontSize: 30),
           ),
-          trailing: CircleAvatar(
-            radius: 50,
-            backgroundColor: Colors.purple,
-          ),
         ),
-        IconButton(icon: Icon(Icons.logout), onPressed: () => widget.authViewModel.logOut()),
-      ]
-    );
+      ),
+      IconButton(
+          icon: Icon(Icons.logout),
+          onPressed: () => widget.authViewModel.logOut()),
+    ]);
   }
 
-  StreamSubscription<bool> subscribeToViewModel(){
+  StreamSubscription<bool> subscribeToViewModel() {
     return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
-      if(!isSuccessfulLogin){
-          Navigator.pop(context);
+      if (!isSuccessfulLogin) {
+        Navigator.pop(context);
       }
     });
   }

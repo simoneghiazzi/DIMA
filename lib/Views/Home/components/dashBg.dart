@@ -17,7 +17,7 @@ class DashBg extends StatelessWidget {
         ),
         Expanded(
           child: Container(color: Colors.transparent),
-          flex: 5,
+          flex: 6,
         ),
       ],
     );

@@ -1,4 +1,5 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/ChatsViewModel.dart';
+import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:flutter/material.dart';
 
 class Body extends StatefulWidget {
@@ -62,7 +63,16 @@ class _BodyState extends State<Body> {
                           ],
                         ),
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return MapScreen();
+                            },
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
