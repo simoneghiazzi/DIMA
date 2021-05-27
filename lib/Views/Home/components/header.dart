@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class Header extends StatefulWidget {
   final AuthViewModel authViewModel;
@@ -29,13 +30,16 @@ class _HeaderState extends State<Header> {
           'Homepage',
           style: TextStyle(color: Colors.white, fontSize: 32),
         ),
-        trailing: CircleAvatar(
-          radius: 50,
-          backgroundColor: Colors.deepPurple[500],
-          child: Text(
-            "S",
-            style: TextStyle(color: Colors.white, fontSize: 30),
+        trailing: InkWell(
+          child: CircleAvatar(
+            radius: 50,
+            backgroundColor: Colors.deepPurple[500],
+            child: Text(
+              "S",
+              style: TextStyle(color: Colors.white, fontSize: 30),
+            ),
           ),
+          onTap: () => _onAccountPressed(context),
         ),
       ),
       // IconButton(
@@ -50,6 +54,42 @@ class _HeaderState extends State<Header> {
         Navigator.pop(context);
       }
     });
+  }
+
+  _onAccountPressed(context) {
+    Alert(
+      context: context,
+      title: "ACCOUNT SETTINGS",
+      //desc: "",
+      image: Image.asset("assets/icons/psychologist.png"),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "SETTINGS",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {},
+          gradient: LinearGradient(colors: [
+            Colors.indigo[500],
+            Colors.cyan[300],
+          ]),
+        ),
+        DialogButton(
+          child: Text(
+            "LOGOUT",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            widget.authViewModel.logOut();
+            Navigator.pop(context);
+          },
+          gradient: LinearGradient(colors: [
+            Colors.red[500],
+            Colors.red[300],
+          ]),
+        )
+      ],
+    ).show();
   }
 
   @override
