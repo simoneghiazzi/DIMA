@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "514204178452-hhqv4si7eb666ogv918dr9jjf01uer05.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dima_colombo_ghiazzi",
+            "certificate_hash": "cd67bde470fb64681ddb0f12b66acae4b2f60de3"
+          }
+        },
+        {
+          "client_id": "514204178452-u5nsok3mvq7e9fhop4nbb4mknc90as7s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dima_colombo_ghiazzi",
+            "certificate_hash": "56ec7dd5fe54d216c2f945a692a4071cbedea1b8"
+          }
+        },
+        {
           "client_id": "514204178452-i44rl2lku8pbj95flk7cqfph87seemjo.apps.googleusercontent.com",
           "client_type": 3
         }
