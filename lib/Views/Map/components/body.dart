@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/MapViewModel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class Body extends StatefulWidget {
   final MapViewModel mapViewModel;
@@ -21,11 +22,19 @@ class _BodyState extends State<Body> {
   Position userLocation;
   StreamSubscription<Place> subscriber;
 
+  //For setting the map style as specified in assets/map_style.txt
+  String _mapStyle;
+
   @override
   void initState() {
     super.initState();
     subscriber = subscribeToViewModel();
     widget.mapViewModel.uploadPosition();
+
+    //For setting the map style
+    rootBundle.loadString('assets/map_style.txt').then((string) {
+      _mapStyle = string;
+    });
   }
 
   @override
@@ -50,6 +59,7 @@ class _BodyState extends State<Body> {
                         onMapCreated: (GoogleMapController controller) {
                           widget.mapViewModel.mapController
                               .complete(controller);
+                          removeMarkers();
                         });
               })),
       Positioned(
@@ -116,6 +126,12 @@ class _BodyState extends State<Body> {
                   ]);
           }),
     ]);
+  }
+
+  Future<void> removeMarkers() async {
+    final GoogleMapController controller =
+        await widget.mapViewModel.mapController.future;
+    controller.setMapStyle(_mapStyle);
   }
 
   StreamSubscription<Place> subscribeToViewModel() {
