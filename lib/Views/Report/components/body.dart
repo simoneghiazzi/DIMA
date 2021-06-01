@@ -14,7 +14,7 @@ class Body extends StatelessWidget {
           final formBloc = BlocProvider.of<ReportFormBloc>(context);
           return Theme(
               data: Theme.of(context).copyWith(
-                primaryColor: Color(0xFFD6C1FF),
+                primaryColor: Colors.indigo[400], //Color(0xFFD6C1FF),
                 inputDecorationTheme: InputDecorationTheme(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(25),
@@ -40,47 +40,64 @@ class Body extends StatelessWidget {
                     child: Container(
                       width: double.infinity,
                       height: size.height,
-                      child:
-                          Stack(alignment: Alignment.center, children: <Widget>[
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          child: Image.asset(
-                            "assets/images/main_top.png",
-                            width: size.width * 0.35,
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Image.asset(
-                            "assets/images/login_bottom.png",
-                            width: size.width * 0.4,
-                          ),
-                        ),
-                        SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              DropdownFieldBlocBuilder<String>(
-                                selectFieldBloc: formBloc.reportCategory,
-                                decoration: InputDecoration(
-                                  labelText: 'Report category',
-                                  prefixIcon: Icon(Icons.security),
-                                ),
-                                itemBuilder: (context, value) => value,
+                      child: Stack(
+                          alignment: Alignment.lerp(
+                              Alignment.topCenter, Alignment.center, 0.7),
+                          children: <Widget>[
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              child: Image.asset(
+                                "assets/images/main_top.png",
+                                width: size.width * 0.35,
                               ),
-                              TextFieldBlocBuilder(
-                                textFieldBloc: formBloc.reportText,
-                                decoration: InputDecoration(
-                                  labelText: 'Report description',
-                                  prefixIcon: Icon(Icons.text_fields),
-                                ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Image.asset(
+                                "assets/images/login_bottom.png",
+                                width: size.width * 0.4,
                               ),
-                            ],
-                          ),
-                        ),
-                        /*child: SingleChildScrollView(
+                            ),
+                            SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  Image.asset(
+                                    "assets/icons/safety.png",
+                                    height: size.height * 0.15,
+                                  ),
+                                  DropdownFieldBlocBuilder<String>(
+                                    selectFieldBloc: formBloc.reportCategory,
+                                    decoration: InputDecoration(
+                                      labelText: 'Report category',
+                                      prefixIcon: Icon(Icons.security),
+                                    ),
+                                    itemBuilder: (context, value) => value,
+                                  ),
+                                  TextFieldBlocBuilder(
+                                    textFieldBloc: formBloc.reportText,
+                                    decoration: InputDecoration(
+                                      labelText: 'Report description',
+                                      prefixIcon: Icon(Icons.text_fields),
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      formBloc.submit();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Colors.indigoAccent[400],
+                                      shadowColor: Colors.indigo[400],
+                                    ),
+                                    child: Text('SUBMIT'),
+                                  )
+                                ],
+                              ),
+                            ),
+                            /*child: SingleChildScrollView(
                   physics: ClampingScrollPhysics(),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -106,7 +123,7 @@ class Body extends StatelessWidget {
                     ),
                   ),
                 ),*/
-                      ]),
+                          ]),
                     ),
                   )));
         },

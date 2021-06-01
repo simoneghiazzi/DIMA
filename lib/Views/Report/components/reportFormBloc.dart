@@ -10,7 +10,9 @@ class ReportFormBloc extends FormBloc<String, String> {
     ],
   );
 
-  final reportText = TextFieldBloc();
+  final reportText = TextFieldBloc(validators: [
+    FieldBlocValidators.required,
+  ]);
 
   ReportFormBloc() {
     addFieldBlocs(fieldBlocs: [reportCategory, reportText]);
@@ -18,6 +20,8 @@ class ReportFormBloc extends FormBloc<String, String> {
 
   @override
   void onSubmitting() async {
+    print(reportCategory.selectedSuggestion);
+    print(reportText.value);
     try {
       await Future<void>.delayed(Duration(milliseconds: 500));
       emitSuccess(canSubmitAgain: true);
