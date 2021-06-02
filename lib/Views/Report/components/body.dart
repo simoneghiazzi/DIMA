@@ -117,6 +117,9 @@ class Body extends StatelessWidget {
       context: context,
       title: "REPORT SUBMITTED",
       type: AlertType.success,
+      style: AlertStyle(
+        isCloseButton: false,
+      ),
       buttons: [
         DialogButton(
           child: Text(
