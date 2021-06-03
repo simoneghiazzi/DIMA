@@ -4,17 +4,23 @@ import 'package:dima_colombo_ghiazzi/Views/Home/components/dashBg.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/homeBody.dart';
 
 class Home extends StatelessWidget {
-
   final AuthViewModel authViewModel;
 
   Home({Key key, @required this.authViewModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[DashBg(), HomeBody(authViewModel: authViewModel,)],
-      ),
-    );
+    return new WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+          body: Stack(
+            children: <Widget>[
+              DashBg(),
+              HomeBody(
+                authViewModel: authViewModel,
+              )
+            ],
+          ),
+        ));
   }
 }
