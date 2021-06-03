@@ -1,7 +1,7 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/Home.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/components/loadingDialog.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/reportViewModel.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/ReportViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -15,7 +15,7 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return BlocProvider(
-      create: (context) => ReportViewModel(),
+      create: (context) => ReportViewModel(authViewModel: authViewModel),
       child: Builder(
         builder: (context) {
           final formBloc = BlocProvider.of<ReportViewModel>(context);
@@ -37,7 +37,6 @@ class Body extends StatelessWidget {
                     onSuccess: (context, state) {
                       LoadingDialog.hide(context);
                       _onReportSubmitted(context);
-                      //Add what to do
                     },
                     onFailure: (context, state) {
                       LoadingDialog.hide(context);
@@ -68,6 +67,7 @@ class Body extends StatelessWidget {
                               ),
                             ),
                             SingleChildScrollView(
+                              padding: EdgeInsets.all(8),
                               child: Column(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,

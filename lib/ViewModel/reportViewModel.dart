@@ -1,6 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'AuthViewModel.dart';
 
 class ReportViewModel extends FormBloc<String, String> {
+  final AuthViewModel authViewModel;
+
+  //ReportViewModel({Key key, @required this.authViewModel}) : super(key: key);
+
   final reportCategory = SelectFieldBloc(items: [
     'Psychological violence',
     'Physical violence',
@@ -14,7 +20,7 @@ class ReportViewModel extends FormBloc<String, String> {
     FieldBlocValidators.required,
   ]);
 
-  ReportViewModel() {
+  ReportViewModel({@required this.authViewModel}) {
     addFieldBlocs(fieldBlocs: [reportCategory, reportText]);
   }
 
@@ -22,7 +28,7 @@ class ReportViewModel extends FormBloc<String, String> {
   //E GESTIRE LA COMUNICAZIONE AL BODY
   @override
   void onSubmitting() async {
-    print(reportCategory.selectedSuggestion);
+    print(reportCategory.value);
     print(reportText.value);
     try {
       await Future<void>.delayed(Duration(milliseconds: 500));
