@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
+import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -48,7 +49,11 @@ class _HeaderState extends State<Header> {
   StreamSubscription<bool> subscribeToViewModel() {
     return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
       if (!isSuccessfulLogin) {
-        Navigator.pop(context);
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+          builder: (context) {
+            return WelcomeScreen(authViewModel: widget.authViewModel);
+          },
+        ), (route) => true);
       }
     });
   }
@@ -78,7 +83,6 @@ class _HeaderState extends State<Header> {
           ),
           onPressed: () {
             widget.authViewModel.logOut();
-            Navigator.pop(context);
           },
           gradient: LinearGradient(colors: [
             Colors.red[400],

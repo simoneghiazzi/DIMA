@@ -36,6 +36,7 @@ class _BodyState extends State<Body> {
     // This size provide us total height and width of our screen
     return Background(
       child: SingleChildScrollView(
+        padding: EdgeInsets.only(top: 50),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -96,18 +97,17 @@ class _BodyState extends State<Body> {
               ],
             ),
             StreamBuilder<String>(
-              stream: widget.authViewModel.authMessage,
-              builder: (context, snapshot) {
-                return Container(
-                  padding: EdgeInsets.all(20.0),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                        text: snapshot.data, 
-                        style: TextStyle(color: Colors.red, fontSize: 15))
-                ));
-              }
-            ),
+                stream: widget.authViewModel.authMessage,
+                builder: (context, snapshot) {
+                  return Container(
+                      padding: EdgeInsets.all(20.0),
+                      child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                              text: snapshot.data,
+                              style:
+                                  TextStyle(color: Colors.red, fontSize: 15))));
+                }),
           ],
         ),
       ),
@@ -116,7 +116,7 @@ class _BodyState extends State<Body> {
 
   StreamSubscription<bool> subscribeToViewModel() {
     return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
-      if (isSuccessfulLogin){
+      if (isSuccessfulLogin) {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return Home(
             authViewModel: widget.authViewModel,
