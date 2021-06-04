@@ -17,13 +17,13 @@ class DashCard extends StatelessWidget {
         elevation: 2,
         shadowColor: Colors.indigo[300],
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        child:  Center(
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Image.asset(
                 imagePath,
-                height: size.height * 0.15,            
+                height: size.height * 0.15,
               ),
               Text(text)
             ],
