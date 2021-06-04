@@ -21,7 +21,7 @@ class Body extends StatelessWidget {
           final formBloc = BlocProvider.of<ReportViewModel>(context);
           return Theme(
               data: Theme.of(context).copyWith(
-                primaryColor: Colors.indigo[400], //Color(0xFFD6C1FF),
+                primaryColor: Colors.indigo[400],
                 inputDecorationTheme: InputDecorationTheme(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(25),
