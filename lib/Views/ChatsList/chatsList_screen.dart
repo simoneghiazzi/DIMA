@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chats/components/body.dart';
+import 'package:dima_colombo_ghiazzi/Views/ChatsList/components/body.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/ChatsViewModel.dart';
 
 class ChatsScreen extends StatelessWidget {

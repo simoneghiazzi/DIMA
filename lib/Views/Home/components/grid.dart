@@ -1,5 +1,5 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chats/chatsList_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/ChatsList/chatsList_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/report_screen.dart';
 import 'package:flutter/material.dart';
