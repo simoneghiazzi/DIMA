@@ -5,8 +5,6 @@ import 'AuthViewModel.dart';
 class ReportViewModel extends FormBloc<String, String> {
   final AuthViewModel authViewModel;
 
-  //ReportViewModel({Key key, @required this.authViewModel}) : super(key: key);
-
   final reportCategory = SelectFieldBloc(items: [
     'Psychological violence',
     'Physical violence',
