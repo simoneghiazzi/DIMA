@@ -1,8 +1,8 @@
+import 'package:dima_colombo_ghiazzi/Views/Signup/components/infoBody.dart';
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/components/body.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/components/mailBody.dart';
 
 class SignUpScreen extends StatelessWidget {
-
   final authViewModel;
 
   SignUpScreen({Key key, this.authViewModel}) : super(key: key);
@@ -10,7 +10,9 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Body(authViewModel: authViewModel,),
+      body: InfoBody(
+        authViewModel: authViewModel,
+      ),
     );
   }
 }

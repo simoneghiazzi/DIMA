@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/ChatsViewModel.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/chatsViewModel.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:flutter/material.dart';
 

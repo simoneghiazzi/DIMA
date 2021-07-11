@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/MapViewModel.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/mapViewModel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart' show rootBundle;

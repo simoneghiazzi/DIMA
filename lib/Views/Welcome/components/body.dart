@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Views/Home/Home.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/home.dart';
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';

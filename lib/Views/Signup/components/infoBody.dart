@@ -1,24 +1,22 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/home.dart';
-import 'package:dima_colombo_ghiazzi/Views/Report/components/loadingDialog.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/reportViewModel.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/infoViewModel.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 
-class Body extends StatelessWidget {
+class InfoBody extends StatelessWidget {
   final AuthViewModel authViewModel;
 
-  Body({Key key, @required this.authViewModel}) : super(key: key);
+  InfoBody({Key key, @required this.authViewModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return BlocProvider(
-      create: (context) => ReportViewModel(authViewModel: authViewModel),
+      create: (context) => InfoViewModel(authViewModel: authViewModel),
       child: Builder(
         builder: (context) {
-          final formBloc = BlocProvider.of<ReportViewModel>(context);
+          final formBloc = BlocProvider.of<InfoViewModel>(context);
           return Theme(
               data: Theme.of(context).copyWith(
                 primaryColor: Colors.indigo[400],
@@ -29,17 +27,17 @@ class Body extends StatelessWidget {
                 ),
               ),
               child: Scaffold(
-                  appBar: AppBar(title: Text('Anonymous report')),
-                  body: FormBlocListener<ReportViewModel, String, String>(
+                  appBar: AppBar(title: Text('Personal informations')),
+                  body: FormBlocListener<InfoViewModel, String, String>(
                     onSubmitting: (context, state) {
-                      LoadingDialog.show(context);
+                      //LoadingDialog.show(context);
                     },
                     onSuccess: (context, state) {
-                      LoadingDialog.hide(context);
-                      _onReportSubmitted(context);
+                      //LoadingDialog.hide(context);
+                      //_onReportSubmitted(context);
                     },
                     onFailure: (context, state) {
-                      LoadingDialog.hide(context);
+                      //LoadingDialog.hide(context);
 
                       //Add what to do
                     },
@@ -73,22 +71,33 @@ class Body extends StatelessWidget {
                                     MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
                                   Image.asset(
-                                    "assets/icons/safety.png",
+                                    "assets/icons/logo.png",
                                     height: size.height * 0.15,
                                   ),
-                                  DropdownFieldBlocBuilder<String>(
-                                    selectFieldBloc: formBloc.reportCategory,
+                                  TextFieldBlocBuilder(
+                                    textFieldBloc: formBloc.nameText,
                                     decoration: InputDecoration(
-                                      labelText: 'Report category',
-                                      prefixIcon: Icon(Icons.security),
+                                      labelText: 'First name',
+                                      prefixIcon: Icon(Icons.text_fields),
                                     ),
-                                    itemBuilder: (context, value) => value,
                                   ),
                                   TextFieldBlocBuilder(
-                                    textFieldBloc: formBloc.reportText,
+                                    textFieldBloc: formBloc.surnameText,
                                     decoration: InputDecoration(
-                                      labelText: 'Report description',
+                                      labelText: 'Last name',
                                       prefixIcon: Icon(Icons.text_fields),
+                                    ),
+                                  ),
+                                  DateTimeFieldBlocBuilder(
+                                    dateTimeFieldBloc: formBloc.birthDate,
+                                    format: DateFormat('dd-MM-yyyy'),
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(1921),
+                                    lastDate: DateTime.now()
+                                        .subtract(const Duration(days: 5844)),
+                                    decoration: InputDecoration(
+                                      labelText: 'Birth date',
+                                      prefixIcon: Icon(Icons.date_range),
                                     ),
                                   ),
                                   ElevatedButton(
@@ -98,7 +107,7 @@ class Body extends StatelessWidget {
                                     style: ElevatedButton.styleFrom(
                                       primary: Colors.indigoAccent[400],
                                     ),
-                                    child: Text('SUBMIT'),
+                                    child: Text('NEXT'),
                                   )
                                 ],
                               ),
@@ -109,36 +118,5 @@ class Body extends StatelessWidget {
         },
       ),
     );
-  }
-
-  _onReportSubmitted(context) {
-    Alert(
-      closeIcon: null,
-      context: context,
-      title: "REPORT SUBMITTED",
-      type: AlertType.success,
-      style: AlertStyle(
-        isCloseButton: false,
-      ),
-      buttons: [
-        DialogButton(
-          child: Text(
-            "OK",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          onPressed: () {
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-              builder: (context) {
-                return Home(authViewModel: authViewModel);
-              },
-            ), (route) => true);
-          },
-          gradient: LinearGradient(colors: [
-            Colors.indigo[400],
-            Colors.cyan[200],
-          ]),
-        )
-      ],
-    ).show();
   }
 }
