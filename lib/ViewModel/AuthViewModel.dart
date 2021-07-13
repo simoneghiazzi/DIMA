@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Model/Services/firebaseAuthService.dart';
+import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/ObserverForms/authForm.dart';
 import 'package:flutter/material.dart';
 
@@ -11,11 +12,11 @@ class AuthViewModel {
   var _isUserLogged = StreamController<bool>.broadcast();
   var _isUserCreated = StreamController<bool>.broadcast();
   var _authMessage = StreamController<String>.broadcast();
-  //User currentUser;
 
-  String getUid() {
-    return auth.currentUser();
-  }
+  String name, surname;
+  DateTime birthDate;
+
+  User loggedUser;
 
   AuthViewModel() {
     emailController
@@ -32,17 +33,20 @@ class AuthViewModel {
   }
 
   void alreadyLogged() {
-    String uid = auth.currentUser();
+    Future<String> uid = auth.currentUser();
     if (uid != null) {
       _isUserLogged.add(true);
     } else
       _isUserLogged.add(false);
   }
 
-  Future createUser() async {
+  Future createUser(String name, String surname, DateTime birthDate) async {
+    this.name = name;
+    this.surname = surname;
+    this.birthDate = birthDate;
     try {
-      await auth.createUserWithEmailAndPassword(
-          emailController.text, passwordController.text);
+      await auth.createUserWithEmailAndPassword(emailController.text,
+          passwordController.text, name, surname, birthDate);
       await auth.sendEmailVerification();
       _authMessage.add("");
       _isUserCreated.add(true);
@@ -116,7 +120,7 @@ class AuthViewModel {
 
   void resendEmailVerification() async {
     await deleteUser();
-    await createUser();
+    await createUser(name, surname, birthDate);
   }
 
   Future<void> deleteUser() async {

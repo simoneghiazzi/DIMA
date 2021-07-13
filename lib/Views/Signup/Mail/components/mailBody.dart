@@ -66,7 +66,8 @@ class _MailBodyState extends State<MailBody> {
                 builder: (context, snapshot) {
                   return RoundedButton(
                     text: "SIGN UP",
-                    press: () => widget.authViewModel.createUser(),
+                    press: () => widget.authViewModel.createUser(
+                        widget.name, widget.surname, widget.birthDate),
                     enabled: snapshot.data ?? false,
                   );
                 }),
