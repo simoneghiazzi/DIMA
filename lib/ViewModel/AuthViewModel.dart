@@ -13,6 +13,10 @@ class AuthViewModel {
   var _authMessage = StreamController<String>.broadcast();
   //User currentUser;
 
+  String getUid() {
+    return auth.currentUser();
+  }
+
   AuthViewModel() {
     emailController
         .addListener(() => loginForm.emailText.add(emailController.text));
@@ -37,7 +41,7 @@ class AuthViewModel {
 
   Future createUser() async {
     try {
-      String uid = await auth.createUserWithEmailAndPassword(
+      await auth.createUserWithEmailAndPassword(
           emailController.text, passwordController.text);
       await auth.sendEmailVerification();
       _authMessage.add("");

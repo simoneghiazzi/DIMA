@@ -4,7 +4,6 @@ import 'package:dima_colombo_ghiazzi/Views/Signup/Informations/signup_info_scree
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/Mail/signup_mail_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
@@ -50,7 +49,7 @@ class _BodyState extends State<Body> {
               "assets/icons/logo.png",
               height: size.height * 0.15,
             ),
-            SizedBox(height: size.height * 0.05),
+            SizedBox(height: size.height * 0.04),
             RoundedButton(
               text: "LOGIN",
               press: () {

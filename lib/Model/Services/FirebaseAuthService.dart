@@ -52,7 +52,9 @@ class FirebaseAuthService implements BaseAuth {
   }
 
   String currentUser() {
-    if (_firebaseAuth.currentUser != null) return _firebaseAuth.currentUser.uid;
+    if (_firebaseAuth.currentUser != null &&
+        _firebaseAuth.currentUser.emailVerified)
+      return _firebaseAuth.currentUser.uid;
     return null;
   }
 

@@ -1,4 +1,3 @@
-import 'package:dima_colombo_ghiazzi/Views/Signup/Mail/components/mailBody.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'authViewModel.dart';

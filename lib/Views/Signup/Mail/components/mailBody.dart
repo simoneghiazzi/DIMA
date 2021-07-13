@@ -44,15 +44,11 @@ class _MailBodyState extends State<MailBody> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              "SIGNUP",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: size.height * 0.03),
             Image.asset(
               "assets/icons/logo.png",
               height: size.height * 0.15,
             ),
+            SizedBox(height: size.height * 0.03),
             StreamBuilder<String>(
                 stream: widget.authViewModel.getLoginForm().errorEmailText,
                 builder: (context, snapshot) {
