@@ -10,8 +10,16 @@ import 'package:dima_colombo_ghiazzi/Views/components/rounded_password_field.dar
 
 class MailBody extends StatefulWidget {
   final AuthViewModel authViewModel;
+  final String name, surname;
+  final DateTime birthDate;
 
-  MailBody({Key key, @required this.authViewModel}) : super(key: key);
+  MailBody(
+      {Key key,
+      @required this.authViewModel,
+      @required this.name,
+      @required this.surname,
+      @required this.birthDate})
+      : super(key: key);
 
   @override
   _MailBodyState createState() => _MailBodyState();

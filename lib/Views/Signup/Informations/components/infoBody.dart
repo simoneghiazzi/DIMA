@@ -1,5 +1,6 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/infoViewModel.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Mail/signup_mail_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
@@ -13,7 +14,8 @@ class InfoBody extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return BlocProvider(
-      create: (context) => InfoViewModel(authViewModel: authViewModel),
+      create: (context) =>
+          InfoViewModel(authViewModel: authViewModel, context: context),
       child: Builder(
         builder: (context) {
           final formBloc = BlocProvider.of<InfoViewModel>(context);
@@ -33,12 +35,20 @@ class InfoBody extends StatelessWidget {
                       //LoadingDialog.show(context);
                     },
                     onSuccess: (context, state) {
-                      //LoadingDialog.hide(context);
-                      //_onReportSubmitted(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return SignUpMail(
+                                authViewModel: authViewModel,
+                                name: formBloc.nameText.value,
+                                surname: formBloc.surnameText.value,
+                                birthDate: formBloc.birthDate.value);
+                          },
+                        ),
+                      );
                     },
                     onFailure: (context, state) {
-                      //LoadingDialog.hide(context);
-
                       //Add what to do
                     },
                     child: Container(
@@ -74,6 +84,7 @@ class InfoBody extends StatelessWidget {
                                     "assets/icons/logo.png",
                                     height: size.height * 0.15,
                                   ),
+                                  SizedBox(height: size.height * 0.02),
                                   TextFieldBlocBuilder(
                                     textFieldBloc: formBloc.nameText,
                                     decoration: InputDecoration(
@@ -90,15 +101,13 @@ class InfoBody extends StatelessWidget {
                                   ),
                                   DateTimeFieldBlocBuilder(
                                     dateTimeFieldBloc: formBloc.birthDate,
-                                    format: DateFormat('dd-MM-yyyy'),
+                                    format: DateFormat.yMEd(),
                                     initialDate: DateTime.now(),
-                                    firstDate: DateTime(1921),
-                                    lastDate: DateTime.now()
-                                        .subtract(const Duration(days: 5844)),
+                                    firstDate: DateTime(1920),
+                                    lastDate: DateTime.now(),
                                     decoration: InputDecoration(
-                                      labelText: 'Birth date',
-                                      prefixIcon: Icon(Icons.date_range),
-                                    ),
+                                        labelText: 'Birth date',
+                                        prefixIcon: Icon(Icons.date_range)),
                                   ),
                                   ElevatedButton(
                                     onPressed: () {

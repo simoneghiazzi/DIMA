@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Views/Home/home.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Informations/signup_info_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/signup_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Mail/signup_mail_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
@@ -74,7 +75,7 @@ class _BodyState extends State<Body> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return SignUpScreen(
+                      return SignUpInfo(
                         authViewModel: widget.authViewModel,
                       );
                     },
