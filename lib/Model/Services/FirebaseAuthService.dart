@@ -1,30 +1,31 @@
+import 'package:dima_colombo_ghiazzi/Model/logedUser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class BaseAuth {
-  Future<String> signInWithEmailAndPassword(String email, String password);
+  Future<LoggedUser> signInWithEmailAndPassword(String email, String password);
   Future<String> createUserWithEmailAndPassword(String email, String password,
       String name, String surname, DateTime birthDate);
   Future deleteUser();
-  Future<String> currentUser();
+  Future<LoggedUser> currentUser();
 }
 
 class FirebaseAuthService implements BaseAuth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   UserCredential _userCredential;
 
+  //The collection of users in the firestore DB
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-  Future<String> signInWithEmailAndPassword(
+  Future<LoggedUser> signInWithEmailAndPassword(
       String email, String password) async {
     _userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
     if (_firebaseAuth.currentUser.emailVerified) {
-      return _userCredential.user.uid;
+      return queryDb(_userCredential.user.uid);
     }
     return null;
   }
@@ -69,23 +70,10 @@ class FirebaseAuthService implements BaseAuth {
     return _userCredential.user.uid;
   }
 
-  Future<String> currentUser() async {
+  Future<LoggedUser> currentUser() async {
     if (_firebaseAuth.currentUser != null &&
         _firebaseAuth.currentUser.emailVerified) {
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-          .instance
-          .collection('users')
-          .where('uid', isEqualTo: _firebaseAuth.currentUser.uid)
-          .get();
-
-      List<QueryDocumentSnapshot> docs = snapshot.docs;
-      for (var doc in docs) {
-        if (doc.data() != null) {
-          var data = doc.data() as Map<String, dynamic>;
-          print("PROVA FRA: " + data['surname']);
-        }
-      }
-      return _firebaseAuth.currentUser.uid;
+      return queryDb(_firebaseAuth.currentUser.uid);
     }
     return null;
   }
@@ -104,5 +92,30 @@ class FirebaseAuthService implements BaseAuth {
   Future signOut() async {
     _userCredential = null;
     await _firebaseAuth.signOut();
+  }
+
+  //Query the firestore DB in order to retrieve the user's info
+  Future<LoggedUser> queryDb(String uid) async {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .where('uid', isEqualTo: uid)
+        .get();
+
+    List<QueryDocumentSnapshot> docs = snapshot.docs;
+    for (var doc in docs) {
+      if (doc.data() != null) {
+        var data = doc.data() as Map<String, dynamic>;
+        Timestamp t = data['birthDate'];
+        LoggedUser loggedUser = new LoggedUser(
+            name: data['name'].toString(),
+            surname: data['name'].toString(),
+            uid: uid,
+            dateOfBirth: t.toDate());
+
+        return loggedUser;
+      }
+    }
+    return null;
   }
 }
