@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "514204178452-9f17e6scadjjno3idn1m1i57cghs2jql.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dima_colombo_ghiazzi",
+            "certificate_hash": "8e733bfedee54aa275153a3d102d582c5d249f5e"
+          }
+        },
+        {
           "client_id": "514204178452-hhqv4si7eb666ogv918dr9jjf01uer05.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
