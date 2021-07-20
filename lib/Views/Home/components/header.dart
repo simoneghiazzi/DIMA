@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dima_colombo_ghiazzi/Model/logedUser.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class Header extends StatefulWidget {
 
 class _HeaderState extends State<Header> {
   StreamSubscription<bool> subscriber;
+  LoggedUser loggedUser;
 
   @override
   void initState() {
@@ -33,13 +35,23 @@ class _HeaderState extends State<Header> {
         ),
         trailing: InkWell(
           child: CircleAvatar(
-            radius: 50,
-            backgroundColor: Colors.deepPurple[500],
-            child: Text(
-              "T", //"${widget.authViewModel.getUser().name[0]}",
-              style: TextStyle(color: Colors.white, fontSize: 30),
-            ),
-          ),
+              radius: 50,
+              backgroundColor: Colors.deepPurple[500],
+              //FutureBuilder due to the fact that LoggedUser is retrieved in an async way
+              child: FutureBuilder(
+                  future: widget.authViewModel.getUser(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<LoggedUser> snapshot) {
+                    if (!snapshot.hasData) {
+                      return Text("");
+                    } else {
+                      loggedUser = snapshot.data;
+                      return Text(
+                        "${loggedUser.name[0]}",
+                        style: TextStyle(color: Colors.white, fontSize: 30),
+                      );
+                    }
+                  })),
           onTap: () => _onAccountPressed(context),
         ),
       )
