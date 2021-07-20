@@ -2,6 +2,7 @@ import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/home.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/components/loadingDialog.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/reportViewModel.dart';
+import 'package:dima_colombo_ghiazzi/Views/Report/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -29,7 +30,18 @@ class Body extends StatelessWidget {
                 ),
               ),
               child: Scaffold(
-                  appBar: AppBar(title: Text('Anonymous report')),
+                  appBar: AppBar(
+                      title: Text('Anonymous report'),
+                      leading: new IconButton(
+                          onPressed: () {
+                            Navigator.pushAndRemoveUntil(context,
+                                MaterialPageRoute(
+                              builder: (context) {
+                                return Home(authViewModel: authViewModel);
+                              },
+                            ), (route) => true);
+                          },
+                          icon: new Icon(Icons.arrow_back))),
                   body: FormBlocListener<ReportViewModel, String, String>(
                     onSubmitting: (context, state) {
                       LoadingDialog.show(context);
@@ -40,8 +52,7 @@ class Body extends StatelessWidget {
                     },
                     onFailure: (context, state) {
                       LoadingDialog.hide(context);
-
-                      //Add what to do
+                      _onReportError(context);
                     },
                     child: Container(
                       width: double.infinity,
@@ -132,6 +143,36 @@ class Body extends StatelessWidget {
                 return Home(authViewModel: authViewModel);
               },
             ), (route) => true);
+          },
+          gradient: LinearGradient(colors: [
+            Colors.indigo[400],
+            Colors.cyan[200],
+          ]),
+        )
+      ],
+    ).show();
+  }
+
+  _onReportError(context) {
+    Alert(
+      closeIcon: null,
+      context: context,
+      title: "AN ERROR OCCURED",
+      type: AlertType.error,
+      style: AlertStyle(
+        isCloseButton: false,
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            "RETRY",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) {
+              return ReportScreen(authViewModel: authViewModel);
+            }));
           },
           gradient: LinearGradient(colors: [
             Colors.indigo[400],

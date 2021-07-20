@@ -127,8 +127,8 @@ class AuthViewModel {
     await auth.deleteUser();
   }
 
-  Future getUser() async {
-    return loggedUser;
+  Future<LoggedUser> getUser() async {
+    return await auth.currentUser();
   }
 
   Stream<bool> get isUserLogged => _isUserLogged.stream;

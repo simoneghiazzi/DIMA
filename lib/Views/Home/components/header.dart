@@ -36,7 +36,7 @@ class _HeaderState extends State<Header> {
             radius: 50,
             backgroundColor: Colors.deepPurple[500],
             child: Text(
-              "S",
+              "T", //"${widget.authViewModel.getUser().name[0]}",
               style: TextStyle(color: Colors.white, fontSize: 30),
             ),
           ),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dima_colombo_ghiazzi/Model/logedUser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -57,17 +59,39 @@ class FirebaseAuthService implements BaseAuth {
       idToken: googleAuth.idToken,
     );
     _userCredential = await _firebaseAuth.signInWithCredential(credential);
+
+    Map<String, dynamic> idMap = parseJwt(googleAuth.idToken);
+
     return _userCredential.user.uid;
   }
 
-  Future<String> signInWithFacebook() async {
-    LoginResult result = await FacebookAuth.instance.login();
-    AccessToken accessToken = result.accessToken;
-    var facebookAuthCredential =
-        FacebookAuthProvider.credential(accessToken.token);
-    _userCredential =
-        await _firebaseAuth.signInWithCredential(facebookAuthCredential);
-    return _userCredential.user.uid;
+  Future<LoggedUser> signInWithFacebook() async {
+    final LoginResult result = await FacebookAuth.i
+        .login(permissions: ['public_profile', 'user_birthday']);
+    if (result.status == LoginStatus.success) {
+      AccessToken accessToken = result.accessToken;
+      var facebookAuthCredential =
+          FacebookAuthProvider.credential(accessToken.token);
+      _userCredential =
+          await _firebaseAuth.signInWithCredential(facebookAuthCredential);
+      if (queryDb(_userCredential.user.uid) == null) {
+        final userData =
+            await FacebookAuth.i.getUserData(fields: "name, birthday");
+        String userName = userData['name'];
+        userName.split(" ");
+        users
+            .add({
+              'uid': _userCredential.user.uid,
+              'name': userName[0],
+              'surname': userName[1],
+              'birthDate': userData['birthday']
+            })
+            .then((value) => print("User added"))
+            .catchError((error) => print("Failed to add user: $error"));
+      }
+      return queryDb(_firebaseAuth.currentUser.uid);
+    }
+    return null;
   }
 
   Future<LoggedUser> currentUser() async {
@@ -117,5 +141,25 @@ class FirebaseAuthService implements BaseAuth {
       }
     }
     return null;
+  }
+
+//Method for extracting account info from google sign in
+  static Map<String, dynamic> parseJwt(String token) {
+    //validate token
+    if (token == null) return null;
+    final List<String> parts = token.split('.');
+    if (parts.length != 3) {
+      return null;
+    }
+    //retrieve payload
+    final String payload = parts[1];
+    final String normalized = base64Url.normalize(payload);
+    final String resp = utf8.decode(base64Url.decode(normalized));
+    //convert to Map
+    final payloadMap = json.decode(resp);
+    if (payload is! Map<String, dynamic>) {
+      return null;
+    }
+    return payloadMap;
   }
 }
