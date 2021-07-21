@@ -32,7 +32,7 @@ class _BodyState extends State<Body> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      "Conversations",
+                      "Anonymous",
                       style:
                           TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                     ),
@@ -63,16 +63,7 @@ class _BodyState extends State<Body> {
                           ],
                         ),
                       ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return MapScreen();
-                            },
-                          ),
-                        );
-                      },
+                      onTap: () {},
                     ),
                   ],
                 ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/ChatsList/components/body.dart';
+import 'package:dima_colombo_ghiazzi/Views/ChatsList/Experts/components/body.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chatsViewModel.dart';
 
-class ChatsScreen extends StatelessWidget {
+class ChatsExperts extends StatelessWidget {
   final ChatsViewModel chatsViewModel = ChatsViewModel();
 
   @override
