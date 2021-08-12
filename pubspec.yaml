@@ -27,7 +27,7 @@ dependencies:
   rxdart: ^0.26.0
   email_validator: ^2.0.1
   google_sign_in: ^5.0.3
-  flutter_facebook_auth: ^3.3.3+1
+  flutter_facebook_auth: ^3.5.0
   firebase_auth: ^1.1.2
   cloud_firestore: ^2.2.0
   firebase_core: ^1.1.0
@@ -44,6 +44,7 @@ dependencies:
   http: ^0.13.3
   rflutter_alert: ^2.0.2
   flutter_form_bloc: ^0.20.1
+  firebase_storage: ^9.0.0
 
 dev_dependencies:
   flutter_test:

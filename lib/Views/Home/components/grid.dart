@@ -1,5 +1,6 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
-import 'package:dima_colombo_ghiazzi/Views/ChatsList/chatsList_screen.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
+import 'package:dima_colombo_ghiazzi/Views/ChatsList/Anonymous/chatAnonymous_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/ChatsList/Experts/chatsExperts_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/report_screen.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class _GridState extends State<Grid> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return ChatsScreen();
+                      return ChatsExperts();
                     },
                   ),
                 );
@@ -44,7 +45,14 @@ class _GridState extends State<Grid> {
               imagePath: "assets/icons/anonymous.png",
               text: "Anonymous chats",
               press: () {
-                print("hola");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return ChatsAnonymous();
+                    },
+                  ),
+                );
               },
             ),
             DashCard(

@@ -1,9 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dima_colombo_ghiazzi/Model/logedUser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'AuthViewModel.dart';
+import 'authViewModel.dart';
 
 class ReportViewModel extends FormBloc<String, String> {
   final AuthViewModel authViewModel;
+  //The collection of users in the firestore DB
+  final CollectionReference reports =
+      FirebaseFirestore.instance.collection('reports');
 
   final reportCategory = SelectFieldBloc(items: [
     'Psychological violence',
@@ -22,17 +27,16 @@ class ReportViewModel extends FormBloc<String, String> {
     addFieldBlocs(fieldBlocs: [reportCategory, reportText]);
   }
 
-  //DA SETTARE LE AZIONI PER IL SALVATAGGIO DELLE INFO NEL DB
-  //E GESTIRE LA COMUNICAZIONE AL BODY
   @override
   void onSubmitting() async {
-    print(reportCategory.value);
-    print(reportText.value);
-    try {
-      await Future<void>.delayed(Duration(milliseconds: 500));
-      emitSuccess(canSubmitAgain: true);
-    } catch (e) {
-      emitFailure();
-    }
+    LoggedUser loggedUser = await authViewModel.getUser();
+    reports
+        .add({
+          'uid': loggedUser.uid,
+          'category': reportCategory.value,
+          'description': reportText.value
+        })
+        .then((value) => emitSuccess(canSubmitAgain: true))
+        .catchError((error) => emitFailure());
   }
 }

@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Views/Home/Home.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/home.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Informations/signup_info_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
@@ -41,7 +41,7 @@ class _BodyState extends State<Body> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Text(
-              "WELCOME TO APPrension",
+              "APPrension",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: size.height * 0.05),
@@ -49,7 +49,7 @@ class _BodyState extends State<Body> {
               "assets/icons/logo.png",
               height: size.height * 0.15,
             ),
-            SizedBox(height: size.height * 0.05),
+            SizedBox(height: size.height * 0.04),
             RoundedButton(
               text: "LOGIN",
               press: () {
@@ -74,7 +74,7 @@ class _BodyState extends State<Body> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return SignUpScreen(
+                      return SignUpInfo(
                         authViewModel: widget.authViewModel,
                       );
                     },

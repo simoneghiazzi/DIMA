@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/AuthViewModel.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/dashBg.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/homeBody.dart';
