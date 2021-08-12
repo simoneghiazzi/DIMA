@@ -43,7 +43,7 @@ class _BodyState extends State<Body> {
     //Icon used for custom markers
     BitmapDescriptor.fromAssetImage(
             ImageConfiguration(devicePixelRatio: 1, size: Size(2, 2)),
-            'assets/icons/psychologist.png')
+            'assets/icons/pin.png')
         .then((onValue) {
       pinLocationIcon = onValue;
     });
