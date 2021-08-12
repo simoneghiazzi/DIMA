@@ -25,6 +25,10 @@ class _BodyState extends State<Body> {
   //For setting the map style as specified in assets/map_style.txt
   String _mapStyle;
 
+  //For placing custom markers on the map
+  BitmapDescriptor pinLocationIcon;
+  Set<Marker> _markers = {};
+
   @override
   void initState() {
     super.initState();
@@ -35,10 +39,36 @@ class _BodyState extends State<Body> {
     rootBundle.loadString('assets/map_style.txt').then((string) {
       _mapStyle = string;
     });
+
+    //Icon used for custom markers
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1, size: Size(2, 2)),
+            'assets/icons/psychologist.png')
+        .then((onValue) {
+      pinLocationIcon = onValue;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    /*BitmapDescriptor customIcon;
+
+    // make sure to initialize before map loading
+    BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(12, 12)),
+            'assets\icons\psychologist.png')
+        .then((d) {
+      customIcon = d;
+    });
+
+    var _markers = <Marker>{};
+    _markers.add(Marker(
+      markerId: MarkerId("CIAO"),
+      position: LatLng(45.17475053853449, 9.148839666974501),
+      icon: customIcon,
+      infoWindow: InfoWindow(title: "INFO", snippet: '*'),
+      onTap: () {},
+    ));*/
+
     return Stack(children: <Widget>[
       Center(
           child: StreamBuilder<Position>(
@@ -53,6 +83,7 @@ class _BodyState extends State<Body> {
                               snapshot.data.latitude, snapshot.data.longitude),
                           zoom: 16,
                         ),
+                        markers: _markers,
                         myLocationButtonEnabled: false,
                         myLocationEnabled: true,
                         zoomControlsEnabled: false,
@@ -60,7 +91,16 @@ class _BodyState extends State<Body> {
                           widget.mapViewModel.mapController
                               .complete(controller);
                           removeMarkers();
-                        });
+
+                          setState(() {
+                            _markers.add(Marker(
+                                markerId: MarkerId("MARKER_ID"),
+                                position: LatLng(
+                                    45.17475053853449, 9.148839666974501),
+                                icon: pinLocationIcon));
+                          });
+                        },
+                      );
               })),
       Positioned(
           top: 60,
