@@ -3,7 +3,7 @@ import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
-class PlacesService {
+class PlaceService {
   final key = 'AIzaSyAarrZBb6KLQ3VbSdhHWnbzqcer0vlOacs';
 
   Future<List<PlaceSearch>> getAutocomplete(String search) async {

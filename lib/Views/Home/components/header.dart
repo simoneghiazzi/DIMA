@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Model/logedUser.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
+import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';

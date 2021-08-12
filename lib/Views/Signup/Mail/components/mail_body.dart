@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/components/background.dart';

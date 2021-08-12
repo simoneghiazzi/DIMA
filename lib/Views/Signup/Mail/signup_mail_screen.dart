@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'components/mailBody.dart';
+import 'components/mail_body.dart';
 
 class SignUpMail extends StatelessWidget {
   final authViewModel;

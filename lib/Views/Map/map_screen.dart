@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/components/body.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/mapViewModel.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/map_view_model.dart';
 
 class MapScreen extends StatelessWidget {
   final MapViewModel mapViewModel = MapViewModel();

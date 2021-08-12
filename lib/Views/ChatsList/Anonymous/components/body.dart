@@ -1,9 +1,9 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/chatsViewModel.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:flutter/material.dart';
 
 class Body extends StatefulWidget {
-  final ChatsViewModel chatsViewModel;
+  final ChatViewModel chatsViewModel;
 
   Body({Key key, @required this.chatsViewModel}) : super(key: key);
 

@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Model/Services/firebaseAuthService.dart';
-import 'package:dima_colombo_ghiazzi/Model/logedUser.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/ObserverForms/authForm.dart';
+import 'package:dima_colombo_ghiazzi/Model/Services/firebase_auth_service.dart';
+import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/ObserverForms/auth_form.dart';
 import 'package:flutter/material.dart';
 
 class AuthViewModel {

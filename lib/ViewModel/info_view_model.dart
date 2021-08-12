@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'authViewModel.dart';
+import 'auth_view_model.dart';
 
 class InfoViewModel extends FormBloc<String, String> {
   final AuthViewModel authViewModel;

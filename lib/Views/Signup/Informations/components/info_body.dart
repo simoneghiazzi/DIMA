@@ -1,5 +1,5 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/infoViewModel.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/info_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/Mail/signup_mail_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

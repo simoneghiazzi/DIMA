@@ -1,7 +1,7 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/authViewModel.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/home.dart';
-import 'package:dima_colombo_ghiazzi/Views/Report/components/loadingDialog.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/reportViewModel.dart';
+import 'package:dima_colombo_ghiazzi/Views/Report/components/loading_dialog.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/report_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';

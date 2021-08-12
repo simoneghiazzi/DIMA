@@ -3,14 +3,14 @@ import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/places_service.dart';
+import 'package:dima_colombo_ghiazzi/Model/Services/place_service.dart';
 
 class MapViewModel {
   var _position = StreamController<Position>.broadcast();
   Completer<GoogleMapController> mapController = Completer();
 
   var _placesSearch = StreamController<List<PlaceSearch>>.broadcast();
-  final placesSearch = PlacesService();
+  final placesSearch = PlaceService();
 
   var _selectedLocation = StreamController<Place>.broadcast();
 

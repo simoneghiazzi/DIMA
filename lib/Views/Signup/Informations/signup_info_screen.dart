@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Views/Signup/Informations/components/infoBody.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Informations/components/info_body.dart';
 import 'package:flutter/material.dart';
 
 class SignUpInfo extends StatelessWidget {
