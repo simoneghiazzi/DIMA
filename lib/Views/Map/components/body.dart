@@ -51,24 +51,6 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    /*BitmapDescriptor customIcon;
-
-    // make sure to initialize before map loading
-    BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(12, 12)),
-            'assets\icons\psychologist.png')
-        .then((d) {
-      customIcon = d;
-    });
-
-    var _markers = <Marker>{};
-    _markers.add(Marker(
-      markerId: MarkerId("CIAO"),
-      position: LatLng(45.17475053853449, 9.148839666974501),
-      icon: customIcon,
-      infoWindow: InfoWindow(title: "INFO", snippet: '*'),
-      onTap: () {},
-    ));*/
-
     return Stack(children: <Widget>[
       Center(
           child: StreamBuilder<Position>(
@@ -76,31 +58,49 @@ class _BodyState extends State<Body> {
               builder: (context, snapshot) {
                 return snapshot.data == null
                     ? Center(child: CircularProgressIndicator())
-                    : GoogleMap(
-                        mapType: MapType.normal,
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(
-                              snapshot.data.latitude, snapshot.data.longitude),
-                          zoom: 16,
-                        ),
-                        markers: _markers,
-                        myLocationButtonEnabled: false,
-                        myLocationEnabled: true,
-                        zoomControlsEnabled: false,
-                        onMapCreated: (GoogleMapController controller) {
-                          widget.mapViewModel.mapController
-                              .complete(controller);
-                          removeMarkers();
-
-                          setState(() {
-                            _markers.add(Marker(
-                                markerId: MarkerId("MARKER_ID"),
-                                position: LatLng(
-                                    45.17475053853449, 9.148839666974501),
-                                icon: pinLocationIcon));
-                          });
-                        },
-                      );
+                    : FutureBuilder(
+                        future: widget.mapViewModel.getMarkers(pinLocationIcon),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<Set<Marker>> snap) {
+                          if (!snap.hasData) {
+                            return GoogleMap(
+                              mapType: MapType.normal,
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(snapshot.data.latitude,
+                                    snapshot.data.longitude),
+                                zoom: 16,
+                              ),
+                              mapToolbarEnabled: false,
+                              myLocationButtonEnabled: false,
+                              myLocationEnabled: true,
+                              zoomControlsEnabled: false,
+                              onMapCreated: (GoogleMapController controller) {
+                                widget.mapViewModel.mapController
+                                    .complete(controller);
+                                removeMarkers();
+                              },
+                            );
+                          } else {
+                            return GoogleMap(
+                              mapType: MapType.normal,
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(snapshot.data.latitude,
+                                    snapshot.data.longitude),
+                                zoom: 16,
+                              ),
+                              mapToolbarEnabled: false,
+                              markers: snap.data,
+                              myLocationButtonEnabled: false,
+                              myLocationEnabled: true,
+                              zoomControlsEnabled: false,
+                              onMapCreated: (GoogleMapController controller) {
+                                widget.mapViewModel.mapController
+                                    .complete(controller);
+                                removeMarkers();
+                              },
+                            );
+                          }
+                        });
               })),
       Positioned(
           top: 60,
