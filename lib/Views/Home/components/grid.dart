@@ -1,3 +1,4 @@
+import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/ChatsList/Anonymous/chat_anonymous_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/ChatsList/Experts/chat_experts_screen.dart';
@@ -16,6 +17,7 @@ class Grid extends StatefulWidget {
 }
 
 class _GridState extends State<Grid> {
+  
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -44,12 +46,13 @@ class _GridState extends State<Grid> {
             DashCard(
               imagePath: "assets/icons/anonymous.png",
               text: "Anonymous chats",
-              press: () {
+              press: () async {
+                LoggedUser loggedUser = await widget.authViewModel.getUser();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return ChatAnonymous();
+                      return ChatAnonymous(loggedUser: loggedUser);
                     },
                   ),
                 );
