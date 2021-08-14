@@ -14,12 +14,16 @@ class InfoViewModel extends FormBloc<String, String> {
     FieldBlocValidators.required,
   ]);
 
+  final cityText = TextFieldBloc(validators: [
+    FieldBlocValidators.required,
+  ]);
+
   final birthDate = InputFieldBloc<DateTime, Object>(validators: [
     FieldBlocValidators.required,
   ]);
 
   InfoViewModel({@required this.authViewModel, @required this.context}) {
-    addFieldBlocs(fieldBlocs: [nameText, surnameText, birthDate]);
+    addFieldBlocs(fieldBlocs: [nameText, surnameText, cityText, birthDate]);
   }
 
   @override

@@ -1,14 +1,14 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/info_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/Mail/signup_mail_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Users/Mail/signup_mail_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 
-class InfoBody extends StatelessWidget {
+class InfoExperts extends StatelessWidget {
   final AuthViewModel authViewModel;
 
-  InfoBody({Key key, @required this.authViewModel}) : super(key: key);
+  InfoExperts({Key key, @required this.authViewModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/place_service.dart';
@@ -69,11 +70,15 @@ class MapViewModel {
             position: LatLng(data['lat'], data['long']),
             icon: pinLocationIcon,
             infoWindow: InfoWindow(
-                title: data['surname'] + " " + data['name'],
-                snippet: data['phone number'])));
+                title: data['surname'] +
+                    " " +
+                    data['name'] +
+                    " (" +
+                    data['phone number'] +
+                    ")",
+                snippet: data['email'])));
       }
     }
-    print("LUNGHEZZA: " + _markers.length.toString());
     return _markers;
   }
 

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/home.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/Informations/signup_info_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Users/signup_users_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/components/background.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_acheck.dart';
@@ -79,7 +79,7 @@ class _BodyState extends State<Body> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return SignUpInfo(
+                      return SignUpUsers(
                         authViewModel: widget.authViewModel,
                       );
                     },

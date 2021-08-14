@@ -75,7 +75,7 @@ class _HeaderState extends State<Header> {
       context: context,
       title: "ACCOUNT SETTINGS",
       //desc: "",
-      image: Image.asset("assets/icons/psychologist.png"),
+      image: Image.asset("assets/icons/small_logo.png"),
       buttons: [
         DialogButton(
           child: Text(
