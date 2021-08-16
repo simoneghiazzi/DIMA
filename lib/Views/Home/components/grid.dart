@@ -1,7 +1,7 @@
 import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/ChatsList/Anonymous/chat_anonymous_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/ChatsList/Experts/chat_experts_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/Anonymous/chatlist_anonymous_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/Experts/chatlist_experts_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/report_screen.dart';
 import 'package:flutter/material.dart';

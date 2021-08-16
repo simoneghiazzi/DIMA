@@ -10,14 +10,18 @@ class UserChat {
   factory UserChat.fromDocument(DocumentSnapshot doc) {
     String photoUrl = "";
     String nickname = "";
+    String uid = "";
+    try {
+      uid = doc.get('uid');
+    } catch (e) {}
     try {
       photoUrl = doc.get('photoUrl');
     } catch (e) {}
     try {
-      nickname = doc.get('nickname');
+      nickname = doc.get('name');
     } catch (e) {}
     return UserChat(
-      id: doc.id,
+      id: uid,
       photoUrl: photoUrl,
       nickname: nickname,
     );

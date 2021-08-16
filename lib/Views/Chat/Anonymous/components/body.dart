@@ -1,27 +1,30 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/user_chat.dart';
+import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/chat_page.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class Body extends StatefulWidget {
   //final ChatViewModel chatsViewModel;
-  final String currentUserId;
+  final LoggedUser loggedUser;
 
-  Body({Key key, @required this.currentUserId}) : super(key: key);
+  Body({Key key, @required this.loggedUser}) : super(key: key);
 
   @override
-  _BodyState createState() => _BodyState(currentUserId: currentUserId);
+  _BodyState createState() => _BodyState(loggedUser: loggedUser);
 }
 
 class _BodyState extends State<Body> {
-  _BodyState({@required this.currentUserId});
+  _BodyState({@required this.loggedUser});
 
-  final String currentUserId;
+  final LoggedUser loggedUser;
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   final ScrollController listScrollController = ScrollController();
 
   int _limit = 20;
@@ -49,25 +52,30 @@ class _BodyState extends State<Body> {
 
     firebaseMessaging.getToken().then((token) {
       print('token: $token');
-      FirebaseFirestore.instance.collection('users').doc(currentUserId).update({'pushToken': token});
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(loggedUser.uid)
+          .update({'pushToken': token});
     }).catchError((err) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(err.message.toString()),
-          ));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(err.message.toString()),
+      ));
     });
   }
 
   void configLocalNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-    IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
-    InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('app_icon');
+    IOSInitializationSettings initializationSettingsIOS =
+        IOSInitializationSettings();
+    InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   void scrollListener() {
-    if (listScrollController.offset >= listScrollController.position.maxScrollExtent &&
+    if (listScrollController.offset >=
+            listScrollController.position.maxScrollExtent &&
         !listScrollController.position.outOfRange) {
       setState(() {
         _limit += _limitIncrement;
@@ -76,8 +84,11 @@ class _BodyState extends State<Body> {
   }
 
   void showNotification(RemoteNotification remoteNotification) async {
-    AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      Platform.isAndroid ? 'com.dfa.flutterchatdemo' : 'com.duytq.flutterchatdemo',
+    AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      Platform.isAndroid
+          ? 'com.dfa.flutterchatdemo'
+          : 'com.duytq.flutterchatdemo',
       'Flutter chat demo',
       'your channel description',
       playSound: true,
@@ -85,9 +96,11 @@ class _BodyState extends State<Body> {
       importance: Importance.max,
       priority: Priority.high,
     );
-    IOSNotificationDetails iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+    IOSNotificationDetails iOSPlatformChannelSpecifics =
+        IOSNotificationDetails();
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics);
 
     print(remoteNotification);
 
@@ -170,45 +183,54 @@ class _BodyState extends State<Body> {
                   ])),
             ),
             Container(
-        child: Stack(
-          children: <Widget>[
-            // List
-            Container(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('users').limit(_limit).snapshots(),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                      padding: EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) => buildItem(context, snapshot.data?.docs[index]),
-                      itemCount: snapshot.data.docs.length,
-                      controller: listScrollController,
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xff203152)),
-                      ),
-                    );
-                  }
-                },
+              child: Stack(
+                children: <Widget>[
+                  // List
+                  Container(
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .limit(_limit)
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            padding: EdgeInsets.all(10.0),
+                            itemBuilder: (context, index) =>
+                                buildItem(context, snapshot.data?.docs[index]),
+                            itemCount: snapshot.data.docs.length,
+                            controller: listScrollController,
+                            shrinkWrap: true,
+                          );
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Color(0xff203152)),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  // Loading
+                  Positioned(
+                    child: isLoading
+                        ? Container(
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Color(0xff203152)),
+                              ),
+                            ),
+                            color: Colors.white.withOpacity(0.8),
+                          )
+                        : Container(),
+                  )
+                ],
               ),
             ),
-
-            // Loading
-            Positioned(
-              child: isLoading ? Container(
-      child: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Color(0xff203152)),
-        ),
-      ),
-      color: Colors.white.withOpacity(0.8),
-    ) : Container(),
-            )
-          ],
-        ),
-      ),
           ],
         ),
       ),
@@ -218,7 +240,7 @@ class _BodyState extends State<Body> {
   Widget buildItem(BuildContext context, DocumentSnapshot document) {
     if (document != null) {
       UserChat userChat = UserChat.fromDocument(document);
-      if (userChat.id == currentUserId) {
+      if (userChat.id == loggedUser.uid) {
         return SizedBox.shrink();
       } else {
         return Container(
@@ -232,7 +254,8 @@ class _BodyState extends State<Body> {
                           fit: BoxFit.cover,
                           width: 50.0,
                           height: 50.0,
-                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent loadingProgress) {
                             if (loadingProgress == null) return child;
                             return Container(
                               width: 50,
@@ -240,9 +263,12 @@ class _BodyState extends State<Body> {
                               child: Center(
                                 child: CircularProgressIndicator(
                                   color: Color(0xff203152),
-                                  value: loadingProgress.expectedTotalBytes != null &&
-                                          loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                  value: loadingProgress.expectedTotalBytes !=
+                                              null &&
+                                          loadingProgress.expectedTotalBytes !=
+                                              null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes
                                       : null,
                                 ),
                               ),
@@ -270,7 +296,7 @@ class _BodyState extends State<Body> {
                       children: <Widget>[
                         Container(
                           child: Text(
-                            'Nickname: ${userChat.nickname}',
+                            '${userChat.nickname}',
                             maxLines: 1,
                             style: TextStyle(color: Color(0xff203152)),
                           ),
@@ -285,18 +311,20 @@ class _BodyState extends State<Body> {
               ],
             ),
             onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => Chat(
-              //       peerId: userChat.id,
-              //       peerAvatar: userChat.photoUrl,
-              //     ),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatPage(
+                    loggedUser: loggedUser,
+                    peerId: userChat.id,
+                    peerAvatar: userChat.photoUrl,
+                  ),
+                ),
+              );
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Color(0xffE8E8E8)),
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(Color(0xffE8E8E8)),
               shape: MaterialStateProperty.all<OutlinedBorder>(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
