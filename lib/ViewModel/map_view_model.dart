@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/place_service.dart';
@@ -47,11 +46,19 @@ class MapViewModel {
     });
   }
 
+  Future<List<PlaceSearch>> searchPlaceSubscription(String searchTerm) async {
+    return await placesSearch.getAutocomplete(searchTerm);
+  }
+
   setSelectedLocation(String place) async {
     placesSearch.getPlace(place).then((location) {
       _selectedLocation.add(location);
       searchedPlace = location;
     });
+  }
+
+  Future<Place> getExpertLocation(String place) async {
+    return await placesSearch.getPlace(place);
   }
 
   //Create all the experts' markers
@@ -66,7 +73,7 @@ class MapViewModel {
       if (doc.data() != null) {
         var data = doc.data() as Map<String, dynamic>;
         _markers.add(Marker(
-            markerId: MarkerId(data['surname'] + data['city'] + data['street']),
+            markerId: MarkerId(data['surname']),
             position: LatLng(data['lat'], data['long']),
             icon: pinLocationIcon,
             infoWindow: InfoWindow(

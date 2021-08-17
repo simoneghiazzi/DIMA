@@ -14,22 +14,20 @@ class InfoViewModel extends FormBloc<String, String> {
     FieldBlocValidators.required,
   ]);
 
-  final cityText = TextFieldBloc(validators: [
-    FieldBlocValidators.required,
-  ]);
-
-  final birthDate = InputFieldBloc<DateTime, Object>(validators: [
-    FieldBlocValidators.required,
-  ]);
+  final birthDate = InputFieldBloc<DateTime, Object>(
+      validators: [
+        FieldBlocValidators.required,
+      ],
+      initialValue: new DateTime(
+          DateTime.now().year - 18, DateTime.now().month, DateTime.now().day));
 
   InfoViewModel({@required this.authViewModel, @required this.context}) {
-    addFieldBlocs(fieldBlocs: [nameText, surnameText, cityText, birthDate]);
+    addFieldBlocs(fieldBlocs: [nameText, surnameText, birthDate]);
   }
 
   @override
   void onSubmitting() async {
     try {
-      await Future<void>.delayed(Duration(milliseconds: 500));
       emitSuccess();
     } catch (e) {
       emitFailure();

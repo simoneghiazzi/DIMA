@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Views/Home/home.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Experts/signup_experts_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/Users/signup_users_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
@@ -112,7 +113,16 @@ class _BodyState extends State<Body> {
                 ),
               ),
               onTap: () {
-                print("Funz");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return SignUpExperts(
+                        authViewModel: widget.authViewModel,
+                      );
+                    },
+                  ),
+                );
               },
             ),
             StreamBuilder<String>(

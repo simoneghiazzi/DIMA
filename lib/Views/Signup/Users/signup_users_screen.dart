@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class SignUpUsers extends StatelessWidget {
   final authViewModel;
 
-  SignUpUsers({Key key, this.authViewModel}) : super(key: key);
+  SignUpUsers({Key key, @required this.authViewModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

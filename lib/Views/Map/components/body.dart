@@ -27,7 +27,6 @@ class _BodyState extends State<Body> {
 
   //For placing custom markers on the map
   BitmapDescriptor pinLocationIcon;
-  Set<Marker> _markers = {};
 
   @override
   void initState() {
