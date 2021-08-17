@@ -16,8 +16,6 @@ class AuthViewModel {
   String name, surname;
   DateTime birthDate;
 
-  LoggedUser loggedUser;
-
   AuthViewModel() {
     emailController
         .addListener(() => loginForm.emailText.add(emailController.text));
@@ -33,8 +31,7 @@ class AuthViewModel {
   }
 
   void alreadyLogged() async {
-    loggedUser = await auth.currentUser();
-    if (loggedUser != null) {
+    if (await auth.currentUser() != null) {
       _isUserLogged.add(true);
     } else
       _isUserLogged.add(false);
@@ -62,9 +59,9 @@ class AuthViewModel {
 
   Future logIn() async {
     try {
-      loggedUser = await auth.signInWithEmailAndPassword(
-          emailController.text, passwordController.text);
-      if (loggedUser != null) {
+      if (await auth.signInWithEmailAndPassword(
+              emailController.text, passwordController.text) !=
+          null) {
         _isUserLogged.add(true);
         _authMessage.add("");
       } else {
@@ -84,10 +81,11 @@ class AuthViewModel {
       _authMessage.add("");
     } catch (e) {
       _isUserLogged.add(false);
+      print(e);
       if (e.code == 'account-exists-with-different-credential')
         _authMessage.add(
             "An account already exists with the same email address but different sign-in credentials.");
-      print(e);
+      
     }
   }
 

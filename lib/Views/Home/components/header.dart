@@ -61,11 +61,16 @@ class _HeaderState extends State<Header> {
   StreamSubscription<bool> subscribeToViewModel() {
     return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
       if (!isSuccessfulLogin) {
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-          builder: (context) {
-            return WelcomeScreen(authViewModel: widget.authViewModel);
-          },
-        ), (route) => true);
+        subscriber.cancel();
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return WelcomeScreen(authViewModel: widget.authViewModel);
+            },
+          ),
+          ModalRoute.withName('/'),
+        );
       }
     });
   }
@@ -103,11 +108,5 @@ class _HeaderState extends State<Header> {
         )
       ],
     ).show();
-  }
-
-  @override
-  void dispose() {
-    subscriber.cancel();
-    super.dispose();
   }
 }

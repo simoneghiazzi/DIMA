@@ -65,7 +65,7 @@ class _BodyState extends State<Body> {
 
   void configLocalNotification() {
     AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
+        new AndroidInitializationSettings('@mipmap/ic_launcher');
     IOSInitializationSettings initializationSettingsIOS =
         IOSInitializationSettings();
     InitializationSettings initializationSettings = InitializationSettings(

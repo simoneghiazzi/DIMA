@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart';
 
 abstract class BaseAuth {
   Future<LoggedUser> signInWithEmailAndPassword(String email, String password);
@@ -25,7 +26,7 @@ class FirebaseAuthService implements BaseAuth {
     _userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
     if (_firebaseAuth.currentUser.emailVerified) {
-      return queryDb(_userCredential.user.uid);
+      return await queryDb(_userCredential.user.uid);
     }
     return null;
   }
@@ -34,13 +35,13 @@ class FirebaseAuthService implements BaseAuth {
       String name, String surname, DateTime birthDate) async {
     _userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
-
     users
-        .add({
+        .doc(_userCredential.user.uid)
+        .set({
           'uid': _userCredential.user.uid,
           'name': name,
           'surname': surname,
-          'birthDate': birthDate
+          'birthDate': birthDate.toString()
         })
         .then((value) => print("User added"))
         .catchError((error) => print("Failed to add user: $error"));
@@ -49,7 +50,11 @@ class FirebaseAuthService implements BaseAuth {
   }
 
   Future<String> signInWithGoogle() async {
-    GoogleSignIn googleSignIn = GoogleSignIn();
+    GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
+      'email',
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/user.birthday.read"
+    ]);
     GoogleSignInAccount googleUser = await googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
     AuthCredential credential = GoogleAuthProvider.credential(
@@ -57,45 +62,61 @@ class FirebaseAuthService implements BaseAuth {
       idToken: googleAuth.idToken,
     );
     _userCredential = await _firebaseAuth.signInWithCredential(credential);
+    final headers = await googleSignIn.currentUser.authHeaders;
+    final res = jsonDecode((await get(
+            Uri.parse(
+                "https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
+            headers: {"Authorization": headers["Authorization"]}))
+        .body)['birthdays'][0]['date'];
+    String birthDate = '${res['month']}/${res['day']}/${res['year']}';
+    if (await queryDb(_userCredential.user.uid) == null) {
+      users
+          .doc(_userCredential.user.uid)
+          .set({
+            'uid': _userCredential.user.uid,
+            'name': googleSignIn.currentUser.displayName.split(" ")[0],
+            'surname': googleSignIn.currentUser.displayName.split(" ")[1],
+            'birthDate': birthDate,
+          })
+          .then((value) => print("User added"))
+          .catchError((error) => print("Failed to add user: $error"));
+    }
 
-    Map<String, dynamic> idMap = parseJwt(googleAuth.idToken);
+    // Map<String, dynamic> idMap = parseJwt(googleAuth.idToken);
 
     return _userCredential.user.uid;
   }
 
   Future<LoggedUser> signInWithFacebook() async {
-    final LoginResult result = await FacebookAuth.i
+    LoginResult result = await FacebookAuth.instance
         .login(permissions: ['public_profile', 'user_birthday']);
-    if (result.status == LoginStatus.success) {
-      AccessToken accessToken = result.accessToken;
-      var facebookAuthCredential =
-          FacebookAuthProvider.credential(accessToken.token);
-      _userCredential =
-          await _firebaseAuth.signInWithCredential(facebookAuthCredential);
-      if (queryDb(_userCredential.user.uid) == null) {
-        final userData =
-            await FacebookAuth.i.getUserData(fields: "name, birthday");
-        String userName = userData['name'];
-        userName.split(" ");
-        users
-            .add({
-              'uid': _userCredential.user.uid,
-              'name': userName[0],
-              'surname': userName[1],
-              'birthDate': userData['birthday']
-            })
-            .then((value) => print("User added"))
-            .catchError((error) => print("Failed to add user: $error"));
-      }
-      return queryDb(_firebaseAuth.currentUser.uid);
+    AccessToken accessToken = result.accessToken;
+    var facebookAuthCredential =
+        FacebookAuthProvider.credential(accessToken.token);
+    _userCredential =
+        await _firebaseAuth.signInWithCredential(facebookAuthCredential);
+    if (await queryDb(_userCredential.user.uid) == null) {
+      final userData =
+          await FacebookAuth.instance.getUserData(fields: "name, birthday");
+      users
+          .doc(_userCredential.user.uid)
+          .set({
+            'uid': _userCredential.user.uid,
+            'name': userData['name'].split(" ")[0],
+            'surname': userData['name'].split(" ")[1],
+            'birthDate': userData['birthday']
+          })
+          .then((value) => print("User added"))
+          .catchError((error) => print("Failed to add user: $error"));
     }
-    return null;
+    return await queryDb(_firebaseAuth.currentUser.uid);
   }
 
   Future<LoggedUser> currentUser() async {
-    if (_firebaseAuth.currentUser != null &&
-        _firebaseAuth.currentUser.emailVerified) {
-      return queryDb(_firebaseAuth.currentUser.uid);
+    if (_firebaseAuth.currentUser != null) {
+      if (_firebaseAuth.currentUser.providerData[0].providerId == 'password' &&
+          !_firebaseAuth.currentUser.emailVerified) return null;
+      return await queryDb(_firebaseAuth.currentUser.uid);
     }
     return null;
   }
@@ -128,36 +149,15 @@ class FirebaseAuthService implements BaseAuth {
     for (var doc in docs) {
       if (doc.data() != null) {
         var data = doc.data() as Map<String, dynamic>;
-        Timestamp t = data['birthDate'];
         LoggedUser loggedUser = new LoggedUser(
             name: data['name'].toString(),
-            surname: data['name'].toString(),
+            surname: data['surname'].toString(),
             uid: uid,
-            dateOfBirth: t.toDate());
+            dateOfBirth: data['birthDate'].toString());
 
         return loggedUser;
       }
     }
     return null;
-  }
-
-//Method for extracting account info from google sign in
-  static Map<String, dynamic> parseJwt(String token) {
-    //validate token
-    if (token == null) return null;
-    final List<String> parts = token.split('.');
-    if (parts.length != 3) {
-      return null;
-    }
-    //retrieve payload
-    final String payload = parts[1];
-    final String normalized = base64Url.normalize(payload);
-    final String resp = utf8.decode(base64Url.decode(normalized));
-    //convert to Map
-    final payloadMap = json.decode(resp);
-    if (payload is! Map<String, dynamic>) {
-      return null;
-    }
-    return payloadMap;
   }
 }
