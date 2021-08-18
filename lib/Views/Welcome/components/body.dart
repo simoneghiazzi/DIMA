@@ -25,7 +25,7 @@ class _BodyState extends State<Body> {
   @override
   void initState() {
     subscriber = subscribeToViewModel();
-    widget.authViewModel.alreadyLogged();
+    widget.authViewModel.isAlreadyLogged();
     super.initState();
   }
 

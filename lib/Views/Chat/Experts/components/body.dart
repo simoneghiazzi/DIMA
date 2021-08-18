@@ -1,17 +1,21 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/chatlist_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:flutter/material.dart';
 
 class Body extends StatefulWidget {
-  final ChatViewModel chatsViewModel;
+  final ChatlistViewModel chatlistViewModel;
 
-  Body({Key key, @required this.chatsViewModel}) : super(key: key);
+  Body({Key key, @required this.chatlistViewModel}) : super(key: key);
 
   @override
-  _BodyState createState() => _BodyState();
+  _BodyState createState() => _BodyState(chatlistViewModel: chatlistViewModel);
 }
 
 class _BodyState extends State<Body> {
+  
+  _BodyState({@required this.chatlistViewModel});
+
+  final ChatlistViewModel chatlistViewModel;
   @override
   void initState() {
     super.initState();

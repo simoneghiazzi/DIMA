@@ -1,7 +1,7 @@
-import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/Anonymous/chatlist_anonymous_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/Experts/chatlist_experts_screen.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/chatlist_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/Anonymous/chatlist_anonymous.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/Experts/chatlist_experts.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/report_screen.dart';
 import 'package:flutter/material.dart';
@@ -32,12 +32,13 @@ class _GridState extends State<Grid> {
             DashCard(
               imagePath: "assets/icons/psychologist.png",
               text: "Experts chats",
-              press: () {
+              press: () async {
+                ChatlistViewModel chatlistViewModel;
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return ChatExperts();
+                      return ChatExperts(chatlistViewModel: chatlistViewModel,);
                     },
                   ),
                 );
@@ -47,12 +48,12 @@ class _GridState extends State<Grid> {
               imagePath: "assets/icons/anonymous.png",
               text: "Anonymous chats",
               press: () async {
-                LoggedUser loggedUser = await widget.authViewModel.getUser();
+                ChatlistViewModel chatlistViewModel = ChatlistViewModel((await widget.authViewModel.getUser()).uid);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return ChatAnonymous(loggedUser: loggedUser);
+                      return ChatAnonymous(chatlistViewModel: chatlistViewModel);
                     },
                   ),
                 );

@@ -1,116 +1,31 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/user_chat.dart';
-import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/chatlist_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/chat_page.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class Body extends StatefulWidget {
-  //final ChatViewModel chatsViewModel;
-  final LoggedUser loggedUser;
+  final ChatlistViewModel chatlistViewModel;
 
-  Body({Key key, @required this.loggedUser}) : super(key: key);
+  Body({Key key, @required this.chatlistViewModel}) : super(key: key);
 
   @override
-  _BodyState createState() => _BodyState(loggedUser: loggedUser);
+  _BodyState createState() => _BodyState(chatlistViewModel: chatlistViewModel);
 }
 
 class _BodyState extends State<Body> {
-  _BodyState({@required this.loggedUser});
+  _BodyState({@required this.chatlistViewModel});
 
-  final LoggedUser loggedUser;
-  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  final ChatlistViewModel chatlistViewModel;
   final ScrollController listScrollController = ScrollController();
-
-  int _limit = 20;
   int _limitIncrement = 20;
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    registerNotification();
-    configLocalNotification();
     listScrollController.addListener(scrollListener);
-  }
-
-  void registerNotification() {
-    firebaseMessaging.requestPermission();
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('onMessage: $message');
-      if (message.notification != null) {
-        showNotification(message.notification);
-      }
-      return;
-    });
-
-    firebaseMessaging.getToken().then((token) {
-      print('token: $token');
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(loggedUser.uid)
-          .update({'pushToken': token});
-    }).catchError((err) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(err.message.toString()),
-      ));
-    });
-  }
-
-  void configLocalNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid =
-        new AndroidInitializationSettings('@mipmap/ic_launcher');
-    IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings();
-    InitializationSettings initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
-
-  void scrollListener() {
-    if (listScrollController.offset >=
-            listScrollController.position.maxScrollExtent &&
-        !listScrollController.position.outOfRange) {
-      setState(() {
-        _limit += _limitIncrement;
-      });
-    }
-  }
-
-  void showNotification(RemoteNotification remoteNotification) async {
-    AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      Platform.isAndroid
-          ? 'com.dfa.flutterchatdemo'
-          : 'com.duytq.flutterchatdemo',
-      'Flutter chat demo',
-      'your channel description',
-      playSound: true,
-      enableVibration: true,
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-    IOSNotificationDetails iOSPlatformChannelSpecifics =
-        IOSNotificationDetails();
-    NotificationDetails platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iOSPlatformChannelSpecifics);
-
-    print(remoteNotification);
-
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      remoteNotification.title,
-      remoteNotification.body,
-      platformChannelSpecifics,
-      payload: null,
-    );
   }
 
   @override
@@ -188,12 +103,8 @@ class _BodyState extends State<Body> {
                   // List
                   Container(
                     child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('users')
-                          .limit(_limit)
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                      stream: chatlistViewModel.loadUsers(),
+                      builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return ListView.builder(
                             padding: EdgeInsets.all(10.0),
@@ -240,7 +151,7 @@ class _BodyState extends State<Body> {
   Widget buildItem(BuildContext context, DocumentSnapshot document) {
     if (document != null) {
       UserChat userChat = UserChat.fromDocument(document);
-      if (userChat.id == loggedUser.uid) {
+      if (userChat.id == chatlistViewModel.loggedId) {
         return SizedBox.shrink();
       } else {
         return Container(
@@ -296,7 +207,7 @@ class _BodyState extends State<Body> {
                       children: <Widget>[
                         Container(
                           child: Text(
-                            '${userChat.nickname}',
+                            '${userChat.name}',
                             maxLines: 1,
                             style: TextStyle(color: Color(0xff203152)),
                           ),
@@ -311,14 +222,13 @@ class _BodyState extends State<Body> {
               ],
             ),
             onPressed: () {
+              ChatViewModel chatViewModel = ChatViewModel(
+                loggedId: chatlistViewModel.loggedId,
+                peerId: userChat.id);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChatPage(
-                    loggedUser: loggedUser,
-                    peerId: userChat.id,
-                    peerAvatar: userChat.photoUrl,
-                  ),
+                  builder: (context) => ChatPage(chatViewModel: chatViewModel),
                 ),
               );
             },
@@ -337,6 +247,16 @@ class _BodyState extends State<Body> {
       }
     } else {
       return SizedBox.shrink();
+    }
+  }
+
+  void scrollListener() {
+    if (listScrollController.offset >=
+            listScrollController.position.maxScrollExtent &&
+        !listScrollController.position.outOfRange) {
+      setState(() {
+        _limitIncrement += _limitIncrement;
+      });
     }
   }
 }

@@ -8,8 +8,8 @@ import 'package:http/http.dart';
 
 abstract class BaseAuth {
   Future<LoggedUser> signInWithEmailAndPassword(String email, String password);
-  Future<String> createUserWithEmailAndPassword(String email, String password,
-      String name, String surname, DateTime birthDate);
+  Future<LoggedUser> createUserWithEmailAndPassword(String email, String password,
+      String name, String surname, String birthDate);
   Future deleteUser();
   Future<LoggedUser> currentUser();
 }
@@ -31,8 +31,8 @@ class FirebaseAuthService implements BaseAuth {
     return null;
   }
 
-  Future<String> createUserWithEmailAndPassword(String email, String password,
-      String name, String surname, DateTime birthDate) async {
+  Future<LoggedUser> createUserWithEmailAndPassword(String email, String password,
+      String name, String surname, String birthDate) async {
     _userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
     users
@@ -41,15 +41,15 @@ class FirebaseAuthService implements BaseAuth {
           'uid': _userCredential.user.uid,
           'name': name,
           'surname': surname,
-          'birthDate': birthDate.toString()
+          'birthDate': birthDate
         })
         .then((value) => print("User added"))
         .catchError((error) => print("Failed to add user: $error"));
 
-    return _userCredential.user.uid;
+    return await queryDb(_userCredential.user.uid);
   }
 
-  Future<String> signInWithGoogle() async {
+  Future<LoggedUser> signInWithGoogle() async {
     GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
       'email',
       "https://www.googleapis.com/auth/userinfo.profile",
@@ -81,10 +81,8 @@ class FirebaseAuthService implements BaseAuth {
           .then((value) => print("User added"))
           .catchError((error) => print("Failed to add user: $error"));
     }
-
-    // Map<String, dynamic> idMap = parseJwt(googleAuth.idToken);
-
-    return _userCredential.user.uid;
+    
+    return await queryDb(_userCredential.user.uid);
   }
 
   Future<LoggedUser> signInWithFacebook() async {
