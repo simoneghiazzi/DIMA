@@ -1,9 +1,10 @@
+import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'components/mail_experts_body.dart';
 
 class SignUpExpertsMail extends StatelessWidget {
-  final authViewModel;
+  final AuthViewModel authViewModel;
   final String name, surname, phoneNumber;
   final DateTime birthDate;
   final LatLng latLng;
@@ -26,6 +27,8 @@ class SignUpExpertsMail extends StatelessWidget {
         name: name,
         surname: surname,
         birthDate: birthDate,
+        latLng: latLng,
+        phoneNumber: phoneNumber,
       ),
     );
   }

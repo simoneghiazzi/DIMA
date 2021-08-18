@@ -3,6 +3,7 @@ import 'package:dima_colombo_ghiazzi/Model/Services/firebase_auth_service.dart';
 import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/ObserverForms/auth_form.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AuthViewModel {
   final TextEditingController emailController = TextEditingController();
@@ -47,6 +48,34 @@ class AuthViewModel {
     try {
       await auth.createUserWithEmailAndPassword(emailController.text,
           passwordController.text, name, surname, birthDate);
+      await auth.sendEmailVerification();
+      _authMessage.add("");
+      _isUserCreated.add(true);
+    } catch (e) {
+      _isUserCreated.add(false);
+      if (e.code == 'email-already-in-use')
+        _authMessage.add('The account already exists.');
+      else if (e.code == 'weak-password')
+        _authMessage
+            .add('The password is too weak.\nIt has to be at least 6 chars.');
+    }
+  }
+
+  Future createExpert(String name, String surname, DateTime birthDate,
+      String phoneNumber, LatLng latLng) async {
+    this.name = name;
+    this.surname = surname;
+    this.birthDate = birthDate;
+    try {
+      await auth.createExpertWithEmailAndPassword(
+          emailController.text,
+          passwordController.text,
+          name,
+          surname,
+          birthDate,
+          latLng.latitude,
+          latLng.longitude,
+          phoneNumber);
       await auth.sendEmailVerification();
       _authMessage.add("");
       _isUserCreated.add(true);

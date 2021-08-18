@@ -23,6 +23,7 @@ class InfoExpertsViewModel extends FormBloc<String, String> {
   final birthDate = InputFieldBloc<DateTime, Object>(
       validators: [
         FieldBlocValidators.required,
+        FieldBlocValidators.checkAdultUser,
       ],
       initialValue: new DateTime(
           DateTime.now().year - 18, DateTime.now().month, DateTime.now().day));
@@ -45,6 +46,7 @@ class InfoExpertsViewModel extends FormBloc<String, String> {
 
   final phoneNumberText = TextFieldBloc(validators: [
     FieldBlocValidators.required,
+    FieldBlocValidators.phoneCorrect,
   ]);
 
   InfoExpertsViewModel({@required this.authViewModel, @required this.context}) {

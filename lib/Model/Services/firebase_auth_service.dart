@@ -21,6 +21,10 @@ class FirebaseAuthService implements BaseAuth {
   //The collection of users in the firestore DB
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
+  //The collection of experts in the firestore DB
+  CollectionReference experts =
+      FirebaseFirestore.instance.collection('experts');
+
   Future<LoggedUser> signInWithEmailAndPassword(
       String email, String password) async {
     _userCredential = await _firebaseAuth.signInWithEmailAndPassword(
@@ -45,6 +49,36 @@ class FirebaseAuthService implements BaseAuth {
         })
         .then((value) => print("User added"))
         .catchError((error) => print("Failed to add user: $error"));
+
+    return _userCredential.user.uid;
+  }
+
+  //Similiar to creation of normal user, but for experts
+  Future<String> createExpertWithEmailAndPassword(
+      String email,
+      String password,
+      String name,
+      String surname,
+      DateTime birthDate,
+      num lat,
+      num lng,
+      String phoneNumber) async {
+    _userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email, password: password);
+
+    experts
+        .add({
+          'eid': _userCredential.user.uid,
+          'name': name,
+          'surname': surname,
+          'birthDate': birthDate,
+          'lat': lat,
+          'lng': lng,
+          'phoneNumber': phoneNumber,
+          'email': email
+        })
+        .then((value) => print("Expert added"))
+        .catchError((error) => print("Failed to add expert: $error"));
 
     return _userCredential.user.uid;
   }

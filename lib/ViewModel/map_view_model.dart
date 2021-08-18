@@ -73,15 +73,17 @@ class MapViewModel {
       if (doc.data() != null) {
         var data = doc.data() as Map<String, dynamic>;
         _markers.add(Marker(
-            markerId: MarkerId(data['surname']),
-            position: LatLng(data['lat'], data['long']),
+            markerId: MarkerId(data['surname'] +
+                data['lat'].toString() +
+                data['lng'].toString()),
+            position: LatLng(data['lat'], data['lng']),
             icon: pinLocationIcon,
             infoWindow: InfoWindow(
                 title: data['surname'] +
                     " " +
                     data['name'] +
                     " (" +
-                    data['phone number'] +
+                    data['phoneNumber'] +
                     ")",
                 snippet: data['email'])));
       }

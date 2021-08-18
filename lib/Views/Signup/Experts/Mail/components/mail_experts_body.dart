@@ -7,18 +7,22 @@ import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_ac
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_input_field.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_password_field.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MailExpertsBody extends StatefulWidget {
   final AuthViewModel authViewModel;
-  final String name, surname;
+  final String name, surname, phoneNumber;
   final DateTime birthDate;
+  final LatLng latLng;
 
   MailExpertsBody(
       {Key key,
       @required this.authViewModel,
       @required this.name,
       @required this.surname,
-      @required this.birthDate})
+      @required this.phoneNumber,
+      @required this.birthDate,
+      @required this.latLng})
       : super(key: key);
 
   @override
@@ -66,8 +70,12 @@ class _MailBodyState extends State<MailExpertsBody> {
                 builder: (context, snapshot) {
                   return RoundedButton(
                     text: "SIGN UP",
-                    press: () => widget.authViewModel.createUser(
-                        widget.name, widget.surname, widget.birthDate),
+                    press: () => widget.authViewModel.createExpert(
+                        widget.name,
+                        widget.surname,
+                        widget.birthDate,
+                        widget.phoneNumber,
+                        widget.latLng),
                     enabled: snapshot.data ?? false,
                   );
                 }),
