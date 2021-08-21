@@ -4,7 +4,7 @@ import 'components/mail_body.dart';
 class SignUpMail extends StatelessWidget {
   final authViewModel;
   final String name, surname;
-  final DateTime birthDate;
+  final String birthDate;
 
   SignUpMail(
       {Key key,

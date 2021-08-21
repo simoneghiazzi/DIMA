@@ -43,7 +43,7 @@ class InfoBody extends StatelessWidget {
                                 authViewModel: authViewModel,
                                 name: formBloc.nameText.value,
                                 surname: formBloc.surnameText.value,
-                                birthDate: formBloc.birthDate.value);
+                                birthDate: formBloc.birthDate.value.toString());
                           },
                         ),
                       );

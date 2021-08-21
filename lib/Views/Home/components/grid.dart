@@ -1,6 +1,7 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/ChatsList/Anonymous/chat_anonymous_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/ChatsList/Experts/chat_experts_screen.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/Anonymous/chatlist_anonymous.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/Experts/chatlist_experts.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/report_screen.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class Grid extends StatefulWidget {
 }
 
 class _GridState extends State<Grid> {
+  
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -30,12 +32,13 @@ class _GridState extends State<Grid> {
             DashCard(
               imagePath: "assets/icons/psychologist.png",
               text: "Experts chats",
-              press: () {
+              press: () async {
+                ChatViewModel chatViewModel;
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return ChatExperts();
+                      return ChatExperts(chatViewModel: chatViewModel,);
                     },
                   ),
                 );
@@ -44,12 +47,13 @@ class _GridState extends State<Grid> {
             DashCard(
               imagePath: "assets/icons/anonymous.png",
               text: "Anonymous chats",
-              press: () {
+              press: () async {
+                ChatViewModel chatViewModel = ChatViewModel((await widget.authViewModel.getUser()).uid);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return ChatAnonymous();
+                      return ChatAnonymous(chatViewModel: chatViewModel);
                     },
                   ),
                 );

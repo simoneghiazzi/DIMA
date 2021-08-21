@@ -2,7 +2,7 @@ class LoggedUser {
   String name;
   String surname;
   String uid;
-  DateTime dateOfBirth;
+  String dateOfBirth;
 
-  LoggedUser({this.name, this.surname, this.uid, this.dateOfBirth});
+  LoggedUser({this.uid, this.name, this.surname, this.dateOfBirth});
 }

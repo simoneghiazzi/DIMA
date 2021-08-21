@@ -25,7 +25,7 @@ class _BodyState extends State<Body> {
   @override
   void initState() {
     subscriber = subscribeToViewModel();
-    widget.authViewModel.alreadyLogged();
+    widget.authViewModel.isAlreadyLogged();
     super.initState();
   }
 
@@ -117,6 +117,7 @@ class _BodyState extends State<Body> {
   StreamSubscription<bool> subscribeToViewModel() {
     return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
       if (isSuccessfulLogin) {
+        subscriber.cancel();
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return Home(
             authViewModel: widget.authViewModel,
@@ -124,11 +125,5 @@ class _BodyState extends State<Body> {
         }));
       }
     });
-  }
-
-  @override
-  void dispose() {
-    subscriber.cancel();
-    super.dispose();
   }
 }

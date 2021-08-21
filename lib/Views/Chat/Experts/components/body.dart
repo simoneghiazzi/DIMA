@@ -3,15 +3,19 @@ import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:flutter/material.dart';
 
 class Body extends StatefulWidget {
-  final ChatViewModel chatsViewModel;
+  final ChatViewModel chatViewModel;
 
-  Body({Key key, @required this.chatsViewModel}) : super(key: key);
+  Body({Key key, @required this.chatViewModel}) : super(key: key);
 
   @override
-  _BodyState createState() => _BodyState();
+  _BodyState createState() => _BodyState(chatViewModel: chatViewModel);
 }
 
 class _BodyState extends State<Body> {
+  
+  _BodyState({@required this.chatViewModel});
+
+  final ChatViewModel chatViewModel;
   @override
   void initState() {
     super.initState();
