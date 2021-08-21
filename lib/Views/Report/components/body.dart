@@ -2,6 +2,7 @@ import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/home.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/report_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Report/components/reports_list.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
@@ -30,93 +31,133 @@ class Body extends StatelessWidget {
                 ),
               ),
               child: Scaffold(
-                  appBar: AppBar(
-                      title: Text('Anonymous report'),
-                      leading: new IconButton(
-                          onPressed: () {
-                            Navigator.pushAndRemoveUntil(context,
-                                MaterialPageRoute(
-                              builder: (context) {
-                                return Home(authViewModel: authViewModel);
-                              },
-                            ), (route) => true);
-                          },
-                          icon: new Icon(Icons.arrow_back))),
-                  body: FormBlocListener<ReportViewModel, String, String>(
-                    onSubmitting: (context, state) {
-                      LoadingDialog.show(context);
-                    },
-                    onSuccess: (context, state) {
-                      LoadingDialog.hide(context);
-                      _onReportSubmitted(context);
-                    },
-                    onFailure: (context, state) {
-                      LoadingDialog.hide(context);
-                      _onReportError(context);
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: size.height,
-                      child: Stack(
-                          alignment: Alignment.lerp(
-                              Alignment.topCenter, Alignment.center, 0.7),
+                  body: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    SafeArea(
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 16, top: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              child: Image.asset(
-                                "assets/images/main_top.png",
-                                width: size.width * 0.35,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                IconButton(
+                                  splashColor: Colors.grey,
+                                  icon: Icon(Icons.arrow_back),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                Text(
+                                  "Reports",
+                                  style: TextStyle(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
                             ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Image.asset(
-                                "assets/images/login_bottom.png",
-                                width: size.width * 0.4,
+                            InkWell(
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                    left: 8, right: 8, top: 2, bottom: 2),
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.lightBlue[200],
+                                ),
+                                child: Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.book,
+                                      color: Colors.indigo[500],
+                                      size: 20,
+                                    ),
+                                    SizedBox(
+                                      width: 2,
+                                    ),
+                                    Text(
+                                      "List",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            SingleChildScrollView(
-                              padding: EdgeInsets.all(8),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/icons/safety.png",
-                                    height: size.height * 0.15,
-                                  ),
-                                  DropdownFieldBlocBuilder<String>(
-                                    selectFieldBloc: formBloc.reportCategory,
-                                    decoration: InputDecoration(
-                                      labelText: 'Report category',
-                                      prefixIcon: Icon(Icons.security),
-                                    ),
-                                    itemBuilder: (context, value) => value,
-                                  ),
-                                  TextFieldBlocBuilder(
-                                    textFieldBloc: formBloc.reportText,
-                                    decoration: InputDecoration(
-                                      labelText: 'Report description',
-                                      prefixIcon: Icon(Icons.text_fields),
-                                    ),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      formBloc.submit();
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return ReportsListPage(
+                                          authViewModel: authViewModel,
+                                          reportViewModel: formBloc);
                                     },
-                                    style: ElevatedButton.styleFrom(
-                                      primary: Colors.indigoAccent[400],
-                                    ),
-                                    child: Text('SUBMIT'),
-                                  )
-                                ],
-                              ),
+                                  ),
+                                );
+                              },
                             ),
-                          ]),
+                          ],
+                        ),
+                      ),
                     ),
-                  )));
+                    Padding(
+                        padding: EdgeInsets.only(
+                            top: size.height / 5, left: 16, right: 16),
+                        child:
+                            FormBlocListener<ReportViewModel, String, String>(
+                          onSubmitting: (context, state) {
+                            LoadingDialog.show(context);
+                          },
+                          onSuccess: (context, state) {
+                            LoadingDialog.hide(context);
+                            _onReportSubmitted(context);
+                          },
+                          onFailure: (context, state) {
+                            LoadingDialog.hide(context);
+                            _onReportError(context);
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Image.asset(
+                                "assets/icons/safety.png",
+                                height: size.height * 0.15,
+                              ),
+                              DropdownFieldBlocBuilder<String>(
+                                selectFieldBloc: formBloc.reportCategory,
+                                decoration: InputDecoration(
+                                  labelText: 'Report category',
+                                  prefixIcon: Icon(Icons.security),
+                                ),
+                                itemBuilder: (context, value) => value,
+                              ),
+                              TextFieldBlocBuilder(
+                                textFieldBloc: formBloc.reportText,
+                                decoration: InputDecoration(
+                                  labelText: 'Report description',
+                                  prefixIcon: Icon(Icons.text_fields),
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  formBloc.submit();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.indigoAccent[400],
+                                ),
+                                child: Text('SUBMIT'),
+                              )
+                            ],
+                          ),
+                        )),
+                  ],
+                ),
+              )));
         },
       ),
     );

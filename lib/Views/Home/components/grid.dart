@@ -71,7 +71,7 @@ class _GridState extends State<Grid> {
             ),
             DashCard(
               imagePath: "assets/icons/report.png",
-              text: "Anonymous report",
+              text: "Anonymous reports",
               press: () {
                 Navigator.push(
                   context,
