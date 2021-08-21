@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 class AuthViewModel {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final FirebaseAuthService auth = FirebaseAuthService();
-  final LoginForm loginForm = LoginForm();
+  final FirebaseAuthService _auth = FirebaseAuthService();
+  final LoginForm _loginForm = LoginForm();
   NotificationService notificationService;
   var _isUserLogged = StreamController<bool>.broadcast();
   var _isUserCreated = StreamController<bool>.broadcast();
@@ -17,52 +17,51 @@ class AuthViewModel {
 
   LoggedUser loggedUser;
 
+  // Register the listener for the input text field 
   AuthViewModel() {
-    emailController
-        .addListener(() => loginForm.emailText.add(emailController.text));
-    passwordController
-        .addListener(() => loginForm.passwordText.add(passwordController.text));
+    emailController.addListener(() => _loginForm.emailText.add(emailController.text));
+    passwordController.addListener(() => _loginForm.passwordText.add(passwordController.text));
   }
 
   void getData() {
     if (emailController.text.isNotEmpty)
-      loginForm.emailText.add(emailController.text);
+      _loginForm.emailText.add(emailController.text);
     if (passwordController.text.isNotEmpty)
-      loginForm.passwordText.add(emailController.text);
+      _loginForm.passwordText.add(emailController.text);
   }
 
+  // Check if the user is already logged in
   void isAlreadyLogged() async {
-    loggedUser = await auth.currentUser();
+    loggedUser = await _auth.currentUser();
     if (loggedUser != null) {
       setLoggedIn();
     } else
       _isUserCreated.add(false);
   }
 
+  // Create a new user with email and password
   Future createUser(String name, String surname, String birthDate) async {
     try {
-      loggedUser = await auth.createUserWithEmailAndPassword(emailController.text,
-          passwordController.text, name, surname, birthDate);
-      await auth.sendEmailVerification();
+      loggedUser = await _auth.createUserWithEmailAndPassword(emailController.text, passwordController.text, name, surname, birthDate);
+      await _auth.sendEmailVerification();
       setLoggedIn();
     } catch (e) {
       _isUserCreated.add(false);
       if (e.code == 'email-already-in-use')
         _authMessage.add('The account already exists.');
       else if (e.code == 'weak-password')
-        _authMessage
-            .add('The password is too weak.\nIt has to be at least 6 chars.');
+        _authMessage.add('The password is too weak.\nIt has to be at least 6 chars.');
     }
   }
 
+  // Login a user with email and password
   Future logIn() async {
     try {
-      loggedUser = await auth.signInWithEmailAndPassword(emailController.text, passwordController.text);
-      if (loggedUser != null) {
+      loggedUser = await _auth.signInWithEmailAndPassword(emailController.text, passwordController.text);
+      if (loggedUser != null)
         setLoggedIn();
-      } else {
+      else
         _authMessage.add("The email is not verified");
-      }
     } catch (e) {
       _isUserLogged.add(false);
       if (e.code == 'user-not-found' || e.code == 'wrong-password')
@@ -70,22 +69,23 @@ class AuthViewModel {
     }
   }
 
+  // Login a user with google. If the user is new, it automatically creates a new account
   Future logInWithGoogle() async {
     try {
-      loggedUser = await auth.signInWithGoogle();
+      loggedUser = await _auth.signInWithGoogle();
       setLoggedIn();
     } catch (e) {
       _isUserLogged.add(false);
       print(e);
       if (e.code == 'account-exists-with-different-credential')
-        _authMessage.add(
-            "An account already exists with the same email address but different sign-in credentials.");
+        _authMessage.add("An account already exists with the same email address but different sign-in credentials.");
     }
   }
 
+  // Login a user with facebook. If the user is new, it automatically creates a new account
   Future logInWithFacebook() async {
     try {
-      loggedUser = await auth.signInWithFacebook();
+      loggedUser = await _auth.signInWithFacebook();
       setLoggedIn();
     } catch (e) {
       _isUserLogged.add(false);
@@ -96,25 +96,29 @@ class AuthViewModel {
     }
   }
 
+  // Log out a user from the app
   void logOut() async {
-    await auth.signOut();
+    await _auth.signOut();
     loggedUser = null;
     _isUserLogged.add(false);
     clearControllers();
   }
 
+  // Clear the email and password controllers
   void clearControllers() {
     passwordController.clear();
     emailController.clear();
-    getLoginForm().emailText.add(null);
-    getLoginForm().passwordText.add(null);
+    _loginForm.emailText.add(null);
+    _loginForm.passwordText.add(null);
   }
 
+  // Resend the email verification if the user has not received it
   void resendEmailVerification() async {
     await deleteUser();
     await createUser(loggedUser.name, loggedUser.surname, loggedUser.dateOfBirth);
   }
 
+  // Set the user logged in and register the notification service for that device
   void setLoggedIn() {
     _authMessage.add("");
     _isUserLogged.add(true);
@@ -123,12 +127,14 @@ class AuthViewModel {
     notificationService.configLocalNotification();
   }
 
+  // Delete a user
   Future<void> deleteUser() async {
-    await auth.deleteUser();
+    await _auth.deleteUser();
   }
 
+  // Get the current authenticated user
   Future<LoggedUser> getUser() async {
-    return await auth.currentUser();
+    return await _auth.currentUser();
   }
 
   Stream<bool> get isUserLogged => _isUserLogged.stream;
@@ -137,5 +143,5 @@ class AuthViewModel {
 
   Stream<String> get authMessage => _authMessage.stream;
 
-  LoginForm getLoginForm() => loginForm;
+  LoginForm getLoginForm() => _loginForm;
 }

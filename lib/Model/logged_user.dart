@@ -4,5 +4,5 @@ class LoggedUser {
   String uid;
   String dateOfBirth;
 
-  LoggedUser({this.name, this.surname, this.uid, this.dateOfBirth});
+  LoggedUser({this.uid, this.name, this.surname, this.dateOfBirth});
 }

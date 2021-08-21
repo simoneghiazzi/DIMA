@@ -1,17 +1,17 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/chatlist_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/Experts/components/body.dart';
 
 class ChatExperts extends StatelessWidget {
 
-  final ChatlistViewModel chatlistViewModel;
+  final ChatViewModel chatViewModel;
 
-  ChatExperts({Key key, @required this.chatlistViewModel}) : super(key: key);
+  ChatExperts({Key key, @required this.chatViewModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Body(chatlistViewModel: chatlistViewModel),
+      body: Body(chatViewModel: chatViewModel),
     );
   }
 }

@@ -28,7 +28,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     listScrollController.addListener(_scrollListener);
-    widget.chatViewModel.readLocal();
+    widget.chatViewModel.updateChattingWith();
   }
 
   @override
@@ -56,7 +56,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
 
   Widget buildItem(int index, DocumentSnapshot document) {
     if (document != null) {
-      if (document.get('idFrom') == chatViewModel.loggedId) {
+      if (document.get('idFrom') == chatViewModel.senderId) {
         // Right (my message)
         return Row(
           children: <Widget>[
@@ -71,9 +71,8 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
                   color: lightGreyColor,
                   borderRadius: BorderRadius.circular(8.0)),
               margin: EdgeInsets.only(
-                  bottom: !widget.chatViewModel.isLastMessageLeft(index)
-                      ? 20.0
-                      : 10.0,
+                  bottom:  
+                      10.0,
                   right: 10.0),
             )
           ],
@@ -135,21 +134,21 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
               ),
 
               // Time
-              widget.chatViewModel.isLastMessageLeft(index)
-                  ? Container(
-                      child: Text(
-                        DateFormat('dd MMM kk:mm').format(
-                            DateTime.fromMillisecondsSinceEpoch(
-                                int.parse(document.get('timestamp')))),
-                        style: TextStyle(
-                            color: greyColor,
-                            fontSize: 12.0,
-                            fontStyle: FontStyle.italic),
-                      ),
-                      margin:
-                          EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
-                    )
-                  : Container()
+              // widget.chatViewModel.isLastMessageLeft(index)
+              //     ? Container(
+              //         child: Text(
+              //           DateFormat('dd MMM kk:mm').format(
+              //               DateTime.fromMillisecondsSinceEpoch(
+              //                   int.parse(document.get('timestamp')))),
+              //           style: TextStyle(
+              //               color: greyColor,
+              //               fontSize: 12.0,
+              //               fontStyle: FontStyle.italic),
+              //         ),
+              //         margin:
+              //             EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
+              //       )
+              //     : Container()
             ],
             crossAxisAlignment: CrossAxisAlignment.start,
           ),
@@ -212,7 +211,10 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
               margin: EdgeInsets.symmetric(horizontal: 8.0),
               child: IconButton(
                 icon: Icon(Icons.send),
-                onPressed: () => widget.chatViewModel.sendMessage(),
+                onPressed: () { 
+                  widget.chatViewModel.sendMessage(); 
+                  focusNode.requestFocus();
+                },
                 color: kPrimaryColor,
               ),
             ),
@@ -230,7 +232,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
 
   Widget buildListMessage() {
     return Flexible(
-        child: widget.chatViewModel.groupChatId.isNotEmpty
+        child: widget.chatViewModel.computeGroupChatId().isNotEmpty
             ? StreamBuilder(
                 stream: widget.chatViewModel.loadMessages(),
                 builder: (context, snapshot) {
@@ -276,7 +278,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
-      widget.chatViewModel.readLocal();
+      widget.chatViewModel.updateChattingWith();
     } else {
       widget.chatViewModel.resetChat();
     }
