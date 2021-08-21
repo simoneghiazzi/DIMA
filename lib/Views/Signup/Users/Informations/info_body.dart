@@ -1,6 +1,7 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/info_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/Mail/signup_mail_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Report/components/loading_dialog.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Users/Mail/signup_mail_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
@@ -32,7 +33,7 @@ class InfoBody extends StatelessWidget {
                   appBar: AppBar(title: Text('Personal informations')),
                   body: FormBlocListener<InfoViewModel, String, String>(
                     onSubmitting: (context, state) {
-                      //LoadingDialog.show(context);
+                      LoadingDialog.show(context);
                     },
                     onSuccess: (context, state) {
                       Navigator.push(

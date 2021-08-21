@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Views/Home/home.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/Informations/signup_info_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Experts/signup_experts_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Users/signup_users_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
@@ -40,9 +41,14 @@ class _BodyState extends State<Body> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
+            SizedBox(height: size.height * 0.07),
             Text(
               "APPrension",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: kPrimaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
+              ),
             ),
             SizedBox(height: size.height * 0.05),
             Image.asset(
@@ -74,7 +80,7 @@ class _BodyState extends State<Body> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return SignUpInfo(
+                      return SignUpUsers(
                         authViewModel: widget.authViewModel,
                       );
                     },
@@ -95,6 +101,29 @@ class _BodyState extends State<Body> {
                   press: () => widget.authViewModel.logInWithGoogle(),
                 ),
               ],
+            ),
+            SizedBox(height: size.height * 0.05),
+            GestureDetector(
+              child: Text(
+                "Are you a psychologist? Join us",
+                style: TextStyle(
+                  color: kPrimaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return SignUpExperts(
+                        authViewModel: widget.authViewModel,
+                      );
+                    },
+                  ),
+                );
+              },
             ),
             StreamBuilder<String>(
                 stream: widget.authViewModel.authMessage,

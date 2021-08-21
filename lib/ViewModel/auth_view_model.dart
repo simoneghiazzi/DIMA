@@ -4,6 +4,7 @@ import 'package:dima_colombo_ghiazzi/Model/Services/notification_service.dart';
 import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/ObserverForms/auth_form.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AuthViewModel {
   final TextEditingController emailController = TextEditingController();
@@ -17,10 +18,12 @@ class AuthViewModel {
 
   LoggedUser loggedUser;
 
-  // Register the listener for the input text field 
+  // Register the listener for the input text field
   AuthViewModel() {
-    emailController.addListener(() => _loginForm.emailText.add(emailController.text));
-    passwordController.addListener(() => _loginForm.passwordText.add(passwordController.text));
+    emailController
+        .addListener(() => _loginForm.emailText.add(emailController.text));
+    passwordController.addListener(
+        () => _loginForm.passwordText.add(passwordController.text));
   }
 
   void getData() {
@@ -42,7 +45,12 @@ class AuthViewModel {
   // Create a new user with email and password
   Future createUser(String name, String surname, String birthDate) async {
     try {
-      loggedUser = await _auth.createUserWithEmailAndPassword(emailController.text, passwordController.text, name, surname, birthDate);
+      loggedUser = await _auth.createUserWithEmailAndPassword(
+          emailController.text,
+          passwordController.text,
+          name,
+          surname,
+          birthDate);
       await _auth.sendEmailVerification();
       setLoggedIn();
     } catch (e) {
@@ -50,14 +58,40 @@ class AuthViewModel {
       if (e.code == 'email-already-in-use')
         _authMessage.add('The account already exists.');
       else if (e.code == 'weak-password')
-        _authMessage.add('The password is too weak.\nIt has to be at least 6 chars.');
+        _authMessage
+            .add('The password is too weak.\nIt has to be at least 6 chars.');
     }
   }
 
-  // Login a user with email and password
+  Future createExpert(String name, String surname, DateTime birthDate,
+      String phoneNumber, LatLng latLng) async {
+    try {
+      await _auth.createExpertWithEmailAndPassword(
+          emailController.text,
+          passwordController.text,
+          name,
+          surname,
+          birthDate,
+          latLng.latitude,
+          latLng.longitude,
+          phoneNumber);
+      await _auth.sendEmailVerification();
+      _authMessage.add("");
+      _isUserCreated.add(true);
+    } catch (e) {
+      _isUserCreated.add(false);
+      if (e.code == 'email-already-in-use')
+        _authMessage.add('The account already exists.');
+      else if (e.code == 'weak-password')
+        _authMessage
+            .add('The password is too weak.\nIt has to be at least 6 chars.');
+    }
+  }
+
   Future logIn() async {
     try {
-      loggedUser = await _auth.signInWithEmailAndPassword(emailController.text, passwordController.text);
+      loggedUser = await _auth.signInWithEmailAndPassword(
+          emailController.text, passwordController.text);
       if (loggedUser != null)
         setLoggedIn();
       else
@@ -78,7 +112,8 @@ class AuthViewModel {
       _isUserLogged.add(false);
       print(e);
       if (e.code == 'account-exists-with-different-credential')
-        _authMessage.add("An account already exists with the same email address but different sign-in credentials.");
+        _authMessage.add(
+            "An account already exists with the same email address but different sign-in credentials.");
     }
   }
 
@@ -115,7 +150,8 @@ class AuthViewModel {
   // Resend the email verification if the user has not received it
   void resendEmailVerification() async {
     await deleteUser();
-    await createUser(loggedUser.name, loggedUser.surname, loggedUser.dateOfBirth);
+    await createUser(
+        loggedUser.name, loggedUser.surname, loggedUser.dateOfBirth);
   }
 
   // Set the user logged in and register the notification service for that device

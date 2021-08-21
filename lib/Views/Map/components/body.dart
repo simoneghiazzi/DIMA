@@ -25,6 +25,9 @@ class _BodyState extends State<Body> {
   //For setting the map style as specified in assets/map_style.txt
   String _mapStyle;
 
+  //For placing custom markers on the map
+  BitmapDescriptor pinLocationIcon;
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +37,14 @@ class _BodyState extends State<Body> {
     //For setting the map style
     rootBundle.loadString('assets/map_style.txt').then((string) {
       _mapStyle = string;
+    });
+
+    //Icon used for custom markers
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: 1, size: Size(2, 2)),
+            'assets/icons/pin.png')
+        .then((onValue) {
+      pinLocationIcon = onValue;
     });
   }
 
@@ -46,20 +57,50 @@ class _BodyState extends State<Body> {
               builder: (context, snapshot) {
                 return snapshot.data == null
                     ? Center(child: CircularProgressIndicator())
-                    : GoogleMap(
-                        mapType: MapType.normal,
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(
-                              snapshot.data.latitude, snapshot.data.longitude),
-                          zoom: 16,
-                        ),
-                        myLocationButtonEnabled: false,
-                        myLocationEnabled: true,
-                        zoomControlsEnabled: false,
-                        onMapCreated: (GoogleMapController controller) {
-                          widget.mapViewModel.mapController
-                              .complete(controller);
-                          removeMarkers();
+                    : FutureBuilder(
+                        future: widget.mapViewModel.getMarkers(pinLocationIcon),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<Set<Marker>> snap) {
+                          if (!snap.hasData) {
+                            return GoogleMap(
+                              mapType: MapType.normal,
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(snapshot.data.latitude,
+                                    snapshot.data.longitude),
+                                zoom: 16,
+                              ),
+                              compassEnabled: false,
+                              mapToolbarEnabled: false,
+                              myLocationButtonEnabled: false,
+                              myLocationEnabled: true,
+                              zoomControlsEnabled: false,
+                              onMapCreated: (GoogleMapController controller) {
+                                widget.mapViewModel.mapController
+                                    .complete(controller);
+                                removeMarkers();
+                              },
+                            );
+                          } else {
+                            return GoogleMap(
+                              mapType: MapType.normal,
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(snapshot.data.latitude,
+                                    snapshot.data.longitude),
+                                zoom: 16,
+                              ),
+                              compassEnabled: false,
+                              mapToolbarEnabled: false,
+                              markers: snap.data,
+                              myLocationButtonEnabled: false,
+                              myLocationEnabled: true,
+                              zoomControlsEnabled: false,
+                              onMapCreated: (GoogleMapController controller) {
+                                widget.mapViewModel.mapController
+                                    .complete(controller);
+                                removeMarkers();
+                              },
+                            );
+                          }
                         });
               })),
       Positioned(

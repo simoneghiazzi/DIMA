@@ -34,7 +34,8 @@ class ReportViewModel extends FormBloc<String, String> {
         .add({
           'uid': loggedUser.uid,
           'category': reportCategory.value,
-          'description': reportText.value
+          'description': reportText.value,
+          'date': DateTime.now()
         })
         .then((value) => emitSuccess(canSubmitAgain: true))
         .catchError((error) => emitFailure());

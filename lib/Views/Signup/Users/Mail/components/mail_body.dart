@@ -1,24 +1,31 @@
 import 'dart:async';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/home.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/Users/signup_users_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Login/components/background.dart';
+import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Users/components/background.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_acheck.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_input_field.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_password_field.dart';
 
-class Body extends StatefulWidget {
+class MailBody extends StatefulWidget {
   final AuthViewModel authViewModel;
+  final String name, surname;
+  final String birthDate;
 
-  Body({Key key, @required this.authViewModel}) : super(key: key);
+  MailBody(
+      {Key key,
+      @required this.authViewModel,
+      @required this.name,
+      @required this.surname,
+      @required this.birthDate})
+      : super(key: key);
 
   @override
-  _BodyState createState() => _BodyState();
+  _MailBodyState createState() => _MailBodyState();
 }
 
-class _BodyState extends State<Body> {
+class _MailBodyState extends State<MailBody> {
   StreamSubscription<bool> subscriber;
 
   @override
@@ -58,8 +65,9 @@ class _BodyState extends State<Body> {
                 stream: widget.authViewModel.getLoginForm().isButtonEnabled,
                 builder: (context, snapshot) {
                   return RoundedButton(
-                    text: "LOGIN",
-                    press: () => widget.authViewModel.logIn(),
+                    text: "SIGN UP",
+                    press: () => widget.authViewModel.createUser(
+                        widget.name, widget.surname, widget.birthDate),
                     enabled: snapshot.data ?? false,
                   );
                 }),
@@ -74,12 +82,13 @@ class _BodyState extends State<Body> {
                 }),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
+              login: false,
               press: () {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return SignUpUsers(
+                      return LoginScreen(
                         authViewModel: widget.authViewModel,
                       );
                     },
@@ -94,12 +103,26 @@ class _BodyState extends State<Body> {
   }
 
   StreamSubscription<bool> subscribeToViewModel() {
-    return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
+    return widget.authViewModel.isUserCreated.listen((isSuccessfulLogin) {
       if (isSuccessfulLogin) {
-        FocusScope.of(context).unfocus();
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('Please check your email for verification link.'),
+          action: SnackBarAction(
+            label: 'RESEND EMAIL',
+            onPressed: () {
+              widget.authViewModel.resendEmailVerification();
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: const Text(
+                    'Please check again your email for verification link.'),
+                duration: const Duration(seconds: 100),
+              ));
+            },
+          ),
+          duration: const Duration(seconds: 100),
+        ));
         Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return Home(
+          return LoginScreen(
             authViewModel: widget.authViewModel,
           );
         }));

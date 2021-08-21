@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -45,11 +46,49 @@ class MapViewModel {
     });
   }
 
+  Future<List<PlaceSearch>> searchPlaceSubscription(String searchTerm) async {
+    return await placesSearch.getAutocomplete(searchTerm);
+  }
+
   setSelectedLocation(String place) async {
     placesSearch.getPlace(place).then((location) {
       _selectedLocation.add(location);
       searchedPlace = location;
     });
+  }
+
+  Future<Place> getExpertLocation(String place) async {
+    return await placesSearch.getPlace(place);
+  }
+
+  //Create all the experts' markers
+  Future<Set<Marker>> getMarkers(BitmapDescriptor pinLocationIcon) async {
+    Set<Marker> _markers = {};
+
+    QuerySnapshot<Map<String, dynamic>> snapshot =
+        await FirebaseFirestore.instance.collection('experts').get();
+
+    List<QueryDocumentSnapshot> docs = snapshot.docs;
+    for (var doc in docs) {
+      if (doc.data() != null) {
+        var data = doc.data() as Map<String, dynamic>;
+        _markers.add(Marker(
+            markerId: MarkerId(data['surname'] +
+                data['lat'].toString() +
+                data['lng'].toString()),
+            position: LatLng(data['lat'], data['lng']),
+            icon: pinLocationIcon,
+            infoWindow: InfoWindow(
+                title: data['surname'] +
+                    " " +
+                    data['name'] +
+                    " (" +
+                    data['phoneNumber'] +
+                    ")",
+                snippet: data['email'])));
+      }
+    }
+    return _markers;
   }
 
   Stream<Position> get position => _position.stream;
