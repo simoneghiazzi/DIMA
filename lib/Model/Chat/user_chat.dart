@@ -12,13 +12,33 @@ class UserChat {
     String name = "";
     String photoUrl = ""; 
     try {
-      uid = doc.get('uid');
+      uid = doc.id;
     } catch (e) {}    
     try {
       name = doc.get('name');
     } catch (e) {}
     try {
       photoUrl = doc.get('photoUrl');
+    } catch (e) {}
+    return UserChat(
+      id: uid,
+      name: name,
+      photoUrl: photoUrl,
+    );
+  }
+
+  factory UserChat.fromMap(Map map) {
+    String uid = "";
+    String name = "";
+    String photoUrl = ""; 
+    try {
+      uid = map['uid'];
+    } catch (e) {}    
+    try {
+      name = map['name'];
+    } catch (e) {}
+    try {
+      photoUrl = map['photoUrl'];
     } catch (e) {}
     return UserChat(
       id: uid,

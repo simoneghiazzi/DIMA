@@ -1,24 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_animation.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class Body extends StatefulWidget {
   final ChatViewModel chatViewModel;
+  final bool newUser;
 
-  Body({Key key, @required this.chatViewModel}) : super(key: key);
+  Body({Key key, @required this.chatViewModel, @required this.newUser})
+      : super(key: key);
 
   @override
-  _BodyState createState() => _BodyState(chatViewModel: chatViewModel);
+  _BodyState createState() =>
+      _BodyState(chatViewModel: chatViewModel, newUser: newUser);
 }
 
 class _BodyState extends State<Body> with WidgetsBindingObserver {
-  _BodyState({@required this.chatViewModel});
+  _BodyState({@required this.chatViewModel, @required this.newUser});
 
   final ChatViewModel chatViewModel;
-
-  bool isLoading = false;
+  bool newUser;
+  bool firstChat = false;
+  bool firstMessageSent = true;
+  bool enableInput = true;
   int _limitIncrement = 20;
   final ScrollController listScrollController = ScrollController();
   final FocusNode focusNode = FocusNode();
@@ -28,7 +33,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     listScrollController.addListener(_scrollListener);
-    widget.chatViewModel.updateChattingWith();
+    newUser ? awaitNewUser() : widget.chatViewModel.updateChattingWith();
   }
 
   @override
@@ -38,16 +43,14 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
         children: <Widget>[
           Column(
             children: <Widget>[
-              // List of messages
-              buildListMessage(),
-
+              newUser
+                  ? Loading(text: 'Looking for new random user...')
+                  // List of messages
+                  : buildListMessages(),
               // Input content
               buildInput(),
             ],
           ),
-
-          // Loading
-          buildLoading()
         ],
       ),
       onWillPop: onBackPress,
@@ -70,10 +73,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
               decoration: BoxDecoration(
                   color: lightGreyColor,
                   borderRadius: BorderRadius.circular(8.0)),
-              margin: EdgeInsets.only(
-                  bottom:  
-                      10.0,
-                  right: 10.0),
+              margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
             )
           ],
           mainAxisAlignment: MainAxisAlignment.end,
@@ -160,102 +160,104 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
     }
   }
 
-  Widget buildLoading() {
-    return Positioned(
-      child: isLoading
-          ? Positioned(
-              child: isLoading
-                  ? Container(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Color(0xff203152)),
-                        ),
-                      ),
-                      color: Colors.white.withOpacity(0.8),
-                    )
-                  : Container(),
-            )
-          : Container(),
-    );
+  void awaitNewUser() {
+    enableInput = false;
+    firstMessageSent = false;
+    widget.chatViewModel.addNewRandomChat().then((value) {
+      if (value) {
+        setState(() {
+          newUser = false;
+          enableInput = true;
+          firstChat = true;
+        });
+      } else {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('No more users.'),
+          duration: const Duration(seconds: 5),
+        ));
+      }
+    });
   }
 
   Widget buildInput() {
-    return Container(
-      child: Row(
-        children: <Widget>[
-          // Edit text
-          Flexible(
-            child: Container(
-              child: TextField(
-                onSubmitted: (value) {
-                  widget.chatViewModel.sendMessage();
-                  listScrollController.animateTo(0.0,
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.easeOut);
-                },
-                style: TextStyle(color: kPrimaryColor, fontSize: 15.0),
-                controller: widget.chatViewModel.textEditingController,
-                decoration: InputDecoration.collapsed(
-                  hintText: 'Type your message...',
-                  hintStyle: TextStyle(color: greyColor),
+    return Stack(alignment: Alignment.bottomCenter, children: [
+      Container(
+        child: Row(
+          children: <Widget>[
+            // Edit text
+            Flexible(
+              child: Container(
+                child: TextField(
+                  onSubmitted: (value) {
+                    widget.chatViewModel.sendMessage();
+                    listScrollController.animateTo(0.0,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.easeOut);
+                  },
+                  style: TextStyle(color: kPrimaryColor, fontSize: 15.0),
+                  controller: chatViewModel.textController,
+                  decoration: InputDecoration.collapsed(
+                    hintText: 'Type your message...',
+                    hintStyle: TextStyle(color: greyColor),
+                  ),
+                  focusNode: focusNode,
+                  enabled: enableInput,
                 ),
-                focusNode: focusNode,
               ),
             ),
-          ),
 
-          // Button send message
-          Material(
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 8.0),
-              child: IconButton(
-                icon: Icon(Icons.send),
-                onPressed: () { 
-                  widget.chatViewModel.sendMessage(); 
-                  focusNode.requestFocus();
-                },
-                color: kPrimaryColor,
+            // Button send message
+            Material(
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 8.0),
+                child: IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: () {
+                    if (chatViewModel.textController.text.trim() != '') {
+                      widget.chatViewModel.sendMessage();
+                      focusNode.requestFocus();
+                      firstMessageSent = true;
+                    }
+                  },
+                  color: kPrimaryColor,
+                ),
               ),
+              color: Colors.white,
             ),
-            color: Colors.white,
-          ),
-        ],
-      ),
-      width: double.infinity,
-      height: 50.0,
-      decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: lightGreyColor, width: 0.5)),
-          color: Colors.white),
-    );
+          ],
+        ),
+        width: double.infinity,
+        height: 50.0,
+        decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: lightGreyColor, width: 0.5)),
+            color: Colors.white),
+      )
+    ]);
   }
 
-  Widget buildListMessage() {
+  Widget buildListMessages() {
     return Flexible(
-        child: widget.chatViewModel.computeGroupChatId().isNotEmpty
-            ? StreamBuilder(
-                stream: widget.chatViewModel.loadMessages(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                      padding: EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) =>
-                          buildItem(index, snapshot.data?.docs[index]),
-                      itemCount: snapshot.data.docs.length,
-                      reverse: true,
-                      controller: listScrollController,
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(kPrimaryColor),
-                      ),
-                    );
-                  }
-                },
-              )
-            : buildLoading());
+        child: StreamBuilder(
+      stream: widget.chatViewModel.loadMessages(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            padding: EdgeInsets.all(10.0),
+            itemBuilder: (context, index) =>
+                buildItem(index, snapshot.data?.docs[index]),
+            itemCount: snapshot.data.docs.length,
+            reverse: true,
+            controller: listScrollController,
+          );
+        } else {
+          if (firstChat)
+            return Container();
+          else
+            return Loading(text: 'Loading messages...');
+        }
+      },
+    ));
   }
 
   _scrollListener() {
@@ -270,6 +272,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
 
   Future<bool> onBackPress() {
     widget.chatViewModel.resetChat();
+    if (!firstMessageSent) widget.chatViewModel.deleteChat();
     Navigator.pop(context);
     return Future.value(false);
   }

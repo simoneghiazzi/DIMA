@@ -17,7 +17,15 @@ class Grid extends StatefulWidget {
 }
 
 class _GridState extends State<Grid> {
-  
+  ChatViewModel chatViewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    chatViewModel = ChatViewModel(widget.authViewModel.loggedUser.uid,
+        widget.authViewModel.loggedUser.name);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -32,13 +40,12 @@ class _GridState extends State<Grid> {
             DashCard(
               imagePath: "assets/icons/psychologist.png",
               text: "Experts chats",
-              press: () async {
-                ChatViewModel chatViewModel;
+              press: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return ChatExperts(chatViewModel: chatViewModel,);
+                      return ChatExperts(chatViewModel: chatViewModel);
                     },
                   ),
                 );
@@ -47,8 +54,7 @@ class _GridState extends State<Grid> {
             DashCard(
               imagePath: "assets/icons/anonymous.png",
               text: "Anonymous chats",
-              press: () async {
-                ChatViewModel chatViewModel = ChatViewModel((await widget.authViewModel.getUser()).uid);
+              press: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(

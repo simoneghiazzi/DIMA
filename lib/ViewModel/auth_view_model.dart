@@ -16,7 +16,7 @@ class AuthViewModel {
   var _isUserCreated = StreamController<bool>.broadcast();
   var _authMessage = StreamController<String>.broadcast();
 
-  LoggedUser loggedUser;
+  LoggedUser _loggedUser;
 
   // Register the listener for the input text field
   AuthViewModel() {
@@ -35,8 +35,8 @@ class AuthViewModel {
 
   // Check if the user is already logged in
   void isAlreadyLogged() async {
-    loggedUser = await _auth.currentUser();
-    if (loggedUser != null) {
+    _loggedUser = await _auth.currentUser();
+    if (_loggedUser != null) {
       setLoggedIn();
     } else
       _isUserCreated.add(false);
@@ -45,7 +45,7 @@ class AuthViewModel {
   // Create a new user with email and password
   Future createUser(String name, String surname, String birthDate) async {
     try {
-      loggedUser = await _auth.createUserWithEmailAndPassword(
+      _loggedUser = await _auth.createUserWithEmailAndPassword(
           emailController.text,
           passwordController.text,
           name,
@@ -90,9 +90,9 @@ class AuthViewModel {
 
   Future logIn() async {
     try {
-      loggedUser = await _auth.signInWithEmailAndPassword(
+      _loggedUser = await _auth.signInWithEmailAndPassword(
           emailController.text, passwordController.text);
-      if (loggedUser != null)
+      if (_loggedUser != null)
         setLoggedIn();
       else
         _authMessage.add("The email is not verified");
@@ -106,7 +106,7 @@ class AuthViewModel {
   // Login a user with google. If the user is new, it automatically creates a new account
   Future logInWithGoogle() async {
     try {
-      loggedUser = await _auth.signInWithGoogle();
+      _loggedUser = await _auth.signInWithGoogle();
       setLoggedIn();
     } catch (e) {
       _isUserLogged.add(false);
@@ -120,7 +120,7 @@ class AuthViewModel {
   // Login a user with facebook. If the user is new, it automatically creates a new account
   Future logInWithFacebook() async {
     try {
-      loggedUser = await _auth.signInWithFacebook();
+      _loggedUser = await _auth.signInWithFacebook();
       setLoggedIn();
     } catch (e) {
       _isUserLogged.add(false);
@@ -134,7 +134,7 @@ class AuthViewModel {
   // Log out a user from the app
   void logOut() async {
     await _auth.signOut();
-    loggedUser = null;
+    _loggedUser = null;
     _isUserLogged.add(false);
     clearControllers();
   }
@@ -151,14 +151,14 @@ class AuthViewModel {
   void resendEmailVerification() async {
     await deleteUser();
     await createUser(
-        loggedUser.name, loggedUser.surname, loggedUser.dateOfBirth);
+        _loggedUser.name, _loggedUser.surname, _loggedUser.dateOfBirth);
   }
 
   // Set the user logged in and register the notification service for that device
   void setLoggedIn() {
     _authMessage.add("");
     _isUserLogged.add(true);
-    notificationService = NotificationService(loggedUser.uid);
+    notificationService = NotificationService(_loggedUser.uid);
     notificationService.registerNotification();
     notificationService.configLocalNotification();
   }
@@ -168,10 +168,7 @@ class AuthViewModel {
     await _auth.deleteUser();
   }
 
-  // Get the current authenticated user
-  Future<LoggedUser> getUser() async {
-    return await _auth.currentUser();
-  }
+  LoggedUser get loggedUser => _loggedUser;
 
   Stream<bool> get isUserLogged => _isUserLogged.stream;
 
