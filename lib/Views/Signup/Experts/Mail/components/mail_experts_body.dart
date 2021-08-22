@@ -9,6 +9,8 @@ import 'package:dima_colombo_ghiazzi/Views/components/rounded_input_field.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_password_field.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../../../../constants.dart';
+
 class MailExpertsBody extends StatefulWidget {
   final AuthViewModel authViewModel;
   final String name, surname, phoneNumber;
@@ -48,11 +50,21 @@ class _MailBodyState extends State<MailExpertsBody> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            SizedBox(height: size.height * 0.08),
+            Text(
+              "Email and password",
+              style: TextStyle(
+                color: kPrimaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
+              ),
+            ),
+            SizedBox(height: size.height * 0.08),
             Image.asset(
               "assets/icons/logo.png",
               height: size.height * 0.15,
             ),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.06),
             StreamBuilder<String>(
                 stream: widget.authViewModel.getLoginForm().errorEmailText,
                 builder: (context, snapshot) {

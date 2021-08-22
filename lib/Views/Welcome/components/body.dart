@@ -32,16 +32,14 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
     // This size provide us total height and width of our screen
+    Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(
-        padding: EdgeInsets.only(top: 50),
+        padding: EdgeInsets.only(top: 40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            SizedBox(height: size.height * 0.07),
             Text(
               "APPrension",
               style: TextStyle(
@@ -50,15 +48,14 @@ class _BodyState extends State<Body> {
                 fontSize: 25,
               ),
             ),
-            SizedBox(height: size.height * 0.05),
+            SizedBox(height: size.height * 0.07),
             Image.asset(
               "assets/icons/logo.png",
               height: size.height * 0.15,
             ),
-            SizedBox(height: size.height * 0.04),
-            RoundedButton(
-              text: "LOGIN",
-              press: () {
+            SizedBox(height: size.height * 0.07),
+            ElevatedButton(
+              onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -70,12 +67,19 @@ class _BodyState extends State<Body> {
                   ),
                 );
               },
+              style: ButtonStyle(
+                  fixedSize: MaterialStateProperty.all<Size>(
+                      Size(size.width / 2, size.height / 20)),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(kPrimaryColor),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(29)))),
+              child: Text('LOGIN'),
             ),
-            RoundedButton(
-              text: "SIGN UP",
-              color: kPrimaryLightColor,
-              textColor: Colors.black,
-              press: () {
+            SizedBox(height: size.height * 0.02),
+            ElevatedButton(
+              onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -87,6 +91,18 @@ class _BodyState extends State<Body> {
                   ),
                 );
               },
+              style: ButtonStyle(
+                  fixedSize: MaterialStateProperty.all<Size>(
+                      Size(size.width / 2, size.height / 20)),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(kPrimaryLightColor),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(29)))),
+              child: Text(
+                'SIGNUP',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
             OrDivider(),
             Row(
