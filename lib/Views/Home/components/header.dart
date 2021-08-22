@@ -37,21 +37,10 @@ class _HeaderState extends State<Header> {
           child: CircleAvatar(
               radius: 50,
               backgroundColor: Colors.deepPurple[500],
-              //FutureBuilder due to the fact that LoggedUser is retrieved in an async way
-              child: FutureBuilder(
-                  future: widget.authViewModel.getUser(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<LoggedUser> snapshot) {
-                    if (!snapshot.hasData) {
-                      return Text("");
-                    } else {
-                      loggedUser = snapshot.data;
-                      return Text(
-                        "${loggedUser.name[0]}",
-                        style: TextStyle(color: Colors.white, fontSize: 30),
-                      );
-                    }
-                  })),
+              child: Text(
+                "${widget.authViewModel.loggedUser.name[0]}",
+                style: TextStyle(color: Colors.white, fontSize: 30),
+              )),
           onTap: () => _onAccountPressed(context),
         ),
       )

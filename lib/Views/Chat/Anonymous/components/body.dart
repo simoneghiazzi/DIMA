@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/user_chat.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/chat_page.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_animation.dart';
 import 'package:flutter/material.dart';
 
 class Body extends StatefulWidget {
@@ -17,8 +19,8 @@ class _BodyState extends State<Body> {
 
   final ChatViewModel chatViewModel;
   final ScrollController listScrollController = ScrollController();
-  int _limitIncrement = 20;
   bool isLoading = false;
+  int _limitIncrement = 20;
 
   @override
   void initState() {
@@ -72,22 +74,16 @@ class _BodyState extends State<Body> {
                           ],
                         ),
                       ),
-                      onTap: () async {
-                        if (await widget.chatViewModel.addNewRandomChat()) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ChatPage(chatViewModel: chatViewModel),
-                            ),
-                          ).then((value) => setState(() {}));
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: const Text(
-                                'No more users.'),
-                            duration: const Duration(seconds: 5),
-                          ));
-                        }
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatPage(
+                                chatViewModel: chatViewModel, newUser: true),
+                          ),
+                        ).then((value) {
+                          setState(() {});
+                        });
                       },
                     ),
                   ],
@@ -116,38 +112,24 @@ class _BodyState extends State<Body> {
                 children: <Widget>[
                   // List
                   Container(
-                    child: FutureBuilder(
-                      future: chatViewModel.loadUsers(),
+                    child: StreamBuilder(
+                      stream: chatViewModel.loadUsers(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return ListView.builder(
                             padding: EdgeInsets.all(10.0),
                             itemBuilder: (context, index) =>
-                                buildItem(context, snapshot.data[index]),
-                            itemCount: snapshot.data.length,
+                                buildItem(context, snapshot.data?.docs[index]),
+                            itemCount: snapshot.data.docs.length,
                             controller: listScrollController,
                             shrinkWrap: true,
                           );
                         } else {
-                          return Container();
+                          return Loading(text: 'Loading anonymous chats...');
                         }
                       },
                     ),
                   ),
-                  // Loading
-                  Positioned(
-                    child: isLoading
-                        ? Container(
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    Color(0xff203152)),
-                              ),
-                            ),
-                            color: Colors.white.withOpacity(0.8),
-                          )
-                        : Container(),
-                  )
                 ],
               ),
             ),
@@ -157,8 +139,9 @@ class _BodyState extends State<Body> {
     );
   }
 
-  Widget buildItem(BuildContext context, UserChat userChat) {
-    if (userChat != null) {
+  Widget buildItem(BuildContext context, DocumentSnapshot doc) {
+    if (doc != null) {
+      UserChat userChat = UserChat.fromDocument(doc);
       if (userChat.id == chatViewModel.senderId) {
         return SizedBox.shrink();
       } else {
@@ -231,10 +214,14 @@ class _BodyState extends State<Body> {
             ),
             onPressed: () {
               chatViewModel.peerId = userChat.id;
+              chatViewModel.peerName = userChat.name;
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChatPage(chatViewModel: chatViewModel),
+                  builder: (context) => ChatPage(
+                    chatViewModel: chatViewModel,
+                    newUser: false,
+                  ),
                 ),
               ).then((value) => setState(() {}));
             },
