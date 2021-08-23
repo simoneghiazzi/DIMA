@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'auth_view_model.dart';
 
 class ReportViewModel extends FormBloc<String, String> {
-  final AuthViewModel authViewModel;
+  final String loggedId;
   //The collection of users in the firestore DB
   final CollectionReference reports =
       FirebaseFirestore.instance.collection('reports');
@@ -23,16 +21,15 @@ class ReportViewModel extends FormBloc<String, String> {
     FieldBlocValidators.required,
   ]);
 
-  ReportViewModel({@required this.authViewModel}) {
+  ReportViewModel({@required this.loggedId}) {
     addFieldBlocs(fieldBlocs: [reportCategory, reportText]);
   }
 
   @override
   void onSubmitting() async {
-    LoggedUser loggedUser = await authViewModel.getUser();
     reports
         .add({
-          'uid': loggedUser.uid,
+          'uid': loggedId,
           'category': reportCategory.value,
           'description': reportText.value,
           'date': DateTime.now()

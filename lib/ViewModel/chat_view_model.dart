@@ -1,44 +1,46 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/random_id.dart';
-import 'package:dima_colombo_ghiazzi/Model/Chat/user_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:flutter/material.dart';
 
 class ChatViewModel {
   FirestoreService _firestoreService = FirestoreService();
   String _senderId;
+  String _senderName;
   String _peerId;
+  String _peerName;
   String _peerAvatar;
   RandomId randomId = new RandomId();
   List<QueryDocumentSnapshot> _listMessages = new List.from([]);
   TextEditingController textEditingController = TextEditingController();
 
-  ChatViewModel(String senderId) {
-    this._senderId = senderId;
-  }
+  ChatViewModel(this._senderId, this._senderName);
 
   updateChattingWith() async {
-    await _firestoreService.updateUserFieldIntoDB(_senderId, 'chattingWith', _peerId);
+    await _firestoreService.updateUserFieldIntoDB(
+        _senderId, 'chattingWith', _peerId);
   }
 
   void sendMessage() async {
-    if (textEditingController.text.trim() != '') {
-      await _firestoreService.addMessageIntoDB(computeGroupChatId(), _senderId, _peerId, textEditingController.text)
-          .then((_) => textEditingController.clear());
-    }
+    await _firestoreService
+        .addMessageIntoDB(computeGroupChatId(), _senderId, _peerId,
+            textEditingController.text)
+        .then((_) => textEditingController.clear());
   }
 
   bool isLastMessageLeft(int index) {
-    if ((index > 0 && _listMessages[index - 1].get('idFrom') == _senderId) || index == 0) {
+    if ((index > 0 && _listMessages[index - 1].get('idFrom') == _senderId) ||
+        index == 0) {
       return true;
     } else {
       return false;
     }
   }
 
-    bool isLastMessageRight(int index) {
-    if ((index > 0 && _listMessages[index - 1].get('idFrom') != _senderId) || index == 0) {
+  bool isLastMessageRight(int index) {
+    if ((index > 0 && _listMessages[index - 1].get('idFrom') != _senderId) ||
+        index == 0) {
       return true;
     } else {
       return false;
@@ -46,7 +48,8 @@ class ChatViewModel {
   }
 
   void resetChat() async {
-    await _firestoreService.updateUserFieldIntoDB(_senderId, 'chattingWith', null);
+    await _firestoreService.updateUserFieldIntoDB(
+        _senderId, 'chattingWith', null);
   }
 
   Stream<QuerySnapshot> loadMessages() {
@@ -63,14 +66,9 @@ class ChatViewModel {
     }
   }
 
-  Future<List<UserChat>> loadUsers() async {
-    List<UserChat> userChats = new List.from([]);
+  Stream<QuerySnapshot> loadUsers() {
     try {
-      var snap = await _firestoreService.getActiveChatUsers(senderId);
-      for(var doc in snap.docs) {
-        userChats.add(new UserChat.fromDocument(doc));
-      }
-      return userChats;
+      return _firestoreService.getActiveChatsFromDB(senderId);
     } catch (e) {
       print(e);
       return null;
@@ -78,16 +76,17 @@ class ChatViewModel {
   }
 
   Future<bool> addNewRandomChat() async {
-    String randomUserId;
-    var activeIds = await _firestoreService.getActiveChatIds(senderId);
-    do {
-      randomUserId = await _firestoreService.getRandomUserFromDB(senderId, randomId.generate());
-      if(randomUserId == null)
-        return false;
-    } while(randomUserId == senderId || activeIds.contains(randomUserId));
-    peerId = randomUserId;
-    await _firestoreService.addChatIntoDB(senderId, peerId);
+    var randomUser = await _firestoreService.getRandomUserFromDB(
+        senderId, randomId.generate());
+    if (randomUser == null) return false;
+    peerId = randomUser['uid'];
+    _peerName = randomUser['name'];
+    _firestoreService.addChatIntoDB(senderId, _senderName, peerId, _peerName);
     return true;
+  }
+
+  Future<void> deleteChat() async {
+    await _firestoreService.removeChatFromDB(senderId, peerId);
   }
 
   String computeGroupChatId() {
@@ -102,13 +101,19 @@ class ChatViewModel {
     this._peerId = peerId;
   }
 
+  set peerName(String peerName) {
+    this._peerName = peerName;
+  }
+
   set peerAvatar(String peerAvatar) {
     this._peerAvatar = peerAvatar;
   }
 
-  get senderId => this._senderId;
+  get senderId => _senderId;
 
-  get peerId => this._peerId;
+  get peerId => _peerId;
 
-  get peerAvatar => this._peerAvatar;
+  get peerAvatar => _peerAvatar;
+
+  TextEditingController get textController => textEditingController;
 }
