@@ -66,9 +66,18 @@ class ChatViewModel {
     }
   }
 
-  Stream<QuerySnapshot> loadUsers() {
+  Stream<QuerySnapshot> loadActiveChats() {
     try {
       return _firestoreService.getActiveChatsFromDB(senderId);
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Stream<QuerySnapshot> loadPendingChats() {
+    try {
+      return _firestoreService.getPendingChatsFromDB(senderId);
     } catch (e) {
       print(e);
       return null;
@@ -85,8 +94,17 @@ class ChatViewModel {
     return true;
   }
 
+  Future<void> acceptPendingChat() async {
+    await _firestoreService.upgradePendingToActiveChatIntoDB(senderId, peerId);
+  }
+
+  Future<void> denyPendingChat() async {
+    await _firestoreService.removePendingChatFromDB(senderId, peerId);
+    await _firestoreService.removeMessagesFromDB(computeGroupChatId());
+  }
+
   Future<void> deleteChat() async {
-    await _firestoreService.removeChatFromDB(senderId, peerId);
+    await _firestoreService.removeActiveChatFromDB(senderId, peerId);
   }
 
   String computeGroupChatId() {

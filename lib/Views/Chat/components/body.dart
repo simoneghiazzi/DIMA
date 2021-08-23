@@ -7,20 +7,29 @@ import 'package:flutter/material.dart';
 class Body extends StatefulWidget {
   final ChatViewModel chatViewModel;
   final bool newUser;
+  final bool pendingChat;
 
-  Body({Key key, @required this.chatViewModel, @required this.newUser})
+  Body(
+      {Key key,
+      @required this.chatViewModel,
+      @required this.newUser,
+      @required this.pendingChat})
       : super(key: key);
 
   @override
-  _BodyState createState() =>
-      _BodyState(chatViewModel: chatViewModel, newUser: newUser);
+  _BodyState createState() => _BodyState(
+      chatViewModel: chatViewModel, newUser: newUser, pendingChat: pendingChat);
 }
 
 class _BodyState extends State<Body> with WidgetsBindingObserver {
-  _BodyState({@required this.chatViewModel, @required this.newUser});
+  _BodyState(
+      {@required this.chatViewModel,
+      @required this.newUser,
+      @required this.pendingChat});
 
   final ChatViewModel chatViewModel;
   bool newUser;
+  bool pendingChat;
   bool firstChat = false;
   bool firstMessageSent = true;
   bool enableInput = true;
@@ -48,7 +57,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
                   // List of messages
                   : buildListMessages(),
               // Input content
-              buildInput(),
+              pendingChat ? buildAccept() : buildInput(),
             ],
           ),
         ],
@@ -221,6 +230,51 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
                     }
                   },
                   color: kPrimaryColor,
+                ),
+              ),
+              color: Colors.white,
+            ),
+          ],
+        ),
+        width: double.infinity,
+        height: 50.0,
+        decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: lightGreyColor, width: 0.5)),
+            color: Colors.white),
+      )
+    ]);
+  }
+
+  Widget buildAccept() {
+    return Stack(alignment: Alignment.bottomCenter, children: [
+      Container(
+        child: Row(
+          children: <Widget>[
+            // Button accept
+            Material(
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 8.0),
+                child: IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    chatViewModel.acceptPendingChat();
+                  },
+                  color: Colors.green,
+                ),
+              ),
+              color: Colors.white,
+            ),
+            // Button deny
+            Material(
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 8.0),
+                child: IconButton(
+                  icon: Icon(Icons.remove),
+                  onPressed: () {
+                    chatViewModel.denyPendingChat();
+                    Navigator.pop(context);
+                  },
+                  color: Colors.red,
                 ),
               ),
               color: Colors.white,
