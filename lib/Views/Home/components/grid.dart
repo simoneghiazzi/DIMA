@@ -27,10 +27,79 @@ class _GridState extends State<Grid> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Center(
       child: Container(
-        padding: EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 90),
-        child: GridView.count(
+          padding: EdgeInsets.only(left: 20, right: 20),
+          child: Table(
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            defaultColumnWidth: FlexColumnWidth(15.0),
+            children: <TableRow>[
+              TableRow(children: <Widget>[
+                DashCard(
+                  imagePath: "assets/icons/psychologist.png",
+                  text: "Experts chats",
+                  press: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ChatExperts(chatViewModel: chatViewModel);
+                        },
+                      ),
+                    );
+                  },
+                ),
+                DashCard(
+                  imagePath: "assets/icons/anonymous.png",
+                  text: "Anonymous chats",
+                  press: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ActiveChatAnonymous(
+                              chatViewModel: chatViewModel);
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ]),
+              TableRow(children: <Widget>[
+                DashCard(
+                  imagePath: "assets/icons/map.png",
+                  text: "Find an expert",
+                  press: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return MapScreen();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                DashCard(
+                  imagePath: "assets/icons/report.png",
+                  text: "Anonymous reports",
+                  press: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ReportScreen(
+                            authViewModel: widget.authViewModel,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ])
+            ],
+          )
+          /*GridView.count(
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
           crossAxisCount: 2,
@@ -95,8 +164,8 @@ class _GridState extends State<Grid> {
               },
             ),
           ],
-        ),
-      ),
+        ),*/
+          ),
     );
   }
 }

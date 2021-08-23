@@ -10,6 +10,7 @@ import 'package:flutter/services.dart' show rootBundle;
 
 class Body extends StatefulWidget {
   final MapViewModel mapViewModel;
+  GoogleMapController controller;
 
   Body({Key key, @required this.mapViewModel}) : super(key: key);
 
@@ -57,51 +58,80 @@ class _BodyState extends State<Body> {
               builder: (context, snapshot) {
                 return snapshot.data == null
                     ? Center(child: CircularProgressIndicator())
-                    : FutureBuilder(
-                        future: widget.mapViewModel.getMarkers(pinLocationIcon),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<Set<Marker>> snap) {
-                          if (!snap.hasData) {
-                            return GoogleMap(
-                              mapType: MapType.normal,
-                              initialCameraPosition: CameraPosition(
-                                target: LatLng(snapshot.data.latitude,
-                                    snapshot.data.longitude),
-                                zoom: 16,
-                              ),
-                              compassEnabled: false,
-                              mapToolbarEnabled: false,
-                              myLocationButtonEnabled: false,
-                              myLocationEnabled: true,
-                              zoomControlsEnabled: false,
-                              onMapCreated: (GoogleMapController controller) {
-                                widget.mapViewModel.mapController
-                                    .complete(controller);
-                                removeMarkers();
+                    : Stack(
+                        children: [
+                          FutureBuilder(
+                              future: widget.mapViewModel
+                                  .getMarkers(pinLocationIcon),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<Set<Marker>> snap) {
+                                if (!snap.hasData) {
+                                  return GoogleMap(
+                                    mapType: MapType.normal,
+                                    initialCameraPosition: CameraPosition(
+                                      target: LatLng(snapshot.data.latitude,
+                                          snapshot.data.longitude),
+                                      zoom: 16,
+                                    ),
+                                    compassEnabled: true,
+                                    mapToolbarEnabled: false,
+                                    myLocationButtonEnabled: false,
+                                    myLocationEnabled: true,
+                                    zoomControlsEnabled: false,
+                                    onMapCreated:
+                                        (GoogleMapController controller) {
+                                      widget.mapViewModel.mapController
+                                          .complete(controller);
+                                      removeMarkers();
+                                      widget.controller = controller;
+                                    },
+                                  );
+                                } else {
+                                  return GoogleMap(
+                                    mapType: MapType.normal,
+                                    initialCameraPosition: CameraPosition(
+                                      target: LatLng(snapshot.data.latitude,
+                                          snapshot.data.longitude),
+                                      zoom: 16,
+                                    ),
+                                    compassEnabled: true,
+                                    mapToolbarEnabled: false,
+                                    markers: snap.data,
+                                    myLocationButtonEnabled: false,
+                                    myLocationEnabled: true,
+                                    zoomControlsEnabled: false,
+                                    onMapCreated:
+                                        (GoogleMapController controller) {
+                                      widget.mapViewModel.mapController
+                                          .complete(controller);
+                                      removeMarkers();
+                                      widget.controller = controller;
+                                    },
+                                  );
+                                }
+                              }),
+                          Positioned(
+                            bottom: 40,
+                            right: 20,
+                            child: FloatingActionButton(
+                              mini: true,
+                              onPressed: () {
+                                widget.controller.animateCamera(
+                                    CameraUpdate.newCameraPosition(
+                                        CameraPosition(
+                                  target: LatLng(snapshot.data.latitude,
+                                      snapshot.data.longitude),
+                                  zoom: 16,
+                                )));
                               },
-                            );
-                          } else {
-                            return GoogleMap(
-                              mapType: MapType.normal,
-                              initialCameraPosition: CameraPosition(
-                                target: LatLng(snapshot.data.latitude,
-                                    snapshot.data.longitude),
-                                zoom: 16,
-                              ),
-                              compassEnabled: false,
-                              mapToolbarEnabled: false,
-                              markers: snap.data,
-                              myLocationButtonEnabled: false,
-                              myLocationEnabled: true,
-                              zoomControlsEnabled: false,
-                              onMapCreated: (GoogleMapController controller) {
-                                widget.mapViewModel.mapController
-                                    .complete(controller);
-                                removeMarkers();
-                              },
-                            );
-                          }
-                        });
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.padded,
+                              backgroundColor: Colors.white10,
+                              child: const Icon(Icons.my_location, size: 40.0),
+                            ),
+                          ),
+                        ],
+                      );
               })),
       Positioned(
           top: 60,
@@ -109,9 +139,16 @@ class _BodyState extends State<Body> {
           left: 15,
           child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25.0),
-              ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 4,
+                      blurRadius: 6,
+                      offset: Offset(0, 3),
+                    )
+                  ]),
               child: Row(children: <Widget>[
                 IconButton(
                   splashColor: Colors.grey,
