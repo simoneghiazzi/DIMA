@@ -58,7 +58,8 @@ class _GridState extends State<Grid> {
                       context,
                       MaterialPageRoute(
                         builder: (context) {
-                          return ChatAnonymous(chatViewModel: chatViewModel);
+                          return ActiveChatAnonymous(
+                              chatViewModel: chatViewModel);
                         },
                       ),
                     );
