@@ -6,13 +6,12 @@ import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/Experts/Mail/signup_experts_mail_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/Experts/signup_experts_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_acheck.dart';
+import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-
-import '../../../../constants.dart';
 
 class InfoExperts extends StatelessWidget {
   final AuthViewModel authViewModel;

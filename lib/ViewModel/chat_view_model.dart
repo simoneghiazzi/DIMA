@@ -27,6 +27,13 @@ class ChatViewModel {
         .then((_) => textEditingController.clear());
   }
 
+  void sendMessageToExpert() async {
+    await _firestoreService
+        .addMessageToExpertIntoDB(computeGroupChatId(), _senderId, _peerId,
+            textEditingController.text)
+        .then((_) => textEditingController.clear());
+  }
+
   bool isLastMessageLeft(int index) {
     if ((index > 0 && _listMessages[index - 1].get('idFrom') == _senderId) ||
         index == 0) {
@@ -46,8 +53,13 @@ class ChatViewModel {
   }
 
   void resetChat() async {
-    await _firestoreService.updateUserFieldIntoDB(
-        _senderId, 'chattingWith', null);
+    try {
+      await _firestoreService.updateUserFieldIntoDB(
+          _senderId, 'chattingWith', null);
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 
   Stream<QuerySnapshot> loadMessages() {
@@ -66,7 +78,7 @@ class ChatViewModel {
 
   Future<List> loadActiveChats() async {
     try {
-      return await _firestoreService.getChatsFromDB(
+      return await _firestoreService.getAnonymousChatsFromDB(
           senderId, _firestoreService.activeChatCollection);
     } catch (e) {
       print(e);
@@ -76,7 +88,7 @@ class ChatViewModel {
 
   Future<List> loadPendingChats() async {
     try {
-      return await _firestoreService.getChatsFromDB(
+      return await _firestoreService.getAnonymousChatsFromDB(
           senderId, _firestoreService.pendingChatCollection);
     } catch (e) {
       print(e);
@@ -86,7 +98,7 @@ class ChatViewModel {
 
   Future<List> loadExpertChats() async {
     try {
-      return await _firestoreService.getChatsFromDB(
+      return await _firestoreService.getExpertChatsFromDB(
           senderId, _firestoreService.expertChatCollection);
     } catch (e) {
       print(e);
@@ -99,8 +111,17 @@ class ChatViewModel {
         senderId, randomId.generate());
     if (randomUser == null) return false;
     peerId = randomUser['uid'];
-    _firestoreService.addChatIntoDB(senderId, peerId);
+    _firestoreService.addAnonymousChatIntoDB(senderId, peerId);
     return true;
+  }
+
+  Future<void> addNewExpertChat() async {
+    try {
+      await _firestoreService.addExpertChatIntoDB(senderId, peerId);
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 
   Future<void> acceptPendingChat() async {

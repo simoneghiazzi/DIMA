@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/user_chat.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/chat_page.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/Anonymous/PendingChatsList/pending_chatlist_anonymous.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/Anonymous/ChatPage/anonymous_chat.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 
@@ -43,9 +44,89 @@ class _BodyState extends State<Body> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      "Requests",
+                      "Anon",
                       style:
                           TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    ),
+                    InkWell(
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            left: 8, right: 8, top: 2, bottom: 2),
+                        height: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.lightBlue[200],
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.archive,
+                              color: Colors.indigo[500],
+                              size: 20,
+                            ),
+                            SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              "Requests",
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PendingChatAnonymous(
+                                  chatViewModel: chatViewModel)),
+                        ).then((value) {
+                          setState(() {});
+                        });
+                      },
+                    ),
+                    InkWell(
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            left: 8, right: 8, top: 2, bottom: 2),
+                        height: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.lightBlue[200],
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.add,
+                              color: Colors.indigo[500],
+                              size: 20,
+                            ),
+                            SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              "Add New",
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AnonymousChat(
+                              chatViewModel: chatViewModel,
+                              newUser: true,
+                              pendingChat: false,
+                            ),
+                          ),
+                        ).then((value) {
+                          setState(() {});
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -74,7 +155,7 @@ class _BodyState extends State<Body> {
                   // List
                   Container(
                     child: FutureBuilder(
-                      future: chatViewModel.loadPendingChats(),
+                      future: chatViewModel.loadActiveChats(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return ListView.builder(
@@ -87,7 +168,7 @@ class _BodyState extends State<Body> {
                           );
                         } else {
                           return LoadingDialog(
-                              text: 'Loading pending requests...');
+                              text: 'Loading anonymous chats...');
                         }
                       },
                     ),
@@ -179,10 +260,10 @@ class _BodyState extends State<Body> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChatPage(
+                  builder: (context) => AnonymousChat(
                     chatViewModel: chatViewModel,
                     newUser: false,
-                    pendingChat: true,
+                    pendingChat: false,
                   ),
                 ),
               ).then((value) => setState(() {}));

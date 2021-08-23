@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/Experts/ChatPage/experts_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/map_view_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,9 +13,11 @@ import 'package:flutter/services.dart' show rootBundle;
 
 class Body extends StatefulWidget {
   final MapViewModel mapViewModel;
+  final ChatViewModel chatViewModel;
   GoogleMapController controller;
 
-  Body({Key key, @required this.mapViewModel}) : super(key: key);
+  Body({Key key, @required this.mapViewModel, @required this.chatViewModel})
+      : super(key: key);
 
   @override
   _BodyState createState() => _BodyState();
@@ -66,8 +70,7 @@ class _BodyState extends State<Body> {
                     : Stack(
                         children: [
                           FutureBuilder(
-                              future: widget.mapViewModel
-                                  .getMarkers(pinLocationIcon),
+                              future: widget.mapViewModel.getMarkers(),
                               builder: (BuildContext context,
                                   AsyncSnapshot<List<QueryDocumentSnapshot>>
                                       snap) {
@@ -105,6 +108,21 @@ class _BodyState extends State<Body> {
                                               LatLng(data['lat'], data['lng']),
                                           icon: pinLocationIcon,
                                           infoWindow: InfoWindow(
+                                              onTap: () {
+                                                widget.chatViewModel.peerId =
+                                                    data['eid'];
+                                                widget.chatViewModel
+                                                    .addNewExpertChat();
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ExpertsChat(
+                                                            chatViewModel: widget
+                                                                .chatViewModel),
+                                                  ),
+                                                );
+                                              },
                                               title: data['surname'] +
                                                   " " +
                                                   data['name'] +

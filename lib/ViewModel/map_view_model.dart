@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
+import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/place_service.dart';
@@ -9,6 +10,7 @@ import 'package:dima_colombo_ghiazzi/Model/Services/place_service.dart';
 class MapViewModel {
   var _position = StreamController<Position>.broadcast();
   Completer<GoogleMapController> mapController = Completer();
+  FirestoreService _firestoreService = FirestoreService();
 
   var _placesSearch = StreamController<List<PlaceSearch>>.broadcast();
   final placesSearch = PlaceService();
@@ -66,11 +68,13 @@ class MapViewModel {
   }
 
   //Create all the experts' markers
-  Future<List<QueryDocumentSnapshot>> getMarkers(
-      BitmapDescriptor pinLocationIcon) async {
-    QuerySnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance.collection('experts').get();
-    return snapshot.docs;
+  Future<List<QueryDocumentSnapshot>> getMarkers() async {
+    try {
+      return (await _firestoreService.getExpertsFromDB()).docs;
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 
   Stream<Position> get position => _position.stream;
