@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima_colombo_ghiazzi/Model/Chat/user_chat.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/report_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/Anonymous/PendingChats/pending_chatlist_anonymous.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/chat_page.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 
