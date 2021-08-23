@@ -10,12 +10,15 @@ class HomeBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Container(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Header(
             authViewModel: authViewModel,
           ),
+          SizedBox(height: size.height * 0.1),
           Grid(
             authViewModel: authViewModel,
           ),
