@@ -52,7 +52,8 @@ class AuthViewModel {
           surname,
           birthDate);
       await _auth.sendEmailVerification();
-      setLoggedIn();
+      _authMessage.add("");
+      _isUserCreated.add(true);
     } catch (e) {
       _isUserCreated.add(false);
       if (e.code == 'email-already-in-use')
