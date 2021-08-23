@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../constants.dart';
+
 class DashCard extends StatelessWidget {
   final String imagePath;
   final String text;
@@ -21,11 +23,21 @@ class DashCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
+              SizedBox(height: size.height * 0.04),
               Image.asset(
                 imagePath,
                 height: size.height * 0.15,
               ),
-              Text(text)
+              SizedBox(height: size.height * 0.02),
+              Text(
+                text,
+                style: TextStyle(
+                  color: kPrimaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+              SizedBox(height: size.height * 0.04),
             ],
           ),
         ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
+import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -26,9 +27,15 @@ class _HeaderState extends State<Header> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      ListTile(
-        contentPadding: EdgeInsets.only(left: 20, right: 20, top: 100),
+    return Container(
+      padding: EdgeInsets.only(bottom: 20),
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomRight,
+              colors: [Colors.indigo[400], Colors.cyan[200]])),
+      child: ListTile(
+        contentPadding: EdgeInsets.only(left: 20, right: 20, top: 60),
         title: Text(
           'Homepage',
           style: TextStyle(color: Colors.white, fontSize: 32),
@@ -36,15 +43,15 @@ class _HeaderState extends State<Header> {
         trailing: InkWell(
           child: CircleAvatar(
               radius: 50,
-              backgroundColor: Colors.deepPurple[500],
+              backgroundColor: kPrimaryColor,
               child: Text(
                 "${widget.authViewModel.loggedUser.name[0]}",
                 style: TextStyle(color: Colors.white, fontSize: 30),
               )),
           onTap: () => _onAccountPressed(context),
         ),
-      )
-    ]);
+      ),
+    );
   }
 
   StreamSubscription<bool> subscribeToViewModel() {
