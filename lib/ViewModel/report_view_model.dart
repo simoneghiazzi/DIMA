@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 
 class ReportViewModel extends FormBloc<String, String> {
+  FirestoreService _firestoreService = FirestoreService();
   final String loggedId;
-  //The collection of users in the firestore DB
-  final CollectionReference reports =
-      FirebaseFirestore.instance.collection('reports');
 
   final reportCategory = SelectFieldBloc(items: [
     'Psychological violence',
@@ -27,14 +26,19 @@ class ReportViewModel extends FormBloc<String, String> {
 
   @override
   void onSubmitting() async {
-    reports
-        .add({
-          'uid': loggedId,
-          'category': reportCategory.value,
-          'description': reportText.value,
-          'date': DateTime.now()
-        })
+    _firestoreService
+        .addReportIntoDB(loggedId, reportCategory.value, reportText.value)
         .then((value) => emitSuccess(canSubmitAgain: true))
         .catchError((error) => emitFailure());
+  }
+
+  // Get all the reports of a user from the DB
+  Stream<QuerySnapshot> loadReports() {
+    try {
+      return _firestoreService.getReportsFromDB(loggedId);
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 }

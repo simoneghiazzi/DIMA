@@ -1,93 +1,198 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/user_chat.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/report_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/Anonymous/PendingChats/pending_chatlist_anonymous.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/chat_page.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 
-class ReportsListPage extends StatelessWidget {
-  final AuthViewModel authViewModel;
+class ReportListPage extends StatefulWidget {
   final ReportViewModel reportViewModel;
 
-  ReportsListPage(
-      {Key key, @required this.authViewModel, @required this.reportViewModel})
-      : super(key: key);
+  ReportListPage({Key key, @required this.reportViewModel}) : super(key: key);
+
+  @override
+  _BodyState createState() => _BodyState(reportViewModel: reportViewModel);
+}
+
+class _BodyState extends State<ReportListPage> {
+  _BodyState({@required this.reportViewModel});
+
+  final ReportViewModel reportViewModel;
+  final ScrollController listScrollController = ScrollController();
+  bool isLoading = false;
+  int _limitIncrement = 20;
+
+  @override
+  void initState() {
+    super.initState();
+    listScrollController.addListener(scrollListener);
+  }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return Theme(
-        data: Theme.of(context).copyWith(
-          primaryColor: Colors.indigo[400],
-          inputDecorationTheme: InputDecorationTheme(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(25),
-            ),
-          ),
-        ),
-        child: Scaffold(
-            body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.only(right: 16, top: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          IconButton(
-                            splashColor: Colors.grey,
-                            icon: Icon(Icons.arrow_back),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                          Text(
-                            "Reports list",
-                            style: TextStyle(
-                                fontSize: 32, fontWeight: FontWeight.bold),
-                          )
-                        ],
-                      ),
-                      InkWell(
-                        child: Container(
-                          padding: EdgeInsets.only(
-                              left: 8, right: 8, top: 2, bottom: 2),
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.lightBlue[200],
-                          ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.add,
-                                color: Colors.indigo[500],
-                                size: 20,
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                "New",
-                                style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
+    return Scaffold(
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(left: 16, right: 16, top: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "Reports",
+                      style:
+                          TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    ),
+                    InkWell(
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            left: 8, right: 8, top: 2, bottom: 2),
+                        height: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.lightBlue[200],
                         ),
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.add,
+                              color: Colors.indigo[500],
+                              size: 20,
+                            ),
+                            SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              "Add New",
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+              child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(25.0),
+                  ),
+                  child: Row(children: <Widget>[
+                    IconButton(
+                      splashColor: Colors.grey,
+                      icon: Icon(Icons.arrow_back),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ])),
+            ),
+            Container(
+              child: Stack(
+                children: <Widget>[
+                  // List
+                  Container(
+                    child: StreamBuilder(
+                      stream: reportViewModel.loadReports(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            padding: EdgeInsets.all(10.0),
+                            itemBuilder: (context, index) =>
+                                buildItem(context, snapshot.data?.docs[index]),
+                            itemCount: snapshot.data.docs.length,
+                            controller: listScrollController,
+                            shrinkWrap: true,
+                          );
+                        } else {
+                          return LoadingDialog(text: 'Loading reports...');
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildItem(BuildContext context, DocumentSnapshot doc) {
+    // This size provide us total height and width of our screen
+    Size size = MediaQuery.of(context).size;
+    if (doc != null) {
+      return Container(
+        child: TextButton(
+          child: Row(
+            children: <Widget>[
+              Material(
+                child: Image.asset(
+                  "assets/icons/logo.png",
+                  height: size.height * 0.08,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                clipBehavior: Clip.hardEdge,
+              ),
+              Flexible(
+                child: Container(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        child: Text(
+                          doc.get('date'),
+                          maxLines: 1,
+                          style: TextStyle(color: Color(0xff203152)),
+                        ),
+                        alignment: Alignment.centerLeft,
+                        margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
                       ),
                     ],
                   ),
+                  margin: EdgeInsets.only(left: 20.0),
                 ),
               ),
             ],
           ),
-        )));
+          onPressed: () {},
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all<Color>(Color(0xffE8E8E8)),
+            shape: MaterialStateProperty.all<OutlinedBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+            ),
+          ),
+        ),
+        margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
+      );
+    } else {
+      return SizedBox.shrink();
+    }
+  }
+
+  void scrollListener() {
+    if (listScrollController.offset >=
+            listScrollController.position.maxScrollExtent &&
+        !listScrollController.position.outOfRange) {
+      setState(() {
+        _limitIncrement += _limitIncrement;
+      });
+    }
   }
 }

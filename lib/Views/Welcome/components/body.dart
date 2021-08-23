@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'or_divider.dart';
 import 'social_icon.dart';

@@ -7,6 +7,9 @@ class FirestoreService {
   // The collection of experts in the firestore DB
   CollectionReference experts =
       FirebaseFirestore.instance.collection('experts');
+  //The collection of users in the firestore DB
+  final CollectionReference reports =
+      FirebaseFirestore.instance.collection('reports');
 
   int _limit = 20;
 
@@ -333,5 +336,25 @@ class FirestoreService {
   Future<void> updateUserFieldIntoDB(
       String id, String fieldName, String field) async {
     await users.doc(id).update({fieldName: field});
+  }
+
+  // Add a new report into the DB
+  Future<void> addReportIntoDB(
+      String id, String category, String description) async {
+    await reports.doc(id).collection('reportsList').doc().set({
+      'uid': id,
+      'category': category,
+      'description': description,
+      'date': DateTime.now().toString()
+    });
+  }
+
+  // Get all the reports of a user from the DB
+  Stream<QuerySnapshot> getReportsFromDB(String id) {
+    return reports
+        .doc(id)
+        .collection('reportsList')
+        .orderBy('date', descending: true)
+        .snapshots();
   }
 }

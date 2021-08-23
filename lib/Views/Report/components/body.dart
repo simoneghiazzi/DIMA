@@ -17,7 +17,8 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return BlocProvider(
-      create: (context) => ReportViewModel(loggedId: authViewModel.loggedUser.uid),
+      create: (context) =>
+          ReportViewModel(loggedId: authViewModel.loggedUser.uid),
       child: Builder(
         builder: (context) {
           final formBloc = BlocProvider.of<ReportViewModel>(context);
@@ -93,8 +94,7 @@ class Body extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      return ReportsListPage(
-                                          authViewModel: authViewModel,
+                                      return ReportListPage(
                                           reportViewModel: formBloc);
                                     },
                                   ),
