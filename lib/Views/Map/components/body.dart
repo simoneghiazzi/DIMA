@@ -23,6 +23,8 @@ class _BodyState extends State<Body> {
   Position userLocation;
   StreamSubscription<Place> subscriber;
 
+  TextEditingController txt = TextEditingController();
+
   //For setting the map style as specified in assets/map_style.txt
   String _mapStyle;
 
@@ -162,9 +164,9 @@ class _BodyState extends State<Body> {
                     cursorColor: Colors.black,
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.go,
+                    controller: txt,
                     decoration: InputDecoration(
                         border: InputBorder.none,
-                        //contentPadding: EdgeInsets.symmetric(horizontal: 15),
                         hintText: "Search place",
                         suffixIcon: Icon(Icons.search)),
                     onChanged: (value) =>
@@ -197,6 +199,8 @@ class _BodyState extends State<Body> {
                                       onTap: () {
                                         widget.mapViewModel.setSelectedLocation(
                                             snapshot.data[index].placeId);
+                                        txt.text =
+                                            snapshot.data[index].description;
                                         FocusManager.instance.primaryFocus
                                             ?.unfocus();
                                       });

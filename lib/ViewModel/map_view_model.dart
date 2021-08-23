@@ -15,6 +15,8 @@ class MapViewModel {
 
   var _selectedLocation = StreamController<Place>.broadcast();
 
+  var _searchedPlaceString = StreamController<String>.broadcast();
+
   Place searchedPlace;
 
   MapViewModel() {
@@ -54,6 +56,8 @@ class MapViewModel {
     placesSearch.getPlace(place).then((location) {
       _selectedLocation.add(location);
       searchedPlace = location;
+
+      _searchedPlaceString.add(place);
     });
   }
 
@@ -94,4 +98,5 @@ class MapViewModel {
   Stream<Position> get position => _position.stream;
   Stream<List<PlaceSearch>> get places => _placesSearch.stream;
   Stream<Place> get location => _selectedLocation.stream;
+  Stream<String> get searched => _searchedPlaceString.stream;
 }

@@ -4,6 +4,7 @@ import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/report_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/components/reports_list.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/report_screen.dart';
+import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -24,7 +25,7 @@ class Body extends StatelessWidget {
           final formBloc = BlocProvider.of<ReportViewModel>(context);
           return Theme(
               data: Theme.of(context).copyWith(
-                primaryColor: Colors.indigo[400],
+                primaryColor: kPrimaryColor,
                 inputDecorationTheme: InputDecorationTheme(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(25),
@@ -68,13 +69,13 @@ class Body extends StatelessWidget {
                                 height: 30,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(30),
-                                  color: Colors.lightBlue[200],
+                                  color: kPrimaryLightColor,
                                 ),
                                 child: Row(
                                   children: <Widget>[
                                     Icon(
                                       Icons.book,
-                                      color: Colors.indigo[500],
+                                      color: kPrimaryColor,
                                       size: 20,
                                     ),
                                     SizedBox(
@@ -83,6 +84,7 @@ class Body extends StatelessWidget {
                                     Text(
                                       "List",
                                       style: TextStyle(
+                                          color: kPrimaryColor,
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -147,9 +149,17 @@ class Body extends StatelessWidget {
                                 onPressed: () {
                                   formBloc.submit();
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.indigoAccent[400],
-                                ),
+                                style: ButtonStyle(
+                                    fixedSize: MaterialStateProperty.all<Size>(
+                                        Size(size.width / 2, size.height / 20)),
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            kPrimaryColor),
+                                    shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(29)))),
                                 child: Text('SUBMIT'),
                               )
                             ],

@@ -3,6 +3,8 @@ import 'package:dima_colombo_ghiazzi/ViewModel/report_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 
+import '../../../constants.dart';
+
 class ReportListPage extends StatefulWidget {
   final ReportViewModel reportViewModel;
 
@@ -28,6 +30,7 @@ class _BodyState extends State<ReportListPage> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -40,10 +43,22 @@ class _BodyState extends State<ReportListPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(
-                      "Reports",
-                      style:
-                          TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        IconButton(
+                          splashColor: Colors.grey,
+                          icon: Icon(Icons.arrow_back),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        Text(
+                          "Reports",
+                          style: TextStyle(
+                              fontSize: 32, fontWeight: FontWeight.bold),
+                        )
+                      ],
                     ),
                     InkWell(
                       child: Container(
@@ -52,13 +67,13 @@ class _BodyState extends State<ReportListPage> {
                         height: 30,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
-                          color: Colors.lightBlue[200],
+                          color: kPrimaryLightColor,
                         ),
                         child: Row(
                           children: <Widget>[
                             Icon(
                               Icons.add,
-                              color: Colors.indigo[500],
+                              color: kPrimaryColor,
                               size: 20,
                             ),
                             SizedBox(
@@ -67,7 +82,9 @@ class _BodyState extends State<ReportListPage> {
                             Text(
                               "Add New",
                               style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.bold),
+                                  color: kPrimaryColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -80,23 +97,7 @@ class _BodyState extends State<ReportListPage> {
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-              child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
-                  child: Row(children: <Widget>[
-                    IconButton(
-                      splashColor: Colors.grey,
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ])),
-            ),
+            SizedBox(height: size.height * 0.02),
             Container(
               child: Stack(
                 children: <Widget>[
@@ -137,13 +138,13 @@ class _BodyState extends State<ReportListPage> {
         child: TextButton(
           child: Row(
             children: <Widget>[
-              Material(
+              CircleAvatar(
+                backgroundColor: Colors.transparent,
+                radius: 30.0,
                 child: Image.asset(
                   "assets/icons/logo.png",
-                  height: size.height * 0.08,
+                  height: size.height * 0.05,
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                clipBehavior: Clip.hardEdge,
               ),
               Flexible(
                 child: Container(
