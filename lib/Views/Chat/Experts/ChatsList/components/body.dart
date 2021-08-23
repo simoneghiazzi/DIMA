@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/user_chat.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/Anonymous/PendingChats/pending_chatlist_anonymous.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/chat_page.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/Experts/ChatPage/experts_chat.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:flutter/material.dart';
@@ -81,7 +80,9 @@ class _BodyState extends State<Body> {
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return MapScreen();
+                              return MapScreen(
+                                chatViewModel: chatViewModel,
+                              );
                             },
                           ),
                         ).then((value) {
@@ -221,11 +222,8 @@ class _BodyState extends State<Body> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChatPage(
-                    chatViewModel: chatViewModel,
-                    newUser: false,
-                    pendingChat: false,
-                  ),
+                  builder: (context) =>
+                      ExpertsChat(chatViewModel: chatViewModel),
                 ),
               ).then((value) => setState(() {}));
             },

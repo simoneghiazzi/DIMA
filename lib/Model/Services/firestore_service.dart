@@ -108,6 +108,11 @@ class FirestoreService {
     return null;
   }
 
+// Get all the experts from DB
+  Future<QuerySnapshot> getExpertsFromDB() async {
+    return await FirebaseFirestore.instance.collection('experts').get();
+  }
+
   // Get random user from DB
   Future<Map> getRandomUserFromDB(String senderId, String randomId) async {
     if (await getUsersCountFromDB() - 1 >
@@ -242,7 +247,7 @@ class FirestoreService {
   }
 
   // Add a new chat to the list of active chats of the sender user
-  Future<void> addChatIntoDB(String senderId, String peerId) async {
+  Future<void> addAnonymousChatIntoDB(String senderId, String peerId) async {
     await users
         .doc(senderId)
         .collection(activeChatCollection)
@@ -250,6 +255,16 @@ class FirestoreService {
         .set({});
     await _incrementChatsCountIntoDB(senderId);
     await addPendingChatIntoDB(senderId, peerId);
+  }
+
+  // Add a new chat to the list of active chats of the sender user
+  Future<void> addExpertChatIntoDB(String senderId, String peerId) async {
+    await users
+        .doc(senderId)
+        .collection(expertChatCollection)
+        .doc(peerId)
+        .set({});
+    await experts.doc(peerId).collection('chats').doc(senderId).set({});
   }
 
   Future<void> addPendingChatIntoDB(String senderId, String peerId) async {
@@ -344,18 +359,34 @@ class FirestoreService {
   }
 
   // Get the active user chats or the pending user chats for a specific user from the DB
-  Future<List> getChatsFromDB(String senderId, String collection) async {
+  Future<List> getAnonymousChatsFromDB(
+      String senderId, String collection) async {
     var ids = await _getChatIds(senderId, collection);
     List<List<String>> subList = [];
-    List activeChats = [];
+    List chats = [];
     for (var i = 0; i < ids.length; i += 10) {
       subList.add(ids.sublist(i, i + 10 > ids.length ? ids.length : i + 10));
     }
     await Future.forEach(subList, (elem) async {
-      activeChats.addAll((await users.where('uid', whereIn: elem).get()).docs);
+      chats.addAll((await users.where('uid', whereIn: elem).get()).docs);
     });
-    activeChats.sort((a, b) => ids.indexOf(b.id).compareTo(ids.indexOf(a.id)));
-    return activeChats;
+    chats.sort((a, b) => ids.indexOf(b.id).compareTo(ids.indexOf(a.id)));
+    return chats;
+  }
+
+  // Get the chats with the experts for a specific user from the DB
+  Future<List> getExpertChatsFromDB(String senderId, String collection) async {
+    var ids = await _getChatIds(senderId, collection);
+    List<List<String>> subList = [];
+    List chats = [];
+    for (var i = 0; i < ids.length; i += 10) {
+      subList.add(ids.sublist(i, i + 10 > ids.length ? ids.length : i + 10));
+    }
+    await Future.forEach(subList, (elem) async {
+      chats.addAll((await experts.where('eid', whereIn: elem).get()).docs);
+    });
+    chats.sort((a, b) => ids.indexOf(b.id).compareTo(ids.indexOf(a.id)));
+    return chats;
   }
 
   // Increment the count of the instances of users into the DB
