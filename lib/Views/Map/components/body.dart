@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,8 @@ class _BodyState extends State<Body> {
   //StreamSubscription<Position> subscriber;
   Position userLocation;
   StreamSubscription<Place> subscriber;
+
+  Set<Marker> _markers = Set<Marker>();
 
   TextEditingController txt = TextEditingController();
 
@@ -66,7 +69,8 @@ class _BodyState extends State<Body> {
                               future: widget.mapViewModel
                                   .getMarkers(pinLocationIcon),
                               builder: (BuildContext context,
-                                  AsyncSnapshot<Set<Marker>> snap) {
+                                  AsyncSnapshot<List<QueryDocumentSnapshot>>
+                                      snap) {
                                 if (!snap.hasData) {
                                   return GoogleMap(
                                     mapType: MapType.normal,
@@ -89,6 +93,27 @@ class _BodyState extends State<Body> {
                                     },
                                   );
                                 } else {
+                                  for (var doc in snap.data) {
+                                    if (doc.data() != null) {
+                                      var data =
+                                          doc.data() as Map<String, dynamic>;
+                                      _markers.add(Marker(
+                                          markerId: MarkerId(data['surname'] +
+                                              data['lat'].toString() +
+                                              data['lng'].toString()),
+                                          position:
+                                              LatLng(data['lat'], data['lng']),
+                                          icon: pinLocationIcon,
+                                          infoWindow: InfoWindow(
+                                              title: data['surname'] +
+                                                  " " +
+                                                  data['name'] +
+                                                  " (" +
+                                                  data['phoneNumber'] +
+                                                  ")",
+                                              snippet: data['email'])));
+                                    }
+                                  }
                                   return GoogleMap(
                                     mapType: MapType.normal,
                                     initialCameraPosition: CameraPosition(
@@ -98,7 +123,7 @@ class _BodyState extends State<Body> {
                                     ),
                                     compassEnabled: true,
                                     mapToolbarEnabled: false,
-                                    markers: snap.data,
+                                    markers: _markers,
                                     myLocationButtonEnabled: false,
                                     myLocationEnabled: true,
                                     zoomControlsEnabled: false,

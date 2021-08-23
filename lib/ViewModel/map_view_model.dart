@@ -66,33 +66,11 @@ class MapViewModel {
   }
 
   //Create all the experts' markers
-  Future<Set<Marker>> getMarkers(BitmapDescriptor pinLocationIcon) async {
-    Set<Marker> _markers = {};
-
+  Future<List<QueryDocumentSnapshot>> getMarkers(
+      BitmapDescriptor pinLocationIcon) async {
     QuerySnapshot<Map<String, dynamic>> snapshot =
         await FirebaseFirestore.instance.collection('experts').get();
-
-    List<QueryDocumentSnapshot> docs = snapshot.docs;
-    for (var doc in docs) {
-      if (doc.data() != null) {
-        var data = doc.data() as Map<String, dynamic>;
-        _markers.add(Marker(
-            markerId: MarkerId(data['surname'] +
-                data['lat'].toString() +
-                data['lng'].toString()),
-            position: LatLng(data['lat'], data['lng']),
-            icon: pinLocationIcon,
-            infoWindow: InfoWindow(
-                title: data['surname'] +
-                    " " +
-                    data['name'] +
-                    " (" +
-                    data['phoneNumber'] +
-                    ")",
-                snippet: data['email'])));
-      }
-    }
-    return _markers;
+    return snapshot.docs;
   }
 
   Stream<Position> get position => _position.stream;
