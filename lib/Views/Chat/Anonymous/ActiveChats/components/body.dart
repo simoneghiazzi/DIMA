@@ -154,20 +154,21 @@ class _BodyState extends State<Body> {
                 children: <Widget>[
                   // List
                   Container(
-                    child: StreamBuilder(
-                      stream: chatViewModel.loadActiveChats(),
+                    child: FutureBuilder(
+                      future: chatViewModel.loadActiveChats(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return ListView.builder(
                             padding: EdgeInsets.all(10.0),
                             itemBuilder: (context, index) =>
-                                buildItem(context, snapshot.data?.docs[index]),
-                            itemCount: snapshot.data.docs.length,
+                                buildItem(context, snapshot.data[index]),
+                            itemCount: snapshot.data.length,
                             controller: listScrollController,
                             shrinkWrap: true,
                           );
                         } else {
-                          return LoadingDialog(text: 'Loading anonymous chats...');
+                          return LoadingDialog(
+                              text: 'Loading anonymous chats...');
                         }
                       },
                     ),
@@ -256,7 +257,6 @@ class _BodyState extends State<Body> {
             ),
             onPressed: () {
               chatViewModel.peerId = userChat.id;
-              chatViewModel.peerName = userChat.name;
               Navigator.push(
                 context,
                 MaterialPageRoute(

@@ -7,24 +7,22 @@ import 'package:flutter/material.dart';
 class ChatViewModel {
   FirestoreService _firestoreService = FirestoreService();
   String _senderId;
-  String _senderName;
   String _peerId;
-  String _peerName;
   String _peerAvatar;
   RandomId randomId = new RandomId();
   List<QueryDocumentSnapshot> _listMessages = new List.from([]);
   TextEditingController textEditingController = TextEditingController();
 
-  ChatViewModel(this._senderId, this._senderName);
+  ChatViewModel(this._senderId);
 
   updateChattingWith() async {
     await _firestoreService.updateUserFieldIntoDB(
         _senderId, 'chattingWith', _peerId);
   }
 
-  void sendMessage() async {
+  void sendMessageToUser() async {
     await _firestoreService
-        .addMessageIntoDB(computeGroupChatId(), _senderId, _peerId,
+        .addMessageToUserIntoDB(computeGroupChatId(), _senderId, _peerId,
             textEditingController.text)
         .then((_) => textEditingController.clear());
   }
@@ -66,18 +64,30 @@ class ChatViewModel {
     }
   }
 
-  Stream<QuerySnapshot> loadActiveChats() {
+  Future<List> loadActiveChats() async {
     try {
-      return _firestoreService.getActiveChatsFromDB(senderId);
+      return await _firestoreService.getChatsFromDB(
+          senderId, _firestoreService.activeChatCollection);
     } catch (e) {
       print(e);
       return null;
     }
   }
 
-  Stream<QuerySnapshot> loadPendingChats() {
+  Future<List> loadPendingChats() async {
     try {
-      return _firestoreService.getPendingChatsFromDB(senderId);
+      return await _firestoreService.getChatsFromDB(
+          senderId, _firestoreService.pendingChatCollection);
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<List> loadExpertChats() async {
+    try {
+      return await _firestoreService.getChatsFromDB(
+          senderId, _firestoreService.expertChatCollection);
     } catch (e) {
       print(e);
       return null;
@@ -89,8 +99,7 @@ class ChatViewModel {
         senderId, randomId.generate());
     if (randomUser == null) return false;
     peerId = randomUser['uid'];
-    _peerName = randomUser['name'];
-    _firestoreService.addChatIntoDB(senderId, _senderName, peerId, _peerName);
+    _firestoreService.addChatIntoDB(senderId, peerId);
     return true;
   }
 
@@ -117,10 +126,6 @@ class ChatViewModel {
 
   set peerId(String peerId) {
     this._peerId = peerId;
-  }
-
-  set peerName(String peerName) {
-    this._peerName = peerName;
   }
 
   set peerAvatar(String peerAvatar) {

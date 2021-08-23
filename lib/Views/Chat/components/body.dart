@@ -199,7 +199,6 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
               child: Container(
                 child: TextField(
                   onSubmitted: (value) {
-                    widget.chatViewModel.sendMessage();
                     listScrollController.animateTo(0.0,
                         duration: Duration(milliseconds: 300),
                         curve: Curves.easeOut);
@@ -224,7 +223,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
                   icon: Icon(Icons.send),
                   onPressed: () {
                     if (chatViewModel.textController.text.trim() != '') {
-                      widget.chatViewModel.sendMessage();
+                      widget.chatViewModel.sendMessageToUser();
                       focusNode.requestFocus();
                       firstMessageSent = true;
                     }
