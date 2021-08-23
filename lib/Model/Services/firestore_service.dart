@@ -11,7 +11,11 @@ class FirestoreService {
   final CollectionReference reports =
       FirebaseFirestore.instance.collection('reports');
 
-  int _limit = 20;
+  String activeChatCollection = 'anonymousActiveChats';
+  String pendingChatCollection = 'anonymousPendingChats';
+  String expertChatCollection = 'expertChats';
+
+  int _limit = 30;
 
   // Add a user into the firestore DB
   Future<void> addUserIntoDB(
@@ -36,7 +40,8 @@ class FirestoreService {
       String phoneNumber,
       String email) async {
     await experts
-        .add({
+        .doc(id)
+        .set({
           'eid': id,
           'name': name,
           'surname': surname,
@@ -107,7 +112,10 @@ class FirestoreService {
   Future<Map> getRandomUserFromDB(String senderId, String randomId) async {
     if (await getUsersCountFromDB() - 1 >
         await _getChatsCountFromDB(senderId)) {
-      List<String> ids = await _getChatIds(senderId);
+      List<String> activeIds =
+          await _getChatIds(senderId, activeChatCollection);
+      List<String> pendingIds =
+          await _getChatIds(senderId, pendingChatCollection);
       var snapshot = await users
           .where('uid', isLessThanOrEqualTo: randomId)
           .orderBy('uid', descending: true)
@@ -115,7 +123,9 @@ class FirestoreService {
           .get();
       for (var doc in snapshot.docs) {
         var data = doc.data() as Map<String, dynamic>;
-        if (senderId != data['uid'].toString() && !ids.contains(data['uid'])) {
+        if (senderId != data['uid'].toString() &&
+            !activeIds.contains(data['uid']) &&
+            !pendingIds.contains(data['uid'])) {
           return data;
         }
       }
@@ -126,7 +136,9 @@ class FirestoreService {
           .get();
       for (var doc in snapshot.docs) {
         var data = doc.data() as Map<String, dynamic>;
-        if (senderId != data['uid'].toString() && !ids.contains(data['uid'])) {
+        if (senderId != data['uid'].toString() &&
+            !activeIds.contains(data['uid']) &&
+            !pendingIds.contains(data['uid'])) {
           return data;
         }
       }
@@ -134,10 +146,72 @@ class FirestoreService {
     return null;
   }
 
-  // Add a new message into the DB
-  Future<void> addMessageIntoDB(
+  // Add a new message to an expert user into the DB
+  Future<void> addMessageToExpertIntoDB(
       String groupChatId, String senderId, String peerId, content) async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
+    _addMessageIntoDB(groupChatId, senderId, peerId, content, timestamp);
+    await users
+        .doc(senderId)
+        .collection(expertChatCollection)
+        .doc(peerId)
+        .update({'lastMessage': timestamp});
+    await experts
+        .doc(peerId)
+        .collection('chats')
+        .doc(senderId)
+        .update({'lastMessage': timestamp});
+  }
+
+  // Add a new response message of an expert to the user into the DB
+  Future<void> addExpertResponseIntoDB(
+      String groupChatId, String senderId, String peerId, content) async {
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+    _addMessageIntoDB(groupChatId, senderId, peerId, content, timestamp);
+    await experts
+        .doc(senderId)
+        .collection('chats')
+        .doc(peerId)
+        .update({'lastMessage': timestamp});
+    await users
+        .doc(peerId)
+        .collection(expertChatCollection)
+        .doc(senderId)
+        .update({'lastMessage': timestamp});
+  }
+
+  // Add a new message to an anonymous user into the DB
+  Future<void> addMessageToUserIntoDB(
+      String groupChatId, String senderId, String peerId, content) async {
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+    _addMessageIntoDB(groupChatId, senderId, peerId, content, timestamp);
+    await users
+        .doc(senderId)
+        .collection(activeChatCollection)
+        .doc(peerId)
+        .update({'lastMessage': timestamp});
+    if ((await users
+            .doc(peerId)
+            .collection(activeChatCollection)
+            .doc(senderId)
+            .get())
+        .exists)
+      await users
+          .doc(peerId)
+          .collection(activeChatCollection)
+          .doc(senderId)
+          .update({'lastMessage': timestamp});
+    else
+      await users
+          .doc(peerId)
+          .collection(pendingChatCollection)
+          .doc(senderId)
+          .update({'lastMessage': timestamp});
+  }
+
+  // Add a new message into the DB
+  Future<void> _addMessageIntoDB(String groupChatId, String senderId,
+      String peerId, content, int timestamp) async {
     var documentReference = FirebaseFirestore.instance
         .collection('messages')
         .doc(groupChatId)
@@ -154,24 +228,6 @@ class FirestoreService {
         },
       );
     });
-    await users
-        .doc(senderId)
-        .collection('activeChats')
-        .doc(peerId)
-        .update({'lastMessage': timestamp});
-    if ((await users.doc(peerId).collection('activeChats').doc(senderId).get())
-        .exists)
-      await users
-          .doc(peerId)
-          .collection('activeChats')
-          .doc(senderId)
-          .update({'lastMessage': timestamp});
-    else
-      await users
-          .doc(peerId)
-          .collection('pendingChats')
-          .doc(senderId)
-          .update({'lastMessage': timestamp});
   }
 
   // Get all the messages of a specific pair of users from the DB
@@ -186,33 +242,38 @@ class FirestoreService {
   }
 
   // Add a new chat to the list of active chats of the sender user
-  Future<void> addChatIntoDB(String senderId, String senderName, String peerId,
-      String peerName) async {
+  Future<void> addChatIntoDB(String senderId, String peerId) async {
     await users
         .doc(senderId)
-        .collection('activeChats')
+        .collection(activeChatCollection)
         .doc(peerId)
-        .set({'name': peerName});
+        .set({});
     await _incrementChatsCountIntoDB(senderId);
-    await addPendingChatIntoDB(senderId, senderName, peerId);
+    await addPendingChatIntoDB(senderId, peerId);
   }
 
-  Future<void> addPendingChatIntoDB(
-      String senderId, String senderName, String peerId) async {
+  Future<void> addPendingChatIntoDB(String senderId, String peerId) async {
     await users
         .doc(peerId)
-        .collection('pendingChats')
+        .collection(pendingChatCollection)
         .doc(senderId)
-        .set({'name': senderName});
+        .set({});
     await _incrementChatsCountIntoDB(peerId);
   }
 
   Future<void> upgradePendingToActiveChatIntoDB(
       String senderId, String peerId) async {
-    var pendingChat =
-        await users.doc(senderId).collection('pendingChats').doc(peerId).get();
-    await users.doc(senderId).collection('pendingChats').doc(peerId).delete();
-    await users.doc(senderId).collection('activeChats').doc(peerId).set({
+    var pendingChat = await users
+        .doc(senderId)
+        .collection(pendingChatCollection)
+        .doc(peerId)
+        .get();
+    await users
+        .doc(senderId)
+        .collection(pendingChatCollection)
+        .doc(peerId)
+        .delete();
+    await users.doc(senderId).collection(activeChatCollection).doc(peerId).set({
       'name': pendingChat.data()['name'],
       'lastMessage': pendingChat.data()['lastMessage']
     });
@@ -237,56 +298,64 @@ class FirestoreService {
 
   // Remove a chat to the list of active chats of the sender user
   Future<void> removeActiveChatFromDB(String senderId, String peerId) async {
-    await users.doc(senderId).collection('activeChats').doc(peerId).delete();
+    await users
+        .doc(senderId)
+        .collection(activeChatCollection)
+        .doc(peerId)
+        .delete();
     await _decrementChatsCountIntoDB(senderId);
-    await users.doc(peerId).collection('pendingChats').doc(senderId).delete();
+    await users
+        .doc(peerId)
+        .collection(pendingChatCollection)
+        .doc(senderId)
+        .delete();
     await _decrementChatsCountIntoDB(peerId);
   }
 
   // Remove a chat to the list of active chats of the sender user
   Future<void> removePendingChatFromDB(String senderId, String peerId) async {
-    await users.doc(senderId).collection('pendingChats').doc(peerId).delete();
+    await users
+        .doc(senderId)
+        .collection(pendingChatCollection)
+        .doc(peerId)
+        .delete();
     await _decrementChatsCountIntoDB(senderId);
-    await users.doc(peerId).collection('activeChats').doc(senderId).delete();
+    await users
+        .doc(peerId)
+        .collection(activeChatCollection)
+        .doc(senderId)
+        .delete();
     await _decrementChatsCountIntoDB(peerId);
   }
 
-  Future<List> _getChatIds(String senderId) async {
+  // Get the list of ids of active or pending chats of a user
+  Future<List> _getChatIds(String senderId, String collection) async {
     List<String> ids = new List.from([]);
-    var snap1 =
-        await users.doc(senderId).collection('activeChats').limit(_limit).get();
-    var snap2 = await users
+    var snap = await users
         .doc(senderId)
-        .collection('pendingChats')
+        .collection(collection)
+        .orderBy('lastMessage')
         .limit(_limit)
         .get();
-    for (var doc in snap1.docs) {
-      ids.add(doc.id);
-    }
-    for (var doc in snap2.docs) {
+    for (var doc in snap.docs) {
       ids.add(doc.id);
     }
     return ids;
   }
 
-  // Get all the active user chats for a specific user from the DB
-  Stream<QuerySnapshot> getActiveChatsFromDB(String senderId) {
-    return users
-        .doc(senderId)
-        .collection('activeChats')
-        .orderBy('lastMessage', descending: true)
-        .limit(_limit)
-        .snapshots();
-  }
-
-  // Get all the pendig user chats for a specific user from the DB
-  Stream<QuerySnapshot> getPendingChatsFromDB(String senderId) {
-    return users
-        .doc(senderId)
-        .collection('pendingChats')
-        .orderBy('lastMessage', descending: true)
-        .limit(_limit)
-        .snapshots();
+  // Get the active user chats or the pending user chats for a specific user from the DB
+  Future<List> getChatsFromDB(String senderId, String collection) async {
+    var ids = await _getChatIds(senderId, collection);
+    List<List<String>> subList = [];
+    List activeChats = [];
+    for (var i = 0; i < ids.length; i += 10) {
+      subList.add(ids.sublist(i, i + 10 > ids.length ? ids.length : i + 10));
+    }
+    await Future.forEach(subList, (elem) async {
+      activeChats.addAll((await users.where('uid', whereIn: elem).get()).docs);
+    });
+    activeChats.sort((a, b) => ids.indexOf(b.id).compareTo(ids.indexOf(a.id)));
+    return activeChats;
   }
 
   // Increment the count of the instances of users into the DB

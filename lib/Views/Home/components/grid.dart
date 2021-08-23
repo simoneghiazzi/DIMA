@@ -22,8 +22,7 @@ class _GridState extends State<Grid> {
   @override
   void initState() {
     super.initState();
-    chatViewModel = ChatViewModel(widget.authViewModel.loggedUser.uid,
-        widget.authViewModel.loggedUser.name);
+    chatViewModel = ChatViewModel(widget.authViewModel.loggedUser.uid);
   }
 
   @override

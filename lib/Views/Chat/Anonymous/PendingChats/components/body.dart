@@ -73,20 +73,21 @@ class _BodyState extends State<Body> {
                 children: <Widget>[
                   // List
                   Container(
-                    child: StreamBuilder(
-                      stream: chatViewModel.loadPendingChats(),
+                    child: FutureBuilder(
+                      future: chatViewModel.loadPendingChats(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return ListView.builder(
                             padding: EdgeInsets.all(10.0),
                             itemBuilder: (context, index) =>
-                                buildItem(context, snapshot.data?.docs[index]),
-                            itemCount: snapshot.data.docs.length,
+                                buildItem(context, snapshot.data[index]),
+                            itemCount: snapshot.data.length,
                             controller: listScrollController,
                             shrinkWrap: true,
                           );
                         } else {
-                          return LoadingDialog(text: 'Loading pending requests...');
+                          return LoadingDialog(
+                              text: 'Loading pending requests...');
                         }
                       },
                     ),
@@ -175,7 +176,6 @@ class _BodyState extends State<Body> {
             ),
             onPressed: () {
               chatViewModel.peerId = userChat.id;
-              chatViewModel.peerName = userChat.name;
               Navigator.push(
                 context,
                 MaterialPageRoute(
