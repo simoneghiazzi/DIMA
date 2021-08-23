@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
   String loggedId;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   final FirestoreService _firestoreService = FirestoreService();
 
   NotificationService(this.loggedId);
@@ -19,13 +21,20 @@ class NotificationService {
       print('onMessage: $message');
       if (message.notification != null) {
         showNotification(message.notification);
+        FlutterAppBadger.updateBadgeCount(1);
       }
       return;
     });
 
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      print('opened');
+      FlutterAppBadger.removeBadge();
+    });
+
     _firebaseMessaging.getToken().then((token) async {
       print('token: $token');
-      await _firestoreService.updateUserFieldIntoDB(loggedId, 'pushToken', token);
+      await _firestoreService.updateUserFieldIntoDB(
+          loggedId, 'pushToken', token);
     }).catchError((err) {
       print(err);
     });
@@ -33,8 +42,11 @@ class NotificationService {
 
   // Show notification on Android and IOS
   void showNotification(RemoteNotification remoteNotification) async {
-    AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      Platform.isAndroid ? 'com.dfa.flutterchatdemo' : 'com.duytq.flutterchatdemo',
+    AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      Platform.isAndroid
+          ? 'com.dfa.flutterchatdemo'
+          : 'com.duytq.flutterchatdemo',
       'DIMA app',
       'messages notification',
       playSound: true,
@@ -42,7 +54,8 @@ class NotificationService {
       importance: Importance.max,
       priority: Priority.high,
     );
-    IOSNotificationDetails iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    IOSNotificationDetails iOSPlatformChannelSpecifics =
+        IOSNotificationDetails();
     NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: iOSPlatformChannelSpecifics);
@@ -58,11 +71,12 @@ class NotificationService {
 
   // Configuration of local notification for Android and IOS
   void configLocalNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
-    IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
+    AndroidInitializationSettings initializationSettingsAndroid =
+        new AndroidInitializationSettings('@mipmap/ic_launcher');
+    IOSInitializationSettings initializationSettingsIOS =
+        IOSInitializationSettings();
     InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid, 
-      iOS: initializationSettingsIOS);
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     _flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 }
