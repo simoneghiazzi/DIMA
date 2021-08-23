@@ -3,7 +3,7 @@ import 'package:dima_colombo_ghiazzi/Model/Chat/user_chat.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/Anonymous/PendingChats/pending_chatlist_anonymous.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/chat_page.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_animation.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 
 class Body extends StatefulWidget {
@@ -167,7 +167,7 @@ class _BodyState extends State<Body> {
                             shrinkWrap: true,
                           );
                         } else {
-                          return Loading(text: 'Loading anonymous chats...');
+                          return LoadingDialog(text: 'Loading anonymous chats...');
                         }
                       },
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LoadingDialog extends StatelessWidget {
+  final String text;
   static void show(BuildContext context, {Key key}) => showDialog<void>(
         context: context,
         useRootNavigator: false,
@@ -10,7 +11,7 @@ class LoadingDialog extends StatelessWidget {
 
   static void hide(BuildContext context) => Navigator.pop(context);
 
-  LoadingDialog({Key key}) : super(key: key);
+  LoadingDialog({Key key, this.text}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +19,18 @@ class LoadingDialog extends StatelessWidget {
       onWillPop: () async => false,
       child: Center(
         child: Card(
-          child: Container(
-            width: 80,
-            height: 80,
-            padding: EdgeInsets.all(12.0),
-            child: CircularProgressIndicator(),
-          ),
-        ),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+              Container(
+                width: 80,
+                height: 80,
+                padding: EdgeInsets.all(12.0),
+                child: CircularProgressIndicator(),
+              ),
+              Container(child: Text(text))
+            ])),
       ),
     );
   }

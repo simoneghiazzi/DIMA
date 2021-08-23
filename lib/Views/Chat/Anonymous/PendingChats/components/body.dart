@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/user_chat.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/chat_page.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_animation.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 
 class Body extends StatefulWidget {
@@ -86,7 +86,7 @@ class _BodyState extends State<Body> {
                             shrinkWrap: true,
                           );
                         } else {
-                          return Loading(text: 'Loading pending requests...');
+                          return LoadingDialog(text: 'Loading pending requests...');
                         }
                       },
                     ),

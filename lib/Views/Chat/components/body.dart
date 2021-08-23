@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_animation.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -53,7 +53,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
           Column(
             children: <Widget>[
               newUser
-                  ? Loading(text: 'Looking for new random user...')
+                  ? LoadingDialog(text: 'Looking for new random user...')
                   // List of messages
                   : buildListMessages(),
               // Input content
@@ -308,7 +308,7 @@ class _BodyState extends State<Body> with WidgetsBindingObserver {
           if (firstChat)
             return Container();
           else
-            return Loading(text: 'Loading messages...');
+            return LoadingDialog(text: 'Loading messages...');
         }
       },
     ));
