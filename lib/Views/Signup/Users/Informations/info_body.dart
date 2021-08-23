@@ -21,7 +21,7 @@ class InfoBody extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Background(
         child: Padding(
-            padding: EdgeInsets.only(left: 10, right: 10),
+            padding: EdgeInsets.only(left: 40, right: 40),
             child: SingleChildScrollView(
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

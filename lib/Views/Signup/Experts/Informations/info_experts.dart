@@ -24,6 +24,8 @@ class InfoExperts extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Background(
+        child: Padding(
+      padding: EdgeInsets.only(left: 40, right: 40),
       child: SingleChildScrollView(
           child: Stack(alignment: Alignment.center,
               //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -195,6 +197,7 @@ class InfoExperts extends StatelessWidget {
                                           );
                                         },
                                       ),
+                                      SizedBox(height: size.height * 0.06),
                                     ],
                                   ),
                                 ),
@@ -205,7 +208,7 @@ class InfoExperts extends StatelessWidget {
               ),
             )
           ])),
-    );
+    ));
   }
 
   _onAddressError(context) {
