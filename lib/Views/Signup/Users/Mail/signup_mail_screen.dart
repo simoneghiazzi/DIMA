@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../signup_users_screen.dart';
 import 'components/mail_body.dart';
 
 class SignUpMail extends StatelessWidget {
@@ -17,11 +18,19 @@ class SignUpMail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: MailBody(
-        authViewModel: authViewModel,
-        name: name,
-        surname: surname,
-        birthDate: birthDate,
+      body: WillPopScope(
+        child: MailBody(
+          authViewModel: authViewModel,
+          name: name,
+          surname: surname,
+          birthDate: birthDate,
+        ),
+        onWillPop: () async =>
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+          builder: (context) {
+            return SignUpUsers(authViewModel: authViewModel);
+          },
+        ), (route) => true),
       ),
     );
   }

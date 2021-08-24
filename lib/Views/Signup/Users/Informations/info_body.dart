@@ -92,7 +92,10 @@ class InfoBody extends StatelessWidget {
                                           filled: true,
                                           fillColor: kPrimaryLightColor,
                                           labelText: 'First name',
-                                          prefixIcon: Icon(Icons.text_fields),
+                                          prefixIcon: Icon(
+                                            Icons.text_fields,
+                                            color: kPrimaryColor,
+                                          ),
                                         ),
                                       ),
                                       TextFieldBlocBuilder(
@@ -101,7 +104,10 @@ class InfoBody extends StatelessWidget {
                                           filled: true,
                                           fillColor: kPrimaryLightColor,
                                           labelText: 'Last name',
-                                          prefixIcon: Icon(Icons.text_fields),
+                                          prefixIcon: Icon(
+                                            Icons.text_fields,
+                                            color: kPrimaryColor,
+                                          ),
                                         ),
                                       ),
                                       DateTimeFieldBlocBuilder(
@@ -114,7 +120,10 @@ class InfoBody extends StatelessWidget {
                                             filled: true,
                                             fillColor: kPrimaryLightColor,
                                             labelText: 'Birth date',
-                                            prefixIcon: Icon(Icons.date_range)),
+                                            prefixIcon: Icon(
+                                              Icons.date_range,
+                                              color: kPrimaryColor,
+                                            )),
                                       ),
                                       SizedBox(height: size.height * 0.04),
                                       ElevatedButton(

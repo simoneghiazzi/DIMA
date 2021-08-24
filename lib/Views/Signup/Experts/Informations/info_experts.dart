@@ -14,11 +14,21 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../../../../constants.dart';
 
-class InfoExperts extends StatelessWidget {
+class InfoExperts extends StatefulWidget {
   final AuthViewModel authViewModel;
   InfoExpertsViewModel formBloc;
 
   InfoExperts({Key key, @required this.authViewModel}) : super(key: key);
+
+  @override
+  _InfoExpertsState createState() => _InfoExpertsState();
+}
+
+class _InfoExpertsState extends State<InfoExperts> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +42,11 @@ class InfoExperts extends StatelessWidget {
               children: <Widget>[
             BlocProvider(
               create: (context) => InfoExpertsViewModel(
-                  authViewModel: authViewModel, context: context),
+                  authViewModel: widget.authViewModel, context: context),
               child: Builder(
                 builder: (context) {
-                  formBloc = BlocProvider.of<InfoExpertsViewModel>(context);
+                  widget.formBloc =
+                      BlocProvider.of<InfoExpertsViewModel>(context);
                   return Theme(
                       data: Theme.of(context).copyWith(
                         primaryColor: kPrimaryColor,
@@ -55,6 +66,7 @@ class InfoExperts extends StatelessWidget {
                         },
                         onFailure: (context, state) {
                           _onAddressError(context);
+                          setState(() {});
                         },
                         child: Container(
                           width: double.infinity,
@@ -85,25 +97,33 @@ class InfoExperts extends StatelessWidget {
                                       ),
                                       SizedBox(height: size.height * 0.04),
                                       TextFieldBlocBuilder(
-                                        textFieldBloc: formBloc.nameText,
+                                        textFieldBloc: widget.formBloc.nameText,
                                         decoration: InputDecoration(
                                           filled: true,
                                           fillColor: kPrimaryLightColor,
                                           labelText: 'First name',
-                                          prefixIcon: Icon(Icons.text_fields),
+                                          prefixIcon: Icon(
+                                            Icons.text_fields,
+                                            color: kPrimaryColor,
+                                          ),
                                         ),
                                       ),
                                       TextFieldBlocBuilder(
-                                        textFieldBloc: formBloc.surnameText,
+                                        textFieldBloc:
+                                            widget.formBloc.surnameText,
                                         decoration: InputDecoration(
                                           filled: true,
                                           fillColor: kPrimaryLightColor,
                                           labelText: 'Last name',
-                                          prefixIcon: Icon(Icons.text_fields),
+                                          prefixIcon: Icon(
+                                            Icons.text_fields,
+                                            color: kPrimaryColor,
+                                          ),
                                         ),
                                       ),
                                       DateTimeFieldBlocBuilder(
-                                        dateTimeFieldBloc: formBloc.birthDate,
+                                        dateTimeFieldBloc:
+                                            widget.formBloc.birthDate,
                                         format: DateFormat.yMEd(),
                                         initialDate: DateTime.now(),
                                         firstDate: DateTime(1920),
@@ -112,58 +132,79 @@ class InfoExperts extends StatelessWidget {
                                             filled: true,
                                             fillColor: kPrimaryLightColor,
                                             labelText: 'Birth date',
-                                            prefixIcon: Icon(Icons.date_range)),
+                                            prefixIcon: Icon(
+                                              Icons.date_range,
+                                              color: kPrimaryColor,
+                                            )),
                                       ),
                                       TextFieldBlocBuilder(
-                                        textFieldBloc: formBloc.countryText,
+                                        textFieldBloc:
+                                            widget.formBloc.countryText,
                                         decoration: InputDecoration(
                                           filled: true,
                                           fillColor: kPrimaryLightColor,
                                           labelText: 'Office country',
-                                          prefixIcon: Icon(Icons.streetview),
+                                          prefixIcon: Icon(
+                                            Icons.streetview,
+                                            color: kPrimaryColor,
+                                          ),
                                         ),
                                       ),
                                       TextFieldBlocBuilder(
-                                        textFieldBloc: formBloc.cityText,
+                                        textFieldBloc: widget.formBloc.cityText,
                                         decoration: InputDecoration(
                                           filled: true,
                                           fillColor: kPrimaryLightColor,
                                           labelText: 'Office city',
-                                          prefixIcon: Icon(Icons.location_city),
-                                        ),
-                                      ),
-                                      TextFieldBlocBuilder(
-                                        textFieldBloc: formBloc.streetText,
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: kPrimaryLightColor,
-                                          labelText: 'Office street',
-                                          prefixIcon: Icon(Icons.location_city),
+                                          prefixIcon: Icon(
+                                            Icons.location_city,
+                                            color: kPrimaryColor,
+                                          ),
                                         ),
                                       ),
                                       TextFieldBlocBuilder(
                                         textFieldBloc:
-                                            formBloc.addressNumberText,
+                                            widget.formBloc.streetText,
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor: kPrimaryLightColor,
+                                          labelText: 'Office street',
+                                          prefixIcon: Icon(
+                                            Icons.location_city,
+                                            color: kPrimaryColor,
+                                          ),
+                                        ),
+                                      ),
+                                      TextFieldBlocBuilder(
+                                        textFieldBloc:
+                                            widget.formBloc.addressNumberText,
                                         decoration: InputDecoration(
                                           filled: true,
                                           fillColor: kPrimaryLightColor,
                                           labelText: 'Office house number',
-                                          prefixIcon: Icon(Icons.house),
+                                          prefixIcon: Icon(
+                                            Icons.house,
+                                            color: kPrimaryColor,
+                                          ),
                                         ),
                                       ),
                                       TextFieldBlocBuilder(
-                                        textFieldBloc: formBloc.phoneNumberText,
+                                        textFieldBloc:
+                                            widget.formBloc.phoneNumberText,
                                         decoration: InputDecoration(
                                           filled: true,
                                           fillColor: kPrimaryLightColor,
                                           labelText: 'Phone number',
-                                          prefixIcon: Icon(Icons.phone),
+                                          prefixIcon: Icon(
+                                            Icons.phone,
+                                            color: kPrimaryColor,
+                                          ),
                                         ),
                                       ),
                                       SizedBox(height: size.height * 0.04),
                                       ElevatedButton(
                                         onPressed: () {
-                                          formBloc.submit();
+                                          widget.formBloc.submit();
                                         },
                                         style: ButtonStyle(
                                             fixedSize:
@@ -190,7 +231,8 @@ class InfoExperts extends StatelessWidget {
                                             MaterialPageRoute(
                                               builder: (context) {
                                                 return LoginScreen(
-                                                  authViewModel: authViewModel,
+                                                  authViewModel:
+                                                      widget.authViewModel,
                                                 );
                                               },
                                             ),
@@ -229,7 +271,7 @@ class InfoExperts extends StatelessWidget {
           onPressed: () {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) {
-              return SignUpExperts(authViewModel: authViewModel);
+              return SignUpExperts(authViewModel: widget.authViewModel);
             }));
           },
           gradient: LinearGradient(colors: [
@@ -245,19 +287,19 @@ class InfoExperts extends StatelessWidget {
     Alert(
       closeIcon: null,
       context: context,
-      title: "FOUND ADDRESS: " + formBloc.infoAddress,
+      title: "FOUND ADDRESS: " + widget.formBloc.infoAddress,
       desc: "YOUR PERSONAL INFORMATIONS: \n" +
           "Name: " +
-          formBloc.nameText.value +
+          widget.formBloc.nameText.value +
           "\n" +
           "Surname: " +
-          formBloc.surnameText.value +
+          widget.formBloc.surnameText.value +
           "\n" +
           "Date of birth: " +
-          DateFormat('MM-dd-yyyy').format(formBloc.birthDate.value) +
+          DateFormat('MM-dd-yyyy').format(widget.formBloc.birthDate.value) +
           "\n" +
           "Phone number: " +
-          formBloc.phoneNumberText.value,
+          widget.formBloc.phoneNumberText.value,
       type: AlertType.info,
       style: AlertStyle(
         isCloseButton: false,
@@ -269,22 +311,23 @@ class InfoExperts extends StatelessWidget {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
+            LoadingDialog.hide(context);
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) {
                   return SignUpExpertsMail(
-                      authViewModel: authViewModel,
-                      name: formBloc.nameText.value,
-                      surname: formBloc.surnameText.value,
-                      birthDate: formBloc.birthDate.value,
-                      phoneNumber: formBloc.phoneNumberText.value,
+                      authViewModel: widget.authViewModel,
+                      name: widget.formBloc.nameText.value,
+                      surname: widget.formBloc.surnameText.value,
+                      birthDate: widget.formBloc.birthDate.value,
+                      phoneNumber: widget.formBloc.phoneNumberText.value,
                       latLng: LatLng(
-                          formBloc.expertAddress.geometry.location.lat,
-                          formBloc.expertAddress.geometry.location.lng));
+                          widget.formBloc.expertAddress.geometry.location.lat,
+                          widget.formBloc.expertAddress.geometry.location.lng));
                 },
               ),
-            );
+            ).then((value) {});
           },
           gradient: LinearGradient(colors: [
             Colors.indigo[400],
@@ -299,7 +342,7 @@ class InfoExperts extends StatelessWidget {
           onPressed: () {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) {
-              return SignUpExperts(authViewModel: authViewModel);
+              return SignUpExperts(authViewModel: widget.authViewModel);
             }));
           },
           gradient: LinearGradient(colors: [

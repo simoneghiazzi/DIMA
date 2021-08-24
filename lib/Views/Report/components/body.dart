@@ -49,7 +49,10 @@ class Body extends StatelessWidget {
                               children: <Widget>[
                                 IconButton(
                                   splashColor: Colors.grey,
-                                  icon: Icon(Icons.arrow_back),
+                                  icon: Icon(
+                                    Icons.arrow_back,
+                                    color: kPrimaryColor,
+                                  ),
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
@@ -57,6 +60,7 @@ class Body extends StatelessWidget {
                                 Text(
                                   "Reports",
                                   style: TextStyle(
+                                      color: kPrimaryColor,
                                       fontSize: 32,
                                       fontWeight: FontWeight.bold),
                                 )
@@ -107,9 +111,16 @@ class Body extends StatelessWidget {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: size.height * 0.1,
+                    ),
+                    Image.asset(
+                      "assets/icons/safety.png",
+                      height: size.height * 0.15,
+                    ),
                     Padding(
                         padding: EdgeInsets.only(
-                            top: size.height / 5, left: 16, right: 16),
+                            top: size.height * 0.1, left: 40, right: 40),
                         child:
                             FormBlocListener<ReportViewModel, String, String>(
                           onSubmitting: (context, state) {
@@ -126,24 +137,33 @@ class Body extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
-                              Image.asset(
-                                "assets/icons/safety.png",
-                                height: size.height * 0.15,
-                              ),
                               DropdownFieldBlocBuilder<String>(
                                 selectFieldBloc: formBloc.reportCategory,
                                 decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: kPrimaryLightColor,
                                   labelText: 'Report category',
-                                  prefixIcon: Icon(Icons.security),
+                                  prefixIcon: Icon(
+                                    Icons.security,
+                                    color: kPrimaryColor,
+                                  ),
                                 ),
                                 itemBuilder: (context, value) => value,
                               ),
                               TextFieldBlocBuilder(
                                 textFieldBloc: formBloc.reportText,
                                 decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: kPrimaryLightColor,
                                   labelText: 'Report description',
-                                  prefixIcon: Icon(Icons.text_fields),
+                                  prefixIcon: Icon(
+                                    Icons.text_fields,
+                                    color: kPrimaryColor,
+                                  ),
                                 ),
+                              ),
+                              SizedBox(
+                                height: size.height * 0.01,
                               ),
                               ElevatedButton(
                                 onPressed: () {

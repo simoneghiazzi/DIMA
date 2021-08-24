@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/report_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../../../constants.dart';
 
@@ -48,15 +49,20 @@ class _BodyState extends State<ReportListPage> {
                       children: <Widget>[
                         IconButton(
                           splashColor: Colors.grey,
-                          icon: Icon(Icons.arrow_back),
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: kPrimaryColor,
+                          ),
                           onPressed: () {
                             Navigator.pop(context);
                           },
                         ),
                         Text(
-                          "Reports",
+                          "Reports list",
                           style: TextStyle(
-                              fontSize: 32, fontWeight: FontWeight.bold),
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: kPrimaryColor),
                         )
                       ],
                     ),
@@ -98,30 +104,24 @@ class _BodyState extends State<ReportListPage> {
               ),
             ),
             SizedBox(height: size.height * 0.02),
-            Container(
-              child: Stack(
-                children: <Widget>[
-                  // List
-                  Container(
-                    child: StreamBuilder(
-                      stream: reportViewModel.loadReports(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return ListView.builder(
-                            padding: EdgeInsets.all(10.0),
-                            itemBuilder: (context, index) =>
-                                buildItem(context, snapshot.data?.docs[index]),
-                            itemCount: snapshot.data.docs.length,
-                            controller: listScrollController,
-                            shrinkWrap: true,
-                          );
-                        } else {
-                          return LoadingDialog(text: 'Loading reports...');
-                        }
-                      },
-                    ),
-                  ),
-                ],
+            Padding(
+              padding: EdgeInsets.only(left: 30, right: 30),
+              child: StreamBuilder(
+                stream: reportViewModel.loadReports(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      padding: EdgeInsets.all(10.0),
+                      itemBuilder: (context, index) =>
+                          buildItem(context, snapshot.data?.docs[index]),
+                      itemCount: snapshot.data.docs.length,
+                      controller: listScrollController,
+                      shrinkWrap: true,
+                    );
+                  } else {
+                    return LoadingDialog(text: 'Loading reports...');
+                  }
+                },
               ),
             ),
           ],
@@ -133,46 +133,49 @@ class _BodyState extends State<ReportListPage> {
   Widget buildItem(BuildContext context, DocumentSnapshot doc) {
     // This size provide us total height and width of our screen
     Size size = MediaQuery.of(context).size;
+    String date = doc.get('date');
     if (doc != null) {
       return Container(
         child: TextButton(
           child: Row(
-            children: <Widget>[
-              CircleAvatar(
-                backgroundColor: Colors.transparent,
-                radius: 30.0,
-                child: Image.asset(
-                  "assets/icons/logo.png",
-                  height: size.height * 0.05,
-                ),
-              ),
-              Flexible(
-                child: Container(
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        child: Text(
-                          doc.get('date'),
-                          maxLines: 1,
-                          style: TextStyle(color: Color(0xff203152)),
-                        ),
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 5.0),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      radius: 30.0,
+                      child: Image.asset(
+                        "assets/icons/logo.png",
+                        height: size.height * 0.05,
                       ),
-                    ],
-                  ),
-                  margin: EdgeInsets.only(left: 20.0),
+                    ),
+                    Text(doc.get('category'),
+                        style: TextStyle(color: kPrimaryColor, fontSize: 20)),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          onPressed: () {},
+                Column(
+                  children: <Widget>[
+                    Text(date.split(' ')[0],
+                        style: TextStyle(color: kPrimaryColor)),
+                    Text(
+                        date.split(' ')[1].split('.')[0].split(':')[0] +
+                            ":" +
+                            date.split(' ')[1].split('.')[0].split(':')[1],
+                        style: TextStyle(color: kPrimaryColor))
+                  ],
+                )
+              ]),
+          onPressed: () {
+            _onReportPressed(
+                context, doc.get('category'), doc.get('description'));
+          },
           style: ButtonStyle(
             backgroundColor:
-                MaterialStateProperty.all<Color>(Color(0xffE8E8E8)),
+                MaterialStateProperty.all<Color>(kPrimaryLightColor),
             shape: MaterialStateProperty.all<OutlinedBorder>(
               RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
+                borderRadius: BorderRadius.all(Radius.circular(25)),
               ),
             ),
           ),
@@ -192,5 +195,27 @@ class _BodyState extends State<ReportListPage> {
         _limitIncrement += _limitIncrement;
       });
     }
+  }
+
+  _onReportPressed(context, String title, String description) {
+    Alert(
+        context: context,
+        title: title.toUpperCase(),
+        desc: description,
+        image: Image.asset("assets/icons/small_logo.png"),
+        closeIcon: Icon(
+          Icons.close,
+          color: kPrimaryColor,
+        ),
+        buttons: [
+          DialogButton(
+            child: Text(
+              "CLOSE",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            color: kPrimaryColor,
+            onPressed: () => Navigator.pop(context),
+          )
+        ]).show();
   }
 }

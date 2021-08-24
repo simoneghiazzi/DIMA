@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/Map/place_search.dart';
+import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/map_view_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -162,15 +163,15 @@ class _BodyState extends State<Body> {
               })),
       Positioned(
           top: 60,
-          right: 15,
-          left: 15,
+          right: 30,
+          left: 30,
           child: Container(
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
+                      color: kPrimaryLightColor.withOpacity(0.5),
                       spreadRadius: 4,
                       blurRadius: 6,
                       offset: Offset(0, 3),
@@ -179,21 +180,28 @@ class _BodyState extends State<Body> {
               child: Row(children: <Widget>[
                 IconButton(
                   splashColor: Colors.grey,
-                  icon: Icon(Icons.arrow_back),
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: kPrimaryColor,
+                  ),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
                 Expanded(
                   child: TextField(
-                    cursorColor: Colors.black,
+                    cursorColor: kPrimaryColor,
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.go,
                     controller: txt,
                     decoration: InputDecoration(
+                        fillColor: kPrimaryColor,
                         border: InputBorder.none,
                         hintText: "Search place",
-                        suffixIcon: Icon(Icons.search)),
+                        suffixIcon: Icon(
+                          Icons.search,
+                          color: kPrimaryColor,
+                        )),
                     onChanged: (value) =>
                         widget.mapViewModel.searchPlaces(value),
                   ),

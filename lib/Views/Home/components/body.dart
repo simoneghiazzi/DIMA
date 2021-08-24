@@ -18,7 +18,7 @@ class HomeBody extends StatelessWidget {
           Header(
             authViewModel: authViewModel,
           ),
-          SizedBox(height: size.height * 0.1),
+          SizedBox(height: size.height * 0.15),
           Grid(
             authViewModel: authViewModel,
           ),
