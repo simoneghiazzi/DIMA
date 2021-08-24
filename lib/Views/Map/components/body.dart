@@ -171,7 +171,7 @@ class _BodyState extends State<Body> {
                   borderRadius: BorderRadius.circular(25.0),
                   boxShadow: [
                     BoxShadow(
-                      color: kPrimaryLightColor.withOpacity(0.5),
+                      color: kPrimaryColor.withOpacity(0.3),
                       spreadRadius: 4,
                       blurRadius: 6,
                       offset: Offset(0, 3),
