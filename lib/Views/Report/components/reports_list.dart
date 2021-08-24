@@ -105,7 +105,7 @@ class _BodyState extends State<ReportListPage> {
             ),
             SizedBox(height: size.height * 0.02),
             Padding(
-              padding: EdgeInsets.only(left: 30, right: 30),
+              padding: EdgeInsets.only(left: 10, right: 10),
               child: StreamBuilder(
                 stream: reportViewModel.loadReports(),
                 builder: (context, snapshot) {
@@ -151,18 +151,18 @@ class _BodyState extends State<ReportListPage> {
                       ),
                     ),
                     Text(doc.get('category'),
-                        style: TextStyle(color: kPrimaryColor, fontSize: 20)),
+                        style: TextStyle(color: kPrimaryColor, fontSize: 17)),
                   ],
                 ),
                 Column(
                   children: <Widget>[
                     Text(date.split(' ')[0],
-                        style: TextStyle(color: kPrimaryColor)),
+                        style: TextStyle(color: kPrimaryColor, fontSize: 12)),
                     Text(
                         date.split(' ')[1].split('.')[0].split(':')[0] +
                             ":" +
                             date.split(' ')[1].split('.')[0].split(':')[1],
-                        style: TextStyle(color: kPrimaryColor))
+                        style: TextStyle(color: kPrimaryColor, fontSize: 12))
                   ],
                 )
               ]),
