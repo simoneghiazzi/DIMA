@@ -33,7 +33,7 @@ class _HeaderState extends State<Header> {
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomRight,
-              colors: [Colors.indigo[400], Colors.cyan[200]])),
+              colors: [kPrimaryColor, kPrimaryLightColor])),
       child: ListTile(
         contentPadding: EdgeInsets.only(left: 20, right: 20, top: 60),
         title: Text(

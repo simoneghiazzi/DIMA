@@ -1,4 +1,5 @@
 import 'package:dima_colombo_ghiazzi/Views/Signup/Experts/Informations/info_experts.dart';
+import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
 class SignUpExperts extends StatelessWidget {
@@ -9,8 +10,16 @@ class SignUpExperts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: InfoExperts(
-        authViewModel: authViewModel,
+      body: WillPopScope(
+        child: InfoExperts(
+          authViewModel: authViewModel,
+        ),
+        onWillPop: () async =>
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+          builder: (context) {
+            return WelcomeScreen(authViewModel: authViewModel);
+          },
+        ), (route) => true),
       ),
     );
   }
