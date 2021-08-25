@@ -59,7 +59,10 @@ class _BodyState extends State<Body> {
                 builder: (context, snapshot) {
                   return RoundedButton(
                     text: "LOGIN",
-                    press: () => widget.authViewModel.logIn(),
+                    press: () {
+                      widget.authViewModel.logIn();
+                      FocusScope.of(context).unfocus();
+                    },
                     enabled: snapshot.data ?? false,
                   );
                 }),

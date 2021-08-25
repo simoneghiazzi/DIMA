@@ -82,12 +82,15 @@ class _MailBodyState extends State<MailExpertsBody> {
                 builder: (context, snapshot) {
                   return RoundedButton(
                     text: "SIGN UP",
-                    press: () => widget.authViewModel.createExpert(
-                        widget.name,
-                        widget.surname,
-                        widget.birthDate,
-                        widget.phoneNumber,
-                        widget.latLng),
+                    press: () {
+                      widget.authViewModel.createExpert(
+                          widget.name,
+                          widget.surname,
+                          widget.birthDate,
+                          widget.phoneNumber,
+                          widget.latLng);
+                      FocusScope.of(context).unfocus();
+                    },
                     enabled: snapshot.data ?? false,
                   );
                 }),

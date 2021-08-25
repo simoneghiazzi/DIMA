@@ -215,10 +215,7 @@ class Body extends StatelessWidget {
               },
             ), (route) => true);
           },
-          gradient: LinearGradient(colors: [
-            Colors.indigo[400],
-            Colors.cyan[200],
-          ]),
+          color: kPrimaryColor,
         )
       ],
     ).show();
@@ -245,10 +242,7 @@ class Body extends StatelessWidget {
               return ReportScreen(authViewModel: authViewModel);
             }));
           },
-          gradient: LinearGradient(colors: [
-            Colors.indigo[400],
-            Colors.cyan[200],
-          ]),
+          color: kPrimaryColor,
         )
       ],
     ).show();
