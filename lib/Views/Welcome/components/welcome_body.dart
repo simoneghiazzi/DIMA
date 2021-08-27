@@ -102,13 +102,13 @@ class _WelcomeBodyState extends State<WelcomeBody> {
             ),
             OrDivider(),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-              SocalIcon(
+              SocialIcon(
                   iconSrc: "assets/icons/facebook.png",
                   press: () async {
                     id = await authViewModel.logInWithFacebook();
                     if (id != null) navigateToHome();
                   }),
-              SocalIcon(
+              SocialIcon(
                   iconSrc: "assets/icons/google.png",
                   press: () async {
                     id = await authViewModel.logInWithGoogle();
