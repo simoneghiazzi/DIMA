@@ -279,10 +279,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
               return ExpertsSignUpScreen(authViewModel: authViewModel);
             }));
           },
-          gradient: LinearGradient(colors: [
-            Colors.indigo[400],
-            Colors.cyan[200],
-          ]),
+          color: kPrimaryColor,
         )
       ],
     ).show();
@@ -330,10 +327,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
               ),
             ).then((value) {});
           },
-          gradient: LinearGradient(colors: [
-            Colors.indigo[400],
-            Colors.cyan[200],
-          ]),
+          color: kPrimaryColor,
         ),
         DialogButton(
           child: Text(
@@ -346,10 +340,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
               return ExpertsSignUpScreen(authViewModel: widget.authViewModel);
             }));
           },
-          gradient: LinearGradient(colors: [
-            Colors.red[400],
-            Colors.red[200],
-          ]),
+          color: Colors.red,
         )
       ],
     ).show();

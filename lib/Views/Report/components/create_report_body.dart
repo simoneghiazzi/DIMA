@@ -228,10 +228,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
               Navigator.pop(context);
             });
           },
-          gradient: LinearGradient(colors: [
-            Colors.indigo[400],
-            Colors.cyan[200],
-          ]),
+          color: kPrimaryColor,
         )
       ],
     ).show();
@@ -260,10 +257,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
               Navigator.pop(context);
             });
           },
-          gradient: LinearGradient(colors: [
-            Colors.indigo[400],
-            Colors.cyan[200],
-          ]),
+          color: kPrimaryColor,
         )
       ],
     ).show();

@@ -85,6 +85,10 @@ class _HeaderState extends State<Header> {
       title: "ACCOUNT SETTINGS",
       //desc: "",
       image: Image.asset("assets/icons/small_logo.png"),
+      closeIcon: Icon(
+        Icons.close,
+        color: kPrimaryColor,
+      ),
       buttons: [
         DialogButton(
           child: Text(
@@ -92,10 +96,7 @@ class _HeaderState extends State<Header> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {},
-          gradient: LinearGradient(colors: [
-            Colors.indigo[400],
-            Colors.cyan[200],
-          ]),
+          color: kPrimaryColor,
         ),
         DialogButton(
           child: Text(
@@ -105,10 +106,7 @@ class _HeaderState extends State<Header> {
           onPressed: () {
             widget.authViewModel.logOut();
           },
-          gradient: LinearGradient(colors: [
-            Colors.red[400],
-            Colors.red[200],
-          ]),
+          color: Colors.red,
         )
       ],
     ).show();
