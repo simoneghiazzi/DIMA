@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/expert_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
@@ -108,12 +109,18 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
             ),
             ChatsListConstructor(
               chatViewModel: widget.chatViewModel,
-              userItem: Expert(),
+              createUserCallback: createUserCallback,
             ),
           ],
         ),
       ),
     );
+  }
+
+  Expert createUserCallback(DocumentSnapshot doc) {
+    Expert user = Expert();
+    user.setFromDocument(doc);
+    return user;
   }
 
   void initChats() {

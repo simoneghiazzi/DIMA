@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
@@ -157,11 +158,18 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
                   ])),
             ),
             ChatsListConstructor(
-                chatViewModel: widget.chatViewModel, userItem: BaseUser()),
+                chatViewModel: widget.chatViewModel,
+                createUserCallback: createUserCallback),
           ],
         ),
       ),
     );
+  }
+
+  BaseUser createUserCallback(DocumentSnapshot doc) {
+    BaseUser user = BaseUser();
+    user.setFromDocument(doc);
+    return user;
   }
 
   void initChats() {

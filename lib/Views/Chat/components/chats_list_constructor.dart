@@ -6,9 +6,10 @@ import 'package:flutter/material.dart';
 
 class ChatsListConstructor extends StatefulWidget {
   final ChatViewModel chatViewModel;
-  final User userItem;
+  final Function createUserCallback;
 
-  ChatsListConstructor({Key key, @required this.chatViewModel, this.userItem})
+  ChatsListConstructor(
+      {Key key, @required this.chatViewModel, this.createUserCallback})
       : super(key: key);
 
   @override
@@ -39,11 +40,13 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
                   return ListView.builder(
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) {
-                      widget.userItem.setFromDocument(snapshot.data[index]);
+                      ////
+                      User user = widget.createUserCallback(snapshot.data[index]);
+                      /////
                       return ChatListItem(
                         chatViewModel: widget.chatViewModel,
-                        userItem: widget.userItem,
-                        callback: () {
+                        userItem: user,
+                        setStateCallback: () {
                           setState(() {});
                         },
                       );

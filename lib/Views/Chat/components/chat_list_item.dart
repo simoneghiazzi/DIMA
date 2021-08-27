@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 
 class ChatListItem extends StatefulWidget {
   final ChatViewModel chatViewModel;
-  final Function callback;
+  final Function setStateCallback;
   final User userItem;
 
-  ChatListItem({Key key, @required this.chatViewModel, @required this.userItem, @required this.callback})
+  ChatListItem({Key key, @required this.chatViewModel, @required this.userItem, @required this.setStateCallback})
       : super(key: key);
 
   @override
@@ -106,7 +106,7 @@ class _ChatListItemState extends State<ChatListItem> {
                     ChatPageScreen(chatViewModel: widget.chatViewModel),
               ),
             ).then((value) {
-              widget.callback();
+              widget.setStateCallback();
             });
           },
           style: ButtonStyle(
