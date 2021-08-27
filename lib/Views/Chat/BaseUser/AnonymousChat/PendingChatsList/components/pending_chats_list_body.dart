@@ -6,6 +6,8 @@ import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chats_list_constructor.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../../constants.dart';
+
 class PendingChatsListBody extends StatefulWidget {
   final ChatViewModel chatViewModel;
 
@@ -25,6 +27,7 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -35,34 +38,29 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
               child: Padding(
                 padding: EdgeInsets.only(left: 16, right: 16, top: 10),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: kPrimaryColor,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                     Text(
                       "Requests",
-                      style:
-                          TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: kPrimaryColor),
                     ),
                   ],
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-              child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
-                  child: Row(children: <Widget>[
-                    IconButton(
-                      splashColor: Colors.grey,
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ])),
-            ),
+            SizedBox(height: size.height * 0.02),
             ChatsListConstructor(
                 chatViewModel: widget.chatViewModel,
                 createUserCallback: createUserCallback),

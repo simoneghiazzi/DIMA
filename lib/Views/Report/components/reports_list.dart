@@ -48,7 +48,6 @@ class _BodyState extends State<ReportListPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         IconButton(
-                          splashColor: Colors.grey,
                           icon: Icon(
                             Icons.arrow_back,
                             color: kPrimaryColor,
@@ -133,7 +132,8 @@ class _BodyState extends State<ReportListPage> {
   Widget buildItem(BuildContext context, DocumentSnapshot doc) {
     // This size provide us total height and width of our screen
     Size size = MediaQuery.of(context).size;
-    String date = DateFormat('yyyy-MM-dd kk:mm').format(doc.get('date').toDate());
+    String date =
+        DateFormat('yyyy-MM-dd kk:mm').format(doc.get('date').toDate());
     if (doc != null) {
       return Container(
         child: TextButton(
