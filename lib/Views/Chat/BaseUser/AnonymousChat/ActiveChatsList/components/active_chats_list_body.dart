@@ -6,6 +6,7 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingCh
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chats_list_constructor.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
+import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 
 class ActiveChatsListBody extends StatefulWidget {
@@ -29,152 +30,135 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SafeArea(
-              child: Padding(
-                padding: EdgeInsets.only(left: 16, right: 16, top: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      "Anonymous",
-                      style: TextStyle(
-                          fontSize: size.width * 0.07,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        InkWell(
-                          child: Container(
-                            padding: EdgeInsets.only(
-                                left: 8, right: 8, top: 2, bottom: 2),
-                            height: 30,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: Colors.lightBlue[200],
+        body: Stack(
+      children: <Widget>[
+        SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.only(right: 16, top: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          IconButton(
+                            padding: EdgeInsets.all(0.0),
+                            icon: Icon(
+                              Icons.arrow_back,
+                              color: kPrimaryColor,
                             ),
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.archive,
-                                  color: Colors.indigo[500],
-                                  size: 20,
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                                Text(
-                                  "Requests",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
                           ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PendingChatsListScreen(
-                                      chatViewModel: widget.chatViewModel)),
-                            ).then((value) {
-                              initChats();
-                              setState(() {});
-                            });
-                          },
+                          Text(
+                            "Anonymous",
+                            style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: kPrimaryColor),
+                          )
+                        ],
+                      ),
+                      InkWell(
+                        child: Container(
+                          padding: EdgeInsets.only(
+                              left: 8, right: 8, top: 2, bottom: 2),
+                          height: 30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: kPrimaryLightColor,
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.archive,
+                                color: kPrimaryColor,
+                                size: 20,
+                              ),
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Text(
+                                "Requests",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: kPrimaryColor),
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(width: size.width * 0.01),
-                        InkWell(
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                  left: 8, right: 8, top: 2, bottom: 2),
-                              height: 30,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: Colors.lightBlue[200],
-                              ),
-                              child: Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.add,
-                                    color: Colors.indigo[500],
-                                    size: 20,
-                                  ),
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(
-                                    "Add New",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            onTap: () async {
-                              LoadingDialog.show(context,
-                                  text: 'Looking for new random user...');
-                              widget.chatViewModel
-                                  .newRandomChat()
-                                  .then((value) {
-                                LoadingDialog.hide(context);
-                                if (value) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ChatPageScreen(
-                                        chatViewModel: widget.chatViewModel,
-                                      ),
-                                    ),
-                                  ).then((value) {
-                                    initChats();
-                                    setState(() {});
-                                  });
-                                } else {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: const Text('No more users.'),
-                                    duration: const Duration(seconds: 5),
-                                  ));
-                                }
-                              });
-                            }),
-                      ],
-                    )
-                  ],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PendingChatsListScreen(
+                                    chatViewModel: widget.chatViewModel)),
+                          ).then((value) {
+                            initChats();
+                            setState(() {});
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-              child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
-                  child: Row(children: <Widget>[
-                    IconButton(
-                      splashColor: Colors.grey,
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ])),
-            ),
-            ChatsListConstructor(
-                chatViewModel: widget.chatViewModel,
-                createUserCallback: createUserCallback),
-          ],
+              SizedBox(
+                height: size.height * 0.02,
+              ),
+              ChatsListConstructor(
+                  chatViewModel: widget.chatViewModel,
+                  createUserCallback: createUserCallback),
+            ],
+          ),
         ),
-      ),
-    );
+        Align(
+          alignment:
+              Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
+          child: FloatingActionButton(
+            onPressed: () async {
+              LoadingDialog.show(context,
+                  text: 'Looking for new random user...');
+              widget.chatViewModel.newRandomChat().then((value) {
+                LoadingDialog.hide(context);
+                if (value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatPageScreen(
+                        chatViewModel: widget.chatViewModel,
+                      ),
+                    ),
+                  ).then((value) {
+                    initChats();
+                    setState(() {});
+                  });
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: const Text('No more users.'),
+                    duration: const Duration(seconds: 5),
+                  ));
+                }
+              });
+            },
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            backgroundColor: Colors.lightBlue[200],
+            child: const Icon(
+              Icons.add,
+              size: 40.0,
+              color: kPrimaryColor,
+            ),
+          ),
+        ),
+      ],
+    ));
   }
 
   BaseUser createUserCallback(DocumentSnapshot doc) {
