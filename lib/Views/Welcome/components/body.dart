@@ -107,11 +107,11 @@ class _BodyState extends State<Body> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SocalIcon(
+                SocialIcon(
                   iconSrc: "assets/icons/facebook.png",
                   press: () => widget.authViewModel.logInWithFacebook(),
                 ),
-                SocalIcon(
+                SocialIcon(
                   iconSrc: "assets/icons/google.png",
                   press: () => widget.authViewModel.logInWithGoogle(),
                 ),
