@@ -35,13 +35,9 @@ class _HeaderState extends State<Header> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomRight,
-              colors: [kPrimaryColor, kPrimaryLightColor])),
+      decoration: BoxDecoration(color: kPrimaryColor),
       child: ListTile(
-        contentPadding: EdgeInsets.only(left: 20, right: 20, top: 60),
+        contentPadding: EdgeInsets.only(left: 20, top: 60),
         title: Text(
           'Homepage',
           style: TextStyle(color: Colors.white, fontSize: 32),
@@ -49,10 +45,10 @@ class _HeaderState extends State<Header> {
         trailing: InkWell(
           child: CircleAvatar(
               radius: 50,
-              backgroundColor: kPrimaryColor,
+              backgroundColor: Colors.white,
               child: Text(
                 "${userViewModel.loggedUser.name[0]}",
-                style: TextStyle(color: Colors.white, fontSize: 30),
+                style: TextStyle(color: kPrimaryColor, fontSize: 30),
               )),
           onTap: () => _onAccountPressed(context),
         ),

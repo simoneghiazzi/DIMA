@@ -11,7 +11,8 @@ class ChatTextInput extends StatefulWidget {
   _ChatTextInputState createState() => _ChatTextInputState();
 }
 
-class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserver {
+class _ChatTextInputState extends State<ChatTextInput>
+    with WidgetsBindingObserver {
   final ScrollController listScrollController = ScrollController();
   final FocusNode focusNode = FocusNode();
 
@@ -19,52 +20,52 @@ class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserv
   Widget build(BuildContext context) {
     return Stack(alignment: Alignment.bottomCenter, children: [
       Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(25.0),
+            boxShadow: [
+              BoxShadow(
+                color: kPrimaryColor.withOpacity(0.3),
+                spreadRadius: 4,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              )
+            ]),
         child: Row(
           children: <Widget>[
             // Edit text
-            Flexible(
-              child: Container(
-                child: TextField(
-                  onSubmitted: (value) {
-                    listScrollController.animateTo(0.0,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeOut);
-                  },
-                  style: TextStyle(color: kPrimaryColor, fontSize: 15.0),
-                  controller: widget.chatViewModel.textController,
-                  decoration: InputDecoration.collapsed(
-                    hintText: 'Type your message...',
-                    hintStyle: TextStyle(color: greyColor),
+            Expanded(
+                child: Padding(
+              padding: EdgeInsets.only(left: 20),
+              child: TextField(
+                onSubmitted: (value) {
+                  listScrollController.animateTo(0.0,
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeOut);
+                },
+                style: TextStyle(color: kPrimaryColor, fontSize: 15.0),
+                controller: widget.chatViewModel.textController,
+                focusNode: focusNode,
+                decoration: InputDecoration(
+                  fillColor: kPrimaryColor,
+                  border: InputBorder.none,
+                  hintText: 'Type your message...',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.send),
+                    onPressed: () {
+                      if (widget.chatViewModel.textController.text.trim() !=
+                          '') {
+                        widget.chatViewModel.sendMessage();
+                        focusNode.requestFocus();
+                      }
+                    },
+                    color: kPrimaryColor,
                   ),
-                  focusNode: focusNode,
                 ),
               ),
-            ),
-
-            // Button send message
-            Material(
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 8.0),
-                child: IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () {
-                    if (widget.chatViewModel.textController.text.trim() != '') {
-                      widget.chatViewModel.sendMessage();
-                      focusNode.requestFocus();
-                    }
-                  },
-                  color: kPrimaryColor,
-                ),
-              ),
-              color: Colors.white,
-            ),
+            ))
           ],
         ),
-        width: double.infinity,
-        height: 50.0,
-        decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: lightGreyColor, width: 0.5)),
-            color: Colors.white),
       )
     ]);
   }

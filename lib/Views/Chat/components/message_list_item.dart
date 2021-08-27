@@ -37,8 +37,8 @@ class _MessageListItemState extends State<MessageListItem>
               padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
               width: 200.0,
               decoration: BoxDecoration(
-                  color: lightGreyColor,
-                  borderRadius: BorderRadius.circular(8.0)),
+                  color: kPrimaryLightColor,
+                  borderRadius: BorderRadius.circular(15.0)),
               margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
             )
           ],
@@ -84,8 +84,8 @@ class _MessageListItemState extends State<MessageListItem>
                                 )
                               : Icon(
                                   Icons.account_circle,
-                                  size: 35,
-                                  color: greyColor,
+                                  size: 40,
+                                  color: kPrimaryColor,
                                 ))
                       : Container(width: 35.0),
                   // Message content
