@@ -94,7 +94,6 @@ class _CredentialBodyState extends State<CredentialBody> {
                   return RoundedButton(
                     text: "SIGN UP",
                     press: () {
-<<<<<<< HEAD:lib/Views/Signup/components/credential_body.dart
                       if (loading)
                         LoadingDialog.show(context,
                             text: 'Creating a new user...');
@@ -105,15 +104,6 @@ class _CredentialBodyState extends State<CredentialBody> {
                           loading = false;
                         });
                       });
-=======
-                      widget.authViewModel.createExpert(
-                          widget.name,
-                          widget.surname,
-                          widget.birthDate,
-                          widget.phoneNumber,
-                          widget.latLng);
-                      FocusScope.of(context).unfocus();
->>>>>>> master:lib/Views/Signup/Experts/Mail/components/mail_experts_body.dart
                     },
                     enabled: snapshot.data ?? false,
                   );
