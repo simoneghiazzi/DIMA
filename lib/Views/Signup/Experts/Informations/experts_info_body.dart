@@ -11,7 +11,9 @@ import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:form_builder_image_picker/form_builder_image_picker.dart';
 
 class ExpertsInfoBody extends StatefulWidget {
   final AuthViewModel authViewModel;
@@ -183,6 +185,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                                       TextFieldBlocBuilder(
                                         textFieldBloc: expertInfoViewModel
                                             .addressNumberText,
+                                        keyboardType: TextInputType.number,
                                         decoration: InputDecoration(
                                           filled: true,
                                           fillColor: kPrimaryLightColor,
@@ -196,6 +199,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                                       TextFieldBlocBuilder(
                                         textFieldBloc:
                                             expertInfoViewModel.phoneNumberText,
+                                        keyboardType: TextInputType.number,
                                         decoration: InputDecoration(
                                           filled: true,
                                           fillColor: kPrimaryLightColor,
@@ -206,6 +210,20 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                                           ),
                                         ),
                                       ),
+                                      FormBuilderImagePicker(
+                                          name: 'photo',
+                                          decoration: const InputDecoration(
+                                              labelText: 'Profile photo'),
+                                          maxImages: 1,
+                                          onChanged: (image) {
+                                            if(image.isNotEmpty) {
+                                              expertInfoViewModel.profilePhoto = image[0].path.toString();
+                                            }
+                                          },
+                                          validator:
+                                              FormBuilderValidators.required(
+                                                  context)),
+                                      const SizedBox(height: 15),
                                       SizedBox(height: size.height * 0.04),
                                       ElevatedButton(
                                         onPressed: () {

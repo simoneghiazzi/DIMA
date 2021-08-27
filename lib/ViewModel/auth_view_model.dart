@@ -82,7 +82,6 @@ class AuthViewModel {
       isUserCreatedController.add(true);
     } catch (e) {
       isUserCreatedController.add(false);
-      print(e.toString());
       if (e.code == 'email-already-in-use')
         authMessageController.add('The account already exists.');
       else if (e.code == 'weak-password')

@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
+import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
@@ -30,6 +32,10 @@ class FirebaseAuthService {
     _userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
     user.id = _userCredential.user.uid;
+    if (user.getData()['profilePhoto'] != null) {
+      _firestoreService.uploadProfilePhoto(
+          user, File(user.getData()['profilePhoto']));
+    }
     await _firestoreService.addUserIntoDB(user);
     return _userCredential.user.uid;
   }

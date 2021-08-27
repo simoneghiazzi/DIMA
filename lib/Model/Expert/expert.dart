@@ -7,6 +7,7 @@ class Expert extends User {
   LatLng address;
   String email;
   String phoneNumber;
+  String profilePhoto;
 
   Expert(
       {String id,
@@ -15,7 +16,8 @@ class Expert extends User {
       DateTime birthDate,
       this.address,
       this.email,
-      this.phoneNumber})
+      this.phoneNumber,
+      this.profilePhoto})
       : super(id: id, name: name, surname: surname, birthDate: birthDate);
 
   @override
@@ -41,6 +43,9 @@ class Expert extends User {
     try {
       phoneNumber = doc.get('phoneNumber');
     } catch (e) {}
+    try {
+      profilePhoto = doc.get('profilePhoto');
+    } catch (e) {}
   }
 
   @override
@@ -53,7 +58,8 @@ class Expert extends User {
       'lat': address.latitude,
       'lng': address.longitude,
       'phoneNumber': phoneNumber,
-      'email': email
+      'email': email,
+      'profilePhoto': profilePhoto
     };
   }
 

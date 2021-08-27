@@ -99,7 +99,6 @@ class _CredentialBodyState extends State<CredentialBody> {
                             text: 'Creating a new user...');
                       user = userViewModel.createUser(infoViewModel);
                       authViewModel.signUpUser(user).then((value) {
-                        user.id = value;
                         setState(() {
                           loading = false;
                         });
@@ -112,6 +111,7 @@ class _CredentialBodyState extends State<CredentialBody> {
             StreamBuilder<String>(
                 stream: authViewModel.authMessage,
                 builder: (context, snapshot) {
+                  //LoadingDialog.hide(context);
                   return RichText(
                       text: TextSpan(
                           text: snapshot.data,
