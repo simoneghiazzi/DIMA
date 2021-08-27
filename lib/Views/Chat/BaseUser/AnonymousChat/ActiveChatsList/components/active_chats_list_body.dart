@@ -27,6 +27,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -40,102 +41,112 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      "Anon",
-                      style:
-                          TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                      "Anonymous",
+                      style: TextStyle(
+                          fontSize: size.width * 0.07,
+                          fontWeight: FontWeight.bold),
                     ),
-                    InkWell(
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            left: 8, right: 8, top: 2, bottom: 2),
-                        height: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.lightBlue[200],
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.archive,
-                              color: Colors.indigo[500],
-                              size: 20,
+                    Row(
+                      children: <Widget>[
+                        InkWell(
+                          child: Container(
+                            padding: EdgeInsets.only(
+                                left: 8, right: 8, top: 2, bottom: 2),
+                            height: 30,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: Colors.lightBlue[200],
                             ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Text(
-                              "Requests",
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PendingChatsListScreen(
-                                  chatViewModel: widget.chatViewModel)),
-                        ).then((value) {
-                          initChats();
-                          setState(() {});
-                        });
-                      },
-                    ),
-                    InkWell(
-                        child: Container(
-                          padding: EdgeInsets.only(
-                              left: 8, right: 8, top: 2, bottom: 2),
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.lightBlue[200],
-                          ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.add,
-                                color: Colors.indigo[500],
-                                size: 20,
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                "Add New",
-                                style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                        ),
-                        onTap: () async {
-                          LoadingDialog.show(context,
-                              text: 'Looking for new random user...');
-                          widget.chatViewModel.newRandomChat().then((value) {
-                            LoadingDialog.hide(context);
-                            if (value) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChatPageScreen(
-                                    chatViewModel: widget.chatViewModel,
-                                  ),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.archive,
+                                  color: Colors.indigo[500],
+                                  size: 20,
                                 ),
-                              ).then((value) {
-                                initChats();
-                                setState(() {});
+                                SizedBox(
+                                  width: 2,
+                                ),
+                                Text(
+                                  "Requests",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PendingChatsListScreen(
+                                      chatViewModel: widget.chatViewModel)),
+                            ).then((value) {
+                              initChats();
+                              setState(() {});
+                            });
+                          },
+                        ),
+                        SizedBox(width: size.width * 0.01),
+                        InkWell(
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  left: 8, right: 8, top: 2, bottom: 2),
+                              height: 30,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: Colors.lightBlue[200],
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.add,
+                                    color: Colors.indigo[500],
+                                    size: 20,
+                                  ),
+                                  SizedBox(
+                                    width: 2,
+                                  ),
+                                  Text(
+                                    "Add New",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            onTap: () async {
+                              LoadingDialog.show(context,
+                                  text: 'Looking for new random user...');
+                              widget.chatViewModel
+                                  .newRandomChat()
+                                  .then((value) {
+                                LoadingDialog.hide(context);
+                                if (value) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ChatPageScreen(
+                                        chatViewModel: widget.chatViewModel,
+                                      ),
+                                    ),
+                                  ).then((value) {
+                                    initChats();
+                                    setState(() {});
+                                  });
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: const Text('No more users.'),
+                                    duration: const Duration(seconds: 5),
+                                  ));
+                                }
                               });
-                            } else {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: const Text('No more users.'),
-                                duration: const Duration(seconds: 5),
-                              ));
-                            }
-                          });
-                        }),
+                            }),
+                      ],
+                    )
                   ],
                 ),
               ),
