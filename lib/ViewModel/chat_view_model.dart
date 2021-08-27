@@ -1,70 +1,79 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima_colombo_ghiazzi/Model/Chat/random_id.dart';
+import 'package:dima_colombo_ghiazzi/Model/BaseUser/random_id.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/conversation.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/pending_chat.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/request.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
+import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:flutter/material.dart';
 
 class ChatViewModel {
-  FirestoreService _firestoreService = FirestoreService();
-  String _senderId;
-  String _peerId;
-  String _peerAvatar;
-  RandomId randomId = new RandomId();
+  FirestoreService firestoreService = FirestoreService();
+  Conversation conversation;
   List<QueryDocumentSnapshot> _listMessages = new List.from([]);
   TextEditingController textEditingController = TextEditingController();
 
-  ChatViewModel(this._senderId);
-
-  updateChattingWith() async {
-    await _firestoreService.updateUserFieldIntoDB(
-        _senderId, 'chattingWith', _peerId);
+  ChatViewModel(User senderUser) {
+    conversation = Conversation(senderUser: senderUser);
   }
 
-  void sendMessageToUser() async {
-    await _firestoreService
-        .addMessageToUserIntoDB(computeGroupChatId(), _senderId, _peerId,
-            textEditingController.text)
-        .then((_) => textEditingController.clear());
+  /// Update the ChattingWith field of the [senderUserChat] inside the DB
+  /// It is used in order to show or not the notification on new messages
+  Future<void> updateChattingWith() async {
+    await firestoreService.updateUserFieldIntoDB(
+        conversation.senderUser, 'chattingWith', conversation.peerUser.id);
   }
 
-  void sendMessageToExpert() async {
-    await _firestoreService
-        .addMessageToExpertIntoDB(computeGroupChatId(), _senderId, _peerId,
-            textEditingController.text)
-        .then((_) => textEditingController.clear());
-  }
-
-  bool isLastMessageLeft(int index) {
-    if ((index > 0 && _listMessages[index - 1].get('idFrom') == _senderId) ||
-        index == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  bool isLastMessageRight(int index) {
-    if ((index > 0 && _listMessages[index - 1].get('idFrom') != _senderId) ||
-        index == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  void resetChat() async {
+  /// Reset the ChattingWith field of the [senderUserChat] inside the DB
+  /// It is used in order to show or not the notification on new messages
+  void resetChattingWith() async {
     try {
-      await _firestoreService.updateUserFieldIntoDB(
-          _senderId, 'chattingWith', null);
+      await firestoreService.updateUserFieldIntoDB(
+          conversation.senderUser, 'chattingWith', null);
     } catch (e) {
       print(e);
       return null;
     }
   }
 
+  /// Send a message to the [peerUserChat]
+  void sendMessage() async {
+    String content = textEditingController.text;
+    textEditingController.clear();
+    await firestoreService.addMessageIntoDB(conversation, content);
+  }
+
+  //DA RIVEDERE
+  bool isLastMessageLeft(int index) {
+    if ((index > 0 &&
+            _listMessages[index - 1].get('idFrom') ==
+                conversation.senderUser.id) ||
+        index == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //DA RIVEDERE
+  bool isLastMessageRight(int index) {
+    if ((index > 0 &&
+            _listMessages[index - 1].get('idFrom') ==
+                conversation.peerUser.id) ||
+        index == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// Get the stream of messages between the 2 users
   Stream<QuerySnapshot> loadMessages() {
     try {
-      var snapshots = _firestoreService.getMessagesFromDB(computeGroupChatId());
+      var snapshots =
+          firestoreService.getStreamMessagesFromDB(conversation.pairChatId);
       _listMessages.clear();
       snapshots.forEach((element) {
         _listMessages.addAll(element.docs);
@@ -76,88 +85,54 @@ class ChatViewModel {
     }
   }
 
-  Future<List> loadActiveChats() async {
-    try {
-      return await _firestoreService.getAnonymousChatsFromDB(
-          senderId, _firestoreService.activeChatCollection);
-    } catch (e) {
-      print(e);
-      return null;
-    }
+  Future<bool> hasMessages() async {
+    return await firestoreService.hasMessages(conversation.pairChatId);
   }
 
-  Future<List> loadPendingChats() async {
-    try {
-      return await _firestoreService.getAnonymousChatsFromDB(
-          senderId, _firestoreService.pendingChatCollection);
-    } catch (e) {
-      print(e);
-      return null;
-    }
+  /// Chat with a [user]
+  Future<void> chatWithUser(User user) async {
+    conversation.peerUser = user;
+    conversation.computePairChatId();
   }
 
-  Future<List> loadExpertChats() async {
-    try {
-      return await _firestoreService.getExpertChatsFromDB(
-          senderId, _firestoreService.expertChatCollection);
-    } catch (e) {
-      print(e);
-      return null;
-    }
-  }
-
-  Future<bool> addNewRandomChat() async {
-    var randomUser = await _firestoreService.getRandomUserFromDB(
-        senderId, randomId.generate());
+  /// Look for a new random anonymous user
+  Future<bool> newRandomChat() async {
+    var randomUser = await firestoreService.getRandomUserFromDB(
+        conversation.senderUser, RandomId.generate());
     if (randomUser == null) return false;
-    peerId = randomUser['uid'];
-    _firestoreService.addAnonymousChatIntoDB(senderId, peerId);
+    conversation.senderUserChat = Request();
+    conversation.peerUser = randomUser;
+    conversation.peerUserChat = PendingChat();
+    conversation.computePairChatId();
+    await firestoreService.addChatIntoDB(conversation);
     return true;
   }
 
-  Future<void> addNewExpertChat() async {
+  /// Load the chat list starting from the [conversation.senderUser] and the
+  /// [conversation.senderUserChat]
+  Future<List> loadChats() async {
     try {
-      await _firestoreService.addExpertChatIntoDB(senderId, peerId);
+      return await firestoreService.getChatsFromDB(
+          conversation.senderUser, conversation.senderUserChat);
     } catch (e) {
       print(e);
       return null;
     }
   }
 
+  /// Accept a new pendig chat request
   Future<void> acceptPendingChat() async {
-    await _firestoreService.upgradePendingToActiveChatIntoDB(senderId, peerId);
+    await firestoreService.upgradePendingToActiveChatIntoDB(conversation);
+    conversation.senderUserChat = ActiveChat();
+    conversation.peerUserChat = ActiveChat();
   }
 
-  Future<void> denyPendingChat() async {
-    await _firestoreService.removePendingChatFromDB(senderId, peerId);
-    await _firestoreService.removeMessagesFromDB(computeGroupChatId());
-  }
-
+  /// Delete or deny a chat between the 2 users and all the messages
   Future<void> deleteChat() async {
-    await _firestoreService.removeActiveChatFromDB(senderId, peerId);
+    await firestoreService.removeChatFromDB(conversation);
+    await firestoreService.removeMessagesFromDB(conversation.pairChatId);
   }
-
-  String computeGroupChatId() {
-    if (_senderId.hashCode <= _peerId.hashCode) {
-      return '$_senderId-$_peerId';
-    } else {
-      return '$_peerId-$_senderId';
-    }
-  }
-
-  set peerId(String peerId) {
-    this._peerId = peerId;
-  }
-
-  set peerAvatar(String peerAvatar) {
-    this._peerAvatar = peerAvatar;
-  }
-
-  get senderId => _senderId;
-
-  get peerId => _peerId;
-
-  get peerAvatar => _peerAvatar;
 
   TextEditingController get textController => textEditingController;
+
 }

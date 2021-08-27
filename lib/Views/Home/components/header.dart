@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
@@ -8,16 +8,22 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 
 class Header extends StatefulWidget {
   final AuthViewModel authViewModel;
+  final UserViewModel userViewModel;
 
-  Header({Key key, @required this.authViewModel}) : super(key: key);
+  Header({Key key, @required this.authViewModel, @required this.userViewModel})
+      : super(key: key);
 
   @override
-  _HeaderState createState() => _HeaderState();
+  _HeaderState createState() =>
+      _HeaderState(authViewModel: authViewModel, userViewModel: userViewModel);
 }
 
 class _HeaderState extends State<Header> {
+  final AuthViewModel authViewModel;
+  final UserViewModel userViewModel;
   StreamSubscription<bool> subscriber;
-  LoggedUser loggedUser;
+
+  _HeaderState({@required this.authViewModel, @required this.userViewModel});
 
   @override
   void initState() {
@@ -45,7 +51,7 @@ class _HeaderState extends State<Header> {
               radius: 50,
               backgroundColor: kPrimaryColor,
               child: Text(
-                "${widget.authViewModel.loggedUser.name[0]}",
+                "${userViewModel.loggedUser.name[0]}",
                 style: TextStyle(color: Colors.white, fontSize: 30),
               )),
           onTap: () => _onAccountPressed(context),
@@ -62,7 +68,9 @@ class _HeaderState extends State<Header> {
           context,
           MaterialPageRoute(
             builder: (context) {
-              return WelcomeScreen(authViewModel: widget.authViewModel);
+              return WelcomeScreen(
+                authViewModel: authViewModel,
+              );
             },
           ),
           ModalRoute.withName('/'),
