@@ -8,6 +8,7 @@ class ExpertInfoViewModel extends BaseUserInfoViewModel {
   final MapViewModel mapViewModel = MapViewModel();
   String infoAddress;
   Place expertAddress;
+  String profilePhoto;
 
   final countryText = TextFieldBloc(validators: [
     FieldBlocValidators.required,
@@ -52,6 +53,7 @@ class ExpertInfoViewModel extends BaseUserInfoViewModel {
       'lat': expertAddress.geometry.location.lat,
       'lng': expertAddress.geometry.location.lng,
       'phoneNumber': phoneNumberText.value,
+      'profilePhoto': profilePhoto,
     };
   }
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
@@ -8,6 +10,7 @@ import 'package:dima_colombo_ghiazzi/Model/Chat/request.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/report.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 // Service used by the view models to interact with the Firestore DB
 class FirestoreService {
@@ -156,6 +159,18 @@ class FirestoreService {
       } catch (e) {}
     }
     return null;
+  }
+
+  Future<void> uploadProfilePhoto(User user, File profilePhoto) async {
+    var firebaseStorageRef =
+        FirebaseStorage.instance.ref().child(user.id + '/profilePhoto');
+    UploadTask uploadTask = firebaseStorageRef.putFile(profilePhoto);
+    uploadTask.whenComplete(() async {
+      updateUserFieldIntoDB(
+          user, 'profilePhoto', await firebaseStorageRef.getDownloadURL());
+    }).catchError((err) {
+      print(err);
+    });
   }
 
   /***************************************** MESSAGES *****************************************/
