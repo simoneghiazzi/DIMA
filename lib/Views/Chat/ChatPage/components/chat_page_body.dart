@@ -17,7 +17,6 @@ class ChatPageBody extends StatefulWidget {
 
 class _ChatPageBodyState extends State<ChatPageBody>
     with WidgetsBindingObserver {
-
   @override
   void initState() {
     super.initState();

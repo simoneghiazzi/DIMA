@@ -14,6 +14,8 @@ import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_input_field.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_password_field.dart';
 
+import '../../../constants.dart';
+
 class LoginBody extends StatefulWidget {
   final AuthViewModel authViewModel;
 
@@ -45,11 +47,20 @@ class _LoginBodyState extends State<LoginBody> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text(
+              "Login",
+              style: TextStyle(
+                color: kPrimaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
+              ),
+            ),
+            SizedBox(height: size.height * 0.08),
             Image.asset(
               "assets/icons/logo.png",
               height: size.height * 0.15,
             ),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.07),
             StreamBuilder<String>(
                 stream: authViewModel.loginForm.errorEmailText,
                 builder: (context, snapshot) {

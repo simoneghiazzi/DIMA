@@ -20,6 +20,7 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput>
     return Stack(alignment: Alignment.bottomCenter, children: [
       Container(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             // Button accept
             Material(
