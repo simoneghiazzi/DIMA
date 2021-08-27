@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Login/components/body.dart';
+import 'package:dima_colombo_ghiazzi/Views/Login/components/login_body.dart';
 
 class LoginScreen extends StatelessWidget {
 
@@ -10,7 +10,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Body(authViewModel: authViewModel,),
+      body: LoginBody(authViewModel: authViewModel,),
     );
   }
 }

@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/report_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/report_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
+import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-
-import '../../../constants.dart';
 
 class ReportListPage extends StatefulWidget {
   final ReportViewModel reportViewModel;
@@ -133,7 +133,7 @@ class _BodyState extends State<ReportListPage> {
   Widget buildItem(BuildContext context, DocumentSnapshot doc) {
     // This size provide us total height and width of our screen
     Size size = MediaQuery.of(context).size;
-    String date = doc.get('date');
+    String date = DateFormat('yyyy-MM-dd kk:mm').format(doc.get('date').toDate());
     if (doc != null) {
       return Container(
         child: TextButton(

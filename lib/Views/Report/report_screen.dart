@@ -1,17 +1,17 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Report/components/body.dart';
+import 'package:dima_colombo_ghiazzi/Views/Report/components/create_report_body.dart';
 
 class ReportScreen extends StatelessWidget {
-  final AuthViewModel authViewModel;
+  final BaseUserViewModel baseUserViewModel;
 
-  ReportScreen({Key key, @required this.authViewModel}) : super(key: key);
+  ReportScreen({Key key, @required this.baseUserViewModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Body(
-        authViewModel: authViewModel,
+      body: CreateReportBody(
+        baseUserViewModel: baseUserViewModel,
       ),
     );
   }

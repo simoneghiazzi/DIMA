@@ -1,68 +1,42 @@
 import 'dart:convert';
+import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
+import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
-import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:dima_colombo_ghiazzi/Model/user.dart';
+import 'package:firebase_auth/firebase_auth.dart' as Firebase;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart';
 
-// Abstract class containing the base authentication methods
-abstract class BaseAuth {
-  Future<LoggedUser> signInWithEmailAndPassword(String email, String password);
-  Future<LoggedUser> createUserWithEmailAndPassword(String email,
-      String password, String name, String surname, String birthDate);
-  Future deleteUser();
-  Future<LoggedUser> currentUser();
-}
-
-class FirebaseAuthService implements BaseAuth {
+class FirebaseAuthService {
   final FirestoreService _firestoreService = FirestoreService();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  UserCredential _userCredential;
+  final Firebase.FirebaseAuth _firebaseAuth = Firebase.FirebaseAuth.instance;
+  Firebase.UserCredential _userCredential;
 
-  // Sign in a user with email and password
-  Future<LoggedUser> signInWithEmailAndPassword(
+  /// Sign in a user with [email] and [password]
+  Future<String> signInWithEmailAndPassword(
       String email, String password) async {
     _userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
     if (_firebaseAuth.currentUser.emailVerified) {
-      return await _firestoreService.getUserFromDB(_userCredential.user.uid);
+      return _userCredential.user.uid;
     }
     return null;
   }
 
-  // Create a new user with email and password
-  Future<LoggedUser> createUserWithEmailAndPassword(String email,
-      String password, String name, String surname, String birthDate) async {
+  /// Create a new user with [email] and [password]
+  Future<String> createUserWithEmailAndPassword(
+      String email, String password, User user) async {
     _userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
-    await _firestoreService.addUserIntoDB(
-        _userCredential.user.uid, name, surname, birthDate);
-    return await _firestoreService.getUserFromDB(_userCredential.user.uid);
-  }
-
-  //Similiar to creation of normal user, but for experts
-  Future<String> createExpertWithEmailAndPassword(
-      String email,
-      String password,
-      String name,
-      String surname,
-      DateTime birthDate,
-      num lat,
-      num lng,
-      String phoneNumber) async {
-    _userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email, password: password);
-
-    _firestoreService.addExpertIntoDB(_userCredential.user.uid, name, surname,
-        birthDate, lat, lng, phoneNumber, email);
-
+    user.id = _userCredential.user.uid;
+    await _firestoreService.addUserIntoDB(user);
     return _userCredential.user.uid;
   }
 
-  /* Sign in a user if it exists or create a new user through the google account.
-  It retrieves the name, surname and birthDate information from the google account of the user. */
-  Future<LoggedUser> signInWithGoogle() async {
+  /// Sign in a user if it exists or create a new user through the google account.
+  /// It retrieves the name, surname and birthDate information from the google account of the user.
+  Future<String> signInWithGoogle() async {
     GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
       'email',
       "https://www.googleapis.com/auth/userinfo.profile",
@@ -70,83 +44,91 @@ class FirebaseAuthService implements BaseAuth {
     ]);
     GoogleSignInAccount googleUser = await googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    AuthCredential credential = GoogleAuthProvider.credential(
+    Firebase.AuthCredential credential = Firebase.GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
     _userCredential = await _firebaseAuth.signInWithCredential(credential);
-    final headers = await googleSignIn.currentUser.authHeaders;
-    final res = jsonDecode((await get(
-            Uri.parse(
-                "https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
-            headers: {"Authorization": headers["Authorization"]}))
-        .body)['birthdays'][0]['date'];
-    String birthDate = '${res['month']}/${res['day']}/${res['year']}';
 
     // Check if it is a new user. If yes, insert the data into the DB
-    if (await _firestoreService.getUserFromDB(_userCredential.user.uid) ==
+    if (await _firestoreService.getUserByIdFromDB(
+            Collection.USERS, _userCredential.user.uid) ==
         null) {
-      await _firestoreService.addUserIntoDB(
-          _userCredential.user.uid,
-          googleSignIn.currentUser.displayName.split(" ")[0],
-          googleSignIn.currentUser.displayName.split(" ")[1],
-          birthDate);
+      final headers = await googleSignIn.currentUser.authHeaders;
+      final res = jsonDecode((await get(
+              Uri.parse(
+                  "https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
+              headers: {"Authorization": headers["Authorization"]}))
+          .body)['birthdays'][0]['date'];
+      var displayName = googleSignIn.currentUser.displayName.split(" ");
+      String birthDate = '${res['year']}-${res['month']}-${res['day']}';
+
+      await _firestoreService.addUserIntoDB(BaseUser(
+          id: _userCredential.user.uid,
+          name: displayName[0],
+          surname: displayName[1],
+          birthDate: DateTime.parse(birthDate)));
     }
-    return await _firestoreService.getUserFromDB(_userCredential.user.uid);
+    return _userCredential.user.uid;
   }
 
-  /* Sign in a user if it exists or create a new user through the facebook account.
-  It retrieves the name, surname and birthDate information from the facebook account of the user. */
-  Future<LoggedUser> signInWithFacebook() async {
+  /// Sign in a user if it exists or create a new user through the facebook account.
+  /// It retrieves the name, surname and birthDate information from the facebook account of the user.
+  Future<String> signInWithFacebook() async {
     LoginResult result = await FacebookAuth.instance
         .login(permissions: ['public_profile', 'user_birthday']);
     AccessToken accessToken = result.accessToken;
     var facebookAuthCredential =
-        FacebookAuthProvider.credential(accessToken.token);
+        Firebase.FacebookAuthProvider.credential(accessToken.token);
     _userCredential =
         await _firebaseAuth.signInWithCredential(facebookAuthCredential);
-    if (await _firestoreService.getUserFromDB(_userCredential.user.uid) ==
+
+    // Check if it is a new user. If yes, insert the data into the DB
+    if (await _firestoreService.getUserByIdFromDB(
+            Collection.USERS, _userCredential.user.uid) ==
         null) {
       final userData =
           await FacebookAuth.instance.getUserData(fields: "name, birthday");
-      await _firestoreService.addUserIntoDB(
-          _userCredential.user.uid,
-          userData['name'].split(" ")[0],
-          userData['name'].split(" ")[1],
-          userData['birthday']);
+
+      var res = userData['birthday'].split('/');
+      String birthDate = '${res[2]}-${res[0]}-${res[1]}';
+      await _firestoreService.addUserIntoDB(BaseUser(
+          id: _userCredential.user.uid,
+          name: userData['name'].split(" ")[0],
+          surname: userData['name'].split(" ")[1],
+          birthDate: DateTime.parse(birthDate)));
     }
-    return await _firestoreService.getUserFromDB(_userCredential.user.uid);
+    return _userCredential.user.uid;
   }
 
-  /* Return the user if it is aleready logged in.
-  It checks if the email is verified in case the user has signed up with the email and password method. */
-  Future<LoggedUser> currentUser() async {
-    if (_firebaseAuth.currentUser != null) {
-      if (_firebaseAuth.currentUser.providerData[0].providerId == 'password' &&
-          !_firebaseAuth.currentUser.emailVerified) return null;
-      return await _firestoreService
-          .getUserFromDB(_firebaseAuth.currentUser.uid);
-    }
-    return null;
-  }
-
-  // Send the email verification to the user in the sign up process
+  /// Send the email verification to the user in the sign up process
   Future sendEmailVerification() async {
     if (_userCredential != null) {
       await _firebaseAuth.currentUser.sendEmailVerification();
     }
   }
 
-  // Delete a user
-  Future deleteUser() async {
+  /// Delete a user
+  Future deleteUser(User user) async {
     await _firebaseAuth.currentUser.delete();
-    await _firestoreService.deleteUserFromDB(_userCredential.user.uid);
+    await _firestoreService.removeUserFromDB(user);
     _userCredential = null;
   }
 
-  // Sign out a user
+  /// Sign out a user
   Future signOut() async {
     _userCredential = null;
     await _firebaseAuth.signOut();
+  }
+
+  /// Return the user id if it is already logged in.
+  /// It checks if the email is verified in case the user has signed up with the email and password method.
+  Future<String> currentUser() async {
+    if (_firebaseAuth.currentUser != null) {
+      if (_firebaseAuth.currentUser.providerData[0].providerId == 'password' &&
+          !_firebaseAuth.currentUser.emailVerified) return null;
+      return _firebaseAuth.currentUser.uid;
+    }
+    return null;
   }
 }

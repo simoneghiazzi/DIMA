@@ -1,233 +1,202 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima_colombo_ghiazzi/Model/logged_user.dart';
+import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/conversation.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/pending_chat.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/chat.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/request.dart';
+import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
+import 'package:dima_colombo_ghiazzi/Model/BaseUser/report.dart';
+import 'package:dima_colombo_ghiazzi/Model/user.dart';
 
+// Service used by the view models to interact with the Firestore DB
 class FirestoreService {
-  // The collection of users in the firestore DB
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
-  // The collection of experts in the firestore DB
-  CollectionReference experts =
-      FirebaseFirestore.instance.collection('experts');
-  //The collection of users in the firestore DB
-  final CollectionReference reports =
-      FirebaseFirestore.instance.collection('reports');
-
-  String activeChatCollection = 'anonymousActiveChats';
-  String pendingChatCollection = 'anonymousPendingChats';
-  String expertChatCollection = 'expertChats';
-
+  // Firestore instance
+  final _firestore = FirebaseFirestore.instance;
+  // Limit of returned instances from the DB by the queries
   int _limit = 30;
 
-  // Add a user into the firestore DB
-  Future<void> addUserIntoDB(
-      String id, String name, String surname, String birthDate) async {
-    await users.doc(id).set({
-      'uid': id,
-      'name': name,
-      'surname': surname,
-      'birthDate': birthDate
-    }).catchError((error) => print("Failed to add user: $error"));
-    await _incrementUsersCountIntoDB();
+  /***************************************** USERS *****************************************/
+
+  /// Add a user into the firestore DB.
+  /// It takes the [user] and based on the type it adds him/her to the list of experts or to the list
+  /// of users and it increments the collection counter.
+  Future<void> addUserIntoDB(User user) async {
+    await _firestore
+        .collection(user.collection.value)
+        .doc(user.id)
+        .set(user.getData())
+        .then((value) => print('User added'))
+        .catchError((error) => print("Failed to add user: $error"));
+    await _incrementBaseCollectionCounter(user.collection, 1);
   }
 
-  //Add an expert into the firestore DB
-  Future<void> addExpertIntoDB(
-      String id,
-      String name,
-      String surname,
-      DateTime birthDate,
-      num lat,
-      num lng,
-      String phoneNumber,
-      String email) async {
-    await experts
-        .doc(id)
-        .set({
-          'eid': id,
-          'name': name,
-          'surname': surname,
-          'birthDate': birthDate,
-          'lat': lat,
-          'lng': lng,
-          'phoneNumber': phoneNumber,
-          'email': email
-        })
-        .then((value) => print("Expert added"))
-        .catchError((error) => print("Failed to add expert: $error"));
-  }
-
-  // Delete a user from the firestore DB
-  Future<void> deleteUserFromDB(String id) async {
-    await users
-        .doc(id)
+  /// Delete a user from the firestore DB.
+  /// It takes the [user] and based on the type it deletes him/her from the list of experts or from the list
+  /// of users and it decrements the collection counter.
+  Future<void> removeUserFromDB(User user) async {
+    await _firestore
+        .collection(user.collection.value)
+        .doc(user.id)
         .delete()
         .catchError((error) => print("Failed to delete user: $error"));
-    await _decrementUsersCountIntoDB();
+    await _incrementBaseCollectionCounter(user.collection, -1);
   }
 
-  // Increment the count of the instances of users into the DB
-  Future<void> _incrementUsersCountIntoDB() async {
-    var data = (await users.doc('utils').get()).data() as Map<String, dynamic>;
-    if (data == null) {
-      await users.doc('utils').set({'count': 1}).catchError(
-          (error) => print("Failed to update user count: $error"));
-    } else {
-      await users.doc('utils').update({'count': data['count'] + 1}).catchError(
-          (error) => print("Failed to update user count: $error"));
-    }
+  /// It takes a [user] and updates the specified [field] with the [newValue] into the DB
+  Future<void> updateUserFieldIntoDB(User user, String field, newValue) async {
+    await _firestore
+        .collection(user.collection.value)
+        .doc(user.id)
+        .update({field: newValue});
   }
 
-  // Decrement the count of the instances of users into the DB
-  Future<void> _decrementUsersCountIntoDB() async {
-    var data = (await users.doc('utils').get()).data() as Map<String, dynamic>;
-    await users.doc('utils').update({'count': data['count'] - 1}).catchError(
-        (error) => print("Failed to update user count: $error"));
+  /// Get the list of all the doc in [collection] from the DB
+  Future<QuerySnapshot> getBaseCollectionFromDB(Collection collection) async {
+    return await _firestore.collection(collection.value).get();
   }
 
-  // Get the count of the intances of users from the DB
-  Future<int> getUsersCountFromDB() async {
-    var data = (await users.doc('utils').get()).data() as Map<String, dynamic>;
-    return data['count'];
-  }
-
-  //Query the firestore DB in order to retrieve the user's info
-  Future<LoggedUser> getUserFromDB(String id) async {
-    QuerySnapshot<Map<String, dynamic>> snapshot =
-        await users.where('uid', isEqualTo: id).get();
-    List<QueryDocumentSnapshot> docs = snapshot.docs;
-    for (var doc in docs) {
-      if (doc.data() != null) {
-        var data = doc.data() as Map<String, dynamic>;
-        LoggedUser loggedUser = new LoggedUser(
-            name: data['name'].toString(),
-            surname: data['surname'].toString(),
-            uid: id,
-            dateOfBirth: data['birthDate'].toString());
-        return loggedUser;
-      }
-    }
+  /// It takes the [id] and the [collection] and returns a doc instance with
+  /// all the information of the retrieved user
+  Future<DocumentSnapshot> getUserByIdFromDB(
+      Collection collection, String id) async {
+    var snap = await _firestore
+        .collection(collection.value)
+        .where(FieldPath.documentId, isEqualTo: id)
+        .get();
+    if (snap.docs.isNotEmpty) return snap.docs[0];
     return null;
   }
 
-// Get all the experts from DB
-  Future<QuerySnapshot> getExpertsFromDB() async {
-    return await FirebaseFirestore.instance.collection('experts').get();
+  /// It takes the [list] of ids and the [collection] (users/experts)
+  /// and returns a list of docs with all the information of the retrieved users
+  Future<List> _getUsersByList(Collection collection, List list) async {
+    var snap = await _firestore
+        .collection(collection.value)
+        .where(FieldPath.documentId, whereIn: list)
+        .get();
+    return List.from(snap.docs);
   }
 
-  // Get random user from DB
-  Future<Map> getRandomUserFromDB(String senderId, String randomId) async {
-    if (await getUsersCountFromDB() - 1 >
-        await _getChatsCountFromDB(senderId)) {
-      List<String> activeIds =
-          await _getChatIds(senderId, activeChatCollection);
-      List<String> pendingIds =
-          await _getChatIds(senderId, pendingChatCollection);
-      var snapshot = await users
+  /// Increment the count of the instances of [collection] into the DB
+  Future<void> _incrementBaseCollectionCounter(
+      Collection collection, int increment) async {
+    var utils = await _firestore
+        .collection(collection.value)
+        .doc(Collection.UTILS.value)
+        .get();
+    int counter;
+    utils.data() != null ? counter = utils.get('userCounter') : counter = 0;
+    await _firestore
+        .collection(collection.value)
+        .doc(Collection.UTILS.value)
+        .set({'userCounter': counter + increment}).catchError(
+            (error) => print("Failed to update the counter: $error"));
+  }
+
+  /// Get the counter of the intances of [collection] from the DB
+  Future<int> _getBaseCollectionCounter(Collection collection) async {
+    var utils = await _firestore
+        .collection(collection.value)
+        .doc(Collection.UTILS.value)
+        .get();
+    return utils.get('userCounter');
+  }
+
+  /// Get random user from the DB. It takes the [user] and the auto-generated [randomId] and it returns a Future BaseUser instance
+  // 1. Check if the number of chats of the user is less than the total number of users, if not return null
+  // 2. Get all the active and pending chat users id
+  // 3. Take the ordered list of users with the id <= randomId and take the first
+  // user id that is not the sender him/herself or that is not in the list of active/pending chat ids
+  // 4. If no user is returned, repeat the search with the ids > randomId
+  Future<BaseUser> getRandomUserFromDB(BaseUser user, String randomId) async {
+    if (await _getBaseCollectionCounter(Collection.USERS) - 1 >
+        await _getChatsCounterFromDB(user)) {
+      List<String> activeIds = await _getChatIds(user, ActiveChat());
+      List<String> pendingIds = await _getChatIds(user, PendingChat());
+      List<String> requests = await _getChatIds(user, Request());
+      var snapshot = await _firestore
+          .collection(user.collection.value)
           .where('uid', isLessThanOrEqualTo: randomId)
           .orderBy('uid', descending: true)
           .limit(_limit)
           .get();
-      for (var doc in snapshot.docs) {
-        var data = doc.data() as Map<String, dynamic>;
-        if (senderId != data['uid'].toString() &&
-            !activeIds.contains(data['uid']) &&
-            !pendingIds.contains(data['uid'])) {
-          return data;
+      while (true) {
+        for (var doc in snapshot.docs) {
+          if (user.id != doc.get('uid') &&
+              !activeIds.contains(doc.get('uid')) &&
+              !pendingIds.contains(doc.get('uid')) &&
+              !requests.contains(doc.get('uid'))) {
+            var user = BaseUser();
+            user.setFromDocument(doc);
+            return user;
+          }
         }
-      }
-      snapshot = await users
-          .where('uid', isGreaterThan: randomId)
-          .orderBy('uid')
-          .limit(_limit)
-          .get();
-      for (var doc in snapshot.docs) {
-        var data = doc.data() as Map<String, dynamic>;
-        if (senderId != data['uid'].toString() &&
-            !activeIds.contains(data['uid']) &&
-            !pendingIds.contains(data['uid'])) {
-          return data;
-        }
+        snapshot = await _firestore
+            .collection(user.collection.value)
+            .where('uid', isGreaterThan: randomId)
+            .orderBy('uid', descending: true)
+            .limit(_limit)
+            .get();
       }
     }
     return null;
   }
 
-  // Add a new message to an expert user into the DB
-  Future<void> addMessageToExpertIntoDB(
-      String groupChatId, String senderId, String peerId, content) async {
+  /// Find the collection of the user [id] inside the base collections of the DB
+  Future<Collection> findUserInCollections(String id) async {
+    var baseCollections = [Collection.USERS, Collection.EXPERTS];
+    for (var collection in baseCollections) {
+      try {
+        var snap = await _firestore
+            .collection(collection.value)
+            .where(FieldPath.documentId, isEqualTo: id)
+            .get();
+        if (snap.docs.isNotEmpty) return collection;
+      } catch (e) {}
+    }
+    return null;
+  }
+
+  /***************************************** MESSAGES *****************************************/
+
+  /// Add a new message to an expert into the DB.
+  /// It takes the [pairChatId] that is the composite id of the 2 users, the [senderUserChat],
+  /// the [peerUserChat] and the [content] of message.
+  /// Firstly, it calls the addMessageIntoDB method that adds the new message into the messages collection,
+  /// then it updates the field of the lastMessage of the sender and peer Users. */
+  Future<void> addMessageIntoDB(Conversation conversation, content) async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
-    _addMessageIntoDB(groupChatId, senderId, peerId, content, timestamp);
-    await users
-        .doc(senderId)
-        .collection(expertChatCollection)
-        .doc(peerId)
+    await _addMessageIntoMessagesCollection(conversation, content, timestamp);
+    await _firestore
+        .collection(conversation.senderUser.collection.value)
+        .doc(conversation.senderUser.id)
+        .collection(conversation.senderUserChat.chatCollection.value)
+        .doc(conversation.peerUser.id)
         .update({'lastMessage': timestamp});
-    await experts
-        .doc(peerId)
-        .collection('chats')
-        .doc(senderId)
+    await _firestore
+        .collection(conversation.peerUser.collection.value)
+        .doc(conversation.peerUser.id)
+        .collection(conversation.peerUserChat.chatCollection.value)
+        .doc(conversation.senderUser.id)
         .update({'lastMessage': timestamp});
   }
 
-  // Add a new response message of an expert to the user into the DB
-  Future<void> addExpertResponseIntoDB(
-      String groupChatId, String senderId, String peerId, content) async {
-    int timestamp = DateTime.now().millisecondsSinceEpoch;
-    _addMessageIntoDB(groupChatId, senderId, peerId, content, timestamp);
-    await experts
-        .doc(senderId)
-        .collection('chats')
-        .doc(peerId)
-        .update({'lastMessage': timestamp});
-    await users
-        .doc(peerId)
-        .collection(expertChatCollection)
-        .doc(senderId)
-        .update({'lastMessage': timestamp});
-  }
-
-  // Add a new message to an anonymous user into the DB
-  Future<void> addMessageToUserIntoDB(
-      String groupChatId, String senderId, String peerId, content) async {
-    int timestamp = DateTime.now().millisecondsSinceEpoch;
-    _addMessageIntoDB(groupChatId, senderId, peerId, content, timestamp);
-    await users
-        .doc(senderId)
-        .collection(activeChatCollection)
-        .doc(peerId)
-        .update({'lastMessage': timestamp});
-    if ((await users
-            .doc(peerId)
-            .collection(activeChatCollection)
-            .doc(senderId)
-            .get())
-        .exists)
-      await users
-          .doc(peerId)
-          .collection(activeChatCollection)
-          .doc(senderId)
-          .update({'lastMessage': timestamp});
-    else
-      await users
-          .doc(peerId)
-          .collection(pendingChatCollection)
-          .doc(senderId)
-          .update({'lastMessage': timestamp});
-  }
-
-  // Add a new message into the DB
-  Future<void> _addMessageIntoDB(String groupChatId, String senderId,
-      String peerId, content, int timestamp) async {
-    var documentReference = FirebaseFirestore.instance
-        .collection('messages')
-        .doc(groupChatId)
-        .collection(groupChatId)
+  /// Add a new message into the messages collection of the DB
+  /// The [pairChatId] that is the composite id of the 2 users
+  Future<void> _addMessageIntoMessagesCollection(
+      Conversation conversation, content, int timestamp) async {
+    var documentReference = _firestore
+        .collection(Collection.MESSAGES.value)
+        .doc(conversation.pairChatId)
+        .collection(conversation.pairChatId)
         .doc(timestamp.toString());
     FirebaseFirestore.instance.runTransaction((transaction) async {
       transaction.set(
         documentReference,
         {
-          'idFrom': senderId,
-          'idTo': peerId,
+          'idFrom': conversation.senderUser.id,
+          'idTo': conversation.peerUser.id,
           'timestamp': timestamp,
           'content': content,
         },
@@ -235,120 +204,156 @@ class FirestoreService {
     });
   }
 
-  // Get all the messages of a specific pair of users from the DB
-  Stream<QuerySnapshot> getMessagesFromDB(String groupChatId) {
-    return FirebaseFirestore.instance
-        .collection('messages')
-        .doc(groupChatId)
-        .collection(groupChatId)
+  /// It takes the [pairChatId] that is the composite id of the 2 users and
+  /// returns the stream of all the messages between the pair of users from the DB
+  Stream<QuerySnapshot> getStreamMessagesFromDB(String pairChatId) {
+    return _firestore
+        .collection(Collection.MESSAGES.value)
+        .doc(pairChatId)
+        .collection(pairChatId)
         .orderBy('timestamp', descending: true)
-        .limit(_limit)
         .snapshots();
   }
 
-  // Add a new chat to the list of active chats of the sender user
-  Future<void> addAnonymousChatIntoDB(String senderId, String peerId) async {
-    await users
-        .doc(senderId)
-        .collection(activeChatCollection)
-        .doc(peerId)
-        .set({});
-    await _incrementChatsCountIntoDB(senderId);
-    await addPendingChatIntoDB(senderId, peerId);
-  }
-
-  // Add a new chat to the list of active chats of the sender user
-  Future<void> addExpertChatIntoDB(String senderId, String peerId) async {
-    await users
-        .doc(senderId)
-        .collection(expertChatCollection)
-        .doc(peerId)
-        .set({});
-    await experts.doc(peerId).collection('chats').doc(senderId).set({});
-  }
-
-  Future<void> addPendingChatIntoDB(String senderId, String peerId) async {
-    await users
-        .doc(peerId)
-        .collection(pendingChatCollection)
-        .doc(senderId)
-        .set({});
-    await _incrementChatsCountIntoDB(peerId);
-  }
-
-  Future<void> upgradePendingToActiveChatIntoDB(
-      String senderId, String peerId) async {
-    var pendingChat = await users
-        .doc(senderId)
-        .collection(pendingChatCollection)
-        .doc(peerId)
+  /// It takes the [pairChatId] that is the composite id of the 2 users and returns true
+  /// if there is at least 1 between the pair of users from the DB, false otherwise
+  Future<bool> hasMessages(String pairChatId) async {
+    var snap = await _firestore
+        .collection(Collection.MESSAGES.value)
+        .doc(pairChatId)
+        .collection(pairChatId)
+        .limit(1)
         .get();
-    await users
-        .doc(senderId)
-        .collection(pendingChatCollection)
-        .doc(peerId)
-        .delete();
-    await users.doc(senderId).collection(activeChatCollection).doc(peerId).set({
-      'name': pendingChat.data()['name'],
-      'lastMessage': pendingChat.data()['lastMessage']
-    });
+    if (snap.docs.isNotEmpty) return true;
+    return false;
   }
 
-  // Remove the messages between 2 users from the DB
-  Future<void> removeMessagesFromDB(String groupChatId) async {
-    var messages = await FirebaseFirestore.instance
-        .collection('messages')
-        .doc(groupChatId)
-        .collection(groupChatId)
+  /// It takes the [pairChatId] and removes the messages between the 2 users from the DB
+  Future<void> removeMessagesFromDB(String pairChatId) async {
+    var messages = await _firestore
+        .collection(Collection.MESSAGES.value)
+        .doc(pairChatId)
+        .collection(pairChatId)
         .get();
     messages.docs.forEach((doc) async {
-      await FirebaseFirestore.instance
-          .collection('messages')
-          .doc(groupChatId)
-          .collection(groupChatId)
+      await _firestore
+          .collection(Collection.MESSAGES.value)
+          .doc(pairChatId)
+          .collection(pairChatId)
           .doc(doc.id)
           .delete();
     });
   }
 
-  // Remove a chat to the list of active chats of the sender user
-  Future<void> removeActiveChatFromDB(String senderId, String peerId) async {
-    await users
-        .doc(senderId)
-        .collection(activeChatCollection)
-        .doc(peerId)
-        .delete();
-    await _decrementChatsCountIntoDB(senderId);
-    await users
-        .doc(peerId)
-        .collection(pendingChatCollection)
-        .doc(senderId)
-        .delete();
-    await _decrementChatsCountIntoDB(peerId);
+  /***************************************** CHATS *****************************************/
+
+  /// Add a new [peerUserChat] to the list of chats of the [senderUserChat]
+  /// Then it increments the chat counters of both the users.
+  Future<void> addChatIntoDB(Conversation conversation) async {
+    await _firestore
+        .collection(conversation.senderUser.collection.value)
+        .doc(conversation.senderUser.id)
+        .collection(conversation.senderUserChat.chatCollection.value)
+        .doc(conversation.peerUser.id)
+        .set({});
+    await _incrementChatsCounter(conversation.senderUser, 1);
+    await _firestore
+        .collection(conversation.peerUser.collection.value)
+        .doc(conversation.peerUser.id)
+        .collection(conversation.peerUserChat.chatCollection.value)
+        .doc(conversation.senderUser.id)
+        .set({});
+    await _incrementChatsCounter(conversation.peerUser, 1);
   }
 
-  // Remove a chat to the list of active chats of the sender user
-  Future<void> removePendingChatFromDB(String senderId, String peerId) async {
-    await users
-        .doc(senderId)
-        .collection(pendingChatCollection)
-        .doc(peerId)
-        .delete();
-    await _decrementChatsCountIntoDB(senderId);
-    await users
-        .doc(peerId)
-        .collection(activeChatCollection)
-        .doc(senderId)
-        .delete();
-    await _decrementChatsCountIntoDB(peerId);
+  /// Upgrade a [pendingUserChat] with a [peerUser] to an active chat for both the users.
+  Future<void> upgradePendingToActiveChatIntoDB(
+      Conversation conversation) async {
+    if (conversation.senderUserChat.chatCollection ==
+        Collection.PENDING_CHATS) {
+      // Pending chat of the sender user is moved into active chats
+      var pendingChat = await _firestore
+          .collection(conversation.senderUser.collection.value)
+          .doc(conversation.senderUser.id)
+          .collection(conversation.senderUserChat.chatCollection.value)
+          .doc(conversation.peerUser.id)
+          .get();
+      await _firestore
+          .collection(conversation.senderUser.collection.value)
+          .doc(conversation.senderUser.id)
+          .collection(conversation.senderUserChat.chatCollection.value)
+          .doc(conversation.peerUser.id)
+          .delete();
+      await _firestore
+          .collection(conversation.senderUser.collection.value)
+          .doc(conversation.senderUser.id)
+          .collection(Collection.ACTIVE_CHATS.value)
+          .doc(conversation.peerUser.id)
+          .set({'lastMessage': pendingChat.get('lastMessage')});
+      // Request chat of the peer user is moved into active chats
+      var request = await _firestore
+          .collection(conversation.peerUser.collection.value)
+          .doc(conversation.peerUser.id)
+          .collection(conversation.peerUserChat.chatCollection.value)
+          .doc(conversation.senderUser.id)
+          .get();
+      await _firestore
+          .collection(conversation.peerUser.collection.value)
+          .doc(conversation.peerUser.id)
+          .collection(conversation.peerUserChat.chatCollection.value)
+          .doc(conversation.senderUser.id)
+          .delete();
+      await _firestore
+          .collection(conversation.peerUser.collection.value)
+          .doc(conversation.peerUser.id)
+          .collection(Collection.ACTIVE_CHATS.value)
+          .doc(conversation.senderUser.id)
+          .set({'lastMessage': request.get('lastMessage')});
+    }
   }
 
-  // Get the list of ids of active or pending chats of a user
-  Future<List> _getChatIds(String senderId, String collection) async {
+  /// Remove the [conversation] between the [peerUser] and the [senderUser] list
+  Future<void> removeChatFromDB(Conversation conversation) async {
+    await _firestore
+        .collection(conversation.senderUser.collection.value)
+        .doc(conversation.senderUser.id)
+        .collection(conversation.senderUserChat.chatCollection.value)
+        .doc(conversation.peerUser.id)
+        .delete();
+    await _incrementChatsCounter(conversation.senderUser, -1);
+    await _firestore
+        .collection(conversation.peerUser.collection.value)
+        .doc(conversation.peerUser.id)
+        .collection(conversation.peerUserChat.chatCollection.value)
+        .doc(conversation.senderUser.id)
+        .delete();
+    await _incrementChatsCounter(conversation.peerUser, -1);
+  }
+
+  /// It takes the [user] and returns the list of all the [chat] of the
+  /// user based on the [chatCollection] field of the Chat.
+  Future<List> getChatsFromDB(User user, Chat chat) async {
+    var ids = await _getChatIds(user, chat);
+    List<List<String>> subList = [];
+    List chats = [];
+    for (var i = 0; i < ids.length; i += 10) {
+      subList.add(ids.sublist(i, i + 10 > ids.length ? ids.length : i + 10));
+    }
+    await Future.forEach(subList, (list) async {
+      chats.addAll(await _getUsersByList(chat.targetCollection, list));
+    });
+    chats.sort((a, b) => ids.indexOf(b.id).compareTo(ids.indexOf(a.id)));
+    return chats;
+  }
+
+  /// It takes the [user] and returns the list of ids of all the [chat] of the
+  /// user based on the [chatCollection] field of the Chat.
+  Future<List> _getChatIds(User user, Chat chat) async {
     List<String> ids = new List.from([]);
-    var snap = await users
-        .doc(senderId)
-        .collection(collection)
+    var snap = await _firestore
+        .collection(user.collection.value)
+        .doc(user.id)
+        .collection(chat.chatCollection.value)
         .orderBy('lastMessage')
         .limit(_limit)
         .get();
@@ -358,100 +363,58 @@ class FirestoreService {
     return ids;
   }
 
-  // Get the active user chats or the pending user chats for a specific user from the DB
-  Future<List> getAnonymousChatsFromDB(
-      String senderId, String collection) async {
-    var ids = await _getChatIds(senderId, collection);
-    List<List<String>> subList = [];
-    List chats = [];
-    for (var i = 0; i < ids.length; i += 10) {
-      subList.add(ids.sublist(i, i + 10 > ids.length ? ids.length : i + 10));
-    }
-    await Future.forEach(subList, (elem) async {
-      chats.addAll((await users.where('uid', whereIn: elem).get()).docs);
-    });
-    chats.sort((a, b) => ids.indexOf(b.id).compareTo(ids.indexOf(a.id)));
-    return chats;
+  /// It takes the [user] and the [increment] amount and increments the anonymous chat's counter of the user into the DB
+  Future<void> _incrementChatsCounter(User user, int increment) async {
+    var utils = await _firestore
+        .collection(user.collection.value)
+        .doc(user.id)
+        .collection(Collection.UTILS.value)
+        .doc(Collection.UTILS.value)
+        .get();
+    int counter;
+    utils.data() != null
+        ? counter = utils.get('anonymousChatCounter')
+        : counter = 0;
+    await _firestore
+        .collection(user.collection.value)
+        .doc(user.id)
+        .collection(Collection.UTILS.value)
+        .doc(Collection.UTILS.value)
+        .set({'anonymousChatCounter': counter + increment}).catchError(
+            (error) => print("Failed to update the counter: $error"));
   }
 
-  // Get the chats with the experts for a specific user from the DB
-  Future<List> getExpertChatsFromDB(String senderId, String collection) async {
-    var ids = await _getChatIds(senderId, collection);
-    List<List<String>> subList = [];
-    List chats = [];
-    for (var i = 0; i < ids.length; i += 10) {
-      subList.add(ids.sublist(i, i + 10 > ids.length ? ids.length : i + 10));
-    }
-    await Future.forEach(subList, (elem) async {
-      chats.addAll((await experts.where('eid', whereIn: elem).get()).docs);
-    });
-    chats.sort((a, b) => ids.indexOf(b.id).compareTo(ids.indexOf(a.id)));
-    return chats;
-  }
-
-  // Increment the count of the instances of users into the DB
-  Future<void> _incrementChatsCountIntoDB(String id) async {
-    var data =
-        (await users.doc(id).collection('utils').doc('utils').get()).data();
-    if (data == null) {
-      await users
-          .doc(id)
-          .collection('utils')
-          .doc('utils')
-          .set({'count': 1}).catchError(
-              (error) => print("Failed to update user count: $error"));
-    } else {
-      await users
-          .doc(id)
-          .collection('utils')
-          .doc('utils')
-          .update({'count': data['count'] + 1}).catchError(
-              (error) => print("Failed to update user count: $error"));
-    }
-  }
-
-  // Decrement the count of the instances of users into the DB
-  Future<void> _decrementChatsCountIntoDB(String id) async {
-    var data =
-        (await users.doc(id).collection('utils').doc('utils').get()).data();
-    await users
-        .doc(id)
-        .collection('utils')
-        .doc('utils')
-        .update({'count': data['count'] - 1}).catchError(
-            (error) => print("Failed to update user count: $error"));
-  }
-
-  // Get the count of the intances of users from the DB
-  Future<int> _getChatsCountFromDB(String id) async {
-    var data =
-        (await users.doc(id).collection('utils').doc('utils').get()).data();
-    if (data == null) {
+  /// It takes the [user] and returns the anonymous chat's counter from the DB
+  Future<int> _getChatsCounterFromDB(User user) async {
+    var utils = await _firestore
+        .collection(user.collection.value)
+        .doc(user.id)
+        .collection(Collection.UTILS.value)
+        .doc(Collection.UTILS.value)
+        .get();
+    if (utils.data() != null)
+      return utils.get('anonymousChatCounter');
+    else
       return 0;
-    }
-    return data['count'];
   }
 
-  // Update a field of a specific user into DB
-  Future<void> updateUserFieldIntoDB(
-      String id, String fieldName, String field) async {
-    await users.doc(id).update({fieldName: field});
+  /***************************************** REPORTS *****************************************/
+
+  /// It takes the [id] of an user and the [report]
+  /// and adds it into the list of reports of the user into the DB
+  Future<void> addReportIntoDB(String id, Report report) async {
+    await _firestore
+        .collection(report.collection.value)
+        .doc(id)
+        .collection('reportsList')
+        .doc(report.id)
+        .set(report.toJson());
   }
 
-  // Add a new report into the DB
-  Future<void> addReportIntoDB(
-      String id, String category, String description) async {
-    await reports.doc(id).collection('reportsList').doc().set({
-      'uid': id,
-      'category': category,
-      'description': description,
-      'date': DateTime.now().toString()
-    });
-  }
-
-  // Get all the reports of a user from the DB
+  /// It takes the [id] of an user and return the stream of all the reports of the user from the DB
   Stream<QuerySnapshot> getReportsFromDB(String id) {
-    return reports
+    return _firestore
+        .collection(Collection.REPORTS.value)
         .doc(id)
         .collection('reportsList')
         .orderBy('date', descending: true)
