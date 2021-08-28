@@ -1,6 +1,8 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 
 class BaseUserInfoViewModel extends FormBloc<String, String> {
+  String email;
+
   final nameText = TextFieldBloc(validators: [
     FieldBlocValidators.required,
   ]);
@@ -24,7 +26,8 @@ class BaseUserInfoViewModel extends FormBloc<String, String> {
     return {
       'name': nameText.value,
       'surname': surnameText.value,
-      'birthDate': birthDateTime.value
+      'birthDate': birthDateTime.value,
+      'email': email,
     };
   }
 

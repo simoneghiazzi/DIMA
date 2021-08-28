@@ -52,6 +52,8 @@ class ExpertInfoViewModel extends BaseUserInfoViewModel {
       'birthDate': birthDateTime.value,
       'lat': expertAddress.geometry.location.lat,
       'lng': expertAddress.geometry.location.lng,
+      'address': infoAddress,
+      'email': email,
       'phoneNumber': phoneNumberText.value,
       'profilePhoto': profilePhoto,
     };

@@ -3,7 +3,7 @@ import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place_search.dart';
 import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Profile/profile_expert_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Profile/Expert/expert_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/map_view_model.dart';
@@ -107,7 +107,9 @@ class _MapBodyState extends State<MapBody> {
                                                   expert
                                                       .getData()['lng']
                                                       .toString()),
-                                          position: expert.getData()['address'],
+                                          position: LatLng(
+                                              expert.getData()['lat'],
+                                              expert.getData()['lng']),
                                           icon: pinLocationIcon,
                                           infoWindow: InfoWindow(
                                               onTap: () {
@@ -115,7 +117,7 @@ class _MapBodyState extends State<MapBody> {
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>
-                                                            ProfileExpertScreen(
+                                                            ExpertProfileScreen(
                                                               chatViewModel: widget
                                                                   .chatViewModel,
                                                               expert: expert,

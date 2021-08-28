@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
+import 'package:dima_colombo_ghiazzi/Model/db_item.dart';
 
-class Report {
+class Report implements DbItem{
   String id;
   String category;
   String description;
@@ -9,11 +10,7 @@ class Report {
 
   Report({this.id, this.category, this.description, this.date});
 
-  factory Report.fromDocument(DocumentSnapshot doc) {
-    String id = "";
-    String category = "";
-    String description = "";
-    DateTime date;
+  void setFromDocument(DocumentSnapshot doc) {
     try {
       id = doc.id;
     } catch (e) {}
@@ -26,11 +23,9 @@ class Report {
     try {
       date = doc.get('date');
     } catch (e) {}
-    return Report(
-        id: id, category: category, description: description, date: date);
   }
 
-  toJson() {
+  getData() {
     return {
       'id': id,
       'category': category,

@@ -31,7 +31,7 @@ class _ChatListItemState extends State<ChatListItem> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              widget.userItem.getData()['profileImage'] == null
+              widget.userItem.collection == Collection.USERS
                   ? CircleAvatar(
                       backgroundColor: Colors.transparent,
                       radius: 30.0,
@@ -40,38 +40,49 @@ class _ChatListItemState extends State<ChatListItem> {
                         height: size.height * 0.05,
                       ),
                     )
-                  : Image.network(
-                      widget.userItem.getData()['profileImage'],
-                      fit: BoxFit.cover,
-                      width: 50.0,
-                      height: 50.0,
-                      loadingBuilder: (BuildContext context, Widget child,
-                          ImageChunkEvent loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Container(
-                          width: 50,
-                          height: 50,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: Color(0xff203152),
-                              value: loadingProgress.expectedTotalBytes !=
-                                          null &&
-                                      loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes
-                                  : null,
-                            ),
-                          ),
-                        );
-                      },
-                      errorBuilder: (context, object, stackTrace) {
-                        return Icon(
-                          Icons.account_circle,
-                          size: 50.0,
-                          color: Color(0xffaeaeae),
-                        );
-                      },
+                  : CircleAvatar(
+                      radius: 25,
+                      backgroundColor: Colors.white,
+                      child: ClipOval(
+                        child: Image.network(
+                          widget.userItem.getData()['profilePhoto'],
+                          fit: BoxFit.cover,
+                          width: 50.0,
+                          height: 50.0,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return SizedBox(
+                              width: 50.0,
+                              height: 50.0,
+                              child: CircularProgressIndicator(
+                                color: kPrimaryColor,
+                                value: loadingProgress.expectedTotalBytes !=
+                                            null &&
+                                        loadingProgress.expectedTotalBytes !=
+                                            null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes
+                                    : null,
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, object, stackTrace) {
+                            return CircleAvatar(
+                                radius: 25,
+                                backgroundColor: Colors.white,
+                                child: Text(
+                                  "${widget.userItem.name[0]}",
+                                  style: TextStyle(
+                                      color: kPrimaryColor, fontSize: 30),
+                                ));
+                          },
+                        ),
+                      ),
                     ),
+              SizedBox(
+                width: 20,
+              ),
               // Profile info
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,

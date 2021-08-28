@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/random_id.dart';
+import 'package:dima_colombo_ghiazzi/Model/random_id.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/report.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:flutter/material.dart';

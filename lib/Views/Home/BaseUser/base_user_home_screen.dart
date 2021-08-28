@@ -1,6 +1,6 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUsers/components/base_user_grid.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/components/base_user_grid.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/header.dart';
 import 'package:flutter/material.dart';
 

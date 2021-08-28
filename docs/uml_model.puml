@@ -1,0 +1,208 @@
+@startuml ModelUML
+package Model {
+    class "RandomId" {
+        {static} +String* AUTO_ID_ALPHABET
+        {static} +String* generate()
+    }
+
+    abstract class "DbItem" {
+        +Collections* collections
+        +void setFromDocument()
+        +dynamic getData()
+    }
+    "DbItem" o-- "Collections"
+
+    abstract class "User" {
+        +String* id
+        +String* name
+        +String* surname
+        +DateTime* birthDate
+    }
+    "DbItem" <|-- "User"
+
+    package BaseUser {
+        class "Report" {
+            +String* id
+            +String* category
+            +String* description
+            +DateTime* date
+            +Collections* collections
+            +void setFromDocument()
+            +dynamic getData()
+        }
+        "DbItem" <|-- "Report"
+        "Report" o-- "Collections"
+
+        class "BaseUser" {
+            +Collections* collections
+            +void setFromDocument()
+            +dynamic getData()
+        }
+        "User" <|-- "BaseUser"
+        "BaseUser" o-- "Collections"
+
+        package Map {
+            class "Place" {
+                +Geometry* geometry
+                +String* name
+                +String* vicinity
+            }
+            "Place" o-- "Geometry"
+
+            class "Geometry" {
+                +Location* location
+            }
+            "Geometry" o-- "Location"
+
+            class "Location" {
+                +double* lat
+                +double* lng
+            }
+            class "PlaceSearch" {
+                +String* description
+                +String* placeId
+            }
+            class "PlaceService" {
+                +String* key
+                +Future<List<PlaceSearch*>*>* getAutocomplete()
+                +Future<Place*>* getPlace()
+            }
+        }
+    }
+
+    package Chat {
+        class "Message" {
+            +String* idFrom
+            +String* idTo
+            +DateTime* timestamp
+            +String* content
+            +Collections* collections
+            +void setFromDocument()
+            +dynamic getData()
+        }
+        "Message" o-- "Collections"
+        "DbItem" <|-- "Message"
+
+        abstract class "Chat" {
+            +Collections* targetCollections
+            +Collections* chatCollections
+        }
+        "Chat" o-- "Collections"
+
+        class "Conversation" {
+            +User* senderUser
+            +User* peerUser
+            +Chat* senderUserChat
+            +Chat* peerUserChat
+            +String* pairChatId
+            +void computePairChatId()
+        }
+        "Conversation" o-- "User"
+        "Conversation" o-- "Chat"
+
+        class "ExpertChat" {
+        }
+        "Chat" <|-- "ExpertChat"
+
+        class "PendingChat" {
+        }
+        "Chat" <|-- "PendingChat"
+
+        class "ActiveChat" {
+        }
+        "Chat" <|-- "ActiveChat"
+
+        class "Request" {
+        }
+        "Chat" <|-- "Request"
+    }
+
+    package Expert {
+        class "Expert" {
+            +LatLng* address
+            +String* email
+            +String* phoneNumber
+            +String* profilePhoto
+            +Collections* collections
+            +void setFromDocument()
+            +dynamic getData()
+        }
+        "User" <|-- "Expert"
+        "Expert" o-- "Collections"
+    }
+
+    package Services {
+        class "FirebaseAuthService" {
+            -FirestoreService* _firestoreService
+            -FirebaseAuth* _firebaseAuth
+            -UserCredential* _userCredential
+            +Future<String*>* signInWithEmailAndPassword()
+            +Future<String*>* createUserWithEmailAndPassword()
+            +Future<String*>* signInWithGoogle()
+            +Future<String*>* signInWithFacebook()
+            +Future<dynamic>* sendEmailVerification()
+            +Future<dynamic>* deleteUser()
+            +Future<dynamic>* signOut()
+            +Future<String*>* currentUser()
+        }
+        "FirebaseAuthService" o-- "FirestoreService"
+        "FirebaseAuthService" o-- "fireauth::FirebaseAuth"
+        "FirebaseAuthService" o-- "fireauth::UserCredential"
+
+        class "FirestoreService" {
+            -FirebaseFirestore* _firestore
+            -int* _limit
+            +Future<void>* addUserIntoDB()
+            +Future<void>* removeUserFromDB()
+            +Future<void>* updateUserFieldIntoDB()
+            +Future<QuerySnapshot<Object*>*>* getBaseCollectionsFromDB()
+            +Future<DocumentSnapshot<Object*>*>* getUserByIdFromDB()
+            -Future<List<dynamic>*>* _getUsersByList()
+            -Future<void>* _incrementBaseCollectionsCounter()
+            -Future<int*>* _getBaseCollectionsCounter()
+            +Future<BaseUser*>* getRandomUserFromDB()
+            +Future<Collections*>* findUserInCollectionss()
+            +Future<void>* uploadProfilePhoto()
+            +Future<void>* addMessageIntoDB()
+            -Future<void>* _addMessageIntoMessagesCollections()
+            +Stream<QuerySnapshot<Object*>*>* getStreamMessagesFromDB()
+            +Future<bool*>* hasMessages()
+            +Future<void>* removeMessagesFromDB()
+            +Future<void>* addChatIntoDB()
+            +Future<void>* upgradePendingToActiveChatIntoDB()
+            +Future<void>* removeChatFromDB()
+            +Future<List<dynamic>*>* getChatsFromDB()
+            -Future<List<dynamic>*>* _getChatIds()
+            -Future<void>* _incrementChatsCounter()
+            -Future<int*>* _getChatsCounterFromDB()
+            +Future<void>* addReportIntoDB()
+            +Stream<QuerySnapshot<Object*>*>* getReportsFromDB()
+        }
+        "FirestoreService" o-- "cloud_firestore::FirebaseFirestore"
+
+        enum "Collections" {
+            USERS
+            EXPERTS
+            REPORTS
+            MESSAGES
+            UTILS
+            ACTIVE_CHATS
+            PENDING_CHATS
+            REQUESTS_CHATS
+            EXPERT_CHATS
+        }
+
+        class "NotificationService" {
+            +User* user
+            -FirebaseMessaging* _firebaseMessaging
+            -FlutterLocalNotificationsPlugin* _flutterLocalNotificationsPlugin
+            -FirestoreService* _firestoreService
+            +void registerNotification()
+            +void showNotification()
+            +void configLocalNotification()
+        }
+        "NotificationService" o-- "User"
+        "NotificationService" o-- "firemessaging::FirebaseMessaging"
+    }
+}
+@enduml

@@ -3,7 +3,7 @@ import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Report/report_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Report/create_report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/dash_card.dart';
 
@@ -95,7 +95,7 @@ class _BaseUserGridState extends State<BaseUserGrid> {
                       context,
                       MaterialPageRoute(
                         builder: (context) {
-                          return ReportScreen(
+                          return CreateReportScreen(
                             baseUserViewModel: baseUserViewModel,
                           );
                         },

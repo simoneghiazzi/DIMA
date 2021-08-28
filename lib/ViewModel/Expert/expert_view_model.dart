@@ -29,7 +29,9 @@ class ExpertViewModel extends UserViewModel {
         name: data['name'],
         surname: data['surname'],
         birthDate: data['birthDate'],
-        address: LatLng(data['lat'], data['lng']),
+        latLng: LatLng(data['lat'], data['lng']),
+        address: data['address'],
+        email: data['email'],
         phoneNumber: data['phoneNumber'],
         profilePhoto: data['profilePhoto']);
     return loggedUser;

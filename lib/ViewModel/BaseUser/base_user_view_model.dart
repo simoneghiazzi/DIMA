@@ -27,7 +27,8 @@ class BaseUserViewModel extends UserViewModel {
         id: id,
         name: data['name'],
         surname: data['surname'],
-        birthDate: data['birthDate']);
+        birthDate: data['birthDate'],
+        email: data['email']);
     return loggedUser;
   }
 }

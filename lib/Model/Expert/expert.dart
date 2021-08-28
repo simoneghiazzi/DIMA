@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Expert extends User {
-  LatLng address;
-  String email;
+  LatLng latLng;
+  String address;
   String phoneNumber;
   String profilePhoto;
 
@@ -15,11 +14,17 @@ class Expert extends User {
       String name,
       String surname,
       DateTime birthDate,
+      String email,
+      this.latLng,
       this.address,
-      this.email,
       this.phoneNumber,
       this.profilePhoto})
-      : super(id: id, name: name, surname: surname, birthDate: birthDate);
+      : super(
+            id: id,
+            name: name,
+            surname: surname,
+            birthDate: birthDate,
+            email: email);
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
@@ -36,7 +41,10 @@ class Expert extends User {
       birthDate = doc.get('birthDate');
     } catch (e) {}
     try {
-      address = LatLng(doc.get('lat'), doc.get('lng'));
+      latLng = LatLng(doc.get('lat'), doc.get('lng'));
+    } catch (e) {}
+    try {
+      address = doc.get('address');
     } catch (e) {}
     try {
       email = doc.get('email');
@@ -57,8 +65,8 @@ class Expert extends User {
       'surname': surname,
       'birthDate': birthDate,
       'address': address,
-      'lat': address.latitude,
-      'lng': address.longitude,
+      'lat': latLng.latitude,
+      'lng': latLng.longitude,
       'phoneNumber': phoneNumber,
       'email': email,
       'profilePhoto': profilePhoto

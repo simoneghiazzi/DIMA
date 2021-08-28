@@ -1,0 +1,150 @@
+@startuml ViewModelUML
+package ViewModel {
+    class "ChatViewModel" {
+        +FirestoreService* firestoreService
+        +Conversation* conversation
+        -List<QueryDocumentSnapshot<Object*>*>* _listMessages
+        +Future<void>* updateChattingWith()
+        +void resetChattingWith()
+        +void sendMessage()
+        +bool* isLastMessageLeft()
+        +bool* isLastMessageRight()
+        +Stream<QuerySnapshot<Object*>*>* loadMessages()
+        +Future<bool*>* hasMessages()
+        +Future<void>* chatWithUser()
+        +Future<bool*>* newRandomChat()
+        +Future<List<dynamic>*>* loadChats()
+        +Future<void>* acceptPendingChat()
+        +Future<void>* deleteChat()
+    }
+    "ChatViewModel" o-- "FirestoreService"
+    "ChatViewModel" o-- "Conversation"
+
+    class "AuthViewModel" {
+        +FirebaseAuthService* auth
+        +FirestoreService* firestore
+        +LoginForm* loginForm
+        +NotificationService* notificationService
+        +Stream<bool*>* isUserLogged
+        +Stream<bool*>* isUserCreated
+        +Stream<String*>* authMessage
+        +Future<String*>* logIn()
+        +Future<String*>* logInWithGoogle()
+        +Future<String*>* logInWithFacebook()
+        +Future<String*>* signUpUser()
+        +Future<void>* logOut()
+        +Future<void>* resendEmailVerification()
+        +Future<void>* deleteUser()
+        +Future<void>* setNotification()
+        +void getData()
+        +void clearControllers()
+    }
+    "AuthViewModel" o-- "FirebaseAuthService"
+    "AuthViewModel" o-- "FirestoreService"
+    "AuthViewModel" o-- "LoginForm"
+    "AuthViewModel" o-- "NotificationService"
+
+    abstract class "UserViewModel" {
+        +FirestoreService* firestore
+        +User* loggedUser
+        +Future<User*>* loadLoggedUser()
+        +User* createUser()
+    }
+    "UserViewModel" o-- "FirestoreService"
+    "UserViewModel" o-- "User"
+
+    class "MapViewModel" {
+        +Completer<GoogleMapController*>* mapController
+        -FirestoreService* _firestoreService
+        +PlaceService* placesSearch
+        +Place* searchedPlace
+        +Stream<Position*>* position
+        +Stream<List<PlaceSearch*>*>* places
+        +Stream<Place*>* location
+        +Stream<String*>* searched
+        +void uploadPosition()
+        -Future<Position*>* _getLocation()
+        +dynamic searchPlaces()
+        +Future<List<PlaceSearch*>*>* searchPlaceSubscription()
+        +dynamic setSelectedLocation()
+        +Future<Place*>* getExpertLocation()
+        +Future<List<dynamic>*>* getMarkers()
+    }
+    "MapViewModel" o-- "FirestoreService"
+    "MapViewModel" o-- "PlaceService"
+    "MapViewModel" o-- "Place"
+
+    package Expert {
+        class "ExpertViewModel" {
+            +Future<Expert*>* loadLoggedUser()
+            +Expert* createUser()
+        }
+        "UserViewModel" <|-- "ExpertViewModel"
+
+        class "ExpertInfoViewModel" {
+            +MapViewModel* mapViewModel
+            +String* infoAddress
+            +Place* expertAddress
+            +String* profilePhoto
+            +TextFieldBloc<dynamic>* countryText
+            +TextFieldBloc<dynamic>* cityText
+            +TextFieldBloc<dynamic>* streetText
+            +TextFieldBloc<dynamic>* addressNumberText
+            +TextFieldBloc<dynamic>* phoneNumberText
+            +Map<dynamic, dynamic>* values
+            +void onSubmitting()
+        }
+        "BaseUserInfoViewModel" <|-- "ExpertInfoViewModel"
+        "ExpertInfoViewModel" o-- "MapViewModel"
+        "ExpertInfoViewModel" o-- "Place"
+    }
+
+    package BaseUser {
+        class "BaseUserViewModel" {
+            +Future<BaseUser*>* loadLoggedUser()
+            +BaseUser* createUser()
+        }
+        "UserViewModel" <|-- "BaseUserViewModel"
+
+        class "BaseUserInfoViewModel" {
+            +TextFieldBloc<dynamic>* nameText
+            +TextFieldBloc<dynamic>* surnameText
+            +InputFieldBloc<DateTime*, Object*>* birthDateTime
+            +Map<dynamic, dynamic>* values
+            +void onSubmitting()
+        }
+
+        class "ReportViewModel" {
+            -FirestoreService* _firestoreService
+            +SelectFieldBloc<String*, dynamic>* reportCategory
+            +TextFieldBloc<dynamic>* reportText
+            +void onSubmitting()
+            +Stream<QuerySnapshot<Object*>*>* loadReports()
+        }
+        "ReportViewModel" o-- "FirestoreService"
+    }
+
+    package ObserverForms {
+        abstract class "AuthFormInterface" {
+            +Sink<dynamic>* emailText
+            +Sink<dynamic>* passwordText
+            +Stream<bool*>* emailController
+            +Stream<bool*>* passwordController
+            +Stream<bool*>* isButtonEnabled
+            +Stream<String*>* errorEmailText
+        }
+
+        class "LoginForm" {
+            -StreamController<String*>* _emailStream
+            -StreamController<String*>* _passwordStream
+            +Sink<dynamic>* emailText
+            +Sink<dynamic>* passwordText
+            +Stream<bool*>* emailController
+            +Stream<bool*>* passwordController
+            +Stream<bool*>* isButtonEnabled
+            +Stream<String*>* errorEmailText
+        }
+        "AuthFormInterface" <|-- "LoginForm"
+    }
+}
+@enduml

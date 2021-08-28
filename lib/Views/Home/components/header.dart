@@ -45,17 +45,49 @@ class _HeaderState extends State<Header> {
         trailing: InkWell(
           child: userViewModel.loggedUser.getData()['profilePhoto'] == null
               ? CircleAvatar(
-                  radius: 50,
+                  radius: 60,
                   backgroundColor: Colors.white,
                   child: Text(
                     "${userViewModel.loggedUser.name[0]}",
                     style: TextStyle(color: kPrimaryColor, fontSize: 30),
                   ))
               : CircleAvatar(
-                  radius: 50,
+                  radius: 60,
                   backgroundColor: Colors.white,
-                  backgroundImage: NetworkImage(
-                      userViewModel.loggedUser.getData()['profilePhoto']),
+                  child: ClipOval(
+                    child: Image.network(
+                      userViewModel.loggedUser.getData()['profilePhoto'],
+                      fit: BoxFit.cover,
+                      width: 60.0,
+                      height: 60.0,
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return SizedBox(
+                          width: 57.0,
+                          height: 57.0,
+                          child: CircularProgressIndicator(
+                            color: kPrimaryColor,
+                            value: loadingProgress.expectedTotalBytes != null &&
+                                    loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes
+                                : null,
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, object, stackTrace) {
+                        return CircleAvatar(
+                            radius: 60,
+                            backgroundColor: Colors.white,
+                            child: Text(
+                              "${userViewModel.loggedUser.name[0]}",
+                              style:
+                                  TextStyle(color: kPrimaryColor, fontSize: 30),
+                            ));
+                      },
+                    ),
+                  ),
                 ),
           onTap: () => _onAccountPressed(context),
         ),

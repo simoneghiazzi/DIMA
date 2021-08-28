@@ -97,6 +97,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                       if (loading)
                         LoadingDialog.show(context,
                             text: 'Creating a new user...');
+                      infoViewModel.email = authViewModel.emailController.text;
                       user = userViewModel.createUser(infoViewModel);
                       authViewModel.signUpUser(user).then((value) {
                         setState(() {

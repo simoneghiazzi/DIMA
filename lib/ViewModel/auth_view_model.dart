@@ -100,7 +100,7 @@ class AuthViewModel {
   }
 
   /// Log out a user from the app
-  void logOut() async {
+  Future<void> logOut() async {
     await auth.signOut();
     id = '';
     isUserLoggedController.add(false);
@@ -116,7 +116,7 @@ class AuthViewModel {
   }
 
   /// Resend the email verification if the user has not received it
-  void resendEmailVerification(User user) async {
+  Future<void> resendEmailVerification(User user) async {
     await deleteUser(user);
     await signUpUser(user);
   }

@@ -3,10 +3,10 @@ import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firebase_auth_service.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/Experts/expert_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUsers/base_user_home_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/Experts/expert_home_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/Expert/expert_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
@@ -23,13 +23,17 @@ Future<void> main() async {
 
   // Creation of the initialization Future for FirebaseApp
   await Firebase.initializeApp().catchError((e) {
+    print('Initialization error');
     exit(-1);
   });
+  print('Firebase initialization completed');
   await FirebaseAppCheck.instance.activate(webRecaptchaSiteKey: 'recaptcha-v3-site-key');
+  print('FirebaseAppCheck initialization completed');
   FirebaseAuthService firebaseAuthService = FirebaseAuthService();
   FirestoreService firestoreService = FirestoreService();
 
   var alreadyLoggedUserId = await firebaseAuthService.currentUser();
+  print('Already logged user check completed');
   if (alreadyLoggedUserId != null) {
     var collection =
         await firestoreService.findUserInCollections(alreadyLoggedUserId);
@@ -37,6 +41,7 @@ Future<void> main() async {
       case Collection.USERS:
         var baseUserViewModel = BaseUserViewModel(id: alreadyLoggedUserId);
         await baseUserViewModel.loadLoggedUser();
+        print('User logged');
         runApp(MyApp(
             home: BaseUserHomeScreen(
                 authViewModel: AuthViewModel(),
@@ -45,6 +50,7 @@ Future<void> main() async {
       case Collection.EXPERTS:
         var expertViewModel = ExpertViewModel(id: alreadyLoggedUserId);
         await expertViewModel.loadLoggedUser();
+        print('Expert logged');
         runApp(MyApp(
             home: ExpertHomeScreen(
                 authViewModel: AuthViewModel(),

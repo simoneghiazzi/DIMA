@@ -1,8 +1,8 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUsers/base_user_home_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUsers/base_users_signup_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/Experts/experts_signup_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';

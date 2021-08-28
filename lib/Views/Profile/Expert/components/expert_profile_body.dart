@@ -1,16 +1,20 @@
+import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/expert_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:open_mail_app/open_mail_app.dart';
 
-class ProfileBody extends StatelessWidget {
+class ExpertProfileBody extends StatelessWidget {
   final ChatViewModel chatViewModel;
   final Expert expert;
 
-  ProfileBody({Key key, @required this.chatViewModel, @required this.expert})
+  ExpertProfileBody(
+      {Key key, @required this.chatViewModel, @required this.expert})
       : super(key: key);
 
   @override
@@ -23,7 +27,7 @@ class ProfileBody extends StatelessWidget {
         Column(
           children: <Widget>[
             Container(
-              height: 250.0,
+              height: 170.0,
               color: kPrimaryColor,
             ),
             Padding(
@@ -62,7 +66,7 @@ class ProfileBody extends StatelessWidget {
                           height: size.height * 0.04,
                         ),
                         GestureDetector(
-                          child: Text("QUI EMAIL",
+                          child: Text(expert.email,
                               style: TextStyle(
                                   color: kPrimaryColor,
                                   fontSize: 20,
@@ -70,7 +74,7 @@ class ProfileBody extends StatelessWidget {
                           onTap: () async {
                             EmailContent email = EmailContent(
                               to: [
-                                'ANCHE QUI MAIL',
+                                expert.email,
                               ],
                             );
 
@@ -104,7 +108,7 @@ class ProfileBody extends StatelessWidget {
                         SizedBox(
                           height: size.height * 0.04,
                         ),
-                        Text("QUI INDIRIZZO",
+                        Text(expert.address,
                             style: TextStyle(
                               color: kPrimaryColor,
                               fontSize: 20,
@@ -124,15 +128,48 @@ class ProfileBody extends StatelessWidget {
         ),
         // Profile image
         Positioned(
-            top: 140.0, // (background container size) - (circle height / 2)
-            child: CircleAvatar(
-              radius: 90,
-              backgroundColor: kPrimaryLightColor,
-              backgroundImage: NetworkImage(expert.profilePhoto),
-            )),
+          top: 100.0, // (background container size) - (circle height / 2)
+          child: CircleAvatar(
+            radius: 70,
+            backgroundColor: Colors.white,
+            child: ClipOval(
+              child: Image.network(
+                expert.getData()['profilePhoto'],
+                fit: BoxFit.cover,
+                width: 140.0,
+                height: 140.0,
+                loadingBuilder: (BuildContext context, Widget child,
+                    ImageChunkEvent loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return SizedBox(
+                    width: 140.0,
+                    height: 140.0,
+                    child: CircularProgressIndicator(
+                      color: kPrimaryColor,
+                      value: loadingProgress.expectedTotalBytes != null &&
+                              loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes
+                          : null,
+                    ),
+                  );
+                },
+                errorBuilder: (context, object, stackTrace) {
+                  return CircleAvatar(
+                      radius: 70,
+                      backgroundColor: Colors.white,
+                      child: Text(
+                        "${expert.name[0]}",
+                        style: TextStyle(color: kPrimaryColor, fontSize: 30),
+                      ));
+                },
+              ),
+            ),
+          ),
+        ),
         Positioned(
           top: 60,
-          left: 20,
+          left: 25,
           child: FloatingActionButton(
             mini: true,
             onPressed: () {
@@ -155,7 +192,19 @@ class ProfileBody extends StatelessWidget {
                 SizedBox(
                   height: size.height * 0.02,
                 ),
-                RoundedButton(text: "CHAT", press: () {})
+                RoundedButton(
+                    text: "CHAT",
+                    press: () {
+                      initChats();
+                      chatViewModel.chatWithUser(expert);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatPageScreen(
+                              chatViewModel: chatViewModel),
+                        ),
+                      );
+                    })
               ],
             ))
       ],
@@ -179,5 +228,10 @@ class ProfileBody extends StatelessWidget {
         );
       },
     );
+  }
+
+  void initChats() {
+    chatViewModel.conversation.senderUserChat = ExpertChat();
+    chatViewModel.conversation.peerUserChat = ActiveChat();
   }
 }

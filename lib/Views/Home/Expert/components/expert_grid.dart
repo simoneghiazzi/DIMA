@@ -1,5 +1,5 @@
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/Experts/expert_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/dash_card.dart';

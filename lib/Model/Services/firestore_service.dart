@@ -188,13 +188,13 @@ class FirestoreService {
         .doc(conversation.senderUser.id)
         .collection(conversation.senderUserChat.chatCollection.value)
         .doc(conversation.peerUser.id)
-        .update({'lastMessage': timestamp});
+        .set({'lastMessage': timestamp});
     await _firestore
         .collection(conversation.peerUser.collection.value)
         .doc(conversation.peerUser.id)
         .collection(conversation.peerUserChat.chatCollection.value)
         .doc(conversation.senderUser.id)
-        .update({'lastMessage': timestamp});
+        .set({'lastMessage': timestamp});
   }
 
   /// Add a new message into the messages collection of the DB
@@ -423,7 +423,7 @@ class FirestoreService {
         .doc(id)
         .collection('reportsList')
         .doc(report.id)
-        .set(report.toJson());
+        .set(report.getData());
   }
 
   /// It takes the [id] of an user and return the stream of all the reports of the user from the DB

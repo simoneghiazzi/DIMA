@@ -5,6 +5,7 @@ abstract class User implements DbItem {
   String name;
   String surname;
   DateTime birthDate;
+  String email;
 
-  User({this.id, this.name, this.surname, this.birthDate});
+  User({this.id, this.name, this.surname, this.birthDate, this.email});
 }

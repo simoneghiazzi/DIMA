@@ -5,7 +5,7 @@ import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Services/place_service.dart';
+import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place_service.dart';
 
 class MapViewModel {
   var _position = StreamController<Position>.broadcast();

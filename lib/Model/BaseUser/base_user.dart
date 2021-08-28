@@ -3,8 +3,18 @@ import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
 
 class BaseUser extends User {
-  BaseUser({String id, String name, String surname, DateTime birthDate})
-      : super(id: id, name: name, surname: surname, birthDate: birthDate);
+  BaseUser(
+      {String id,
+      String name,
+      String surname,
+      DateTime birthDate,
+      String email})
+      : super(
+            id: id,
+            name: name,
+            surname: surname,
+            birthDate: birthDate,
+            email: email);
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
@@ -20,6 +30,9 @@ class BaseUser extends User {
     try {
       birthDate = doc.get('birthDate');
     } catch (e) {}
+    try {
+      email = doc.get('email');
+    } catch (e) {}
   }
 
   @override
@@ -29,6 +42,7 @@ class BaseUser extends User {
       'name': name,
       'surname': surname,
       'birthDate': birthDate,
+      'email': email,
     };
   }
 

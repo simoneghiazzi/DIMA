@@ -1,17 +1,17 @@
-import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUsers/Informations/base_user_info_body.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/components/experts_info_body.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
-class BaseUsersSignUpScreen extends StatelessWidget {
+class ExpertsSignUpScreen extends StatelessWidget {
   final authViewModel;
 
-  BaseUsersSignUpScreen({Key key, @required this.authViewModel}) : super(key: key);
+  ExpertsSignUpScreen({Key key, @required this.authViewModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: WillPopScope(
-        child: BaseUserInfoBody(
+        child: ExpertsInfoBody(
           authViewModel: authViewModel,
         ),
         onWillPop: () async =>

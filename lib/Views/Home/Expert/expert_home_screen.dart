@@ -1,6 +1,6 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/Experts/expert_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/Experts/components/expert_grid.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/Expert/components/expert_grid.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/header.dart';
 import 'package:flutter/material.dart';
 

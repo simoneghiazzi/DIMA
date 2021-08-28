@@ -40,9 +40,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
                   return ListView.builder(
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) {
-                      ////
                       User user = widget.createUserCallback(snapshot.data[index]);
-                      /////
                       return ChatListItem(
                         chatViewModel: widget.chatViewModel,
                         userItem: user,

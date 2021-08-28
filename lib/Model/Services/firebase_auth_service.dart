@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
-import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';

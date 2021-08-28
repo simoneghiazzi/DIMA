@@ -1,8 +1,8 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/report_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
-import 'package:dima_colombo_ghiazzi/Views/Report/components/reports_list.dart';
-import 'package:dima_colombo_ghiazzi/Views/Report/report_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Report/reports_list_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Report/create_report_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
@@ -111,7 +111,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      return ReportListPage(
+                                      return ReportListScreen(
                                           reportViewModel: reportViewModel);
                                     },
                                   ),
@@ -222,7 +222,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
           onPressed: () {
             Navigator.pushReplacement(context, MaterialPageRoute(
               builder: (context) {
-                return ReportListPage(reportViewModel: reportViewModel);
+                return ReportListScreen(reportViewModel: reportViewModel);
               },
             )).then((value) {
               Navigator.pop(context);
@@ -252,7 +252,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
           onPressed: () {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) {
-              return ReportScreen(baseUserViewModel: widget.baseUserViewModel);
+              return CreateReportScreen(baseUserViewModel: widget.baseUserViewModel);
             })).then((value) {
               Navigator.pop(context);
             });
