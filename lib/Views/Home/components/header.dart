@@ -51,36 +51,11 @@ class _HeaderState extends State<Header> {
                     "${userViewModel.loggedUser.name[0]}",
                     style: TextStyle(color: kPrimaryColor, fontSize: 30),
                   ))
-              : Image.network(
-                  userViewModel.loggedUser.getData()['profilePhoto'],
-                  fit: BoxFit.cover,
-                  width: 50.0,
-                  height: 50.0,
-                  loadingBuilder: (BuildContext context, Widget child,
-                      ImageChunkEvent loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      width: 50,
-                      height: 50,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: Color(0xff203152),
-                          value: loadingProgress.expectedTotalBytes != null &&
-                                  loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes
-                              : null,
-                        ),
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, object, stackTrace) {
-                    return Icon(
-                      Icons.account_circle,
-                      size: 50.0,
-                      color: Color(0xffaeaeae),
-                    );
-                  },
+              : CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.white,
+                  backgroundImage: NetworkImage(
+                      userViewModel.loggedUser.getData()['profilePhoto']),
                 ),
           onTap: () => _onAccountPressed(context),
         ),

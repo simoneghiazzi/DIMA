@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Expert extends User {
@@ -55,6 +56,7 @@ class Expert extends User {
       'name': name,
       'surname': surname,
       'birthDate': birthDate,
+      'address': address,
       'lat': address.latitude,
       'lng': address.longitude,
       'phoneNumber': phoneNumber,

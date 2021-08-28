@@ -3,6 +3,7 @@ import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/pending_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_accept_deny.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_text_input.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/messages_list_constructor.dart';
@@ -131,7 +132,41 @@ class _ChatPageBodyState extends State<ChatPageBody>
                 widget.chatViewModel.conversation.senderUserChat
                             .chatCollection ==
                         PendingChat().chatCollection
-                    ? ChatAcceptDenyInput(chatViewModel: widget.chatViewModel)
+                    ? InkWell(
+                        child: Container(
+                          width: size.width * 0.4,
+                          padding: EdgeInsets.only(
+                              left: 8, right: 8, top: 2, bottom: 2),
+                          height: 30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: kPrimaryLightColor,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.arrow_upward,
+                                color: kPrimaryColor,
+                                size: 20,
+                              ),
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Text(
+                                "Handle",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: kPrimaryColor),
+                              ),
+                            ],
+                          ),
+                        ),
+                        onTap: () {
+                          _onHandleChat(context);
+                        },
+                      )
                     : ChatTextInput(chatViewModel: widget.chatViewModel),
               ],
             ),
@@ -170,8 +205,12 @@ class _ChatPageBodyState extends State<ChatPageBody>
   _onHandleChat(context) {
     Alert(
       context: context,
-      title: "ACCEPT CHAT FROM",
-      desc: widget.chatViewModel.conversation.peerUser.getData()['name'],
+      title: "ACCEPT CHAT FROM " +
+          widget.chatViewModel.conversation.peerUser
+              .getData()['name']
+              .toString()
+              .toUpperCase() +
+          "?",
       image: Image.asset("assets/icons/small_logo.png"),
       closeIcon: Icon(
         Icons.close,
@@ -187,7 +226,14 @@ class _ChatPageBodyState extends State<ChatPageBody>
             await widget.chatViewModel.acceptPendingChat();
             widget.chatViewModel.conversation.senderUserChat = ActiveChat();
             widget.chatViewModel.conversation.peerUserChat = ActiveChat();
-            Navigator.pop(context);
+            Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) {
+                return ActiveChatsListScreen(
+                    chatViewModel: widget.chatViewModel);
+              },
+            )).then((value) {
+              Navigator.pop(context);
+            });
           },
           color: kPrimaryColor,
         ),
@@ -198,7 +244,14 @@ class _ChatPageBodyState extends State<ChatPageBody>
           ),
           onPressed: () async {
             await widget.chatViewModel.deleteChat();
-            Navigator.pop(context);
+            Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) {
+                return ActiveChatsListScreen(
+                    chatViewModel: widget.chatViewModel);
+              },
+            )).then((value) {
+              Navigator.pop(context);
+            });
           },
           color: Colors.red,
         )

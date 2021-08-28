@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place_search.dart';
+import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Profile/profile_expert_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/map_view_model.dart';
@@ -94,38 +96,41 @@ class _MapBodyState extends State<MapBody> {
                                 } else {
                                   for (var doc in snap.data) {
                                     if (doc.data() != null) {
-                                      var data =
-                                          doc.data() as Map<String, dynamic>;
+                                      Expert expert = Expert();
+                                      expert.setFromDocument(doc);
                                       _markers.add(Marker(
-                                          markerId: MarkerId(data['surname'] +
-                                              data['lat'].toString() +
-                                              data['lng'].toString()),
-                                          position:
-                                              LatLng(data['lat'], data['lng']),
+                                          markerId: MarkerId(
+                                              expert.getData()['surname'] +
+                                                  expert
+                                                      .getData()['lat']
+                                                      .toString() +
+                                                  expert
+                                                      .getData()['lng']
+                                                      .toString()),
+                                          position: expert.getData()['address'],
                                           icon: pinLocationIcon,
                                           infoWindow: InfoWindow(
                                               onTap: () {
-                                                // widget.chatViewModel.peerId =
-                                                //     data['eid'];
-                                                // widget.chatViewModel
-                                                //     .chatWithExpertChat();
-                                                // Navigator.push(
-                                                //   context,
-                                                //   MaterialPageRoute(
-                                                //     builder: (context) =>
-                                                //         ExpertsChat(
-                                                //             chatViewModel: widget
-                                                //                 .chatViewModel),
-                                                //   ),
-                                                // );
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ProfileExpertScreen(
+                                                              chatViewModel: widget
+                                                                  .chatViewModel,
+                                                              expert: expert,
+                                                            )));
                                               },
-                                              title: data['surname'] +
-                                                  " " +
-                                                  data['name'] +
-                                                  " (" +
-                                                  data['phoneNumber'] +
-                                                  ")",
-                                              snippet: data['email'])));
+                                              title:
+                                                  expert.getData()['surname'] +
+                                                      " " +
+                                                      expert.getData()['name'] +
+                                                      " (" +
+                                                      expert.getData()[
+                                                          'phoneNumber'] +
+                                                      ")",
+                                              snippet:
+                                                  expert.getData()['email'])));
                                     }
                                   }
                                   return GoogleMap(
