@@ -61,7 +61,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
                                     Collection.EXPERTS
                                 ? Row(children: <Widget>[
                                     CircleAvatar(
-                                      radius: 60,
+                                      radius: 30,
                                       backgroundColor: Colors.white,
                                       child: ClipOval(
                                         child: Image.network(
@@ -98,7 +98,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
                                           errorBuilder:
                                               (context, object, stackTrace) {
                                             return CircleAvatar(
-                                                radius: 60,
+                                                radius: 30,
                                                 backgroundColor: Colors.white,
                                                 child: Text(
                                                   "${widget.chatViewModel.conversation.peerUser.name[0]}",
@@ -119,7 +119,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
                                               .peerUser
                                               .getData()['surname'],
                                       style: TextStyle(
-                                          fontSize: 32,
+                                          fontSize: 25,
                                           fontWeight: FontWeight.bold,
                                           color: kPrimaryColor),
                                     )

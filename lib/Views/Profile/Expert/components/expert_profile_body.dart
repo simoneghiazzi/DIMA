@@ -54,71 +54,145 @@ class ExpertProfileBody extends StatelessWidget {
                                       fontSize: 32,
                                       fontWeight: FontWeight.bold))),
                         ),
-                        SizedBox(
-                          height: size.height * 0.05,
-                        ),
-                        Text(expert.phoneNumber,
-                            style: TextStyle(
-                              color: kPrimaryColor,
-                              fontSize: 20,
-                            )),
-                        SizedBox(
-                          height: size.height * 0.04,
-                        ),
-                        GestureDetector(
-                          child: Text(expert.email,
-                              style: TextStyle(
-                                  color: kPrimaryColor,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold)),
-                          onTap: () async {
-                            EmailContent email = EmailContent(
-                              to: [
-                                expert.email,
-                              ],
-                            );
+                        SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(
+                                height: size.height * 0.05,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.phone,
+                                    color: kPrimaryColor,
+                                  ),
+                                  SizedBox(
+                                    width: size.width * 0.05,
+                                  ),
+                                  Text(expert.phoneNumber,
+                                      style: TextStyle(
+                                        color: kPrimaryColor,
+                                        fontSize: 20,
+                                      )),
+                                ],
+                              ),
+                              SizedBox(
+                                height: size.height * 0.04,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.mail,
+                                    color: kPrimaryColor,
+                                  ),
+                                  SizedBox(
+                                    width: size.width * 0.05,
+                                  ),
+                                  GestureDetector(
+                                    child: Text(expert.email,
+                                        style: TextStyle(
+                                            color: kPrimaryColor,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold)),
+                                    onTap: () async {
+                                      EmailContent email = EmailContent(
+                                        to: [
+                                          expert.email,
+                                        ],
+                                      );
 
-                            // Android: Will open mail app or show native picker.
-                            // iOS: Will open mail app if single mail app found.
-                            OpenMailAppResult result =
-                                await OpenMailApp.composeNewEmailInMailApp(
-                                    nativePickerTitle:
-                                        'Select email app to compose',
-                                    emailContent: email);
+                                      // Android: Will open mail app or show native picker.
+                                      // iOS: Will open mail app if single mail app found.
+                                      OpenMailAppResult result = await OpenMailApp
+                                          .composeNewEmailInMailApp(
+                                              nativePickerTitle:
+                                                  'Select email app to compose',
+                                              emailContent: email);
 
-                            // If no mail apps found, show error
-                            if (!result.didOpen && !result.canOpen) {
-                              showNoMailAppsDialog(context);
+                                      // If no mail apps found, show error
+                                      if (!result.didOpen && !result.canOpen) {
+                                        showNoMailAppsDialog(context);
 
-                              // iOS: if multiple mail apps found, show dialog to select.
-                              // There is no native intent/default app system in iOS so
-                              // you have to do it yourself.
-                            } else if (!result.didOpen && result.canOpen) {
-                              showDialog(
-                                context: context,
-                                builder: (_) {
-                                  return MailAppPickerDialog(
-                                    mailApps: result.options,
-                                  );
-                                },
-                              );
-                            }
-                          },
-                        ),
-                        SizedBox(
-                          height: size.height * 0.04,
-                        ),
-                        Text(expert.address,
-                            style: TextStyle(
-                              color: kPrimaryColor,
-                              fontSize: 20,
-                            )),
-                        SizedBox(
-                          height: size.height * 0.05,
-                        ),
-                        Divider(
-                          color: kPrimaryColor,
-                          height: 1.5,
+                                        // iOS: if multiple mail apps found, show dialog to select.
+                                        // There is no native intent/default app system in iOS so
+                                        // you have to do it yourself.
+                                      } else if (!result.didOpen &&
+                                          result.canOpen) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (_) {
+                                            return MailAppPickerDialog(
+                                              mailApps: result.options,
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: size.height * 0.04,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.local_hospital,
+                                    color: kPrimaryColor,
+                                  ),
+                                  SizedBox(
+                                    width: size.width * 0.05,
+                                  ),
+                                  Flexible(
+                                      child: Text(expert.address,
+                                          style: TextStyle(
+                                            color: kPrimaryColor,
+                                            fontSize: 20,
+                                          ))),
+                                ],
+                              ),
+                              SizedBox(
+                                height: size.height * 0.05,
+                              ),
+                              Divider(
+                                color: kPrimaryColor,
+                                height: 1.5,
+                              ),
+                              SizedBox(
+                                height: size.height * 0.05,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.chat,
+                                    color: kPrimaryColor,
+                                  ),
+                                  SizedBox(
+                                    width: size.width * 0.05,
+                                  ),
+                                  GestureDetector(
+                                    child: Text("Get in touch",
+                                        style: TextStyle(
+                                            color: kPrimaryColor,
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold)),
+                                    onTap: () {
+                                      initChats();
+                                      chatViewModel.chatWithUser(expert);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ChatPageScreen(
+                                              chatViewModel: chatViewModel),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         )
                       ],
                     ),
@@ -180,33 +254,6 @@ class ExpertProfileBody extends StatelessWidget {
             child: const Icon(Icons.arrow_back, size: 40.0),
           ),
         ),
-        Positioned(
-            bottom: 40,
-            child: Column(
-              children: <Widget>[
-                Text("Get in touch",
-                    style: TextStyle(
-                        color: kPrimaryColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
-                SizedBox(
-                  height: size.height * 0.02,
-                ),
-                RoundedButton(
-                    text: "CHAT",
-                    press: () {
-                      initChats();
-                      chatViewModel.chatWithUser(expert);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatPageScreen(
-                              chatViewModel: chatViewModel),
-                        ),
-                      );
-                    })
-              ],
-            ))
       ],
     );
   }
