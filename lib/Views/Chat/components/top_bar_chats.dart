@@ -46,30 +46,31 @@ class TopBarChats extends StatelessWidget {
                           width: size.width * 0.04,
                         )
                       : Container(),
-                  GestureDetector(
-                    child: Flexible(
-                        child: Text(
-                      text,
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: kPrimaryColor),
-                      overflow: TextOverflow.ellipsis,
-                    )),
-                    onTap: () {
-                      if (circleAvatar != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ExpertProfileScreen(
-                              chatViewModel: chatViewModel,
-                              expert:
-                                  chatViewModel.conversation.peerUser as Expert,
+                  Flexible(
+                    child: GestureDetector(
+                      child: Text(
+                        text,
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: kPrimaryColor),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      onTap: () {
+                        if (circleAvatar != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ExpertProfileScreen(
+                                chatViewModel: chatViewModel,
+                                expert: chatViewModel.conversation.peerUser
+                                    as Expert,
+                              ),
                             ),
-                          ),
-                        );
-                      }
-                    },
+                          );
+                        }
+                      },
+                    ),
                   ),
                 ],
               ),

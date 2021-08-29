@@ -40,24 +40,28 @@ class ExpertProfileBody extends StatelessWidget {
                       child: Center(
                         child: Column(
                           children: <Widget>[
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: kPrimaryLightColor,
-                              ),
-                              child: Center(
-                                  child: Flexible(
-                                      child: Text(
-                                expert.name.toUpperCase() +
-                                    " " +
-                                    expert.surname.toUpperCase(),
-                                style: TextStyle(
-                                    color: kPrimaryColor,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,
-                              ))),
-                            ),
+                            Center(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: kPrimaryLightColor,
+                                    ),
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Flexible(
+                                              child: Text(
+                                            expert.name.toUpperCase() +
+                                                " " +
+                                                expert.surname.toUpperCase(),
+                                            style: TextStyle(
+                                                color: kPrimaryColor,
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.center,
+                                          ))
+                                        ]))),
                             Column(
                               children: <Widget>[
                                 SizedBox(
