@@ -6,7 +6,6 @@ import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_accept_deny.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_text_input.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/messages_list_constructor.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar_chats.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
