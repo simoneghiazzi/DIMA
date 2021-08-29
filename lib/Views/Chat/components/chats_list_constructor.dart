@@ -1,7 +1,6 @@
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_list_item.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 
 class ChatsListConstructor extends StatefulWidget {

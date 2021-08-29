@@ -33,7 +33,6 @@ class _ReportsListBodyState extends State<ReportsListBody> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),

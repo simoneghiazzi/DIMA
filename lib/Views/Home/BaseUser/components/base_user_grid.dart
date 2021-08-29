@@ -4,7 +4,6 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveCha
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/create_report_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/dash_card.dart';
 

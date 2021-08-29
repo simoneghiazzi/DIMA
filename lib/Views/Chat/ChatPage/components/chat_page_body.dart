@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/pending_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_accept_deny.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_text_input.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/messages_list_constructor.dart';
