@@ -8,7 +8,6 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_text_input.dart'
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/messages_list_constructor.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 
 class ChatPageBody extends StatefulWidget {
   final ChatViewModel chatViewModel;

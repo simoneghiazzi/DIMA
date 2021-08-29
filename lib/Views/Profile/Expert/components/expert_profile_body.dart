@@ -3,7 +3,6 @@ import 'package:dima_colombo_ghiazzi/Model/Chat/expert_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

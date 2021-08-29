@@ -1,7 +1,6 @@
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_list_item.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 
 class ChatsListConstructor extends StatefulWidget {
@@ -40,7 +39,8 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
                   return ListView.builder(
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) {
-                      User user = widget.createUserCallback(snapshot.data[index]);
+                      User user =
+                          widget.createUserCallback(snapshot.data[index]);
                       return ChatListItem(
                         chatViewModel: widget.chatViewModel,
                         userItem: user,
