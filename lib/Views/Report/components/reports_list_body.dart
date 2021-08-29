@@ -1,22 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/report_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-class ReportListPage extends StatefulWidget {
+class ReportsListBody extends StatefulWidget {
   final ReportViewModel reportViewModel;
 
-  ReportListPage({Key key, @required this.reportViewModel}) : super(key: key);
+  ReportsListBody({Key key, @required this.reportViewModel}) : super(key: key);
 
   @override
-  _BodyState createState() => _BodyState(reportViewModel: reportViewModel);
+  _ReportsListBodyState createState() =>
+      _ReportsListBodyState(reportViewModel: reportViewModel);
 }
 
-class _BodyState extends State<ReportListPage> {
-  _BodyState({@required this.reportViewModel});
+class _ReportsListBodyState extends State<ReportsListBody> {
+  _ReportsListBodyState({@required this.reportViewModel});
 
   final ReportViewModel reportViewModel;
   final ScrollController listScrollController = ScrollController();
@@ -38,90 +40,58 @@ class _BodyState extends State<ReportListPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SafeArea(
-              child: Padding(
-                padding: EdgeInsets.only(left: 16, right: 16, top: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: kPrimaryColor,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        Text(
-                          "Reports list",
-                          style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: kPrimaryColor),
-                        )
-                      ],
-                    ),
-                    InkWell(
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            left: 8, right: 8, top: 2, bottom: 2),
-                        height: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: kPrimaryLightColor,
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.add,
-                              color: kPrimaryColor,
-                              size: 20,
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Text(
-                              "Add New",
-                              style: TextStyle(
-                                  color: kPrimaryColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+            TopBar(
+              text: 'Old reports',
+              button: InkWell(
+                child: Container(
+                  padding:
+                      EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                  height: 30,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: kPrimaryLightColor,
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.add,
+                        color: kPrimaryColor,
+                        size: 20,
                       ),
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text(
+                        "Add New",
+                        style: TextStyle(
+                            color: kPrimaryColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(height: size.height * 0.02),
-            Padding(
-              padding: EdgeInsets.only(left: 10, right: 10),
-              child: StreamBuilder(
-                stream: reportViewModel.loadReports(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                      padding: EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) =>
-                          buildItem(context, snapshot.data?.docs[index]),
-                      itemCount: snapshot.data.docs.length,
-                      controller: listScrollController,
-                      shrinkWrap: true,
-                    );
-                  } else {
-                    return LoadingDialog(text: 'Loading reports...');
-                  }
+                onTap: () {
+                  Navigator.pop(context);
                 },
               ),
+            ),
+            StreamBuilder(
+              stream: reportViewModel.loadReports(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    padding: EdgeInsets.all(10.0),
+                    itemBuilder: (context, index) =>
+                        buildItem(context, snapshot.data?.docs[index]),
+                    itemCount: snapshot.data.docs.length,
+                    controller: listScrollController,
+                    shrinkWrap: true,
+                  );
+                } else {
+                  return LoadingDialog(text: 'Loading reports...');
+                }
+              },
             ),
           ],
         ),
@@ -144,25 +114,30 @@ class _BodyState extends State<ReportListPage> {
                   children: <Widget>[
                     CircleAvatar(
                       backgroundColor: Colors.transparent,
-                      radius: 30.0,
+                      radius: 25.0,
                       child: Image.asset(
                         "assets/icons/logo.png",
                         height: size.height * 0.05,
                       ),
                     ),
-                    Text(doc.get('category'),
-                        style: TextStyle(color: kPrimaryColor, fontSize: 17)),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      doc.get('category'),
+                      style: TextStyle(color: kPrimaryColor, fontSize: 18),
+                    ),
                   ],
                 ),
                 Column(
                   children: <Widget>[
                     Text(date.split(' ')[0],
-                        style: TextStyle(color: kPrimaryColor, fontSize: 12)),
+                        style: TextStyle(color: kPrimaryColor, fontSize: 10)),
                     Text(
                         date.split(' ')[1].split('.')[0].split(':')[0] +
                             ":" +
                             date.split(' ')[1].split('.')[0].split(':')[1],
-                        style: TextStyle(color: kPrimaryColor, fontSize: 12))
+                        style: TextStyle(color: kPrimaryColor, fontSize: 10))
                   ],
                 )
               ]),

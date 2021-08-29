@@ -4,6 +4,7 @@ import 'package:dima_colombo_ghiazzi/Model/Chat/expert_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chats_list_constructor.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
@@ -36,36 +37,7 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.only(right: 16, top: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      IconButton(
-                        padding: EdgeInsets.all(0.0),
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: kPrimaryColor,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      Text(
-                        "Experts",
-                        style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: kPrimaryColor),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: size.height * 0.02,
-              ),
+              TopBar(text: 'Experts'),
               ChatsListConstructor(
                 chatViewModel: widget.chatViewModel,
                 createUserCallback: createUserCallback,

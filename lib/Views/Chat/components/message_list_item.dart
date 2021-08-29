@@ -2,6 +2,7 @@ import 'package:dima_colombo_ghiazzi/Model/Chat/message.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MessageListItem extends StatefulWidget {
   final ChatViewModel chatViewModel;
@@ -32,7 +33,7 @@ class _MessageListItemState extends State<MessageListItem>
             Container(
               child: Text(
                 widget.messageItem.getData()['content'],
-                style: TextStyle(color: kPrimaryColor),
+                style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
               ),
               padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
               width: 200.0,
@@ -92,7 +93,7 @@ class _MessageListItemState extends State<MessageListItem>
                   Container(
                     child: Text(
                       widget.messageItem.getData()['content'],
-                      style: TextStyle(color: Colors.white),
+                      style: GoogleFonts.ubuntuCondensed(color: Colors.white),
                     ),
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                     width: 200.0,

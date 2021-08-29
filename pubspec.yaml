@@ -54,6 +54,8 @@ dependencies:
   form_builder_validators: ^7.0.0-beta.0
   firebase_app_check: ^0.0.2+1
   open_mail_app: ^0.2.0
+  google_fonts: ^2.1.0
+  auto_size_text: ^2.1.0
 
 dev_dependencies:
   flutter_test:

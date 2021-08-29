@@ -34,7 +34,7 @@ class _ChatListItemState extends State<ChatListItem> {
               widget.userItem.collection == Collection.USERS
                   ? CircleAvatar(
                       backgroundColor: Colors.transparent,
-                      radius: 30.0,
+                      radius: 25.0,
                       child: Image.asset(
                         "assets/icons/logo.png",
                         height: size.height * 0.05,
@@ -81,7 +81,7 @@ class _ChatListItemState extends State<ChatListItem> {
                       ),
                     ),
               SizedBox(
-                width: 20,
+                width: 15,
               ),
               // Profile info
               Column(
@@ -92,15 +92,15 @@ class _ChatListItemState extends State<ChatListItem> {
                           widget.userItem.name + ' ' + widget.userItem.surname,
                           maxLines: 1,
                           style: TextStyle(
-                              color: Color(0xff203152),
-                              fontSize: size.width * 0.07),
+                              color: kPrimaryColor,
+                              fontSize: 18),
                         )
                       : Text(
                           widget.userItem.name,
                           maxLines: 1,
                           style: TextStyle(
                               color: kPrimaryColor,
-                              fontSize: size.width * 0.07),
+                              fontSize: 18),
                         ),
                 ],
               ),

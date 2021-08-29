@@ -1,6 +1,7 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ChatTextInput extends StatefulWidget {
   final ChatViewModel chatViewModel;
@@ -43,7 +44,8 @@ class _ChatTextInputState extends State<ChatTextInput>
                       duration: Duration(milliseconds: 300),
                       curve: Curves.easeOut);
                 },
-                style: TextStyle(color: kPrimaryColor, fontSize: 15.0),
+                textAlignVertical: TextAlignVertical.center,
+                style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
                 controller: widget.chatViewModel.textController,
                 focusNode: focusNode,
                 decoration: InputDecoration(
@@ -61,6 +63,7 @@ class _ChatTextInputState extends State<ChatTextInput>
                     },
                     color: kPrimaryColor,
                   ),
+                  isCollapsed: true,
                 ),
               ),
             ))

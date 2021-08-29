@@ -1,5 +1,6 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/report_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/reports_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/create_report_screen.dart';
@@ -49,77 +50,48 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    SafeArea(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 16, top: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                IconButton(
-                                  splashColor: Colors.grey,
-                                  icon: Icon(
-                                    Icons.arrow_back,
-                                    color: kPrimaryColor,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                                Text(
-                                  "Reports",
-                                  style: TextStyle(
-                                      color: kPrimaryColor,
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                            InkWell(
-                              child: Container(
-                                padding: EdgeInsets.only(
-                                    left: 8, right: 8, top: 2, bottom: 2),
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: kPrimaryLightColor,
-                                ),
-                                child: Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.book,
-                                      color: kPrimaryColor,
-                                      size: 20,
-                                    ),
-                                    SizedBox(
-                                      width: 2,
-                                    ),
-                                    Text(
-                                      "List",
-                                      style: TextStyle(
-                                          color: kPrimaryColor,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
+                    TopBar(
+                      text: 'New report',
+                      button: InkWell(
+                        child: Container(
+                          padding: EdgeInsets.only(
+                              left: 8, right: 8, top: 2, bottom: 2),
+                          height: 30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: kPrimaryLightColor,
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.book,
+                                color: kPrimaryColor,
+                                size: 20,
                               ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return ReportListScreen(
-                                          reportViewModel: reportViewModel);
-                                    },
-                                  ),
-                                );
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Text(
+                                "List",
+                                style: TextStyle(
+                                    color: kPrimaryColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return ReportsListScreen(
+                                    reportViewModel: reportViewModel);
                               },
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
                     ),
                     SizedBox(
@@ -222,7 +194,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
           onPressed: () {
             Navigator.pushReplacement(context, MaterialPageRoute(
               builder: (context) {
-                return ReportListScreen(reportViewModel: reportViewModel);
+                return ReportsListScreen(reportViewModel: reportViewModel);
               },
             )).then((value) {
               Navigator.pop(context);
@@ -252,7 +224,8 @@ class _CreateReportBodyState extends State<CreateReportBody> {
           onPressed: () {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) {
-              return CreateReportScreen(baseUserViewModel: widget.baseUserViewModel);
+              return CreateReportScreen(
+                  baseUserViewModel: widget.baseUserViewModel);
             })).then((value) {
               Navigator.pop(context);
             });

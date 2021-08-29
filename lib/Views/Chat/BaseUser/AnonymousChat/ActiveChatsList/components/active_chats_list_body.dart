@@ -5,6 +5,7 @@ import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chats_list_constructor.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
@@ -37,81 +38,49 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.only(right: 16, top: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          IconButton(
-                            padding: EdgeInsets.all(0.0),
-                            icon: Icon(
-                              Icons.arrow_back,
-                              color: kPrimaryColor,
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                          Text(
-                            "Anonymous",
-                            style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                color: kPrimaryColor),
-                          )
-                        ],
-                      ),
-                      InkWell(
-                        child: Container(
-                          padding: EdgeInsets.only(
-                              left: 8, right: 8, top: 2, bottom: 2),
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: kPrimaryLightColor,
-                          ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.archive,
-                                color: kPrimaryColor,
-                                size: 20,
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                "Requests",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: kPrimaryColor),
-                              ),
-                            ],
-                          ),
+              TopBar(
+                text: 'Anonymous',
+                button: InkWell(
+                  child: Container(
+                    padding:
+                        EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                    height: 30,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: kPrimaryLightColor,
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.archive,
+                          color: kPrimaryColor,
+                          size: 20,
                         ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PendingChatsListScreen(
-                                    chatViewModel: widget.chatViewModel)),
-                          ).then((value) {
-                            initChats();
-                            setState(() {});
-                          });
-                        },
-                      ),
-                    ],
+                        SizedBox(
+                          width: 2,
+                        ),
+                        Text(
+                          "Requests",
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: kPrimaryColor),
+                        ),
+                      ],
+                    ),
                   ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PendingChatsListScreen(
+                              chatViewModel: widget.chatViewModel)),
+                    ).then((value) {
+                      initChats();
+                      setState(() {});
+                    });
+                  },
                 ),
-              ),
-              SizedBox(
-                height: size.height * 0.02,
               ),
               ChatsListConstructor(
                   chatViewModel: widget.chatViewModel,
