@@ -39,7 +39,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
               children: <Widget>[
                 SafeArea(
                   child: Padding(
-                    padding: EdgeInsets.only(right: 16, top: 15),
+                    padding: EdgeInsets.only(right: 1),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -154,41 +154,103 @@ class _ChatPageBodyState extends State<ChatPageBody>
                 widget.chatViewModel.conversation.senderUserChat
                             .chatCollection ==
                         PendingChat().chatCollection
-                    ? InkWell(
-                        child: Container(
-                          width: size.width * 0.4,
-                          padding: EdgeInsets.only(
-                              left: 8, right: 8, top: 2, bottom: 2),
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: kPrimaryLightColor,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.arrow_upward,
-                                color: kPrimaryColor,
-                                size: 20,
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                            InkWell(
+                              child: Container(
+                                width: size.width * 0.3,
+                                padding: EdgeInsets.only(top: 2, bottom: 2),
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.green,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                      size: 25,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "Accept",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              SizedBox(
-                                width: 2,
+                              onTap: () async {
+                                await widget.chatViewModel.acceptPendingChat();
+                                widget.chatViewModel.conversation
+                                    .senderUserChat = ActiveChat();
+                                widget.chatViewModel.conversation.peerUserChat =
+                                    ActiveChat();
+                                Navigator.pushReplacement(context,
+                                    MaterialPageRoute(
+                                  builder: (context) {
+                                    return ActiveChatsListScreen(
+                                        chatViewModel: widget.chatViewModel);
+                                  },
+                                )).then((value) {
+                                  Navigator.pop(context);
+                                });
+                              },
+                            ),
+                            SizedBox(
+                              width: size.width * 0.1,
+                            ),
+                            InkWell(
+                              child: Container(
+                                width: size.width * 0.3,
+                                padding: EdgeInsets.only(top: 2, bottom: 2),
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.red,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                      size: 25,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "Refuse",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              Text(
-                                "Handle",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: kPrimaryColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          _onHandleChat(context);
-                        },
-                      )
+                              onTap: () async {
+                                await widget.chatViewModel.deleteChat();
+                                Navigator.pushReplacement(context,
+                                    MaterialPageRoute(
+                                  builder: (context) {
+                                    return ActiveChatsListScreen(
+                                        chatViewModel: widget.chatViewModel);
+                                  },
+                                )).then((value) {
+                                  Navigator.pop(context);
+                                });
+                              },
+                            )
+                          ])
                     : ChatTextInput(chatViewModel: widget.chatViewModel),
               ],
             ),
@@ -222,62 +284,5 @@ class _ChatPageBodyState extends State<ChatPageBody>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-  }
-
-  _onHandleChat(context) {
-    Alert(
-      context: context,
-      title: "ACCEPT CHAT FROM " +
-          widget.chatViewModel.conversation.peerUser
-              .getData()['name']
-              .toString()
-              .toUpperCase() +
-          "?",
-      image: Image.asset("assets/icons/small_logo.png"),
-      closeIcon: Icon(
-        Icons.close,
-        color: kPrimaryColor,
-      ),
-      buttons: [
-        DialogButton(
-          child: Text(
-            "ACCEPT",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          onPressed: () async {
-            await widget.chatViewModel.acceptPendingChat();
-            widget.chatViewModel.conversation.senderUserChat = ActiveChat();
-            widget.chatViewModel.conversation.peerUserChat = ActiveChat();
-            Navigator.pushReplacement(context, MaterialPageRoute(
-              builder: (context) {
-                return ActiveChatsListScreen(
-                    chatViewModel: widget.chatViewModel);
-              },
-            )).then((value) {
-              Navigator.pop(context);
-            });
-          },
-          color: kPrimaryColor,
-        ),
-        DialogButton(
-          child: Text(
-            "REFUSE",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          onPressed: () async {
-            await widget.chatViewModel.deleteChat();
-            Navigator.pushReplacement(context, MaterialPageRoute(
-              builder: (context) {
-                return ActiveChatsListScreen(
-                    chatViewModel: widget.chatViewModel);
-              },
-            )).then((value) {
-              Navigator.pop(context);
-            });
-          },
-          color: Colors.red,
-        )
-      ],
-    ).show();
   }
 }

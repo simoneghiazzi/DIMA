@@ -138,7 +138,7 @@ class ExpertProfileBody extends StatelessWidget {
                               Row(
                                 children: <Widget>[
                                   Icon(
-                                    Icons.local_hospital,
+                                    Icons.house,
                                     color: kPrimaryColor,
                                   ),
                                   SizedBox(
@@ -162,35 +162,52 @@ class ExpertProfileBody extends StatelessWidget {
                               SizedBox(
                                 height: size.height * 0.05,
                               ),
-                              Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.chat,
-                                    color: kPrimaryColor,
-                                  ),
-                                  SizedBox(
-                                    width: size.width * 0.05,
-                                  ),
-                                  GestureDetector(
-                                    child: Text("Get in touch",
-                                        style: TextStyle(
-                                            color: kPrimaryColor,
-                                            fontSize: 25,
-                                            fontWeight: FontWeight.bold)),
-                                    onTap: () {
-                                      initChats();
-                                      chatViewModel.chatWithUser(expert);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ChatPageScreen(
-                                              chatViewModel: chatViewModel),
+                              Center(
+                                child: InkWell(
+                                  child: Container(
+                                    padding: EdgeInsets.only(
+                                        left: 8, right: 8, top: 2, bottom: 2),
+                                    height: size.height * 0.05,
+                                    width: size.width * 0.5,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: kPrimaryColor,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          "Get in touch",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                      );
-                                    },
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Icon(
+                                          Icons.message,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              ),
+                                  onTap: () {
+                                    initChats();
+                                    chatViewModel.chatWithUser(expert);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ChatPageScreen(
+                                            chatViewModel: chatViewModel),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              )
                             ],
                           ),
                         )
