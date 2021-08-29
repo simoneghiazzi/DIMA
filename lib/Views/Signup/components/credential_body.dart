@@ -112,7 +112,9 @@ class _CredentialBodyState extends State<CredentialBody> {
             StreamBuilder<String>(
                 stream: authViewModel.authMessage,
                 builder: (context, snapshot) {
-                  LoadingDialog.hide(context);
+                  if (snapshot.hasData) {
+                    LoadingDialog.hide(context);
+                  }
                   return RichText(
                       text: TextSpan(
                           text: snapshot.data,
