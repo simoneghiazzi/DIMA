@@ -309,7 +309,6 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            LoadingDialog.hide(context);
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -320,7 +319,9 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                       userViewModel: ExpertViewModel());
                 },
               ),
-            ).then((value) {});
+            ).then((value) {
+              setState(() {});
+            });
           },
           color: kPrimaryColor,
         ),

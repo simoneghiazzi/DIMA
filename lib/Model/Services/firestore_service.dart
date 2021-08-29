@@ -113,7 +113,7 @@ class FirestoreService {
   // user id that is not the sender him/herself or that is not in the list of active/pending chat ids
   // 4. If no user is returned, repeat the search with the ids > randomId
   Future<BaseUser> getRandomUserFromDB(BaseUser user, String randomId) async {
-    if (await _getBaseCollectionCounter(Collection.USERS) - 1 >
+    if (await _getBaseCollectionCounter(Collection.BASE_USERS) - 1 >
         await _getChatsCounterFromDB(user)) {
       List<String> activeIds = await _getChatIds(user, ActiveChat());
       List<String> pendingIds = await _getChatIds(user, PendingChat());
@@ -148,7 +148,7 @@ class FirestoreService {
 
   /// Find the collection of the user [id] inside the base collections of the DB
   Future<Collection> findUserInCollections(String id) async {
-    var baseCollections = [Collection.USERS, Collection.EXPERTS];
+    var baseCollections = [Collection.BASE_USERS, Collection.EXPERTS];
     for (var collection in baseCollections) {
       try {
         var snap = await _firestore
@@ -175,14 +175,10 @@ class FirestoreService {
 
   /***************************************** MESSAGES *****************************************/
 
-  /// Add a new message to an expert into the DB.
-  /// It takes the [pairChatId] that is the composite id of the 2 users, the [senderUserChat],
-  /// the [peerUserChat] and the [content] of message.
-  /// Firstly, it calls the addMessageIntoDB method that adds the new message into the messages collection,
-  /// then it updates the field of the lastMessage of the sender and peer Users. */
-  Future<void> addMessageIntoDB(Conversation conversation, content) async {
-    int timestamp = DateTime.now().millisecondsSinceEpoch;
-    await _addMessageIntoMessagesCollection(conversation, content, timestamp);
+  /// It updates the field of the lastMessage of the sender and peer Users. If the chat is new, it
+  /// adds it to the list of chats of the 2 users in the collection specified
+  /// into the [conversation] field and updates the chat counters,
+  Future<void> _updateChatInfo(Conversation conversation, timestamp) async {
     await _firestore
         .collection(conversation.senderUser.collection.value)
         .doc(conversation.senderUser.id)
@@ -195,12 +191,21 @@ class FirestoreService {
         .collection(conversation.peerUserChat.chatCollection.value)
         .doc(conversation.senderUser.id)
         .set({'lastMessage': timestamp});
+    // Increments the counter only if the sender and the peer users are base users and if
+    // this is their first message
+    if (conversation.senderUser.collection == Collection.BASE_USERS &&
+        conversation.peerUser.collection == Collection.BASE_USERS &&
+        !await hasMessages(conversation.pairChatId)) {
+      _incrementChatsCounter(conversation.senderUser, 1);
+      _incrementChatsCounter(conversation.peerUser, 1);
+    }
   }
 
-  /// Add a new message into the messages collection of the DB
-  /// The [pairChatId] that is the composite id of the 2 users
-  Future<void> _addMessageIntoMessagesCollection(
-      Conversation conversation, content, int timestamp) async {
+  /// It takes the [pairChatId] that is the composite id of the 2 users, the [senderUserChat],
+  /// the [peerUserChat] and the [content] of message and adds a new message into the messages collection of the DB.
+  /// Then it calls the updateChatInfo method
+  Future<void> addMessageIntoDB(Conversation conversation, content) async {
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
     var documentReference = _firestore
         .collection(Collection.MESSAGES.value)
         .doc(conversation.pairChatId)
@@ -217,6 +222,7 @@ class FirestoreService {
         },
       );
     });
+    _updateChatInfo(conversation, timestamp);
   }
 
   /// It takes the [pairChatId] that is the composite id of the 2 users and
@@ -261,25 +267,6 @@ class FirestoreService {
   }
 
   /***************************************** CHATS *****************************************/
-
-  /// Add a new [peerUserChat] to the list of chats of the [senderUserChat]
-  /// Then it increments the chat counters of both the users.
-  Future<void> addChatIntoDB(Conversation conversation) async {
-    await _firestore
-        .collection(conversation.senderUser.collection.value)
-        .doc(conversation.senderUser.id)
-        .collection(conversation.senderUserChat.chatCollection.value)
-        .doc(conversation.peerUser.id)
-        .set({});
-    await _incrementChatsCounter(conversation.senderUser, 1);
-    await _firestore
-        .collection(conversation.peerUser.collection.value)
-        .doc(conversation.peerUser.id)
-        .collection(conversation.peerUserChat.chatCollection.value)
-        .doc(conversation.senderUser.id)
-        .set({});
-    await _incrementChatsCounter(conversation.peerUser, 1);
-  }
 
   /// Upgrade a [pendingUserChat] with a [peerUser] to an active chat for both the users.
   Future<void> upgradePendingToActiveChatIntoDB(
@@ -385,8 +372,7 @@ class FirestoreService {
         .collection(Collection.PENDING_CHATS.value)
         .limit(1)
         .get();
-    if(snap.docs.isEmpty) 
-      return false;
+    if (snap.docs.isEmpty) return false;
     return true;
   }
 
@@ -398,17 +384,19 @@ class FirestoreService {
         .collection(Collection.UTILS.value)
         .doc(Collection.UTILS.value)
         .get();
-    int counter;
+    int oldCounter;
     utils.data() != null
-        ? counter = utils.get('anonymousChatCounter')
-        : counter = 0;
+        ? oldCounter = utils.get('anonymousChatCounter')
+        : oldCounter = 0;
+    int newCounter = oldCounter + increment;
     await _firestore
         .collection(user.collection.value)
         .doc(user.id)
         .collection(Collection.UTILS.value)
         .doc(Collection.UTILS.value)
-        .set({'anonymousChatCounter': counter + increment}).catchError(
-            (error) => print("Failed to update the counter: $error"));
+        .set({
+      'anonymousChatCounter': newCounter < 0 ? 0 : newCounter
+    }).catchError((error) => print("Failed to update the counter: $error"));
   }
 
   /// It takes the [user] and returns the anonymous chat's counter from the DB

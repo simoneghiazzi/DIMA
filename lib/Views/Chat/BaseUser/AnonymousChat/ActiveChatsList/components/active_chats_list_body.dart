@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/pending_chat.dart';
+import 'package:dima_colombo_ghiazzi/Model/Chat/request.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
@@ -24,7 +26,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   bool newPendingChats;
   @override
   void initState() {
-    initChats();
+    initActiveChats();
     super.initState();
   }
 
@@ -80,10 +82,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
                               MaterialPageRoute(
                                   builder: (context) => PendingChatsListScreen(
                                       chatViewModel: widget.chatViewModel)),
-                            ).then((value) {
-                              initChats();
-                              setState(() {});
-                            });
+                            );
                           },
                         ),
                       );
@@ -95,8 +94,9 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
                 },
               ),
               ChatsListConstructor(
-                  chatViewModel: widget.chatViewModel,
-                  createUserCallback: createUserCallback),
+                chatViewModel: widget.chatViewModel,
+                createUserCallback: createUserCallback,
+              ),
             ],
           ),
         ),
@@ -107,18 +107,18 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
             onPressed: () async {
               LoadingDialog.show(context,
                   text: 'Looking for new random user...');
-              widget.chatViewModel.newRandomChat().then((value) {
+              widget.chatViewModel.getNewRandomUser().then((value) {
                 LoadingDialog.hide(context);
                 if (value) {
+                  initNewRandomChats();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ChatPageScreen(
-                        chatViewModel: widget.chatViewModel,
-                      ),
+                      builder: (context) =>
+                          ChatPageScreen(chatViewModel: widget.chatViewModel),
                     ),
                   ).then((value) {
-                    initChats();
+                    initActiveChats();
                     setState(() {});
                   });
                 } else {
@@ -148,8 +148,13 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
     return user;
   }
 
-  void initChats() {
+  void initActiveChats() {
     widget.chatViewModel.conversation.senderUserChat = ActiveChat();
     widget.chatViewModel.conversation.peerUserChat = ActiveChat();
+  }
+
+  void initNewRandomChats() {
+    widget.chatViewModel.conversation.senderUserChat = Request();
+    widget.chatViewModel.conversation.peerUserChat = PendingChat();
   }
 }

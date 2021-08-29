@@ -1,0 +1,51 @@
+@startuml ViwesUML
+package Views {
+    package Home {
+        class "DashCard" {
+            +String* imagePath
+            +String* text
+            +Function* press
+        }
+
+        class "Header" {
+            +AuthViewModel* authViewModel
+            +UserViewModel* userViewModel
+            -dynamic _onAccountPressed()
+        }
+        "Header" o-- "AuthViewModel"
+        "Header" o-- "UserViewModel"
+
+        package BaseUser {
+            class "BaseUserHomeScreen" {
+                +AuthViewModel* authViewModel
+                +BaseUserViewModel* baseUserViewModel
+            }
+            "BaseUserHomeScreen" o-- "AuthViewModel"
+            "BaseUserHomeScreen" o-- "BaseUserViewModel"
+
+            class "BaseUserGrid" {
+                +BaseUserViewModel* baseUserViewModel
+                +ChatViewModel* chatViewModel
+            }
+            "BaseUserGrid" o-- "BaseUserViewModel"
+            "BaseUserGrid" o-- "ChatViewModel"
+
+        }
+        package Expert {
+            class "ExpertHomeScreen" {
+                +AuthViewModel* authViewModel
+                +ExpertViewModel* expertViewModel
+            }
+            "ExpertHomeScreen" o-- "AuthViewModel"
+            "ExpertHomeScreen" o-- "ExpertViewModel"
+
+            class "ExpertGrid" {
+                +ExpertViewModel* expertViewModel
+                +ChatViewModel* chatViewModel
+            }
+            "ExpertGrid" o-- "ExpertViewModel"
+            "ExpertGrid" o-- "ChatViewModel"
+        }
+    }
+}
+@enduml

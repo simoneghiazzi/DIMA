@@ -7,9 +7,11 @@ class ChatsListConstructor extends StatefulWidget {
   final ChatViewModel chatViewModel;
   final Function createUserCallback;
 
-  ChatsListConstructor(
-      {Key key, @required this.chatViewModel, this.createUserCallback})
-      : super(key: key);
+  ChatsListConstructor({
+    Key key,
+    @required this.chatViewModel,
+    this.createUserCallback,
+  }) : super(key: key);
 
   @override
   _ChatsListConstructorState createState() => _ChatsListConstructorState();

@@ -22,6 +22,8 @@ class ChatPageBody extends StatefulWidget {
 class _ChatPageBodyState extends State<ChatPageBody>
     with WidgetsBindingObserver {
   User peerUser;
+  FocusNode focusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -86,15 +88,24 @@ class _ChatPageBodyState extends State<ChatPageBody>
                         ),
                         text: peerUser.getData()['name'] +
                             " " +
-                            peerUser.getData()['surname'])
-                    : TopBarChats(text: peerUser.getData()['name']),
+                            peerUser.getData()['surname'],
+                        chatViewModel: widget.chatViewModel,
+                        focusNode: focusNode,
+                      )
+                    : TopBarChats(
+                        text: peerUser.getData()['name'],
+                        focusNode: focusNode,
+                      ),
                 // List of messages
                 MessagesListConstructor(chatViewModel: widget.chatViewModel),
                 // Input content
                 widget.chatViewModel.conversation.senderUserChat.runtimeType ==
                         PendingChat
                     ? ChatAcceptDenyInput(chatViewModel: widget.chatViewModel)
-                    : ChatTextInput(chatViewModel: widget.chatViewModel),
+                    : ChatTextInput(
+                        chatViewModel: widget.chatViewModel,
+                        focusNode: focusNode,
+                      ),
               ],
             ),
           ],
@@ -107,8 +118,6 @@ class _ChatPageBodyState extends State<ChatPageBody>
 
   Future<bool> onBackPress() async {
     widget.chatViewModel.resetChattingWith();
-    if (!await widget.chatViewModel.hasMessages())
-      await widget.chatViewModel.deleteChat();
     Navigator.pop(context);
     return Future.value(false);
   }

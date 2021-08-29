@@ -27,13 +27,11 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
 
   @override
   Widget build(BuildContext context) {
-    //LoadingDialog.show(context, text: 'Loading chats...');
     return Flexible(
         child: StreamBuilder(
       stream: widget.chatViewModel.loadMessages(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          //LoadingDialog.hide(context);
           return ListView.builder(
             padding: EdgeInsets.all(10.0),
             itemBuilder: (context, index) {

@@ -122,7 +122,7 @@ class _LoginBodyState extends State<LoginBody> {
         await firestoreService.findUserInCollections(authViewModel.id);
     UserViewModel userViewModel;
     switch (collection) {
-      case Collection.USERS:
+      case Collection.BASE_USERS:
         userViewModel = BaseUserViewModel(id: authViewModel.id);
         await userViewModel.loadLoggedUser();
         Navigator.pushReplacement(context,

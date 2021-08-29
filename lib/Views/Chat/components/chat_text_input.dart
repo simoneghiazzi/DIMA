@@ -5,8 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 class ChatTextInput extends StatefulWidget {
   final ChatViewModel chatViewModel;
+  final FocusNode focusNode;
 
-  ChatTextInput({Key key, @required this.chatViewModel}) : super(key: key);
+  ChatTextInput(
+      {Key key, @required this.chatViewModel, @required this.focusNode})
+      : super(key: key);
 
   @override
   _ChatTextInputState createState() => _ChatTextInputState();
@@ -15,7 +18,6 @@ class ChatTextInput extends StatefulWidget {
 class _ChatTextInputState extends State<ChatTextInput>
     with WidgetsBindingObserver {
   final ScrollController listScrollController = ScrollController();
-  final FocusNode focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class _ChatTextInputState extends State<ChatTextInput>
                 textAlignVertical: TextAlignVertical.center,
                 style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
                 controller: widget.chatViewModel.textController,
-                focusNode: focusNode,
+                focusNode: widget.focusNode,
                 decoration: InputDecoration(
                   fillColor: kPrimaryColor,
                   border: InputBorder.none,
@@ -58,7 +60,6 @@ class _ChatTextInputState extends State<ChatTextInput>
                       if (widget.chatViewModel.textController.text.trim() !=
                           '') {
                         widget.chatViewModel.sendMessage();
-                        focusNode.requestFocus();
                       }
                     },
                     color: kPrimaryColor,

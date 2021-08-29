@@ -5,12 +5,14 @@ import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 class ChatPageScreen extends StatelessWidget {
   final ChatViewModel chatViewModel;
 
-  ChatPageScreen({Key key, @required this.chatViewModel}) : super(key: key);
+  ChatPageScreen({Key key, @required this.chatViewModel})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ChatPageBody(chatViewModel: chatViewModel),
+      body: ChatPageBody(
+          chatViewModel: chatViewModel),
     );
   }
 }

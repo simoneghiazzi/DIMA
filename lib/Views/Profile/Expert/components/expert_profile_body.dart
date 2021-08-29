@@ -7,6 +7,7 @@ import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:open_mail_app/open_mail_app.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ExpertProfileBody extends StatelessWidget {
   final ChatViewModel chatViewModel;
@@ -26,15 +27,15 @@ class ExpertProfileBody extends StatelessWidget {
         Column(
           children: <Widget>[
             Container(
-              height: 170.0,
+              height: 165.0,
               color: kPrimaryColor,
             ),
             SingleChildScrollView(
                 child: Padding(
-                    padding: EdgeInsets.only(top: 110),
+                    padding: EdgeInsets.only(top: 90),
                     child: Container(
                       padding: EdgeInsets.only(
-                          left: size.width / 8, right: size.width / 8),
+                          left: size.width / 10, right: size.width / 10),
                       color: Colors.white,
                       child: Center(
                         child: Column(
@@ -52,16 +53,15 @@ class ExpertProfileBody extends StatelessWidget {
                                     expert.surname.toUpperCase(),
                                 style: TextStyle(
                                     color: kPrimaryColor,
-                                    fontSize: 30,
+                                    fontSize: 22,
                                     fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.center,
                               ))),
                             ),
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 SizedBox(
-                                  height: size.height * 0.05,
+                                  height: size.height * 0.06,
                                 ),
                                 Row(
                                   children: <Widget>[
@@ -72,15 +72,20 @@ class ExpertProfileBody extends StatelessWidget {
                                     SizedBox(
                                       width: size.width * 0.05,
                                     ),
-                                    Text(expert.phoneNumber,
-                                        style: TextStyle(
-                                          color: kPrimaryColor,
-                                          fontSize: 20,
-                                        )),
+                                    GestureDetector(
+                                      child: Text(expert.phoneNumber,
+                                          style: TextStyle(
+                                              color: kPrimaryColor,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold)),
+                                      onTap: () {
+                                        launch('tel://' + expert.phoneNumber);
+                                      },
+                                    ),
                                   ],
                                 ),
                                 SizedBox(
-                                  height: size.height * 0.04,
+                                  height: size.height * 0.06,
                                 ),
                                 Row(
                                   children: <Widget>[
@@ -91,52 +96,55 @@ class ExpertProfileBody extends StatelessWidget {
                                     SizedBox(
                                       width: size.width * 0.05,
                                     ),
-                                    GestureDetector(
-                                      child: Text(expert.email,
-                                          style: TextStyle(
-                                              color: kPrimaryColor,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold)),
-                                      onTap: () async {
-                                        EmailContent email = EmailContent(
-                                          to: [
-                                            expert.email,
-                                          ],
-                                        );
-
-                                        // Android: Will open mail app or show native picker.
-                                        // iOS: Will open mail app if single mail app found.
-                                        OpenMailAppResult result = await OpenMailApp
-                                            .composeNewEmailInMailApp(
-                                                nativePickerTitle:
-                                                    'Select email app to compose',
-                                                emailContent: email);
-
-                                        // If no mail apps found, show error
-                                        if (!result.didOpen &&
-                                            !result.canOpen) {
-                                          showNoMailAppsDialog(context);
-
-                                          // iOS: if multiple mail apps found, show dialog to select.
-                                          // There is no native intent/default app system in iOS so
-                                          // you have to do it yourself.
-                                        } else if (!result.didOpen &&
-                                            result.canOpen) {
-                                          showDialog(
-                                            context: context,
-                                            builder: (_) {
-                                              return MailAppPickerDialog(
-                                                mailApps: result.options,
-                                              );
-                                            },
+                                    Flexible(
+                                      child: GestureDetector(
+                                        child: Text(expert.email,
+                                            style: TextStyle(
+                                                color: kPrimaryColor,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold)),
+                                        onTap: () async {
+                                          EmailContent email = EmailContent(
+                                            to: [
+                                              expert.email,
+                                            ],
                                           );
-                                        }
-                                      },
+
+                                          // Android: Will open mail app or show native picker.
+                                          // iOS: Will open mail app if single mail app found.
+                                          OpenMailAppResult result =
+                                              await OpenMailApp
+                                                  .composeNewEmailInMailApp(
+                                                      nativePickerTitle:
+                                                          'Select email app to compose',
+                                                      emailContent: email);
+
+                                          // If no mail apps found, show error
+                                          if (!result.didOpen &&
+                                              !result.canOpen) {
+                                            showNoMailAppsDialog(context);
+
+                                            // iOS: if multiple mail apps found, show dialog to select.
+                                            // There is no native intent/default app system in iOS so
+                                            // you have to do it yourself.
+                                          } else if (!result.didOpen &&
+                                              result.canOpen) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (_) {
+                                                return MailAppPickerDialog(
+                                                  mailApps: result.options,
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                      ),
                                     ),
                                   ],
                                 ),
                                 SizedBox(
-                                  height: size.height * 0.04,
+                                  height: size.height * 0.06,
                                 ),
                                 Row(
                                   children: <Widget>[
@@ -148,22 +156,28 @@ class ExpertProfileBody extends StatelessWidget {
                                       width: size.width * 0.05,
                                     ),
                                     Flexible(
+                                      child: GestureDetector(
                                         child: Text(expert.address,
                                             style: TextStyle(
-                                              color: kPrimaryColor,
-                                              fontSize: 20,
-                                            ))),
+                                                color: kPrimaryColor,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold)),
+                                        onTap: () {
+                                          openMaps();
+                                        },
+                                      ),
+                                    ),
                                   ],
                                 ),
                                 SizedBox(
-                                  height: size.height * 0.05,
+                                  height: size.height * 0.06,
                                 ),
                                 Divider(
                                   color: kPrimaryColor,
                                   height: 1.5,
                                 ),
                                 SizedBox(
-                                  height: size.height * 0.05,
+                                  height: size.height * 0.06,
                                 ),
                                 Center(
                                   child: InkWell(
@@ -199,13 +213,14 @@ class ExpertProfileBody extends StatelessWidget {
                                       ),
                                     ),
                                     onTap: () {
-                                      initChats();
+                                      initExpertChats();
                                       chatViewModel.chatWithUser(expert);
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => ChatPageScreen(
-                                              chatViewModel: chatViewModel),
+                                            chatViewModel: chatViewModel,
+                                          ),
                                         ),
                                       );
                                     },
@@ -223,20 +238,20 @@ class ExpertProfileBody extends StatelessWidget {
         Positioned(
           top: 100.0, // (background container size) - (circle height / 2)
           child: CircleAvatar(
-            radius: 70,
+            radius: 60,
             backgroundColor: Colors.white,
             child: ClipOval(
               child: Image.network(
                 expert.getData()['profilePhoto'],
                 fit: BoxFit.cover,
-                width: 140.0,
-                height: 140.0,
+                width: 120.0,
+                height: 120.0,
                 loadingBuilder: (BuildContext context, Widget child,
                     ImageChunkEvent loadingProgress) {
                   if (loadingProgress == null) return child;
                   return SizedBox(
-                    width: 140.0,
-                    height: 140.0,
+                    width: 120.0,
+                    height: 120.0,
                     child: CircularProgressIndicator(
                       color: kPrimaryColor,
                       value: loadingProgress.expectedTotalBytes != null &&
@@ -249,7 +264,7 @@ class ExpertProfileBody extends StatelessWidget {
                 },
                 errorBuilder: (context, object, stackTrace) {
                   return CircleAvatar(
-                      radius: 70,
+                      radius: 60,
                       backgroundColor: Colors.white,
                       child: Text(
                         "${expert.name[0]}",
@@ -296,8 +311,19 @@ class ExpertProfileBody extends StatelessWidget {
     );
   }
 
-  void initChats() {
+  void initExpertChats() {
     chatViewModel.conversation.senderUserChat = ExpertChat();
     chatViewModel.conversation.peerUserChat = ActiveChat();
+  }
+
+  void openMaps() async {
+    var lat = expert.latLng.latitude;
+    var lng = expert.latLng.longitude;
+    var uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
+    if (await canLaunch(uri.toString())) {
+      await launch(uri.toString());
+    } else {
+      throw 'Could not launch ${uri.toString()}';
+    }
   }
 }

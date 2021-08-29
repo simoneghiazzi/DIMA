@@ -4,6 +4,6 @@ import 'package:dima_colombo_ghiazzi/Model/Chat/chat.dart';
 class ActiveChat extends Chat {
   ActiveChat()
       : super(
-            targetCollection: Collection.USERS,
+            targetCollection: Collection.BASE_USERS,
             chatCollection: Collection.ACTIVE_CHATS);
 }

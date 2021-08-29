@@ -1,75 +1,5 @@
 @startuml ModelUML
 package Model {
-    class "RandomId" {
-        {static} +String* AUTO_ID_ALPHABET
-        {static} +String* generate()
-    }
-
-    abstract class "DbItem" {
-        +Collections* collections
-        +void setFromDocument()
-        +dynamic getData()
-    }
-    "DbItem" o-- "Collections"
-
-    abstract class "User" {
-        +String* id
-        +String* name
-        +String* surname
-        +DateTime* birthDate
-    }
-    "DbItem" <|-- "User"
-
-    package BaseUser {
-        class "Report" {
-            +String* id
-            +String* category
-            +String* description
-            +DateTime* date
-            +Collections* collections
-            +void setFromDocument()
-            +dynamic getData()
-        }
-        "DbItem" <|-- "Report"
-        "Report" o-- "Collections"
-
-        class "BaseUser" {
-            +Collections* collections
-            +void setFromDocument()
-            +dynamic getData()
-        }
-        "User" <|-- "BaseUser"
-        "BaseUser" o-- "Collections"
-
-        package Map {
-            class "Place" {
-                +Geometry* geometry
-                +String* name
-                +String* vicinity
-            }
-            "Place" o-- "Geometry"
-
-            class "Geometry" {
-                +Location* location
-            }
-            "Geometry" o-- "Location"
-
-            class "Location" {
-                +double* lat
-                +double* lng
-            }
-            class "PlaceSearch" {
-                +String* description
-                +String* placeId
-            }
-            class "PlaceService" {
-                +String* key
-                +Future<List<PlaceSearch*>*>* getAutocomplete()
-                +Future<Place*>* getPlace()
-            }
-        }
-    }
-
     package Chat {
         class "Message" {
             +String* idFrom
@@ -115,20 +45,6 @@ package Model {
         class "Request" {
         }
         "Chat" <|-- "Request"
-    }
-
-    package Expert {
-        class "Expert" {
-            +LatLng* address
-            +String* email
-            +String* phoneNumber
-            +String* profilePhoto
-            +Collections* collections
-            +void setFromDocument()
-            +dynamic getData()
-        }
-        "User" <|-- "Expert"
-        "Expert" o-- "Collections"
     }
 
     package Services {

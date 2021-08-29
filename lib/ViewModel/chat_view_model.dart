@@ -100,15 +100,12 @@ class ChatViewModel {
   }
 
   /// Look for a new random anonymous user
-  Future<bool> newRandomChat() async {
+  Future<bool> getNewRandomUser() async {
     var randomUser = await firestoreService.getRandomUserFromDB(
         conversation.senderUser, RandomId.generate());
     if (randomUser == null) return false;
-    conversation.senderUserChat = Request();
     conversation.peerUser = randomUser;
-    conversation.peerUserChat = PendingChat();
     conversation.computePairChatId();
-    await firestoreService.addChatIntoDB(conversation);
     return true;
   }
 

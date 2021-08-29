@@ -47,5 +47,5 @@ class BaseUser extends User {
   }
 
   @override
-  Collection get collection => Collection.USERS;
+  Collection get collection => Collection.BASE_USERS;
 }

@@ -31,7 +31,7 @@ class _ChatListItemState extends State<ChatListItem> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              widget.userItem.collection == Collection.USERS
+              widget.userItem.collection == Collection.BASE_USERS
                   ? CircleAvatar(
                       backgroundColor: Colors.transparent,
                       radius: 25.0,
@@ -104,8 +104,9 @@ class _ChatListItemState extends State<ChatListItem> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    ChatPageScreen(chatViewModel: widget.chatViewModel),
+                builder: (context) => ChatPageScreen(
+                  chatViewModel: widget.chatViewModel,
+                ),
               ),
             ).then((value) {
               widget.setStateCallback();

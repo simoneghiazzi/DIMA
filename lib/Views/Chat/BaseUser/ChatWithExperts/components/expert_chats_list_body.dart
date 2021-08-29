@@ -22,7 +22,7 @@ class ExpertChatsListBody extends StatefulWidget {
 class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
   @override
   void initState() {
-    initChats();
+    initExpertChats();
     super.initState();
   }
 
@@ -59,7 +59,7 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
                   },
                 ),
               ).then((value) {
-                initChats();
+                initExpertChats();
                 setState(() {});
               });
             },
@@ -82,7 +82,7 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
     return user;
   }
 
-  void initChats() {
+  void initExpertChats() {
     widget.chatViewModel.conversation.senderUserChat = ExpertChat();
     widget.chatViewModel.conversation.peerUserChat = ActiveChat();
   }

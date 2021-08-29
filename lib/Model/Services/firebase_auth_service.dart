@@ -57,7 +57,7 @@ class FirebaseAuthService {
 
     // Check if it is a new user. If yes, insert the data into the DB
     if (await _firestoreService.getUserByIdFromDB(
-            Collection.USERS, _userCredential.user.uid) ==
+            Collection.BASE_USERS, _userCredential.user.uid) ==
         null) {
       final headers = await googleSignIn.currentUser.authHeaders;
       final res = jsonDecode((await get(
@@ -90,7 +90,7 @@ class FirebaseAuthService {
 
     // Check if it is a new user. If yes, insert the data into the DB
     if (await _firestoreService.getUserByIdFromDB(
-            Collection.USERS, _userCredential.user.uid) ==
+            Collection.BASE_USERS, _userCredential.user.uid) ==
         null) {
       final userData =
           await FacebookAuth.instance.getUserData(fields: "name, birthday");

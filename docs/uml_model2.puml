@@ -1,0 +1,31 @@
+@startuml ModelUML
+package Model {
+    package Map {
+        class "Place" {
+            +Geometry* geometry
+            +String* name
+            +String* vicinity
+        }
+        "Place" o-- "Geometry"
+
+        class "Geometry" {
+            +Location* location
+        }
+        "Geometry" o-- "Location"
+
+        class "Location" {
+            +double* lat
+            +double* lng
+        }
+        class "PlaceSearch" {
+            +String* description
+            +String* placeId
+        }
+        class "PlaceService" {
+            +String* key
+            +Future<List<PlaceSearch*>*>* getAutocomplete()
+            +Future<Place*>* getPlace()
+        }
+    }
+}
+@enduml

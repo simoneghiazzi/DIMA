@@ -13,7 +13,7 @@ class BaseUserViewModel extends UserViewModel {
     if (id != null) {
       loggedUser = BaseUser();
       loggedUser.setFromDocument(
-          await firestore.getUserByIdFromDB(Collection.USERS, id));
+          await firestore.getUserByIdFromDB(Collection.BASE_USERS, id));
       return loggedUser;
     }
     return null;

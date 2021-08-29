@@ -20,7 +20,7 @@ class PendingChatsListBody extends StatefulWidget {
 class _PendingChatsListBodyState extends State<PendingChatsListBody> {
   @override
   void initState() {
-    initChats();
+    initPendingChats();
     super.initState();
   }
 
@@ -34,8 +34,9 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
           children: <Widget>[
             TopBar(text: 'Requests'),
             ChatsListConstructor(
-                chatViewModel: widget.chatViewModel,
-                createUserCallback: createUserCallback),
+              chatViewModel: widget.chatViewModel,
+              createUserCallback: createUserCallback,
+            ),
           ],
         ),
       ),
@@ -48,7 +49,7 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
     return user;
   }
 
-  void initChats() {
+  void initPendingChats() {
     widget.chatViewModel.conversation.senderUserChat = PendingChat();
     widget.chatViewModel.conversation.peerUserChat = Request();
   }

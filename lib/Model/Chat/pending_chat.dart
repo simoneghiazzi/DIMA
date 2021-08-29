@@ -4,6 +4,6 @@ import 'package:dima_colombo_ghiazzi/Model/Chat/chat.dart';
 class PendingChat extends Chat {
   PendingChat()
       : super(
-            targetCollection: Collection.USERS,
+            targetCollection: Collection.BASE_USERS,
             chatCollection: Collection.PENDING_CHATS);
 }

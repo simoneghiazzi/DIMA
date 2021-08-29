@@ -1,5 +1,5 @@
 enum Collection {
-  USERS,
+  BASE_USERS,
   EXPERTS,
   REPORTS,
   MESSAGES,
@@ -13,7 +13,7 @@ enum Collection {
 extension Utils on Collection {
   String get value {
     switch (this) {
-      case Collection.USERS:
+      case Collection.BASE_USERS:
         return 'users';
         break;
       case Collection.EXPERTS:
