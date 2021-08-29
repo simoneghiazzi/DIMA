@@ -84,25 +84,18 @@ class _ChatListItemState extends State<ChatListItem> {
                 width: 15,
               ),
               // Profile info
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  widget.userItem.collection == Collection.EXPERTS
-                      ? Text(
-                          widget.userItem.name + ' ' + widget.userItem.surname,
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: kPrimaryColor,
-                              fontSize: 18),
-                        )
-                      : Text(
-                          widget.userItem.name,
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: kPrimaryColor,
-                              fontSize: 18),
-                        ),
-                ],
+              Flexible(
+                child: widget.userItem.collection == Collection.EXPERTS
+                    ? Text(
+                        widget.userItem.name + ' ' + widget.userItem.surname,
+                        maxLines: 1,
+                        style: TextStyle(color: kPrimaryColor, fontSize: 18),
+                      )
+                    : Text(
+                        widget.userItem.name,
+                        maxLines: 1,
+                        style: TextStyle(color: kPrimaryColor, fontSize: 18),
+                      ),
               ),
             ],
           ),

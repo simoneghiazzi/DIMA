@@ -2,11 +2,12 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 
-class TopBar extends StatelessWidget {
+class TopBarChats extends StatelessWidget {
   final String text;
-  final InkWell button;
+  final CircleAvatar circleAvatar;
 
-  TopBar({Key key, @required this.text, this.button}) : super(key: key);
+  TopBarChats({Key key, @required this.text, this.circleAvatar})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class TopBar extends StatelessWidget {
           child: SizedBox(
             width: size.width,
             child: Padding(
-              padding: EdgeInsets.only(right: 20, left: 10, top: 12, bottom: 7),
+              padding: EdgeInsets.only(right: 20, top: 12, bottom: 7),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -32,16 +33,21 @@ class TopBar extends StatelessWidget {
                       Navigator.pop(context);
                     },
                   ),
-                  AutoSizeText(
+                  circleAvatar ?? Container(),
+                  circleAvatar != null
+                      ? SizedBox(
+                          width: size.width * 0.04,
+                        )
+                      : Container(),
+                  Flexible(
+                      child: Text(
                     text,
                     style: TextStyle(
                         fontSize: 25.0,
                         fontWeight: FontWeight.bold,
                         color: kPrimaryColor),
-                    maxLines: 1,
-                  ),
-                  Spacer(),
-                  button ?? Container(),
+                    overflow: TextOverflow.ellipsis,
+                  )),
                 ],
               ),
             ),

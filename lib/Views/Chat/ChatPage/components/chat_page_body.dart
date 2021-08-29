@@ -7,6 +7,7 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_accept_deny.dart
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_text_input.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/messages_list_constructor.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar_chats.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +40,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
             Column(
               children: <Widget>[
                 peerUser.collection == Collection.EXPERTS
-                    ? TopBar(
+                    ? TopBarChats(
                         circleAvatar: CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.white,
@@ -87,7 +88,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
                         text: peerUser.getData()['name'] +
                             " " +
                             peerUser.getData()['surname'])
-                    : TopBar(text: peerUser.getData()['name']),
+                    : TopBarChats(text: peerUser.getData()['name']),
                 // List of messages
                 MessagesListConstructor(chatViewModel: widget.chatViewModel),
                 // Input content

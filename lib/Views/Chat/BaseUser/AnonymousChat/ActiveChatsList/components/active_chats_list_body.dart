@@ -38,60 +38,61 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              TopBar(
-                text: 'Anonymous',
-                button: InkWell(
-                  child: Container(
-                    padding:
-                        EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                    height: 30,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: kPrimaryLightColor,
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.archive,
-                          color: kPrimaryColor,
-                          size: 20,
-                        ),
-                        SizedBox(
-                          width: 2,
-                        ),
-                        Text(
-                          "Requests",
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: kPrimaryColor),
-                        ),
-                        FutureBuilder(
-                          future: widget.chatViewModel.hasPendingChats(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              if (snapshot.data) {
-                                return Text('+1');
-                              }
-                            }
-                            return Container();
+              FutureBuilder(
+                future: widget.chatViewModel.hasPendingChats(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data) {
+                      return TopBar(
+                        text: 'Anonymous',
+                        button: InkWell(
+                          child: Container(
+                            padding: EdgeInsets.only(
+                                left: 8, right: 8, top: 2, bottom: 2),
+                            height: 30,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: kPrimaryLightColor,
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.notification_add,
+                                  color: Colors.red,
+                                  size: 20,
+                                ),
+                                SizedBox(
+                                  width: 2,
+                                ),
+                                Text(
+                                  "Requests",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: kPrimaryColor),
+                                ),
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PendingChatsListScreen(
+                                      chatViewModel: widget.chatViewModel)),
+                            ).then((value) {
+                              initChats();
+                              setState(() {});
+                            });
                           },
-                        )
-                      ],
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => PendingChatsListScreen(
-                              chatViewModel: widget.chatViewModel)),
-                    ).then((value) {
-                      initChats();
-                      setState(() {});
-                    });
-                  },
-                ),
+                        ),
+                      );
+                    } else {
+                      return TopBar(text: 'Anonymous');
+                    }
+                  }
+                  return Container();
+                },
               ),
               ChatsListConstructor(
                   chatViewModel: widget.chatViewModel,
