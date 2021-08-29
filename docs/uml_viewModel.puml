@@ -1,5 +1,26 @@
 @startuml ViewModelUML
 package ViewModel {
+    package ObserverForm {
+        abstract class "AuthFormInterface" {
+            +Sink<dynamic>* emailText
+            +Sink<dynamic>* passwordText
+            +Stream<bool*>* emailController
+            +Stream<bool*>* passwordController
+            +Stream<bool*>* isButtonEnabled
+            +Stream<String*>* errorEmailText
+        }
+        class "LoginForm" {
+            -StreamController<String*>* _emailStream
+            -StreamController<String*>* _passwordStream
+            +Sink<dynamic>* emailText
+            +Sink<dynamic>* passwordText
+            +Stream<bool*>* emailController
+            +Stream<bool*>* passwordController
+            +Stream<bool*>* isButtonEnabled
+            +Stream<String*>* errorEmailText
+        }
+        "AuthFormInterface" <|-- "LoginForm"
+    }
     class "ChatViewModel" {
         +FirestoreService* firestoreService
         +Conversation* conversation
@@ -74,6 +95,7 @@ package ViewModel {
     "MapViewModel" o-- "PlaceService"
     "MapViewModel" o-- "Place"
 
+
     package Expert {
         class "ExpertViewModel" {
             +Future<Expert*>* loadLoggedUser()
@@ -122,29 +144,6 @@ package ViewModel {
             +Stream<QuerySnapshot<Object*>*>* loadReports()
         }
         "ReportViewModel" o-- "FirestoreService"
-    }
-
-    package ObserverForms {
-        abstract class "AuthFormInterface" {
-            +Sink<dynamic>* emailText
-            +Sink<dynamic>* passwordText
-            +Stream<bool*>* emailController
-            +Stream<bool*>* passwordController
-            +Stream<bool*>* isButtonEnabled
-            +Stream<String*>* errorEmailText
-        }
-
-        class "LoginForm" {
-            -StreamController<String*>* _emailStream
-            -StreamController<String*>* _passwordStream
-            +Sink<dynamic>* emailText
-            +Sink<dynamic>* passwordText
-            +Stream<bool*>* emailController
-            +Stream<bool*>* passwordController
-            +Stream<bool*>* isButtonEnabled
-            +Stream<String*>* errorEmailText
-        }
-        "AuthFormInterface" <|-- "LoginForm"
     }
 }
 @enduml

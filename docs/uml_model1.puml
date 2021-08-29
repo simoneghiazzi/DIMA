@@ -20,6 +20,20 @@ package Model {
     }
     "DbItem" <|-- "User"
 
+    package Expert {
+        class "Expert" {
+            +LatLng* address
+            +String* email
+            +String* phoneNumber
+            +String* profilePhoto
+            +Collections* collections
+            +void setFromDocument()
+            +dynamic getData()
+        }
+        "User" <|-- "Expert"
+        "Expert" o-- "Collections"
+    }
+
     package BaseUser {
         class "Report" {
             +String* id
@@ -40,19 +54,6 @@ package Model {
         }
         "User" <|-- "BaseUser"
         "BaseUser" o-- "Collections"
-
-        package Expert {
-            class "Expert" {
-                +LatLng* address
-                +String* email
-                +String* phoneNumber
-                +String* profilePhoto
-                +Collections* collections
-                +void setFromDocument()
-                +dynamic getData()
-            }
-            "User" <|-- "Expert"
-            "Expert" o-- "Collections"
-        }
     }
-    @enduml
+}
+@enduml
