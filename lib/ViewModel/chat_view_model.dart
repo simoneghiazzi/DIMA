@@ -89,6 +89,10 @@ class ChatViewModel {
     return await firestoreService.hasMessages(conversation.pairChatId);
   }
 
+  Future<bool> hasPendingChats() async {
+    return await firestoreService.hasPendingChats(conversation.senderUser);
+  }
+
   /// Chat with a [user]
   Future<void> chatWithUser(User user) async {
     conversation.peerUser = user;
@@ -134,5 +138,4 @@ class ChatViewModel {
   }
 
   TextEditingController get textController => textEditingController;
-
 }

@@ -21,6 +21,7 @@ class ActiveChatsListBody extends StatefulWidget {
 }
 
 class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
+  bool newPendingChats;
   @override
   void initState() {
     initChats();
@@ -65,6 +66,17 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
                               fontWeight: FontWeight.bold,
                               color: kPrimaryColor),
                         ),
+                        FutureBuilder(
+                          future: widget.chatViewModel.hasPendingChats(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data) {
+                                return Text('+1');
+                              }
+                            }
+                            return Container();
+                          },
+                        )
                       ],
                     ),
                   ),

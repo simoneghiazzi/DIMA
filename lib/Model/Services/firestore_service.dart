@@ -378,6 +378,18 @@ class FirestoreService {
     return ids;
   }
 
+  Future<bool> hasPendingChats(User user) async {
+    var snap = await _firestore
+        .collection(user.collection.value)
+        .doc(user.id)
+        .collection(Collection.PENDING_CHATS.value)
+        .limit(1)
+        .get();
+    if(snap.docs.isEmpty) 
+      return false;
+    return true;
+  }
+
   /// It takes the [user] and the [increment] amount and increments the anonymous chat's counter of the user into the DB
   Future<void> _incrementChatsCounter(User user, int increment) async {
     var utils = await _firestore
