@@ -9,7 +9,7 @@ import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chats_list_constructor.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar_experts.dart';
 import 'package:dima_colombo_ghiazzi/Views/Settings/user_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
@@ -54,8 +54,8 @@ class _ActiveChatsExpertsBodyState extends State<ActiveChatsExpertsBody> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     if (snapshot.data) {
-                      return TopBar(
-                        text: 'Anonymous',
+                      return TopBarExperts(
+                        text: 'Chats',
                         button: InkWell(
                           child: Container(
                             padding: EdgeInsets.only(
@@ -96,7 +96,7 @@ class _ActiveChatsExpertsBodyState extends State<ActiveChatsExpertsBody> {
                         ),
                       );
                     } else {
-                      return TopBar(text: 'Anonymous');
+                      return TopBarExperts(text: 'Chats');
                     }
                   }
                   return Container();
