@@ -4,15 +4,18 @@ import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 
 class ChatPageScreen extends StatelessWidget {
   final ChatViewModel chatViewModel;
+  final bool isExpert;
 
-  ChatPageScreen({Key key, @required this.chatViewModel})
+  ChatPageScreen({Key key, @required this.chatViewModel, this.isExpert = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ChatPageBody(
-          chatViewModel: chatViewModel),
+        chatViewModel: chatViewModel,
+        isExpert: isExpert,
+      ),
     );
   }
 }

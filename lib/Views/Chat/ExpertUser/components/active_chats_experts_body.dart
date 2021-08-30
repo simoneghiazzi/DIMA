@@ -96,69 +96,73 @@ class _ActiveChatsExpertsBodyState extends State<ActiveChatsExpertsBody> {
                         ),
                       );
                     } else {
-                      return TopBarExperts(text: 'Chats');
+                      return TopBarExperts(
+                        text: 'Chats',
+                        button: InkWell(
+                          child: CircleAvatar(
+                            radius: 30,
+                            backgroundColor: Colors.white,
+                            child: ClipOval(
+                              child: Image.network(
+                                widget.userViewModel.loggedUser
+                                    .getData()['profilePhoto'],
+                                fit: BoxFit.cover,
+                                width: 60.0,
+                                height: 60.0,
+                                loadingBuilder: (BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return SizedBox(
+                                    width: 57.0,
+                                    height: 57.0,
+                                    child: CircularProgressIndicator(
+                                      color: kPrimaryColor,
+                                      value: loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null &&
+                                              loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                          ? loadingProgress
+                                                  .cumulativeBytesLoaded /
+                                              loadingProgress.expectedTotalBytes
+                                          : null,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, object, stackTrace) {
+                                  return CircleAvatar(
+                                      radius: 60,
+                                      backgroundColor: Colors.white,
+                                      child: Text(
+                                        "${widget.userViewModel.loggedUser.name[0]}",
+                                        style: TextStyle(
+                                            color: kPrimaryColor, fontSize: 30),
+                                      ));
+                                },
+                              ),
+                            ),
+                          ),
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UserProfileScreen(
+                                      user: widget.userViewModel.loggedUser))),
+                        ),
+                      );
                     }
                   }
                   return Container();
                 },
               ),
               ChatsListConstructor(
+                isExpert: true,
                 chatViewModel: chatViewModel,
                 createUserCallback: createUserCallback,
               ),
             ],
           ),
-        ),
-        Align(
-          alignment: Alignment.lerp(Alignment.topRight, Alignment.center, 0.11),
-          child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => UserProfileScreen(
-                            user: widget.userViewModel.loggedUser)));
-              },
-              materialTapTargetSize: MaterialTapTargetSize.padded,
-              backgroundColor: Colors.lightBlue[200],
-              child: CircleAvatar(
-                radius: 60,
-                backgroundColor: Colors.white,
-                child: ClipOval(
-                  child: Image.network(
-                    widget.userViewModel.loggedUser.getData()['profilePhoto'],
-                    fit: BoxFit.cover,
-                    width: 60.0,
-                    height: 60.0,
-                    loadingBuilder: (BuildContext context, Widget child,
-                        ImageChunkEvent loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return SizedBox(
-                        width: 57.0,
-                        height: 57.0,
-                        child: CircularProgressIndicator(
-                          color: kPrimaryColor,
-                          value: loadingProgress.expectedTotalBytes != null &&
-                                  loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes
-                              : null,
-                        ),
-                      );
-                    },
-                    errorBuilder: (context, object, stackTrace) {
-                      return CircleAvatar(
-                          radius: 60,
-                          backgroundColor: Colors.white,
-                          child: Text(
-                            "${widget.userViewModel.loggedUser.name[0]}",
-                            style:
-                                TextStyle(color: kPrimaryColor, fontSize: 30),
-                          ));
-                    },
-                  ),
-                ),
-              )),
         ),
       ],
     ));

@@ -6,7 +6,8 @@ class TopBarExperts extends StatelessWidget {
   final String text;
   final InkWell button;
 
-  TopBarExperts({Key key, @required this.text, this.button}) : super(key: key);
+  TopBarExperts({Key key, @required this.text, @required this.button})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,8 @@ class TopBarExperts extends StatelessWidget {
           child: SizedBox(
             width: size.width,
             child: Padding(
-              padding: EdgeInsets.only(right: 20, left: 10, top: 20, bottom: 7),
+              padding:
+                  EdgeInsets.only(right: 30, left: 30, top: 10, bottom: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[

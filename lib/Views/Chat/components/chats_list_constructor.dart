@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 class ChatsListConstructor extends StatefulWidget {
   final ChatViewModel chatViewModel;
   final Function createUserCallback;
+  final bool isExpert;
 
   ChatsListConstructor({
     Key key,
     @required this.chatViewModel,
+    this.isExpert = false,
     this.createUserCallback,
   }) : super(key: key);
 
@@ -45,6 +47,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
                       User user =
                           widget.createUserCallback(snapshot.data[index]);
                       return ChatListItem(
+                        isExpert: widget.isExpert,
                         chatViewModel: widget.chatViewModel,
                         userItem: user,
                         setStateCallback: () {

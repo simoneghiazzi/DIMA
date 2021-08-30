@@ -9,12 +9,14 @@ class ChatListItem extends StatefulWidget {
   final ChatViewModel chatViewModel;
   final Function setStateCallback;
   final User userItem;
+  final bool isExpert;
 
   ChatListItem(
       {Key key,
       @required this.chatViewModel,
       @required this.userItem,
-      @required this.setStateCallback})
+      @required this.setStateCallback,
+      this.isExpert = false})
       : super(key: key);
 
   @override
@@ -91,11 +93,21 @@ class _ChatListItemState extends State<ChatListItem> {
                         maxLines: 1,
                         style: TextStyle(color: kPrimaryColor, fontSize: 18),
                       )
-                    : Text(
-                        widget.userItem.name,
-                        maxLines: 1,
-                        style: TextStyle(color: kPrimaryColor, fontSize: 18),
-                      ),
+                    : widget.isExpert
+                        ? Text(
+                            widget.userItem.name +
+                                ' ' +
+                                widget.userItem.surname,
+                            maxLines: 1,
+                            style:
+                                TextStyle(color: kPrimaryColor, fontSize: 18),
+                          )
+                        : Text(
+                            widget.userItem.name,
+                            maxLines: 1,
+                            style:
+                                TextStyle(color: kPrimaryColor, fontSize: 18),
+                          ),
               ),
             ],
           ),
@@ -106,6 +118,7 @@ class _ChatListItemState extends State<ChatListItem> {
               MaterialPageRoute(
                 builder: (context) => ChatPageScreen(
                   chatViewModel: widget.chatViewModel,
+                  isExpert: widget.isExpert,
                 ),
               ),
             ).then((value) {

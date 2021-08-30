@@ -173,7 +173,7 @@ class UserProfileBody extends StatelessWidget {
                               height: 1.5,
                             ),
                             SizedBox(
-                              height: size.height * 0.06,
+                              height: size.height * 0.1,
                             ),
                             Center(
                               child: InkWell(

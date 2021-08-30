@@ -12,8 +12,10 @@ import 'package:flutter/material.dart';
 
 class ChatPageBody extends StatefulWidget {
   final ChatViewModel chatViewModel;
+  final bool isExpert;
 
-  ChatPageBody({Key key, @required this.chatViewModel}) : super(key: key);
+  ChatPageBody({Key key, @required this.chatViewModel, this.isExpert = false})
+      : super(key: key);
 
   @override
   _ChatPageBodyState createState() => _ChatPageBodyState();
@@ -92,10 +94,17 @@ class _ChatPageBodyState extends State<ChatPageBody>
                         chatViewModel: widget.chatViewModel,
                         focusNode: focusNode,
                       )
-                    : TopBarChats(
-                        text: peerUser.getData()['name'],
-                        focusNode: focusNode,
-                      ),
+                    : widget.isExpert
+                        ? TopBarChats(
+                            text: peerUser.getData()['name'] +
+                                " " +
+                                peerUser.getData()['surname'],
+                            focusNode: focusNode,
+                          )
+                        : TopBarChats(
+                            text: peerUser.getData()['name'],
+                            focusNode: focusNode,
+                          ),
                 // List of messages
                 MessagesListConstructor(chatViewModel: widget.chatViewModel),
                 // Input content
