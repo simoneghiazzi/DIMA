@@ -59,10 +59,6 @@ class UserProfileBody extends StatelessWidget {
                             SizedBox(
                               height: size.height * 0.05,
                             ),
-                            Image.asset(
-                              "assets/icons/small_logo.png",
-                              height: size.height * 0.1,
-                            ),
                             user.getData()['profilePhoto'] != null
                                 ? Row(
                                     children: <Widget>[
@@ -75,12 +71,16 @@ class UserProfileBody extends StatelessWidget {
                                       ),
                                       Text(user.getData()['phoneNumber'],
                                           style: TextStyle(
-                                              color: kPrimaryColor,
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold))
+                                            color: kPrimaryColor,
+                                            fontSize: 15,
+                                          ))
                                     ],
                                   )
-                                : Container(),
+                                : Image.asset(
+                                    "assets/icons/small_logo.png",
+                                    height: size.height * 0.1,
+                                  ),
+                            Container(),
                             SizedBox(
                               height: size.height * 0.03,
                             ),
@@ -137,6 +137,9 @@ class UserProfileBody extends StatelessWidget {
                                 )
                               ],
                             ),
+                            SizedBox(
+                              height: size.height * 0.03,
+                            ),
                             user.getData()['profilePhoto'] != null
                                 ? Row(
                                     children: <Widget>[
@@ -151,9 +154,9 @@ class UserProfileBody extends StatelessWidget {
                                         child: GestureDetector(
                                           child: Text(user.getData()['address'],
                                               style: TextStyle(
-                                                  color: kPrimaryColor,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold)),
+                                                color: kPrimaryColor,
+                                                fontSize: 15,
+                                              )),
                                           onTap: () {
                                             openMaps();
                                           },
