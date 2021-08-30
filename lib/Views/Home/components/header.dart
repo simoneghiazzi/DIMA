@@ -5,7 +5,6 @@ import 'package:dima_colombo_ghiazzi/Views/Settings/user_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 
 class Header extends StatefulWidget {
   final AuthViewModel authViewModel;
