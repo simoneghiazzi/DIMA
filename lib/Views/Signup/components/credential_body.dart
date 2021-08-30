@@ -94,16 +94,9 @@ class _CredentialBodyState extends State<CredentialBody> {
                   return RoundedButton(
                     text: "SIGN UP",
                     press: () {
-                      if (loading)
-                        LoadingDialog.show(context,
-                            text: 'Creating a new user...');
                       infoViewModel.email = authViewModel.emailController.text;
                       user = userViewModel.createUser(infoViewModel);
-                      authViewModel.signUpUser(user).then((value) {
-                        setState(() {
-                          loading = false;
-                        });
-                      });
+                      authViewModel.signUpUser(user).then((value) {});
                     },
                     enabled: snapshot.data ?? false,
                   );
@@ -112,9 +105,7 @@ class _CredentialBodyState extends State<CredentialBody> {
             StreamBuilder<String>(
                 stream: authViewModel.authMessage,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    LoadingDialog.hide(context);
-                  }
+                  if (snapshot.hasData) {}
                   return RichText(
                       text: TextSpan(
                           text: snapshot.data,

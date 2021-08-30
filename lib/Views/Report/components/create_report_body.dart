@@ -180,16 +180,20 @@ class _CreateReportBodyState extends State<CreateReportBody> {
     Alert(
       closeIcon: null,
       context: context,
-      title: "REPORT SUBMITTED",
+      title: "Report submitted",
       type: AlertType.success,
       style: AlertStyle(
+        animationDuration: Duration(milliseconds: 0),
         isCloseButton: false,
       ),
       buttons: [
         DialogButton(
           child: Text(
             "OK",
-            style: TextStyle(color: Colors.white, fontSize: 20),
+            style: TextStyle(
+                color: kPrimaryColor,
+                fontSize: 20,
+                fontWeight: FontWeight.bold),
           ),
           onPressed: () {
             Navigator.pushReplacement(context, MaterialPageRoute(
@@ -200,7 +204,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
               Navigator.pop(context);
             });
           },
-          color: kPrimaryColor,
+          color: Colors.transparent,
         )
       ],
     ).show();
@@ -213,6 +217,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
       title: "AN ERROR OCCURED",
       type: AlertType.error,
       style: AlertStyle(
+        animationDuration: Duration(milliseconds: 0),
         isCloseButton: false,
       ),
       buttons: [

@@ -39,6 +39,11 @@ class FirebaseAuthService {
     return _userCredential.user.uid;
   }
 
+  /// Send email for reset password
+  Future<void> resetPassword(String email) async {
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
   /// Sign in a user if it exists or create a new user through the google account.
   /// It retrieves the name, surname and birthDate information from the google account of the user.
   Future<String> signInWithGoogle() async {

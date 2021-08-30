@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Settings/user_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
@@ -43,54 +44,58 @@ class _HeaderState extends State<Header> {
           style: TextStyle(color: Colors.white, fontSize: 32),
         ),
         trailing: InkWell(
-          child: userViewModel.loggedUser.getData()['profilePhoto'] == null
-              ? CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.white,
-                  child: Text(
-                    "${userViewModel.loggedUser.name[0]}",
-                    style: TextStyle(color: kPrimaryColor, fontSize: 30),
-                  ))
-              : CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.white,
-                  child: ClipOval(
-                    child: Image.network(
-                      userViewModel.loggedUser.getData()['profilePhoto'],
-                      fit: BoxFit.cover,
-                      width: 60.0,
-                      height: 60.0,
-                      loadingBuilder: (BuildContext context, Widget child,
-                          ImageChunkEvent loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return SizedBox(
-                          width: 57.0,
-                          height: 57.0,
-                          child: CircularProgressIndicator(
-                            color: kPrimaryColor,
-                            value: loadingProgress.expectedTotalBytes != null &&
-                                    loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes
-                                : null,
-                          ),
-                        );
-                      },
-                      errorBuilder: (context, object, stackTrace) {
-                        return CircleAvatar(
-                            radius: 60,
-                            backgroundColor: Colors.white,
-                            child: Text(
-                              "${userViewModel.loggedUser.name[0]}",
-                              style:
-                                  TextStyle(color: kPrimaryColor, fontSize: 30),
-                            ));
-                      },
+            child: userViewModel.loggedUser.getData()['profilePhoto'] == null
+                ? CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.white,
+                    child: Text(
+                      "${userViewModel.loggedUser.name[0]}",
+                      style: TextStyle(color: kPrimaryColor, fontSize: 30),
+                    ))
+                : CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.white,
+                    child: ClipOval(
+                      child: Image.network(
+                        userViewModel.loggedUser.getData()['profilePhoto'],
+                        fit: BoxFit.cover,
+                        width: 60.0,
+                        height: 60.0,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return SizedBox(
+                            width: 57.0,
+                            height: 57.0,
+                            child: CircularProgressIndicator(
+                              color: kPrimaryColor,
+                              value: loadingProgress.expectedTotalBytes !=
+                                          null &&
+                                      loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes
+                                  : null,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, object, stackTrace) {
+                          return CircleAvatar(
+                              radius: 60,
+                              backgroundColor: Colors.white,
+                              child: Text(
+                                "${userViewModel.loggedUser.name[0]}",
+                                style: TextStyle(
+                                    color: kPrimaryColor, fontSize: 30),
+                              ));
+                        },
+                      ),
                     ),
                   ),
-                ),
-          onTap: () => _onAccountPressed(context),
-        ),
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        UserProfileScreen(user: userViewModel.loggedUser)))),
       ),
     );
   }
@@ -112,38 +117,5 @@ class _HeaderState extends State<Header> {
         );
       }
     });
-  }
-
-  _onAccountPressed(context) {
-    Alert(
-      context: context,
-      title: "ACCOUNT SETTINGS",
-      //desc: "",
-      image: Image.asset("assets/icons/small_logo.png"),
-      closeIcon: Icon(
-        Icons.close,
-        color: kPrimaryColor,
-      ),
-      buttons: [
-        DialogButton(
-          child: Text(
-            "SETTINGS",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          onPressed: () {},
-          color: kPrimaryColor,
-        ),
-        DialogButton(
-          child: Text(
-            "LOGOUT",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          onPressed: () {
-            widget.authViewModel.logOut();
-          },
-          color: Colors.red,
-        )
-      ],
-    ).show();
   }
 }
