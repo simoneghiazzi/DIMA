@@ -5,6 +5,7 @@ import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/Expert/expert_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
@@ -27,7 +28,8 @@ Future<void> main() async {
     exit(-1);
   });
   print('Firebase initialization completed');
-  await FirebaseAppCheck.instance.activate(webRecaptchaSiteKey: 'recaptcha-v3-site-key');
+  await FirebaseAppCheck.instance
+      .activate(webRecaptchaSiteKey: 'recaptcha-v3-site-key');
   print('FirebaseAppCheck initialization completed');
   FirebaseAuthService firebaseAuthService = FirebaseAuthService();
   FirestoreService firestoreService = FirestoreService();
@@ -52,7 +54,7 @@ Future<void> main() async {
         await expertViewModel.loadLoggedUser();
         print('Expert logged');
         runApp(MyApp(
-            home: ExpertHomeScreen(
+            home: ActiveChatsExpertsScreen(
                 authViewModel: AuthViewModel(),
                 expertViewModel: expertViewModel)));
         break;
