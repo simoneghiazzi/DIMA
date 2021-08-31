@@ -1,22 +1,22 @@
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatAcceptDenyInput extends StatefulWidget {
-  final ChatViewModel chatViewModel;
-
-  ChatAcceptDenyInput({Key key, @required this.chatViewModel})
-      : super(key: key);
-
   @override
   _ChatAcceptDenyInputState createState() => _ChatAcceptDenyInputState();
 }
 
-class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput>
-    with WidgetsBindingObserver {
+class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
   @override
   Widget build(BuildContext context) {
+    var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    AppRouterDelegate routerDelegate =
+        Provider.of<AppRouterDelegate>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       InkWell(
@@ -50,16 +50,13 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput>
           ),
         ),
         onTap: () async {
-          await widget.chatViewModel.acceptPendingChat();
-          widget.chatViewModel.conversation.senderUserChat = ActiveChat();
-          widget.chatViewModel.conversation.peerUserChat = ActiveChat();
-          Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (context) {
-              return ActiveChatsListScreen(chatViewModel: widget.chatViewModel);
-            },
-          )).then((value) {
-            Navigator.pop(context);
-          });
+          await chatViewModel.acceptPendingChat();
+          chatViewModel.conversation.senderUserChat = ActiveChat();
+          chatViewModel.conversation.peerUserChat = ActiveChat();
+          routerDelegate.replaceAllButNumber(2, [
+            RouteSettings(name: ActiveChatsListScreen.route),
+            RouteSettings(name: ChatPageScreen.route)
+          ]);
         },
       ),
       SizedBox(
@@ -96,14 +93,10 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput>
           ),
         ),
         onTap: () async {
-          await widget.chatViewModel.deleteChat();
-          Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (context) {
-              return ActiveChatsListScreen(chatViewModel: widget.chatViewModel);
-            },
-          )).then((value) {
-            Navigator.pop(context);
-          });
+          await chatViewModel.deleteChat();
+          routerDelegate.replaceAllButNumber(2, [
+            RouteSettings(name: ActiveChatsListScreen.route),
+          ]);
         },
       )
     ]);

@@ -1,3 +1,4 @@
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/report_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
@@ -7,31 +8,32 @@ import 'package:dima_colombo_ghiazzi/Views/Report/create_report_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class CreateReportBody extends StatefulWidget {
-  final BaseUserViewModel baseUserViewModel;
-
-  CreateReportBody({Key key, @required this.baseUserViewModel})
-      : super(key: key);
-
   @override
-  _CreateReportBodyState createState() =>
-      _CreateReportBodyState(baseUserViewModel: baseUserViewModel);
+  _CreateReportBodyState createState() => _CreateReportBodyState();
 }
 
 class _CreateReportBodyState extends State<CreateReportBody> {
-  final BaseUserViewModel baseUserViewModel;
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  BaseUserViewModel baseUserViewModel;
   ReportViewModel reportViewModel;
+  AppRouterDelegate routerDelegate;
 
-  _CreateReportBodyState({@required this.baseUserViewModel});
+  @override
+  void initState() {
+    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return BlocProvider(
-      create: (context) =>
-          ReportViewModel(loggedId: widget.baseUserViewModel.id),
+      create: (context) => ReportViewModel(loggedId: baseUserViewModel.id),
       child: Builder(
         builder: (context) {
           reportViewModel = BlocProvider.of<ReportViewModel>(context);
@@ -82,15 +84,9 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                           ),
                         ),
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return ReportsListScreen(
-                                    reportViewModel: reportViewModel);
-                              },
-                            ),
-                          );
+                          routerDelegate.pushPage(
+                              name: ReportsListScreen.route,
+                              arguments: reportViewModel);
                         },
                       ),
                     ),
@@ -107,14 +103,18 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                         child:
                             FormBlocListener<ReportViewModel, String, String>(
                           onSubmitting: (context, state) {
-                            LoadingDialog.show(context);
+                            LoadingDialog.show(context, _keyLoader);
                           },
                           onSuccess: (context, state) {
-                            LoadingDialog.hide(context);
+                            Navigator.of(_keyLoader.currentContext,
+                                    rootNavigator: true)
+                                .pop();
                             _onReportSubmitted(context);
                           },
                           onFailure: (context, state) {
-                            LoadingDialog.hide(context);
+                            Navigator.of(_keyLoader.currentContext,
+                                    rootNavigator: true)
+                                .pop();
                             _onReportError(context);
                           },
                           child: Column(
@@ -192,13 +192,8 @@ class _CreateReportBodyState extends State<CreateReportBody> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(
-              builder: (context) {
-                return ReportsListScreen(reportViewModel: reportViewModel);
-              },
-            )).then((value) {
-              Navigator.pop(context);
-            });
+            routerDelegate.replace(
+                name: ReportsListScreen.route, arguments: reportViewModel);
           },
           color: kPrimaryColor,
         )
@@ -222,13 +217,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) {
-              return CreateReportScreen(
-                  baseUserViewModel: widget.baseUserViewModel);
-            })).then((value) {
-              Navigator.pop(context);
-            });
+            routerDelegate.replace(name: CreateReportScreen.route);
           },
           color: kPrimaryColor,
         )

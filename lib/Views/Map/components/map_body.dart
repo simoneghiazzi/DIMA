@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place_search.dart';
 import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/Views/Profile/Expert/expert_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
@@ -10,23 +10,19 @@ import 'package:dima_colombo_ghiazzi/ViewModel/map_view_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:provider/provider.dart';
 
 class MapBody extends StatefulWidget {
-  final MapViewModel mapViewModel;
-  final ChatViewModel chatViewModel;
-  GoogleMapController controller;
-
-  MapBody({Key key, @required this.mapViewModel, @required this.chatViewModel})
-      : super(key: key);
-
   @override
   _MapBodyState createState() => _MapBodyState();
 }
 
 class _MapBodyState extends State<MapBody> {
-  //StreamSubscription<Position> subscriber;
+  GoogleMapController mapController;
+  MapViewModel mapViewModel = MapViewModel();
   Position userLocation;
   StreamSubscription<Place> subscriber;
+  AppRouterDelegate routerDelegate;
 
   Set<Marker> _markers = Set<Marker>();
 
@@ -42,7 +38,8 @@ class _MapBodyState extends State<MapBody> {
   void initState() {
     super.initState();
     subscriber = subscribeToViewModel();
-    widget.mapViewModel.uploadPosition();
+    mapViewModel.uploadPosition();
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
 
     //For setting the map style
     rootBundle.loadString('assets/map_style.txt').then((string) {
@@ -63,14 +60,14 @@ class _MapBodyState extends State<MapBody> {
     return Stack(children: <Widget>[
       Center(
           child: StreamBuilder<Position>(
-              stream: widget.mapViewModel.position,
+              stream: mapViewModel.position,
               builder: (context, snapshot) {
                 return snapshot.data == null
                     ? Center(child: CircularProgressIndicator())
                     : Stack(
                         children: [
                           FutureBuilder(
-                              future: widget.mapViewModel.getMarkers(),
+                              future: mapViewModel.getMarkers(),
                               builder: (context, snap) {
                                 if (!snap.hasData) {
                                   return GoogleMap(
@@ -87,10 +84,10 @@ class _MapBodyState extends State<MapBody> {
                                     zoomControlsEnabled: false,
                                     onMapCreated:
                                         (GoogleMapController controller) {
-                                      widget.mapViewModel.mapController
+                                      mapViewModel.mapController
                                           .complete(controller);
                                       removeMarkers();
-                                      widget.controller = controller;
+                                      mapController = controller;
                                     },
                                   );
                                 } else {
@@ -113,15 +110,10 @@ class _MapBodyState extends State<MapBody> {
                                           icon: pinLocationIcon,
                                           infoWindow: InfoWindow(
                                               onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ExpertProfileScreen(
-                                                              chatViewModel: widget
-                                                                  .chatViewModel,
-                                                              expert: expert,
-                                                            )));
+                                                routerDelegate.pushPage(
+                                                    name: ExpertProfileScreen
+                                                        .route,
+                                                    arguments: expert);
                                               },
                                               title:
                                                   expert.getData()['surname'] +
@@ -150,10 +142,10 @@ class _MapBodyState extends State<MapBody> {
                                     zoomControlsEnabled: false,
                                     onMapCreated:
                                         (GoogleMapController controller) {
-                                      widget.mapViewModel.mapController
+                                      mapViewModel.mapController
                                           .complete(controller);
                                       removeMarkers();
-                                      widget.controller = controller;
+                                      mapController = controller;
                                     },
                                   );
                                 }
@@ -164,7 +156,7 @@ class _MapBodyState extends State<MapBody> {
                             child: FloatingActionButton(
                               mini: true,
                               onPressed: () {
-                                widget.controller.animateCamera(
+                                mapController.animateCamera(
                                     CameraUpdate.newCameraPosition(
                                         CameraPosition(
                                   target: LatLng(snapshot.data.latitude,
@@ -205,7 +197,7 @@ class _MapBodyState extends State<MapBody> {
                     color: kPrimaryColor,
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    routerDelegate.pop();
                   },
                 ),
                 Expanded(
@@ -222,13 +214,12 @@ class _MapBodyState extends State<MapBody> {
                           Icons.search,
                           color: kPrimaryColor,
                         )),
-                    onChanged: (value) =>
-                        widget.mapViewModel.searchPlaces(value),
+                    onChanged: (value) => mapViewModel.searchPlaces(value),
                   ),
                 ),
               ]))),
       StreamBuilder<List<PlaceSearch>>(
-          stream: widget.mapViewModel.places,
+          stream: mapViewModel.places,
           builder: (context, snapshot) {
             return (snapshot.data == null || snapshot.data.length == 0)
                 ? Container(width: 0.0, height: 0.0)
@@ -250,7 +241,7 @@ class _MapBodyState extends State<MapBody> {
                                         style: TextStyle(color: Colors.white),
                                       ),
                                       onTap: () {
-                                        widget.mapViewModel.setSelectedLocation(
+                                        mapViewModel.setSelectedLocation(
                                             snapshot.data[index].placeId);
                                         txt.text =
                                             snapshot.data[index].description;
@@ -265,12 +256,12 @@ class _MapBodyState extends State<MapBody> {
 
   Future<void> removeMarkers() async {
     final GoogleMapController controller =
-        await widget.mapViewModel.mapController.future;
+        await mapViewModel.mapController.future;
     controller.setMapStyle(_mapStyle);
   }
 
   StreamSubscription<Place> subscribeToViewModel() {
-    return widget.mapViewModel.location.listen((place) {
+    return mapViewModel.location.listen((place) {
       if (place != null) {
         _goToPlace(place);
       } else {
@@ -281,7 +272,7 @@ class _MapBodyState extends State<MapBody> {
 
   Future<void> _goToPlace(Place place) async {
     final GoogleMapController controller =
-        await widget.mapViewModel.mapController.future;
+        await mapViewModel.mapController.future;
     controller.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
@@ -290,7 +281,7 @@ class _MapBodyState extends State<MapBody> {
             zoom: 15),
       ),
     );
-    widget.mapViewModel.searchPlaces("");
+    mapViewModel.searchPlaces("");
   }
 
   @override

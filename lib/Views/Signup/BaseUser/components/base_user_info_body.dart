@@ -1,6 +1,6 @@
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_info_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/credential_screen.dart';
@@ -9,14 +9,14 @@ import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_ac
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:provider/provider.dart';
 
 class BaseUserInfoBody extends StatelessWidget {
-  final AuthViewModel authViewModel;
-
-  BaseUserInfoBody({Key key, @required this.authViewModel}) : super(key: key);
-
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   @override
   Widget build(BuildContext context) {
+    AppRouterDelegate routerDelegate =
+        Provider.of<AppRouterDelegate>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     return Background(
         child: Padding(
@@ -30,7 +30,8 @@ class BaseUserInfoBody extends StatelessWidget {
                       child: Builder(
                         builder: (context) {
                           final infoViewModel =
-                              BlocProvider.of<BaseUserInfoViewModel>(context);
+                              BlocProvider.of<BaseUserInfoViewModel>(context,
+                                  listen: false);
                           return Theme(
                               data: Theme.of(context).copyWith(
                                 primaryColor: kPrimaryColor,
@@ -43,20 +44,19 @@ class BaseUserInfoBody extends StatelessWidget {
                               child: FormBlocListener<BaseUserInfoViewModel,
                                   String, String>(
                                 onSubmitting: (context, state) {
-                                  LoadingDialog.show(context);
+                                  LoadingDialog.show(context, _keyLoader);
                                 },
                                 onSuccess: (context, state) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return CredentialScreen(
-                                            authViewModel: authViewModel,
-                                            infoViewModel: infoViewModel,
-                                            userViewModel: BaseUserViewModel());
-                                      },
-                                    ),
-                                  );
+                                  Navigator.of(_keyLoader.currentContext,
+                                          rootNavigator: true)
+                                      .pop();
+                                  routerDelegate.pushPage(
+                                      name: CredentialScreen.route,
+                                      arguments: InfoArguments(
+                                        infoViewModel,
+                                        Provider.of<BaseUserViewModel>(context,
+                                            listen: false),
+                                      ));
                                 },
                                 onFailure: (context, state) {
                                   //Add what to do
@@ -148,16 +148,8 @@ class BaseUserInfoBody extends StatelessWidget {
                                       AlreadyHaveAnAccountCheck(
                                         login: false,
                                         press: () {
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) {
-                                                return LoginScreen(
-                                                  authViewModel: authViewModel,
-                                                );
-                                              },
-                                            ),
-                                          );
+                                          routerDelegate.replace(
+                                              name: LoginScreen.route);
                                         },
                                       ),
                                     ],

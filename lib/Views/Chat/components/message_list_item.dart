@@ -3,30 +3,26 @@ import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class MessageListItem extends StatefulWidget {
-  final ChatViewModel chatViewModel;
   final Message messageItem;
   final int index;
 
-  MessageListItem(
-      {Key key,
-      @required this.chatViewModel,
-      @required this.messageItem,
-      @required this.index})
+  MessageListItem({Key key, @required this.messageItem, @required this.index})
       : super(key: key);
 
   @override
   _MessageListItemState createState() => _MessageListItemState();
 }
 
-class _MessageListItemState extends State<MessageListItem>
-    with WidgetsBindingObserver {
+class _MessageListItemState extends State<MessageListItem> {
   @override
   Widget build(BuildContext context) {
+    var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     if (widget.messageItem != null) {
       if (widget.messageItem.getData()['idFrom'] ==
-          widget.chatViewModel.conversation.senderUser.id) {
+          chatViewModel.conversation.senderUser.id) {
         // Right (my message)
         return Row(
           children: <Widget>[
@@ -52,14 +48,14 @@ class _MessageListItemState extends State<MessageListItem>
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  widget.chatViewModel.isLastMessageLeft(widget.index)
+                  chatViewModel.isLastMessageLeft(widget.index)
                       ? Material(
-                          child: widget.chatViewModel.conversation.peerUser
+                          child: chatViewModel.conversation.peerUser
                                       .getData()['profileImage'] !=
                                   null
                               // Profile Image
                               ? Image.network(
-                                  widget.chatViewModel.conversation.peerUser
+                                  chatViewModel.conversation.peerUser
                                       .getData()['profileImage'],
                                   loadingBuilder: (BuildContext context,
                                       Widget child,

@@ -1,26 +1,23 @@
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/components/base_user_info_body.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BaseUsersSignUpScreen extends StatelessWidget {
-  final authViewModel;
-
-  BaseUsersSignUpScreen({Key key, @required this.authViewModel}) : super(key: key);
-
+  static const route = '/baseUsersSignUpScreen';
   @override
   Widget build(BuildContext context) {
+    AppRouterDelegate routerDelegate =
+        Provider.of<AppRouterDelegate>(context, listen: false);
     return Scaffold(
       body: WillPopScope(
-        child: BaseUserInfoBody(
-          authViewModel: authViewModel,
-        ),
-        onWillPop: () async =>
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-          builder: (context) {
-            return WelcomeScreen(authViewModel: authViewModel);
-          },
-        ), (route) => true),
-      ),
+          child: BaseUserInfoBody(),
+          onWillPop: () {
+            routerDelegate.replaceAllButNumber(
+                1, [RouteSettings(name: WelcomeScreen.route)]);
+            return Future.value(true);
+          }),
     );
   }
 }

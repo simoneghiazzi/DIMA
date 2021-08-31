@@ -2,15 +2,9 @@ import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class ChatTextInput extends StatefulWidget {
-  final ChatViewModel chatViewModel;
-  final FocusNode focusNode;
-
-  ChatTextInput(
-      {Key key, @required this.chatViewModel, @required this.focusNode})
-      : super(key: key);
-
   @override
   _ChatTextInputState createState() => _ChatTextInputState();
 }
@@ -21,6 +15,7 @@ class _ChatTextInputState extends State<ChatTextInput>
 
   @override
   Widget build(BuildContext context) {
+    var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     return Stack(alignment: Alignment.bottomCenter, children: [
       Container(
         decoration: BoxDecoration(
@@ -48,8 +43,7 @@ class _ChatTextInputState extends State<ChatTextInput>
                 },
                 textAlignVertical: TextAlignVertical.center,
                 style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
-                controller: widget.chatViewModel.textController,
-                focusNode: widget.focusNode,
+                controller: chatViewModel.textController,
                 decoration: InputDecoration(
                   fillColor: kPrimaryColor,
                   border: InputBorder.none,
@@ -57,9 +51,8 @@ class _ChatTextInputState extends State<ChatTextInput>
                   suffixIcon: IconButton(
                     icon: Icon(Icons.send),
                     onPressed: () {
-                      if (widget.chatViewModel.textController.text.trim() !=
-                          '') {
-                        widget.chatViewModel.sendMessage();
+                      if (chatViewModel.textController.text.trim() != '') {
+                        chatViewModel.sendMessage();
                       }
                     },
                     color: kPrimaryColor,

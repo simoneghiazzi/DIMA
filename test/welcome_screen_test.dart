@@ -1,4 +1,3 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/components/background.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/welcome_body.dart';
 import 'package:flutter/material.dart';
@@ -6,13 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/social_icon.dart';
 
 void main() {
-  AuthViewModel authViewModel = AuthViewModel();
-
   //FAI DEBUG RIGA 10 E RIGA 16 CHE SONO QUELLE TRA CUI VIENE ALZATA L'EXCEPTION
   testWidgets(
       'The welcome page has a background, a text, an image, two elevated buttons, two social icons, a gesture detector containing a text andfour sizedBoxes',
       (WidgetTester tester) async {
-    await tester.pumpWidget(WelcomeBody(authViewModel: authViewModel));
+    await tester.pumpWidget(WelcomeBody());
 
     final titleFinder = find.text('APPrension');
     final expertsFinder = find.text('Are you a psychologist? Join us');

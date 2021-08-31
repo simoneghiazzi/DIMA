@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TopBar extends StatelessWidget {
   final String text;
@@ -10,6 +12,7 @@ class TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +32,7 @@ class TopBar extends StatelessWidget {
                       color: kPrimaryColor,
                     ),
                     onPressed: () {
-                      Navigator.pop(context);
+                      routerDelegate.pop();
                     },
                   ),
                   AutoSizeText(

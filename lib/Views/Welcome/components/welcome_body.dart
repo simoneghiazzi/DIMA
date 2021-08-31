@@ -1,5 +1,7 @@
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
@@ -7,24 +9,27 @@ import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:provider/provider.dart';
 import 'or_divider.dart';
 import 'social_icon.dart';
 
 class WelcomeBody extends StatefulWidget {
-  final AuthViewModel authViewModel;
-
-  WelcomeBody({Key key, @required this.authViewModel}) : super(key: key);
   @override
-  _WelcomeBodyState createState() =>
-      _WelcomeBodyState(authViewModel: authViewModel);
+  _WelcomeBodyState createState() => _WelcomeBodyState();
 }
 
 class _WelcomeBodyState extends State<WelcomeBody> {
-  final AuthViewModel authViewModel;
+  AuthViewModel authViewModel;
   BaseUserViewModel baseUserViewModel;
   String id;
+  AppRouterDelegate routerDelegate;
 
-  _WelcomeBodyState({this.authViewModel});
+  @override
+  void initState() {
+    authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,16 +57,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
             SizedBox(height: size.height * 0.07),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return LoginScreen(
-                        authViewModel: authViewModel,
-                      );
-                    },
-                  ),
-                );
+                routerDelegate.pushPage(name: LoginScreen.route);
               },
               style: ButtonStyle(
                   fixedSize: MaterialStateProperty.all<Size>(
@@ -76,16 +72,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
             SizedBox(height: size.height * 0.02),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return BaseUsersSignUpScreen(
-                        authViewModel: authViewModel,
-                      );
-                    },
-                  ),
-                );
+                routerDelegate.pushPage(name: BaseUsersSignUpScreen.route);
               },
               style: ButtonStyle(
                   fixedSize: MaterialStateProperty.all<Size>(
@@ -138,16 +125,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                 ),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return ExpertsSignUpScreen(
-                        authViewModel: authViewModel,
-                      );
-                    },
-                  ),
-                );
+                routerDelegate.pushPage(name: ExpertsSignUpScreen.route);
               },
             ),
           ],
@@ -157,13 +135,10 @@ class _WelcomeBodyState extends State<WelcomeBody> {
   }
 
   void navigateToHome() async {
-    baseUserViewModel = BaseUserViewModel(id: id);
+    Provider<UserViewModel>.value(value: BaseUserViewModel());
+    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    baseUserViewModel.id = id;
     await baseUserViewModel.loadLoggedUser();
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return BaseUserHomeScreen(
-        authViewModel: widget.authViewModel,
-        baseUserViewModel: baseUserViewModel,
-      );
-    }));
+    routerDelegate.pushPage(name: BaseUserHomeScreen.route);
   }
 }

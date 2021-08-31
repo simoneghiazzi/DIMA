@@ -1,31 +1,29 @@
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/dash_card.dart';
+import 'package:provider/provider.dart';
 
 class ExpertGrid extends StatefulWidget {
-  final ExpertViewModel expertViewModel;
-
-  ExpertGrid({Key key, @required this.expertViewModel}) : super(key: key);
-
   @override
-  _ExpertGridState createState() =>
-      _ExpertGridState(expertViewModel: expertViewModel);
+  _ExpertGridState createState() => _ExpertGridState();
 }
 
 class _ExpertGridState extends State<ExpertGrid> {
-  final ExpertViewModel expertViewModel;
   ChatViewModel chatViewModel;
-
-  _ExpertGridState({@required this.expertViewModel});
+  ExpertViewModel expertViewModel;
+  AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
+    expertViewModel = Provider.of<ExpertViewModel>(context, listen: false);
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    chatViewModel.conversation.senderUser = expertViewModel.loggedUser;
+    initExpertChats();
     super.initState();
-    chatViewModel = ChatViewModel(expertViewModel.loggedUser);
-    chatViewModel.conversation.senderUserChat = ActiveChat();
-    chatViewModel.conversation.peerUserChat = ActiveChat();
   }
 
   @override
@@ -47,5 +45,10 @@ class _ExpertGridState extends State<ExpertGrid> {
             ],
           )),
     );
+  }
+
+  void initExpertChats() {
+    chatViewModel.conversation.senderUserChat = ActiveChat();
+    chatViewModel.conversation.peerUserChat = ActiveChat();
   }
 }

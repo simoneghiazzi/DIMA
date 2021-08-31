@@ -3,6 +3,7 @@ import 'package:dima_colombo_ghiazzi/Views/Report/components/reports_list_body.d
 import 'package:flutter/material.dart';
 
 class ReportsListScreen extends StatelessWidget {
+  static const route = '/reportListScreen';
   final ReportViewModel reportViewModel;
 
   ReportsListScreen({Key key, @required this.reportViewModel})

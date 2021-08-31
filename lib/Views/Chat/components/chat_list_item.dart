@@ -1,20 +1,18 @@
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatListItem extends StatefulWidget {
-  final ChatViewModel chatViewModel;
   final Function setStateCallback;
   final User userItem;
 
   ChatListItem(
-      {Key key,
-      @required this.chatViewModel,
-      @required this.userItem,
-      @required this.setStateCallback})
+      {Key key, @required this.userItem, @required this.setStateCallback})
       : super(key: key);
 
   @override
@@ -24,6 +22,9 @@ class ChatListItem extends StatefulWidget {
 class _ChatListItemState extends State<ChatListItem> {
   @override
   Widget build(BuildContext context) {
+    var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    AppRouterDelegate routerDelegate =
+        Provider.of<AppRouterDelegate>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     if (widget.userItem != null) {
       return Container(
@@ -100,17 +101,9 @@ class _ChatListItemState extends State<ChatListItem> {
             ],
           ),
           onPressed: () {
-            widget.chatViewModel.chatWithUser(widget.userItem);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChatPageScreen(
-                  chatViewModel: widget.chatViewModel,
-                ),
-              ),
-            ).then((value) {
-              widget.setStateCallback();
-            });
+            chatViewModel.chatWithUser(widget.userItem);
+            routerDelegate.pushPage(name: ChatPageScreen.route);
+            widget.setStateCallback();
           },
           style: ButtonStyle(
             backgroundColor:

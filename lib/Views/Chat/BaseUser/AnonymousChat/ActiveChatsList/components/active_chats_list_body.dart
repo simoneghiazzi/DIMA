@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/pending_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/request.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
@@ -11,27 +14,33 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ActiveChatsListBody extends StatefulWidget {
-  final ChatViewModel chatViewModel;
-
-  ActiveChatsListBody({Key key, @required this.chatViewModel})
-      : super(key: key);
-
   @override
   _ActiveChatsListBodyState createState() => _ActiveChatsListBodyState();
 }
 
 class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
-  bool newPendingChats;
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  StreamSubscription<bool> subscriber;
+  Future<bool> _newPendingChats;
+  ChatViewModel chatViewModel;
+  AppRouterDelegate routerDelegate;
+
   @override
   void initState() {
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     initActiveChats();
+    _newPendingChats = chatViewModel.hasPendingChats();
+    subscriber = subscribeToNewRandomUser();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     return Scaffold(
         body: Stack(
       children: <Widget>[
@@ -41,7 +50,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               FutureBuilder(
-                future: widget.chatViewModel.hasPendingChats(),
+                future: _newPendingChats,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     if (snapshot.data) {
@@ -77,12 +86,8 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
                             ),
                           ),
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PendingChatsListScreen(
-                                      chatViewModel: widget.chatViewModel)),
-                            );
+                            routerDelegate.pushPage(
+                                name: PendingChatsListScreen.route);
                           },
                         ),
                       );
@@ -94,7 +99,6 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
                 },
               ),
               ChatsListConstructor(
-                chatViewModel: widget.chatViewModel,
                 createUserCallback: createUserCallback,
               ),
             ],
@@ -104,30 +108,10 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
           alignment:
               Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
           child: FloatingActionButton(
-            onPressed: () async {
-              LoadingDialog.show(context,
+            onPressed: () {
+              LoadingDialog.show(context, _keyLoader,
                   text: 'Looking for new random user...');
-              widget.chatViewModel.getNewRandomUser().then((value) {
-                LoadingDialog.hide(context);
-                if (value) {
-                  initNewRandomChats();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ChatPageScreen(chatViewModel: widget.chatViewModel),
-                    ),
-                  ).then((value) {
-                    initActiveChats();
-                    setState(() {});
-                  });
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: const Text('No more users.'),
-                    duration: const Duration(seconds: 5),
-                  ));
-                }
-              });
+              chatViewModel.getNewRandomUser();
             },
             materialTapTargetSize: MaterialTapTargetSize.padded,
             backgroundColor: Colors.lightBlue[200],
@@ -149,12 +133,33 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   }
 
   void initActiveChats() {
-    widget.chatViewModel.conversation.senderUserChat = ActiveChat();
-    widget.chatViewModel.conversation.peerUserChat = ActiveChat();
+    chatViewModel.conversation.senderUserChat = ActiveChat();
+    chatViewModel.conversation.peerUserChat = ActiveChat();
   }
 
   void initNewRandomChats() {
-    widget.chatViewModel.conversation.senderUserChat = Request();
-    widget.chatViewModel.conversation.peerUserChat = PendingChat();
+    chatViewModel.conversation.senderUserChat = Request();
+    chatViewModel.conversation.peerUserChat = PendingChat();
+  }
+
+  StreamSubscription<bool> subscribeToNewRandomUser() {
+    return chatViewModel.isNewRandomUser.listen((isNewRandomUser) {
+      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+      if (isNewRandomUser) {
+        initNewRandomChats();
+        routerDelegate.pushPage(name: ChatPageScreen.route);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('No more users.'),
+          duration: const Duration(seconds: 5),
+        ));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    subscriber.cancel();
+    super.dispose();
   }
 }

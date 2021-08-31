@@ -2,30 +2,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/pending_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/request.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chats_list_constructor.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PendingChatsListBody extends StatefulWidget {
-  final ChatViewModel chatViewModel;
-
-  PendingChatsListBody({Key key, @required this.chatViewModel})
-      : super(key: key);
-
   @override
   _PendingChatsListBodyState createState() => _PendingChatsListBodyState();
 }
 
 class _PendingChatsListBodyState extends State<PendingChatsListBody> {
+  ChatViewModel chatViewModel;
+  AppRouterDelegate routerDelegate;
+
   @override
   void initState() {
-    initPendingChats();
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    initPendingChats();
     return Scaffold(
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -34,7 +36,6 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
           children: <Widget>[
             TopBar(text: 'Requests'),
             ChatsListConstructor(
-              chatViewModel: widget.chatViewModel,
               createUserCallback: createUserCallback,
             ),
           ],
@@ -50,7 +51,7 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
   }
 
   void initPendingChats() {
-    widget.chatViewModel.conversation.senderUserChat = PendingChat();
-    widget.chatViewModel.conversation.peerUserChat = Request();
+    chatViewModel.conversation.senderUserChat = PendingChat();
+    chatViewModel.conversation.peerUserChat = Request();
   }
 }

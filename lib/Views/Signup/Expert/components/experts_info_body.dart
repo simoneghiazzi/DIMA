@@ -1,7 +1,7 @@
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_info_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/components/background.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/credential_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
@@ -12,32 +12,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:form_builder_image_picker/form_builder_image_picker.dart';
 
 import '../experts_signup_screen.dart';
 
 class ExpertsInfoBody extends StatefulWidget {
-  final AuthViewModel authViewModel;
-
-  ExpertsInfoBody({Key key, @required this.authViewModel}) : super(key: key);
-
   @override
-  _ExpertsInfoBodyState createState() =>
-      _ExpertsInfoBodyState(authViewModel: authViewModel);
+  _ExpertsInfoBodyState createState() => _ExpertsInfoBodyState();
 }
 
 class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
-  final AuthViewModel authViewModel;
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   ExpertInfoViewModel expertInfoViewModel;
+  AppRouterDelegate routerDelegate;
   bool nextEnabled;
-
-  _ExpertsInfoBodyState({@required this.authViewModel});
 
   @override
   void initState() {
-    super.initState();
     nextEnabled = false;
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    super.initState();
   }
 
   @override
@@ -54,7 +50,8 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                   child: Builder(
                     builder: (context) {
                       expertInfoViewModel =
-                          BlocProvider.of<ExpertInfoViewModel>(context);
+                          BlocProvider.of<ExpertInfoViewModel>(context,
+                              listen: false);
                       return Theme(
                           data: Theme.of(context).copyWith(
                             primaryColor: kPrimaryColor,
@@ -67,9 +64,12 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                           child: FormBlocListener<ExpertInfoViewModel, String,
                               String>(
                             onSubmitting: (context, state) {
-                              LoadingDialog.show(context);
+                              LoadingDialog.show(context, _keyLoader);
                             },
                             onSuccess: (context, state) {
+                              Navigator.of(_keyLoader.currentContext,
+                                      rootNavigator: true)
+                                  .pop();
                               _addressConfirmation(context);
                             },
                             onFailure: (context, state) {
@@ -234,16 +234,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                 AlreadyHaveAnAccountCheck(
                   login: false,
                   press: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return LoginScreen(
-                            authViewModel: widget.authViewModel,
-                          );
-                        },
-                      ),
-                    );
+                    routerDelegate.replace(name: LoginScreen.route);
                   },
                 ),
                 SizedBox(height: size.height * 0.06),
@@ -269,10 +260,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) {
-              return ExpertsSignUpScreen(authViewModel: authViewModel);
-            }));
+            routerDelegate.replace(name: ExpertsSignUpScreen.route);
           },
           color: kPrimaryColor,
         )
@@ -309,19 +297,10 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return CredentialScreen(
-                      authViewModel: authViewModel,
-                      infoViewModel: expertInfoViewModel,
-                      userViewModel: ExpertViewModel());
-                },
-              ),
-            ).then((value) {
-              setState(() {});
-            });
+            routerDelegate.pushPage(
+                name: CredentialScreen.route,
+                arguments: InfoArguments(expertInfoViewModel,
+                    Provider.of<ExpertViewModel>(context, listen: false)));
           },
           color: kPrimaryColor,
         ),
@@ -331,10 +310,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) {
-              return ExpertsSignUpScreen(authViewModel: widget.authViewModel);
-            }));
+            routerDelegate.replace(name: ExpertsSignUpScreen.route);
           },
           color: Colors.red,
         )

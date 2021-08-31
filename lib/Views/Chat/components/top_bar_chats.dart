@@ -1,25 +1,27 @@
 import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Profile/Expert/expert_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TopBarChats extends StatelessWidget {
-  final ChatViewModel chatViewModel;
   final String text;
   final CircleAvatar circleAvatar;
-  final FocusNode focusNode;
 
   TopBarChats({
     Key key,
     @required this.text,
-    @required this.focusNode,
     this.circleAvatar,
-    this.chatViewModel,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    AppRouterDelegate routerDelegate =
+        Provider.of<AppRouterDelegate>(context, listen: false);
+    ChatViewModel chatViewModel =
+        Provider.of<ChatViewModel>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +39,8 @@ class TopBarChats extends StatelessWidget {
                       color: kPrimaryColor,
                     ),
                     onPressed: () async {
-                      Navigator.pop(context);
+                      FocusScope.of(context).unfocus();
+                      routerDelegate.pop();
                     },
                   ),
                   circleAvatar ?? Container(),
@@ -58,16 +61,10 @@ class TopBarChats extends StatelessWidget {
                       ),
                       onTap: () {
                         if (circleAvatar != null) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ExpertProfileScreen(
-                                chatViewModel: chatViewModel,
-                                expert: chatViewModel.conversation.peerUser
-                                    as Expert,
-                              ),
-                            ),
-                          );
+                          routerDelegate.pushPage(
+                              name: ExpertProfileScreen.route,
+                              arguments: chatViewModel.conversation.peerUser
+                                  as Expert);
                         }
                       },
                     ),

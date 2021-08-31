@@ -1,9 +1,9 @@
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/Expert/expert_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
@@ -13,27 +13,24 @@ import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_ac
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_input_field.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_password_field.dart';
+import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 
 class LoginBody extends StatefulWidget {
-  final AuthViewModel authViewModel;
-
-  LoginBody({Key key, @required this.authViewModel}) : super(key: key);
-
   @override
-  _LoginBodyState createState() =>
-      _LoginBodyState(authViewModel: authViewModel);
+  _LoginBodyState createState() => _LoginBodyState();
 }
 
 class _LoginBodyState extends State<LoginBody> {
-  final AuthViewModel authViewModel;
+  AuthViewModel authViewModel;
+  AppRouterDelegate routerDelegate;
   FirestoreService firestoreService = FirestoreService();
-
-  _LoginBodyState({@required this.authViewModel});
 
   @override
   void initState() {
+    authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     WidgetsBinding.instance
         .addPostFrameCallback((_) => authViewModel.getData());
     super.initState();
@@ -80,7 +77,7 @@ class _LoginBodyState extends State<LoginBody> {
                     text: "LOGIN",
                     press: () async {
                       var id = await authViewModel.logIn();
-                      if (id != null) navigateToHome();
+                      if (id != null) navigateToHome(id);
                     },
                     enabled: snapshot.data ?? false,
                   );
@@ -97,16 +94,7 @@ class _LoginBodyState extends State<LoginBody> {
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
               press: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return BaseUsersSignUpScreen(
-                        authViewModel: authViewModel,
-                      );
-                    },
-                  ),
-                );
+                routerDelegate.replace(name: BaseUsersSignUpScreen.route);
               },
             ),
           ],
@@ -115,34 +103,25 @@ class _LoginBodyState extends State<LoginBody> {
     );
   }
 
-  void navigateToHome() async {
+  void navigateToHome(String id) async {
     FocusScope.of(context).unfocus();
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     Collection collection =
         await firestoreService.findUserInCollections(authViewModel.id);
-    UserViewModel userViewModel;
     switch (collection) {
       case Collection.BASE_USERS:
-        userViewModel = BaseUserViewModel(id: authViewModel.id);
-        await userViewModel.loadLoggedUser();
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) {
-          return BaseUserHomeScreen(
-            authViewModel: authViewModel,
-            baseUserViewModel: userViewModel,
-          );
-        }));
+        var baseUserViewModel =
+            Provider.of<BaseUserViewModel>(context, listen: false);
+        baseUserViewModel.id = id;
+        await baseUserViewModel.loadLoggedUser();
+        routerDelegate.replace(name: BaseUserHomeScreen.route);
         break;
       case Collection.EXPERTS:
-        userViewModel = ExpertViewModel(id: authViewModel.id);
-        await userViewModel.loadLoggedUser();
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) {
-          return ExpertHomeScreen(
-            authViewModel: authViewModel,
-            expertViewModel: userViewModel,
-          );
-        }));
+        var expertViewModel =
+            Provider.of<ExpertViewModel>(context, listen: false);
+        expertViewModel.id = id;
+        await expertViewModel.loadLoggedUser();
+        routerDelegate.replace(name: ExpertHomeScreen.route);
         break;
       default:
     }

@@ -51,7 +51,8 @@ class FirestoreService {
     await _firestore
         .collection(user.collection.value)
         .doc(user.id)
-        .update({field: newValue});
+        .update({field: newValue}).catchError(
+            (error) => print("Error on updating collection field: $error"));
   }
 
   /// Get the list of all the doc in [collection] from the DB
@@ -184,13 +185,15 @@ class FirestoreService {
         .doc(conversation.senderUser.id)
         .collection(conversation.senderUserChat.chatCollection.value)
         .doc(conversation.peerUser.id)
-        .set({'lastMessage': timestamp});
+        .set({'lastMessage': timestamp}).catchError(
+            (error) => print("Error on updating last message: $error"));
     await _firestore
         .collection(conversation.peerUser.collection.value)
         .doc(conversation.peerUser.id)
         .collection(conversation.peerUserChat.chatCollection.value)
         .doc(conversation.senderUser.id)
-        .set({'lastMessage': timestamp});
+        .set({'lastMessage': timestamp}).catchError(
+            (error) => print("Error on updating last message: $error"));
     // Increments the counter only if the sender and the peer users are base users and if
     // this is their first message
     if (conversation.senderUser.collection == Collection.BASE_USERS &&
@@ -262,7 +265,8 @@ class FirestoreService {
           .doc(pairChatId)
           .collection(pairChatId)
           .doc(doc.id)
-          .delete();
+          .delete()
+          .catchError((error) => print("Error on remove messages: $error"));
     });
   }
 
@@ -285,13 +289,16 @@ class FirestoreService {
           .doc(conversation.senderUser.id)
           .collection(conversation.senderUserChat.chatCollection.value)
           .doc(conversation.peerUser.id)
-          .delete();
+          .delete()
+          .catchError(
+              (error) => print("Error on upgrading pending chats: $error"));
       await _firestore
           .collection(conversation.senderUser.collection.value)
           .doc(conversation.senderUser.id)
           .collection(Collection.ACTIVE_CHATS.value)
           .doc(conversation.peerUser.id)
-          .set({'lastMessage': pendingChat.get('lastMessage')});
+          .set({'lastMessage': pendingChat.get('lastMessage')}).catchError(
+              (error) => print("Error on upgrading pending chats: $error"));
       // Request chat of the peer user is moved into active chats
       var request = await _firestore
           .collection(conversation.peerUser.collection.value)
@@ -304,13 +311,16 @@ class FirestoreService {
           .doc(conversation.peerUser.id)
           .collection(conversation.peerUserChat.chatCollection.value)
           .doc(conversation.senderUser.id)
-          .delete();
+          .delete()
+          .catchError(
+              (error) => print("Error on upgrading pending chats: $error"));
       await _firestore
           .collection(conversation.peerUser.collection.value)
           .doc(conversation.peerUser.id)
           .collection(Collection.ACTIVE_CHATS.value)
           .doc(conversation.senderUser.id)
-          .set({'lastMessage': request.get('lastMessage')});
+          .set({'lastMessage': request.get('lastMessage')}).catchError(
+              (error) => print("Error on upgrading pending chats: $error"));
     }
   }
 
@@ -321,14 +331,16 @@ class FirestoreService {
         .doc(conversation.senderUser.id)
         .collection(conversation.senderUserChat.chatCollection.value)
         .doc(conversation.peerUser.id)
-        .delete();
+        .delete()
+        .catchError((error) => print("Error on removing chat: $error"));
     await _incrementChatsCounter(conversation.senderUser, -1);
     await _firestore
         .collection(conversation.peerUser.collection.value)
         .doc(conversation.peerUser.id)
         .collection(conversation.peerUserChat.chatCollection.value)
         .doc(conversation.senderUser.id)
-        .delete();
+        .delete()
+        .catchError((error) => print("Error on removing chat: $error"));
     await _incrementChatsCounter(conversation.peerUser, -1);
   }
 
@@ -423,7 +435,8 @@ class FirestoreService {
         .doc(id)
         .collection('reportsList')
         .doc(report.id)
-        .set(report.getData());
+        .set(report.getData())
+        .catchError((error) => print("Error on adding report: $error"));
   }
 
   /// It takes the [id] of an user and return the stream of all the reports of the user from the DB

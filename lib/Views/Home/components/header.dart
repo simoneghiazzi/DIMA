@@ -1,32 +1,31 @@
 import 'dart:async';
+import 'package:dima_colombo_ghiazzi/Model/user.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class Header extends StatefulWidget {
-  final AuthViewModel authViewModel;
-  final UserViewModel userViewModel;
+  final User loggedUser;
 
-  Header({Key key, @required this.authViewModel, @required this.userViewModel})
-      : super(key: key);
+  Header({Key key, @required this.loggedUser}) : super(key: key);
 
   @override
-  _HeaderState createState() =>
-      _HeaderState(authViewModel: authViewModel, userViewModel: userViewModel);
+  _HeaderState createState() => _HeaderState();
 }
 
 class _HeaderState extends State<Header> {
-  final AuthViewModel authViewModel;
-  final UserViewModel userViewModel;
+  AuthViewModel authViewModel;
+  AppRouterDelegate routerDelegate;
   StreamSubscription<bool> subscriber;
-
-  _HeaderState({@required this.authViewModel, @required this.userViewModel});
 
   @override
   void initState() {
+    authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     subscriber = subscribeToViewModel();
     super.initState();
   }
@@ -43,12 +42,12 @@ class _HeaderState extends State<Header> {
           style: TextStyle(color: Colors.white, fontSize: 32),
         ),
         trailing: InkWell(
-          child: userViewModel.loggedUser.getData()['profilePhoto'] == null
+          child: widget.loggedUser.getData()['profilePhoto'] == null
               ? CircleAvatar(
                   radius: 60,
                   backgroundColor: Colors.white,
                   child: Text(
-                    "${userViewModel.loggedUser.name[0]}",
+                    widget.loggedUser.name[0].toUpperCase(),
                     style: TextStyle(color: kPrimaryColor, fontSize: 30),
                   ))
               : CircleAvatar(
@@ -56,7 +55,7 @@ class _HeaderState extends State<Header> {
                   backgroundColor: Colors.white,
                   child: ClipOval(
                     child: Image.network(
-                      userViewModel.loggedUser.getData()['profilePhoto'],
+                      widget.loggedUser.getData()['profilePhoto'],
                       fit: BoxFit.cover,
                       width: 60.0,
                       height: 60.0,
@@ -81,7 +80,7 @@ class _HeaderState extends State<Header> {
                             radius: 60,
                             backgroundColor: Colors.white,
                             child: Text(
-                              "${userViewModel.loggedUser.name[0]}",
+                              widget.loggedUser.name[0].toUpperCase(),
                               style:
                                   TextStyle(color: kPrimaryColor, fontSize: 30),
                             ));
@@ -96,20 +95,10 @@ class _HeaderState extends State<Header> {
   }
 
   StreamSubscription<bool> subscribeToViewModel() {
-    return widget.authViewModel.isUserLogged.listen((isSuccessfulLogin) {
+    return authViewModel.isUserLogged.listen((isSuccessfulLogin) {
       if (!isSuccessfulLogin) {
         subscriber.cancel();
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return WelcomeScreen(
-                authViewModel: authViewModel,
-              );
-            },
-          ),
-          ModalRoute.withName('/'),
-        );
+        routerDelegate.replaceAll(name: WelcomeScreen.route);
       }
     });
   }
@@ -139,7 +128,7 @@ class _HeaderState extends State<Header> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            widget.authViewModel.logOut();
+            authViewModel.logOut();
           },
           color: Colors.red,
         )

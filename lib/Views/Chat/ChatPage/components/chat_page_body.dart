@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Model/Chat/pending_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_accept_deny.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_text_input.dart';
@@ -9,27 +10,27 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/components/messages_list_constru
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar_chats.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatPageBody extends StatefulWidget {
-  final ChatViewModel chatViewModel;
-
-  ChatPageBody({Key key, @required this.chatViewModel}) : super(key: key);
-
   @override
   _ChatPageBodyState createState() => _ChatPageBodyState();
 }
 
 class _ChatPageBodyState extends State<ChatPageBody>
     with WidgetsBindingObserver {
+  ChatViewModel chatViewModel;
+  AppRouterDelegate routerDelegate;
   User peerUser;
-  FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
-    super.initState();
-    peerUser = widget.chatViewModel.conversation.peerUser;
     WidgetsBinding.instance.addObserver(this);
-    widget.chatViewModel.updateChattingWith();
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    peerUser = chatViewModel.conversation.peerUser;
+    chatViewModel.updateChattingWith();
+    super.initState();
   }
 
   @override
@@ -47,7 +48,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
                           backgroundColor: Colors.white,
                           child: ClipOval(
                             child: Image.network(
-                              widget.chatViewModel.conversation.peerUser
+                              chatViewModel.conversation.peerUser
                                   .getData()['profilePhoto'],
                               fit: BoxFit.cover,
                               width: 40.0,
@@ -78,7 +79,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
                                     radius: 20,
                                     backgroundColor: Colors.white,
                                     child: Text(
-                                      "${widget.chatViewModel.conversation.peerUser.name[0]}",
+                                      "${chatViewModel.conversation.peerUser.name[0]}",
                                       style: TextStyle(
                                           color: kPrimaryColor, fontSize: 30),
                                     ));
@@ -89,23 +90,17 @@ class _ChatPageBodyState extends State<ChatPageBody>
                         text: peerUser.getData()['name'] +
                             " " +
                             peerUser.getData()['surname'],
-                        chatViewModel: widget.chatViewModel,
-                        focusNode: focusNode,
                       )
                     : TopBarChats(
                         text: peerUser.getData()['name'],
-                        focusNode: focusNode,
                       ),
                 // List of messages
-                MessagesListConstructor(chatViewModel: widget.chatViewModel),
+                MessagesListConstructor(),
                 // Input content
-                widget.chatViewModel.conversation.senderUserChat.runtimeType ==
+                chatViewModel.conversation.senderUserChat.runtimeType ==
                         PendingChat
-                    ? ChatAcceptDenyInput(chatViewModel: widget.chatViewModel)
-                    : ChatTextInput(
-                        chatViewModel: widget.chatViewModel,
-                        focusNode: focusNode,
-                      ),
+                    ? ChatAcceptDenyInput()
+                    : ChatTextInput(),
               ],
             ),
           ],
@@ -117,8 +112,8 @@ class _ChatPageBodyState extends State<ChatPageBody>
   }
 
   Future<bool> onBackPress() async {
-    widget.chatViewModel.resetChattingWith();
-    Navigator.pop(context);
+    chatViewModel.resetChattingWith();
+    routerDelegate.pop();
     return Future.value(false);
   }
 
@@ -126,9 +121,9 @@ class _ChatPageBodyState extends State<ChatPageBody>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
-      widget.chatViewModel.updateChattingWith();
+      chatViewModel.updateChattingWith();
     } else {
-      widget.chatViewModel.resetChattingWith();
+      chatViewModel.resetChattingWith();
     }
   }
 

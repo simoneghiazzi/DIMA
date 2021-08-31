@@ -3,21 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/random_id.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/conversation.dart';
-import 'package:dima_colombo_ghiazzi/Model/Chat/pending_chat.dart';
-import 'package:dima_colombo_ghiazzi/Model/Chat/request.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:flutter/material.dart';
 
 class ChatViewModel {
   FirestoreService firestoreService = FirestoreService();
-  Conversation conversation;
+  Conversation conversation = Conversation();
   List<QueryDocumentSnapshot> _listMessages = new List.from([]);
   TextEditingController textEditingController = TextEditingController();
-
-  ChatViewModel(User senderUser) {
-    conversation = Conversation(senderUser: senderUser);
-  }
+  var isNewRandomUserController = StreamController<bool>.broadcast();
 
   /// Update the ChattingWith field of the [senderUserChat] inside the DB
   /// It is used in order to show or not the notification on new messages
@@ -100,13 +95,13 @@ class ChatViewModel {
   }
 
   /// Look for a new random anonymous user
-  Future<bool> getNewRandomUser() async {
+  Future<void> getNewRandomUser() async {
     var randomUser = await firestoreService.getRandomUserFromDB(
         conversation.senderUser, RandomId.generate());
-    if (randomUser == null) return false;
+    if (randomUser == null) isNewRandomUserController.add(false);
     conversation.peerUser = randomUser;
     conversation.computePairChatId();
-    return true;
+    isNewRandomUserController.add(true);
   }
 
   /// Load the chat list starting from the [conversation.senderUser] and the
@@ -135,4 +130,5 @@ class ChatViewModel {
   }
 
   TextEditingController get textController => textEditingController;
+  Stream<bool> get isNewRandomUser => isNewRandomUserController.stream;
 }

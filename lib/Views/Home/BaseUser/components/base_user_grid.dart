@@ -1,3 +1,4 @@
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
@@ -6,27 +7,25 @@ import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/create_report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/components/dash_card.dart';
+import 'package:provider/provider.dart';
 
 class BaseUserGrid extends StatefulWidget {
-  final BaseUserViewModel baseUserViewModel;
-
-  BaseUserGrid({Key key, @required this.baseUserViewModel}) : super(key: key);
-
   @override
-  _BaseUserGridState createState() =>
-      _BaseUserGridState(baseUserViewModel: baseUserViewModel);
+  _BaseUserGridState createState() => _BaseUserGridState();
 }
 
 class _BaseUserGridState extends State<BaseUserGrid> {
-  final BaseUserViewModel baseUserViewModel;
+  BaseUserViewModel baseUserViewModel;
   ChatViewModel chatViewModel;
-
-  _BaseUserGridState({@required this.baseUserViewModel});
+  AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
+    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    chatViewModel.conversation.senderUser = baseUserViewModel.loggedUser;
     super.initState();
-    chatViewModel = ChatViewModel(baseUserViewModel.loggedUser);
   }
 
   @override
@@ -43,30 +42,14 @@ class _BaseUserGridState extends State<BaseUserGrid> {
                   imagePath: "assets/icons/psychologist.png",
                   text: "Experts chats",
                   press: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return ExpertChatsListScreen(
-                              chatViewModel: chatViewModel);
-                        },
-                      ),
-                    );
+                    routerDelegate.pushPage(name: ExpertChatsListScreen.route);
                   },
                 ),
                 DashCard(
                   imagePath: "assets/icons/anonymous.png",
                   text: "Anonymous chats",
                   press: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return ActiveChatsListScreen(
-                              chatViewModel: chatViewModel);
-                        },
-                      ),
-                    );
+                    routerDelegate.pushPage(name: ActiveChatsListScreen.route);
                   },
                 ),
               ]),
@@ -75,32 +58,14 @@ class _BaseUserGridState extends State<BaseUserGrid> {
                   imagePath: "assets/icons/map.png",
                   text: "Find an expert",
                   press: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return MapScreen(
-                            chatViewModel: chatViewModel,
-                          );
-                        },
-                      ),
-                    );
+                    routerDelegate.pushPage(name: MapScreen.route);
                   },
                 ),
                 DashCard(
                   imagePath: "assets/icons/report.png",
                   text: "Anonymous reports",
                   press: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return CreateReportScreen(
-                            baseUserViewModel: baseUserViewModel,
-                          );
-                        },
-                      ),
-                    );
+                    routerDelegate.pushPage(name: CreateReportScreen.route);
                   },
                 ),
               ])
