@@ -21,11 +21,15 @@ class _CreateReportBodyState extends State<CreateReportBody> {
   BaseUserViewModel baseUserViewModel;
   ReportViewModel reportViewModel;
   AppRouterDelegate routerDelegate;
+  Alert errorAlert;
+  Alert successAlert;
 
   @override
   void initState() {
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    errorAlert = createErrorAlert();
+    successAlert = createSuccessAlert();
     super.initState();
   }
 
@@ -177,7 +181,15 @@ class _CreateReportBodyState extends State<CreateReportBody> {
   }
 
   _onReportSubmitted(context) {
-    Alert(
+    successAlert.show();
+  }
+
+  _onReportError(context) {
+    errorAlert.show();
+  }
+
+  Alert createSuccessAlert() {
+    return Alert(
       closeIcon: null,
       context: context,
       title: "Report submitted",
@@ -196,17 +208,18 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                 fontWeight: FontWeight.bold),
           ),
           onPressed: () {
-            routerDelegate.replace(
+            routerDelegate.pushPage(
                 name: ReportsListScreen.route, arguments: reportViewModel);
+            successAlert.dismiss();
           },
           color: Colors.transparent,
         )
       ],
-    ).show();
+    );
   }
 
-  _onReportError(context) {
-    Alert(
+  Alert createErrorAlert() {
+    return Alert(
       closeIcon: null,
       context: context,
       title: "AN ERROR OCCURED",
@@ -223,10 +236,11 @@ class _CreateReportBodyState extends State<CreateReportBody> {
           ),
           onPressed: () {
             routerDelegate.replace(name: CreateReportScreen.route);
+            errorAlert.dismiss();
           },
           color: kPrimaryColor,
         )
       ],
-    ).show();
+    );
   }
 }

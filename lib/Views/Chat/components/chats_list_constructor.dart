@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_list_item.dart';
@@ -20,18 +22,21 @@ class ChatsListConstructor extends StatefulWidget {
 
 class _ChatsListConstructorState extends State<ChatsListConstructor> {
   final ScrollController listScrollController = ScrollController();
+  StreamSubscription<bool> subscriber;
+  ChatViewModel chatViewModel;
   int _limitIncrement = 20;
   bool loading = true;
 
   @override
   void initState() {
     super.initState();
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     listScrollController.addListener(scrollListener);
+    subscriber = subscribeToNewMessages();
   }
 
   @override
   Widget build(BuildContext context) {
-    var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     return Container(
       child: Stack(
         children: <Widget>[
@@ -47,12 +52,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
                       User user =
                           widget.createUserCallback(snapshot.data[index]);
                       return ChatListItem(
-                        isExpert: widget.isExpert,
-                        userItem: user,
-                        setStateCallback: () {
-                          setState(() {});
-                        },
-                      );
+                          isExpert: widget.isExpert, userItem: user);
                     },
                     itemCount: snapshot.data.length,
                     controller: listScrollController,
@@ -69,6 +69,14 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
     );
   }
 
+  StreamSubscription<bool> subscribeToNewMessages() {
+    return chatViewModel.isNewMessage.listen((isNewMessage) {
+      if (isNewMessage) {
+        setState(() {});
+      }
+    });
+  }
+
   void scrollListener() {
     if (listScrollController.offset >=
             listScrollController.position.maxScrollExtent &&
@@ -81,6 +89,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
 
   @override
   void dispose() {
+    subscriber.cancel();
     listScrollController.dispose();
     super.dispose();
   }

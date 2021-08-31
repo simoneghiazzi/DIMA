@@ -24,12 +24,12 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    initExpertChats();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    initExpertChats();
     return Scaffold(
         body: Stack(
       children: <Widget>[

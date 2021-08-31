@@ -12,7 +12,9 @@ class ChatViewModel {
   Conversation conversation = Conversation();
   List<QueryDocumentSnapshot> _listMessages = new List.from([]);
   TextEditingController textEditingController = TextEditingController();
-  var isNewRandomUserController = StreamController<bool>.broadcast();
+  var _isNewRandomUserController = StreamController<bool>.broadcast();
+  var _isNewMessageController = StreamController<bool>.broadcast();
+  bool newCurrentUser;
 
   /// Update the ChattingWith field of the [senderUserChat] inside the DB
   /// It is used in order to show or not the notification on new messages
@@ -38,6 +40,10 @@ class ChatViewModel {
     String content = textEditingController.text;
     textEditingController.clear();
     await firestoreService.addMessageIntoDB(conversation, content);
+    if (newCurrentUser) {
+      _isNewMessageController.add(true);
+      newCurrentUser = false;
+    }
   }
 
   //DA RIVEDERE
@@ -92,16 +98,18 @@ class ChatViewModel {
   Future<void> chatWithUser(User user) async {
     conversation.peerUser = user;
     conversation.computePairChatId();
+    _isNewMessageController.add(false);
+    newCurrentUser = true;
   }
 
   /// Look for a new random anonymous user
   Future<void> getNewRandomUser() async {
     var randomUser = await firestoreService.getRandomUserFromDB(
         conversation.senderUser, RandomId.generate());
-    if (randomUser == null) isNewRandomUserController.add(false);
+    if (randomUser == null) _isNewRandomUserController.add(false);
     conversation.peerUser = randomUser;
     conversation.computePairChatId();
-    isNewRandomUserController.add(true);
+    _isNewRandomUserController.add(true);
   }
 
   /// Load the chat list starting from the [conversation.senderUser] and the
@@ -130,5 +138,6 @@ class ChatViewModel {
   }
 
   TextEditingController get textController => textEditingController;
-  Stream<bool> get isNewRandomUser => isNewRandomUserController.stream;
+  Stream<bool> get isNewRandomUser => _isNewRandomUserController.stream;
+  Stream<bool> get isNewMessage => _isNewMessageController.stream;
 }

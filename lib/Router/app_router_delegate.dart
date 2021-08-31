@@ -50,7 +50,9 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
 
   @override
   Future<bool> popRoute() {
-    if (_pages.length > 1) {
+    if (_pages.length > 1 &&
+        _pages.last.name != BaseUserHomeScreen.route &&
+        _pages.last.name != ActiveChatsExpertsScreen.route) {
       _pages.removeLast();
       notifyListeners();
       return Future.value(true);

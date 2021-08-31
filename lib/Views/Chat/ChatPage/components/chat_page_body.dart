@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatPageBody extends StatefulWidget {
-  bool isExpert;
+  final bool isExpert;
 
   ChatPageBody({Key key, this.isExpert = false}) : super(key: key);
 

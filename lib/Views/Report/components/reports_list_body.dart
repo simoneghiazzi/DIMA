@@ -20,6 +20,7 @@ class ReportsListBody extends StatefulWidget {
 class _ReportsListBodyState extends State<ReportsListBody> {
   final ScrollController listScrollController = ScrollController();
   AppRouterDelegate routerDelegate;
+  Alert alert;
   bool isLoading = false;
   int _limitIncrement = 20;
 
@@ -139,8 +140,8 @@ class _ReportsListBodyState extends State<ReportsListBody> {
                 )
               ]),
           onPressed: () {
-            _onReportPressed(
-                context, doc.get('category'), doc.get('description'));
+            alert = createAlert(doc.get('category'), doc.get('description'));
+            alert.show();
           },
           style: ButtonStyle(
             backgroundColor:
@@ -169,8 +170,8 @@ class _ReportsListBodyState extends State<ReportsListBody> {
     }
   }
 
-  _onReportPressed(context, String title, String description) {
-    Alert(
+  Alert createAlert(String title, String description) {
+    return Alert(
         context: context,
         title: title,
         desc: description,
@@ -189,8 +190,8 @@ class _ReportsListBodyState extends State<ReportsListBody> {
                   fontWeight: FontWeight.bold),
             ),
             color: Colors.transparent,
-            onPressed: () => routerDelegate.pop(),
+            onPressed: () => alert.dismiss(),
           )
-        ]).show();
+        ]);
   }
 }

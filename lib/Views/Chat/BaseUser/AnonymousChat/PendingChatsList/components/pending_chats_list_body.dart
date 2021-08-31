@@ -22,12 +22,12 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    initPendingChats();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    initPendingChats();
     return Scaffold(
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),

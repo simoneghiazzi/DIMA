@@ -96,7 +96,13 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     routerDelegate = AppRouterDelegate();
-    routerDelegate.pushPage(name: widget.firstPage);
+    if (widget.firstPage != WelcomeScreen.route)
+      routerDelegate.addAll([
+        RouteSettings(name: WelcomeScreen.route),
+        RouteSettings(name: widget.firstPage)
+      ]);
+    else
+      routerDelegate.pushPage(name: widget.firstPage);
     super.initState();
   }
 

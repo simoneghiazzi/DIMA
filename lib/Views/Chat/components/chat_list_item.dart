@@ -8,12 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatListItem extends StatefulWidget {
-  final Function setStateCallback;
   final User userItem;
   final bool isExpert;
 
-  ChatListItem(
-      {Key key, @required this.userItem, @required this.setStateCallback, this.isExpert = false})
+  ChatListItem({Key key, @required this.userItem, this.isExpert = false})
       : super(key: key);
 
   @override
@@ -114,7 +112,6 @@ class _ChatListItemState extends State<ChatListItem> {
           onPressed: () {
             chatViewModel.chatWithUser(widget.userItem);
             routerDelegate.pushPage(name: ChatPageScreen.route);
-            widget.setStateCallback();
           },
           style: ButtonStyle(
             backgroundColor:

@@ -24,7 +24,6 @@ class ActiveChatsListBody extends StatefulWidget {
 class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   StreamSubscription<bool> subscriber;
-  Future<bool> _newPendingChats;
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
 
@@ -33,7 +32,6 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     initActiveChats();
-    _newPendingChats = chatViewModel.hasPendingChats();
     subscriber = subscribeToNewRandomUser();
     super.initState();
   }
@@ -50,7 +48,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               FutureBuilder(
-                future: _newPendingChats,
+                future: chatViewModel.hasPendingChats(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     if (snapshot.data) {

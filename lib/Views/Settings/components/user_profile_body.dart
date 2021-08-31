@@ -1,14 +1,34 @@
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class UserProfileBody extends StatelessWidget {
+class UserProfileBody extends StatefulWidget {
   final User user;
 
   UserProfileBody({Key key, @required this.user}) : super(key: key);
+
+  @override
+  _UserProfileBodyState createState() => _UserProfileBodyState();
+}
+
+class _UserProfileBodyState extends State<UserProfileBody> {
+  AuthViewModel authViewModel;
+  AppRouterDelegate routerDelegate;
+  Alert alert;
+
+  @override
+  void initState() {
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    alert = createAlert();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +64,9 @@ class UserProfileBody extends StatelessWidget {
                                     children: [
                                       Flexible(
                                           child: Text(
-                                        user.name.toUpperCase() +
+                                        widget.user.name.toUpperCase() +
                                             " " +
-                                            user.surname.toUpperCase(),
+                                            widget.user.surname.toUpperCase(),
                                         style: TextStyle(
                                             color: kPrimaryColor,
                                             fontSize: 22,
@@ -59,7 +79,7 @@ class UserProfileBody extends StatelessWidget {
                             SizedBox(
                               height: size.height * 0.05,
                             ),
-                            user.getData()['profilePhoto'] != null
+                            widget.user.getData()['profilePhoto'] != null
                                 ? Row(
                                     children: <Widget>[
                                       Icon(
@@ -69,7 +89,7 @@ class UserProfileBody extends StatelessWidget {
                                       SizedBox(
                                         width: size.width * 0.05,
                                       ),
-                                      Text(user.getData()['phoneNumber'],
+                                      Text(widget.user.getData()['phoneNumber'],
                                           style: TextStyle(
                                             color: kPrimaryColor,
                                             fontSize: 15,
@@ -94,8 +114,8 @@ class UserProfileBody extends StatelessWidget {
                                   width: size.width * 0.05,
                                 ),
                                 Flexible(
-                                    child: user.email != null
-                                        ? Text(user.email,
+                                    child: widget.user.email != null
+                                        ? Text(widget.user.email,
                                             style: TextStyle(
                                               color: kPrimaryColor,
                                               fontSize: 15,
@@ -131,7 +151,8 @@ class UserProfileBody extends StatelessWidget {
                                       ),
                                     ),
                                     onTap: () {
-                                      //authViewModel.resetPassword(user.email);
+                                      authViewModel
+                                          .resetPassword(widget.user.email);
                                     },
                                   ),
                                 )
@@ -140,7 +161,7 @@ class UserProfileBody extends StatelessWidget {
                             SizedBox(
                               height: size.height * 0.03,
                             ),
-                            user.getData()['profilePhoto'] != null
+                            widget.user.getData()['profilePhoto'] != null
                                 ? Row(
                                     children: <Widget>[
                                       Icon(
@@ -152,7 +173,8 @@ class UserProfileBody extends StatelessWidget {
                                       ),
                                       Flexible(
                                         child: GestureDetector(
-                                          child: Text(user.getData()['address'],
+                                          child: Text(
+                                              widget.user.getData()['address'],
                                               style: TextStyle(
                                                 color: kPrimaryColor,
                                                 fontSize: 15,
@@ -208,7 +230,7 @@ class UserProfileBody extends StatelessWidget {
                                   ),
                                 ),
                                 onTap: () {
-                                  //authViewModel.logOut();
+                                  authViewModel.logOut();
                                 },
                               ),
                             ),
@@ -262,13 +284,13 @@ class UserProfileBody extends StatelessWidget {
         )),
         Positioned(
           top: 100.0, // (background container size) - (circle height / 2)
-          child: user.getData()['profilePhoto'] != null
+          child: widget.user.getData()['profilePhoto'] != null
               ? CircleAvatar(
                   radius: 60,
                   backgroundColor: Colors.white,
                   child: ClipOval(
                     child: Image.network(
-                      user.getData()['profilePhoto'],
+                      widget.user.getData()['profilePhoto'],
                       fit: BoxFit.cover,
                       width: 120.0,
                       height: 120.0,
@@ -293,7 +315,7 @@ class UserProfileBody extends StatelessWidget {
                             radius: 60,
                             backgroundColor: Colors.white,
                             child: Text(
-                              "${user.name[0]}",
+                              "${widget.user.name[0]}",
                               style:
                                   TextStyle(color: kPrimaryColor, fontSize: 30),
                             ));
@@ -316,7 +338,7 @@ class UserProfileBody extends StatelessWidget {
           child: FloatingActionButton(
             mini: true,
             onPressed: () {
-              Navigator.pop(context);
+              routerDelegate.pop();
             },
             materialTapTargetSize: MaterialTapTargetSize.padded,
             backgroundColor: Colors.transparent,
@@ -328,8 +350,8 @@ class UserProfileBody extends StatelessWidget {
   }
 
   void openMaps() async {
-    var lat = user.getData()['latLng'].latitude;
-    var lng = user.getData()['latLng'].longitude;
+    var lat = widget.user.getData()['latLng'].latitude;
+    var lng = widget.user.getData()['latLng'].longitude;
     var uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
     if (await canLaunch(uri.toString())) {
       await launch(uri.toString());
@@ -339,7 +361,11 @@ class UserProfileBody extends StatelessWidget {
   }
 
   _onDeleteAccount(context) {
-    Alert(
+    alert.show();
+  }
+
+  Alert createAlert() {
+    return Alert(
         closeIcon: null,
         context: context,
         title: "Insert password to confirm:",
@@ -362,10 +388,11 @@ class UserProfileBody extends StatelessWidget {
                   color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold),
             ),
             onPressed: () {
-              //authViewModel.logOut();
+              authViewModel.logOut();
+              alert.dismiss();
             },
             color: Colors.transparent,
           )
-        ]).show();
+        ]);
   }
 }
