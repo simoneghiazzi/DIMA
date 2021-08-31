@@ -16,7 +16,6 @@ void main() {
   });
 
   tester.test('one or divider', () async {
-    tester.expect(await driver.waitFor(tester.find.byKey('or_divider')),
-        tester.findsOneWidget);
+    tester.expect(orDividerFinder, tester.findsOneWidget);
   });
 }
