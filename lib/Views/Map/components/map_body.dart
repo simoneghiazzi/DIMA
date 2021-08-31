@@ -3,7 +3,6 @@ import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place_search.dart';
 import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Profile/expert_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';

@@ -13,7 +13,6 @@ class BaseUserHomeScreen extends StatelessWidget {
         Provider.of<BaseUserViewModel>(context, listen: false);
     var authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     authViewModel.setNotification(baseUserViewModel.loggedUser);
-    Size size = MediaQuery.of(context).size;
     return new WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
