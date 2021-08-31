@@ -10,9 +10,10 @@ import 'package:provider/provider.dart';
 class ChatListItem extends StatefulWidget {
   final Function setStateCallback;
   final User userItem;
+  final bool isExpert;
 
   ChatListItem(
-      {Key key, @required this.userItem, @required this.setStateCallback})
+      {Key key, @required this.userItem, @required this.setStateCallback, this.isExpert = false})
       : super(key: key);
 
   @override
@@ -92,11 +93,21 @@ class _ChatListItemState extends State<ChatListItem> {
                         maxLines: 1,
                         style: TextStyle(color: kPrimaryColor, fontSize: 18),
                       )
-                    : Text(
-                        widget.userItem.name,
-                        maxLines: 1,
-                        style: TextStyle(color: kPrimaryColor, fontSize: 18),
-                      ),
+                    : widget.isExpert
+                        ? Text(
+                            widget.userItem.name +
+                                ' ' +
+                                widget.userItem.surname,
+                            maxLines: 1,
+                            style:
+                                TextStyle(color: kPrimaryColor, fontSize: 18),
+                          )
+                        : Text(
+                            widget.userItem.name,
+                            maxLines: 1,
+                            style:
+                                TextStyle(color: kPrimaryColor, fontSize: 18),
+                          ),
               ),
             ],
           ),

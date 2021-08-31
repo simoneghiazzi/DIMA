@@ -172,7 +172,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
   _onReportPressed(context, String title, String description) {
     Alert(
         context: context,
-        title: title.toUpperCase(),
+        title: title,
         desc: description,
         image: Image.asset("assets/icons/small_logo.png"),
         closeIcon: Icon(
@@ -183,9 +183,12 @@ class _ReportsListBodyState extends State<ReportsListBody> {
           DialogButton(
             child: Text(
               "CLOSE",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(
+                  color: kPrimaryColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
             ),
-            color: kPrimaryColor,
+            color: Colors.transparent,
             onPressed: () => routerDelegate.pop(),
           )
         ]).show();

@@ -13,6 +13,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatPageBody extends StatefulWidget {
+  bool isExpert;
+
+  ChatPageBody({Key key, this.isExpert = false}) : super(key: key);
+
   @override
   _ChatPageBodyState createState() => _ChatPageBodyState();
 }
@@ -91,9 +95,15 @@ class _ChatPageBodyState extends State<ChatPageBody>
                             " " +
                             peerUser.getData()['surname'],
                       )
-                    : TopBarChats(
-                        text: peerUser.getData()['name'],
-                      ),
+                    : widget.isExpert
+                        ? TopBarChats(
+                            text: peerUser.getData()['name'] +
+                                " " +
+                                peerUser.getData()['surname'],
+                          )
+                        : TopBarChats(
+                            text: peerUser.getData()['name'],
+                          ),
                 // List of messages
                 MessagesListConstructor(),
                 // Input content

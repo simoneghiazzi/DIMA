@@ -7,8 +7,8 @@ import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dar
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/Expert/expert_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +62,7 @@ Future<void> main() async {
         runApp(MyApp(
           expertProvider: Provider(create: (context) => expertViewModel),
           baseUserProvider: Provider(create: (context) => BaseUserViewModel()),
-          firstPage: ExpertHomeScreen.route,
+          firstPage: ActiveChatsExpertsScreen.route,
         ));
         break;
       default:

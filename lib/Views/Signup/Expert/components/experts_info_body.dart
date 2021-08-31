@@ -272,8 +272,8 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
     Alert(
       closeIcon: null,
       context: context,
-      title: "FOUND ADDRESS: " + expertInfoViewModel.infoAddress,
-      desc: "YOUR PERSONAL INFORMATIONS: \n" +
+      title: "Found address: " + expertInfoViewModel.infoAddress,
+      desc: "Your personal informations: \n" +
           "Name: " +
           expertInfoViewModel.values['name'] +
           "\n" +
@@ -286,15 +286,18 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
           "\n" +
           "Phone number: " +
           expertInfoViewModel.values['phoneNumber'],
-      type: AlertType.info,
       style: AlertStyle(
+        animationDuration: Duration(milliseconds: 0),
         isCloseButton: false,
       ),
       buttons: [
         DialogButton(
           child: Text(
             "CONFIRM",
-            style: TextStyle(color: Colors.white, fontSize: 20),
+            style: TextStyle(
+                color: kPrimaryColor,
+                fontSize: 20,
+                fontWeight: FontWeight.bold),
           ),
           onPressed: () {
             routerDelegate.pushPage(
@@ -307,12 +310,13 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
         DialogButton(
           child: Text(
             "RETRY",
-            style: TextStyle(color: Colors.white, fontSize: 20),
+            style: TextStyle(
+                color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onPressed: () {
             routerDelegate.replace(name: ExpertsSignUpScreen.route);
           },
-          color: Colors.red,
+          color: Colors.transparent,
         )
       ],
     ).show();

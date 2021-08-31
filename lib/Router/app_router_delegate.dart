@@ -4,13 +4,14 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveCha
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/Expert/expert_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Profile/Expert/expert_profile_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Profile/expert_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/create_report_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/reports_list_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Settings/user_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/credential_screen.dart';
@@ -93,8 +94,11 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
       case LoginScreen.route:
         child = LoginScreen();
         break;
-      case ExpertHomeScreen.route:
-        child = ExpertHomeScreen();
+      case UserProfileScreen.route:
+        child = UserProfileScreen(user: routeSettings.arguments);
+        break;
+      case ActiveChatsExpertsScreen.route:
+        child = ActiveChatsExpertsScreen();
         break;
       case BaseUserHomeScreen.route:
         child = BaseUserHomeScreen();

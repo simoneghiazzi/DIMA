@@ -91,6 +91,12 @@ class AuthViewModel {
     return id;
   }
 
+  Future<void> resetPassword(String email) async {
+    try {
+      auth.resetPassword(email);
+    } catch (e) {}
+  }
+
   /// Get the data text from the controllers
   void getData() {
     if (emailController.text.isNotEmpty)
