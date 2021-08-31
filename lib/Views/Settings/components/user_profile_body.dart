@@ -128,39 +128,46 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                                             ))),
                               ],
                             ),
-                            SizedBox(
-                              height: size.height * 0.03,
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.lock,
-                                  color: kPrimaryColor,
-                                ),
-                                SizedBox(
-                                  width: size.width * 0.05,
-                                ),
-                                Flexible(
-                                  child: GestureDetector(
-                                    child: Text(
-                                      "Reset password",
-                                      style: TextStyle(
-                                        color: kPrimaryColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ),
+                            widget.user.email != null
+                                ? Column(children: [
+                                    SizedBox(
+                                      height: size.height * 0.03,
                                     ),
-                                    onTap: () {
-                                      authViewModel
-                                          .resetPassword(widget.user.email);
-                                    },
+                                    Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.lock,
+                                          color: kPrimaryColor,
+                                        ),
+                                        SizedBox(
+                                          width: size.width * 0.05,
+                                        ),
+                                        Flexible(
+                                          child: GestureDetector(
+                                            child: Text(
+                                              "Reset password",
+                                              style: TextStyle(
+                                                color: kPrimaryColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                            onTap: () {
+                                              authViewModel.resetPassword(
+                                                  widget.user.email);
+                                              showSnackBar();
+                                            },
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 0.03,
+                                    ),
+                                  ])
+                                : SizedBox(
+                                    height: size.height * 0.03,
                                   ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: size.height * 0.03,
-                            ),
                             widget.user.getData()['profilePhoto'] != null
                                 ? Row(
                                     children: <Widget>[
@@ -274,6 +281,9 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                                 },
                               ),
                             ),
+                            SizedBox(
+                              height: size.height * 0.03,
+                            ),
                           ],
                         ),
                       ],
@@ -362,6 +372,22 @@ class _UserProfileBodyState extends State<UserProfileBody> {
 
   _onDeleteAccount(context) {
     alert.show();
+  }
+
+  void showSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content:
+          const Text('Please check your email for the password reset link.'),
+      action: SnackBarAction(
+        label: 'RESEND EMAIL',
+        onPressed: () {
+          authViewModel.resetPassword(widget.user.email);
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          showSnackBar();
+        },
+      ),
+      duration: const Duration(seconds: 10),
+    ));
   }
 
   Alert createAlert() {

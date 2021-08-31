@@ -19,11 +19,12 @@ class BaseUserHomeScreen extends StatelessWidget {
         child: Scaffold(
           body: Container(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Header(loggedUser: baseUserViewModel.loggedUser),
-                SizedBox(height: size.height * 0.15),
-                BaseUserGrid()
+                Spacer(),
+                BaseUserGrid(),
+                Spacer()
               ],
             ),
           ),
