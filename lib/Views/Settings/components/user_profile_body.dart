@@ -45,7 +45,7 @@ class _UserProfileBodyState extends State<UserProfileBody> {
               color: kPrimaryColor,
             ),
             Padding(
-                padding: EdgeInsets.only(top: 90),
+                padding: EdgeInsets.only(top: 100),
                 child: Container(
                   padding: EdgeInsets.only(
                       left: size.width / 10, right: size.width / 10),
@@ -77,7 +77,7 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                         Column(
                           children: <Widget>[
                             SizedBox(
-                              height: size.height * 0.05,
+                              height: size.height * 0.09,
                             ),
                             widget.user.getData()['profilePhoto'] != null
                                 ? Row(
@@ -195,14 +195,14 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                                   )
                                 : Container(),
                             SizedBox(
-                              height: size.height * 0.06,
+                              height: size.height * 0.09,
                             ),
                             Divider(
                               color: kPrimaryColor,
                               height: 1.5,
                             ),
                             SizedBox(
-                              height: size.height * 0.1,
+                              height: size.height * 0.09,
                             ),
                             Center(
                               child: InkWell(

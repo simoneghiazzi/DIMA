@@ -33,6 +33,7 @@ class _ActiveChatsExpertsBodyState extends State<ActiveChatsExpertsBody> {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     authViewModel.setNotification(expertViewModel.loggedUser);
+    chatViewModel.conversation.senderUser = expertViewModel.loggedUser;
     initActiveChats();
   }
 
@@ -46,67 +47,54 @@ class _ActiveChatsExpertsBodyState extends State<ActiveChatsExpertsBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              FutureBuilder(
-                future: chatViewModel.loadChats(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return TopBarExperts(
-                      text: 'Chats',
-                      button: InkWell(
-                          child: CircleAvatar(
-                            radius: 30,
-                            backgroundColor: Colors.white,
-                            child: ClipOval(
-                              child: Image.network(
-                                expertViewModel.loggedUser
-                                    .getData()['profilePhoto'],
-                                fit: BoxFit.cover,
-                                width: 60.0,
-                                height: 60.0,
-                                loadingBuilder: (BuildContext context,
-                                    Widget child,
-                                    ImageChunkEvent loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return SizedBox(
-                                    width: 57.0,
-                                    height: 57.0,
-                                    child: CircularProgressIndicator(
-                                      color: kPrimaryColor,
-                                      value: loadingProgress
-                                                      .expectedTotalBytes !=
-                                                  null &&
-                                              loadingProgress
-                                                      .expectedTotalBytes !=
-                                                  null
-                                          ? loadingProgress
-                                                  .cumulativeBytesLoaded /
-                                              loadingProgress.expectedTotalBytes
-                                          : null,
-                                    ),
-                                  );
-                                },
-                                errorBuilder: (context, object, stackTrace) {
-                                  return CircleAvatar(
-                                      radius: 60,
-                                      backgroundColor: Colors.white,
-                                      child: Text(
-                                        "${expertViewModel.loggedUser.name[0]}",
-                                        style: TextStyle(
-                                            color: kPrimaryColor, fontSize: 30),
-                                      ));
-                                },
+              TopBarExperts(
+                text: 'Chats',
+                button: InkWell(
+                    child: CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.white,
+                      child: ClipOval(
+                        child: Image.network(
+                          expertViewModel.loggedUser.getData()['profilePhoto'],
+                          fit: BoxFit.cover,
+                          width: 60.0,
+                          height: 60.0,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return SizedBox(
+                              width: 57.0,
+                              height: 57.0,
+                              child: CircularProgressIndicator(
+                                color: kPrimaryColor,
+                                value: loadingProgress.expectedTotalBytes !=
+                                            null &&
+                                        loadingProgress.expectedTotalBytes !=
+                                            null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes
+                                    : null,
                               ),
-                            ),
-                          ),
-                          onTap: () {
-                            routerDelegate.pushPage(
-                                name: UserProfileScreen.route,
-                                arguments: expertViewModel.loggedUser);
-                          }),
-                    );
-                  }
-                  return Container();
-                },
+                            );
+                          },
+                          errorBuilder: (context, object, stackTrace) {
+                            return CircleAvatar(
+                                radius: 60,
+                                backgroundColor: Colors.white,
+                                child: Text(
+                                  "${expertViewModel.loggedUser.name[0]}",
+                                  style: TextStyle(
+                                      color: kPrimaryColor, fontSize: 30),
+                                ));
+                          },
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      routerDelegate.pushPage(
+                          name: UserProfileScreen.route,
+                          arguments: expertViewModel.loggedUser);
+                    }),
               ),
               ChatsListConstructor(
                 isExpert: true,
