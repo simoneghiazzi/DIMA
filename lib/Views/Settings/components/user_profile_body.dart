@@ -42,7 +42,7 @@ class _UserProfileBodyState extends State<UserProfileBody> {
               child: Column(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.only(top: 50, bottom: 10),
+                padding: EdgeInsets.only(top: 40, bottom: 10),
                 child: widget.user.getData()['profilePhoto'] != null
                     ? CircleAvatar(
                         radius: 50,
@@ -92,7 +92,7 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                           size: 70,
                           color: kPrimaryColor,
                         )),
-                height: 170.0,
+                height: 150.0,
                 width: size.width,
                 color: kPrimaryColor,
               ),

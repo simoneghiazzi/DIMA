@@ -1,5 +1,6 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Diary/diary_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/components/base_user_home_page.dart';
 import 'package:dima_colombo_ghiazzi/Views/Settings/user_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
@@ -24,6 +25,7 @@ class _BaseUserHomeScreenState extends State<BaseUserHomeScreen> {
     authViewModel.setNotification(baseUserViewModel.loggedUser);
     final List<Widget> _pages = [
       BaseUserHomePage(),
+      DiaryScreen(),
       UserProfileScreen(user: baseUserViewModel.loggedUser)
     ];
     return new WillPopScope(
@@ -45,6 +47,8 @@ class _BaseUserHomeScreenState extends State<BaseUserHomeScreen> {
                   label: 'Home',
                 ),
                 BottomNavigationBarItem(
+                    icon: Icon(Icons.menu_book), label: 'Diary'),
+                BottomNavigationBarItem(
                     icon: Icon(Icons.person), label: 'Profile')
               ]),
         ));
@@ -52,6 +56,7 @@ class _BaseUserHomeScreenState extends State<BaseUserHomeScreen> {
 
   void _onBottomNavTapped(int index) {
     setState(() {
+      FocusScope.of(context).unfocus();
       _currentIndex = index;
     });
   }

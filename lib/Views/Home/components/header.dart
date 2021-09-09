@@ -31,6 +31,7 @@ class _HeaderState extends State<Header> {
     return Container(
         padding: EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(color: kPrimaryColor),
+        height: 150,
         child: ListTile(
           contentPadding: EdgeInsets.only(left: 20, top: 60),
           title: Text(
