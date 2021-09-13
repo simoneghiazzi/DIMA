@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-//import '../home.dart';
-
 class AddEntry extends StatefulWidget {
   static const routeName = 'add-entry';
 

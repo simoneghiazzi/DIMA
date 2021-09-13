@@ -354,19 +354,21 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                   ),
                 ],
               )),
-          Positioned(
-            top: 60,
-            left: 25,
-            child: FloatingActionButton(
-              mini: true,
-              onPressed: () {
-                routerDelegate.pop();
-              },
-              materialTapTargetSize: MaterialTapTargetSize.padded,
-              backgroundColor: Colors.transparent,
-              child: const Icon(Icons.arrow_back, size: 40.0),
-            ),
-          ),
+          widget.user.getData()['profilePhoto'] != null
+              ? Positioned(
+                  top: 60,
+                  left: 25,
+                  child: FloatingActionButton(
+                    mini: true,
+                    onPressed: () {
+                      routerDelegate.pop();
+                    },
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    backgroundColor: Colors.transparent,
+                    child: const Icon(Icons.arrow_back, size: 40.0),
+                  ),
+                )
+              : Container(),
         ],
       ),
     );
