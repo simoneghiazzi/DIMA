@@ -1,0 +1,10 @@
+TODO DIMA
+
+- Diary (link con gli esperti?)
+- Fix chat
+- Delete account
+- Grafica (aspetto e layout tablet/smartphone)
+- Testing porcoooo
+- Doppio check per email e password 
+
+- (Appuntamenti con esperti) 
