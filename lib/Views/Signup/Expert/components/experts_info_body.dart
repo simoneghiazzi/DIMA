@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_info_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
@@ -12,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:form_builder_image_picker/form_builder_image_picker.dart';
@@ -28,6 +31,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
   ExpertInfoViewModel expertInfoViewModel;
   AppRouterDelegate routerDelegate;
   bool nextEnabled;
+  File _image;
 
   @override
   void initState() {
@@ -38,6 +42,17 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
 
   @override
   Widget build(BuildContext context) {
+    Future getImage() async {
+      ImagePicker _picker = ImagePicker();
+      var image = await _picker.getImage(source: ImageSource.gallery);
+      expertInfoViewModel.profilePhoto = image.path.toString();
+
+      setState(() {
+        _image = File(image.path);
+        nextEnabled = true;
+      });
+    }
+
     Size size = MediaQuery.of(context).size;
     return Background(
       child: Padding(
@@ -207,7 +222,48 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                     },
                   ),
                 ),
-                FormBuilderImagePicker(
+                SizedBox(height: size.height * 0.04),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    CircleAvatar(
+                      radius: size.width / 3.9,
+                      backgroundColor: kPrimaryColor,
+                      child: CircleAvatar(
+                        radius: size.width / 4,
+                        backgroundColor: kPrimaryLightColor,
+                        child: ClipOval(
+                          child: new SizedBox(
+                            width: 180.0,
+                            height: 180.0,
+                            child: (_image != null)
+                                ? Image.file(
+                                    _image,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.asset(
+                                    "assets/icons/logo.png",
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      padding: EdgeInsets.all(0),
+                      color: kPrimaryColor,
+                      icon: Icon(
+                        Icons.camera_alt_outlined,
+                        size: size.width / 10,
+                      ),
+                      onPressed: () {
+                        getImage();
+                      },
+                    ),
+                  ],
+                ),
+                /* FormBuilderImagePicker(
                     name: 'photo',
                     decoration:
                         const InputDecoration(labelText: 'Profile photo'),
@@ -221,7 +277,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                         });
                       }
                     },
-                    validator: FormBuilderValidators.required(context)),
+                    validator: FormBuilderValidators.required(context)),*/
                 SizedBox(height: size.height * 0.04),
                 RoundedButton(
                   text: "NEXT",
@@ -305,7 +361,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                 arguments: InfoArguments(expertInfoViewModel,
                     Provider.of<ExpertViewModel>(context, listen: false)));
           },
-          color: kPrimaryColor,
+          color: Colors.transparent,
         ),
         DialogButton(
           child: Text(

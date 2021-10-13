@@ -58,6 +58,7 @@ dependencies:
   auto_size_text: ^2.1.0
   url_launcher: ^6.0.9
   dio: ^4.0.0
+  cached_network_image: ^3.1.0
 
 dev_dependencies:
   flutter_test:
