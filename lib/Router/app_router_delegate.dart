@@ -5,6 +5,8 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingCh
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Diary/add_page_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Diary/diary_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
@@ -119,6 +121,12 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
         break;
       case BaseUserHomeScreen.route:
         child = BaseUserHomeScreen();
+        break;
+      case DiaryScreen.route:
+        child = DiaryScreen();
+        break;
+      case AddPageScreen.route:
+        child = AddPageScreen();
         break;
     }
     return MaterialPage(

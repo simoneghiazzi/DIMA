@@ -1,17 +1,33 @@
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
+import 'package:dima_colombo_ghiazzi/Model/db_item.dart';
 
-class Entry {
-  int id;
+class Entry implements DbItem {
+  String id;
   String title;
   String content;
-  String imageUrl;
-  String createdAt;
+  DateTime date;
 
-  Entry.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        title = json['title'],
-        content = json['content'],
-        imageUrl = json['image_url'],
-        createdAt = new DateFormat.yMMMd("en_US")
-            .format(DateTime.parse(json['created_at']));
+  Entry({this.id, this.title, this.content, this.date});
+
+  void setFromDocument(DocumentSnapshot doc) {
+    try {
+      id = doc.id;
+    } catch (e) {}
+    try {
+      title = doc.get('title');
+    } catch (e) {}
+    try {
+      content = doc.get('content');
+    } catch (e) {}
+    try {
+      date = doc.get('date');
+    } catch (e) {}
+  }
+
+  getData() {
+    return {'id': id, 'title': title, 'content': content, 'date': date};
+  }
+
+  Collection get collection => Collection.REPORTS;
 }

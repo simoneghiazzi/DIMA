@@ -7,7 +7,8 @@ enum Collection {
   ACTIVE_CHATS,
   PENDING_CHATS,
   REQUESTS_CHATS,
-  EXPERT_CHATS
+  EXPERT_CHATS,
+  DIARY
 }
 
 extension Utils on Collection {
@@ -39,6 +40,9 @@ extension Utils on Collection {
         break;
       case Collection.EXPERT_CHATS:
         return 'expertChats';
+        break;
+      case Collection.DIARY:
+        return 'diary';
         break;
       default:
         return '';

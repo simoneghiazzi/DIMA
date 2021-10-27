@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/entry.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/conversation.dart';
@@ -448,4 +449,30 @@ class FirestoreService {
         .orderBy('date', descending: true)
         .snapshots();
   }
+
+  /**************************************** DIARY ********************************************/
+
+  /// Add a user into the firestore DB.
+  /// It takes the [user] and based on the type it adds him/her to the list of experts or to the list
+  /// of users and it increments the collection counter.
+  Future<void> addDiaryPageIntoDB(String userId, Entry entry) async {
+    await _firestore
+        .collection(Collection.DIARY.value)
+        .doc(userId)
+        .collection('diaryPages')
+        .doc(entry.id)
+        .set(entry.getData())
+        .catchError((error) => print("Failed to add page: $error"));
+  }
+
+  /// Delete a user from the firestore DB.
+  /// It takes the [user] and based on the type it deletes him/her from the list of experts or from the list
+  /// of users and it decrements the collection counter.
+  /*Future<void> removeDiaryPageFromDB(String id) async {
+    await _firestore
+        .collection(user.collection.value)
+        .doc(user.id)
+        .delete()
+        .catchError((error) => print("Failed to delete user: $error"));
+  }*/
 }
