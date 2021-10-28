@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Model/Services/diary/InputValidator.dart';
+import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
@@ -28,6 +28,8 @@ class _AddEntryState extends State<AddEntry>
   AppRouterDelegate routerDelegate;
   Alert errorAlert;
   Alert successAlert;
+  StreamSubscription<bool> successSubscriber;
+  StreamSubscription<bool> failureSubscriber;
 
   @override
   void initState() {
@@ -48,10 +50,12 @@ class _AddEntryState extends State<AddEntry>
                 curve: Interval(0.2, 1.0, curve: Curves.easeOutBack)));
 
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
-    diaryViewModel = DiaryViewModel(loggedId: baseUserViewModel.id);
+    diaryViewModel = DiaryViewModel(baseUserViewModel.id);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
+    successSubscriber = subscribeToSuccessViewModel();
+    failureSubscriber = subscribeToFailureViewModel();
   }
 
   @override
@@ -85,46 +89,86 @@ class _AddEntryState extends State<AddEntry>
                   Positioned(
                     top: 200.0,
                     child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.symmetric(horizontal: 25),
-                      alignment: Alignment.bottomLeft,
-                      child: Form(
-                        key: _addTitleFormKey,
-                        child: TextFormField(
-                          cursorColor: kPrimaryColor,
-                          style: TextStyle(
-                              color: kPrimaryColor,
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                              shadows: <Shadow>[
-                                Shadow(
-                                  offset: Offset(2.0, 2.0),
-                                  blurRadius: 3.0,
-                                  color: Colors.white,
-                                ),
-                              ]),
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                              hintText: 'What\'s our topic of discussion?',
-                              hintStyle: TextStyle(
-                                  color: kPrimaryColor,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                  shadows: <Shadow>[
-                                    Shadow(
-                                      offset: Offset(0.0, 0.0),
-                                      blurRadius: 5.0,
-                                      color: Colors.white,
-                                    ),
-                                  ])),
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(100),
-                          ],
-                          validator: InputValidator.title,
-                          //onSaved: (value) => _formData['title'] = value,
+                        width: MediaQuery.of(context).size.width,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        alignment: Alignment.bottomLeft,
+                        child: StreamBuilder<String>(
+                            stream: diaryViewModel.diaryForm.errorTitleText,
+                            builder: (context, snapshot) {
+                              return TextField(
+                                controller: diaryViewModel.titleController,
+                                cursorColor: kPrimaryColor,
+                                style: TextStyle(
+                                    color: kPrimaryColor,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                    shadows: <Shadow>[
+                                      Shadow(
+                                        offset: Offset(2.0, 2.0),
+                                        blurRadius: 3.0,
+                                        color: Colors.white,
+                                      ),
+                                    ]),
+                                textAlign: TextAlign.center,
+                                decoration: InputDecoration(
+                                    hintText: "What's out topic of discussion?",
+                                    hintStyle: TextStyle(
+                                        color: kPrimaryColor,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        shadows: <Shadow>[
+                                          Shadow(
+                                            offset: Offset(0.0, 0.0),
+                                            blurRadius: 5.0,
+                                            color: Colors.white,
+                                          ),
+                                        ])),
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(100),
+                                ],
+                              );
+
+                              /*RoundedInputField(
+                                hintText: "What's out topic of discussion?",
+                                controller: diaryViewModel.titleController,
+                                errorText: snapshot.data,
+                              );*/
+                            })
+
+                        /*TextFormField(
+                        cursorColor: kPrimaryColor,
+                        style: TextStyle(
+                            color: kPrimaryColor,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                            shadows: <Shadow>[
+                              Shadow(
+                                offset: Offset(2.0, 2.0),
+                                blurRadius: 3.0,
+                                color: Colors.white,
+                              ),
+                            ]),
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                            hintText: 'What\'s our topic of discussion?',
+                            hintStyle: TextStyle(
+                                color: kPrimaryColor,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                shadows: <Shadow>[
+                                  Shadow(
+                                    offset: Offset(0.0, 0.0),
+                                    blurRadius: 5.0,
+                                    color: Colors.white,
+                                  ),
+                                ])),
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(100),
+                        ],
+                        validator: InputValidator.title,
+                        //onSaved: (value) => _formData['title'] = value,
+                      ),*/
                         ),
-                      ),
-                    ),
                   ),
                   Positioned(
                     top: 300.0,
@@ -149,21 +193,37 @@ class _AddEntryState extends State<AddEntry>
               ),
               Container(
                 padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 50.0),
-                child: Form(
-                  key: _addContentFormKey,
-                  child: TextFormField(
-                    keyboardType: TextInputType.multiline,
-                    style: TextStyle(color: kPrimaryColor, fontSize: 20),
-                    maxLines: null,
-                    cursorColor: Color(0xFF3C4858),
-                    decoration: InputDecoration.collapsed(
-                        hintText: 'Tell me about it...',
-                        hintStyle:
-                            TextStyle(color: kPrimaryColor, fontSize: 20)),
-                    validator: InputValidator.content,
-                    onSaved: (value) => _formData['content'] = value,
-                  ),
-                ),
+                child: StreamBuilder<String>(
+                    stream: diaryViewModel.diaryForm.errorContentText,
+                    builder: (context, snapshot) {
+                      return TextField(
+                          controller: diaryViewModel.contentController,
+                          cursorColor: kPrimaryColor,
+                          style: TextStyle(color: kPrimaryColor, fontSize: 20),
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          decoration: InputDecoration.collapsed(
+                              hintText: 'Tell me about it...',
+                              hintStyle: TextStyle(
+                                  color: kPrimaryColor, fontSize: 20)));
+
+                      /*RoundedInputField(
+                        hintText: "Tell me about it...",
+                        controller: diaryViewModel.contentController,
+                        errorText: snapshot.data,
+                      );*/
+                    }),
+                /*TextFormField(
+                  keyboardType: TextInputType.multiline,
+                  style: TextStyle(color: kPrimaryColor, fontSize: 20),
+                  maxLines: null,
+                  cursorColor: Color(0xFF3C4858),
+                  decoration: InputDecoration.collapsed(
+                      hintText: 'Tell me about it...',
+                      hintStyle: TextStyle(color: kPrimaryColor, fontSize: 20)),
+                  validator: InputValidator.content,
+                  onSaved: (value) => _formData['content'] = value,
+                ),*/
               )
             ],
           ),
@@ -204,39 +264,30 @@ class _AddEntryState extends State<AddEntry>
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 15.0, vertical: 15.0),
-                child: InkResponse(
-                  onTap: () async {
-                    final titleForm = _addTitleFormKey.currentState;
-                    final contentForm = _addContentFormKey.currentState;
-                    if (titleForm.validate()) {
-                      titleForm.save();
-                    }
-                    if (contentForm.validate()) {
-                      contentForm.save();
-                    }
-
-                    if (await diaryViewModel.submitPage(_formData)) {
-                      successAlert.show();
-                    } else {
-                      errorAlert.show();
-                    }
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black12),
-                      borderRadius: BorderRadius.circular(100),
-                      boxShadow: [
-                        BoxShadow(
-                            color: kPrimaryColor.withOpacity(.5),
-                            offset: Offset(1.0, 10.0),
-                            blurRadius: 10.0),
-                      ],
-                    ),
-                    child: Icon(Icons.check, color: kPrimaryColor),
-                  ),
-                ),
+                child: StreamBuilder(
+                    stream: diaryViewModel.diaryForm.isButtonEnabled,
+                    builder: (context, snapshot) {
+                      return InkResponse(
+                        onTap: () {
+                          snapshot.data ? diaryViewModel.submitPage() : null;
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.black12),
+                            borderRadius: BorderRadius.circular(100),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: kPrimaryColor.withOpacity(.5),
+                                  offset: Offset(1.0, 10.0),
+                                  blurRadius: 10.0),
+                            ],
+                          ),
+                          child: Icon(Icons.check, color: kPrimaryColor),
+                        ),
+                      );
+                    }),
               ),
             ),
           ),
@@ -256,6 +307,22 @@ class _AddEntryState extends State<AddEntry>
   void dispose() {
     _optionsAnimationController.dispose();
     super.dispose();
+  }
+
+  StreamSubscription<bool> subscribeToSuccessViewModel() {
+    return diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
+      if (isSuccessfulAdd) {
+        successAlert.show();
+      }
+    });
+  }
+
+  StreamSubscription<bool> subscribeToFailureViewModel() {
+    return diaryViewModel.isPageNotAdded.listen((isUnsuccesfullAdd) {
+      if (isUnsuccesfullAdd) {
+        errorAlert.show();
+      }
+    });
   }
 
   Alert createSuccessAlert() {

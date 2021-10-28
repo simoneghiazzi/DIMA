@@ -1,14 +1,15 @@
 class InputValidator {
-static String title(String value) {
+  static bool title(String value) {
     if (value.isEmpty) {
-      return 'C\'mon, give me a headline!';
+      return false;
     }
-    return null;
+    return true;
   }
-  static String content(String value) {
+
+  static bool content(String value) {
     if (value.isEmpty) {
-      return 'Hey! You haven\'t told me anything yet!';
+      return false;
     }
-    return null;
+    return true;
   }
 }
