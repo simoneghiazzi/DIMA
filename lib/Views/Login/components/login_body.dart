@@ -106,7 +106,7 @@ class _LoginBodyState extends State<LoginBody> {
     FocusScope.of(context).unfocus();
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     Collection collection =
-        await firestoreService.findUserInCollections(authViewModel.id);
+        await firestoreService.findUsersCollection(authViewModel.id);
     switch (collection) {
       case Collection.BASE_USERS:
         var baseUserViewModel =
