@@ -59,6 +59,7 @@ dependencies:
   url_launcher: ^6.0.9
   dio: ^4.0.0
   cached_network_image: ^3.1.0
+  syncfusion_flutter_calendar: ^19.3.47
 
 dev_dependencies:
   flutter_test:
