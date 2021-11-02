@@ -50,7 +50,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) {
                       User user =
-                          widget.createUserCallback(snapshot.data[index]);
+                          widget.createUserCallback(snapshot.data.removeFirst());
                       return ChatListItem(
                           isExpert: widget.isExpert, userItem: user);
                     },

@@ -1,19 +1,10 @@
 TODO DIMA
 
--REGISTRAZIONE GOOGLE
--INSERIRE EXPERTS
--CHAT ESPERTI
--CHAT ANONIMI
--CHECK SHA-1
+- Diary (link con gli esperti?)
+- Fix chat
+- Delete account
+- Grafica (aspetto e layout tablet/smartphone)
+- Testing porcoooo
+- Doppio check per email e password 
 
--APP PER ESPERTI (chat)
-
--VERSIONE TABLET
-
--TESTING
--DOCUMENTAZIONE
-
-
-SE RIUSCIAMO:
--Agenda prenotazioni per esperti
--Diario per l'utente
+- (Appuntamenti con esperti) 

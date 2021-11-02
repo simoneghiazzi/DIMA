@@ -148,7 +148,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
         routerDelegate.pushPage(name: ChatPageScreen.route);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: const Text('No more users.'),
+          content: const Text('No match found.'),
           duration: const Duration(seconds: 5),
         ));
       }

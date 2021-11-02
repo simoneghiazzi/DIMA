@@ -41,7 +41,7 @@ Future<void> main() async {
   print('Already logged user check completed');
   if (alreadyLoggedUserId != null) {
     var collection =
-        await firestoreService.findUserInCollections(alreadyLoggedUserId);
+        await firestoreService.findUsersCollection(alreadyLoggedUserId);
     switch (collection) {
       case Collection.BASE_USERS:
         var baseUserViewModel = BaseUserViewModel();

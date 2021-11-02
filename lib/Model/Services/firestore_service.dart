@@ -1,5 +1,7 @@
+import 'dart:collection';
+import 'package:collection/collection.dart';
 import 'dart:io';
-
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/entry.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
@@ -26,25 +28,24 @@ class FirestoreService {
   /// It takes the [user] and based on the type it adds him/her to the list of experts or to the list
   /// of users and it increments the collection counter.
   Future<void> addUserIntoDB(User user) async {
-    await _firestore
-        .collection(user.collection.value)
-        .doc(user.id)
-        .set(user.getData())
-        .then((value) => print('User added'))
-        .catchError((error) => print("Failed to add user: $error"));
-    await _incrementBaseCollectionCounter(user.collection, 1);
+    var userReference =
+        _firestore.collection(user.collection.value).doc(user.id);
+    await _firestore.runTransaction((transaction) async {
+      transaction.set(userReference, user.getData());
+      await _incrementBaseUsersCounter(transaction, 1);
+    });
   }
 
   /// Delete a user from the firestore DB.
   /// It takes the [user] and based on the type it deletes him/her from the list of experts or from the list
   /// of users and it decrements the collection counter.
   Future<void> removeUserFromDB(User user) async {
-    await _firestore
-        .collection(user.collection.value)
-        .doc(user.id)
-        .delete()
-        .catchError((error) => print("Failed to delete user: $error"));
-    await _incrementBaseCollectionCounter(user.collection, -1);
+    var userReference =
+        _firestore.collection(user.collection.value).doc(user.id);
+    await _firestore.runTransaction((transaction) async {
+      transaction.delete(userReference);
+      await _incrementBaseUsersCounter(transaction, -1);
+    });
   }
 
   /// It takes a [user] and updates the specified [field] with the [newValue] into the DB
@@ -52,8 +53,7 @@ class FirestoreService {
     await _firestore
         .collection(user.collection.value)
         .doc(user.id)
-        .update({field: newValue}).catchError(
-            (error) => print("Error on updating collection field: $error"));
+        .update({field: newValue});
   }
 
   /// Get the list of all the doc in [collection] from the DB
@@ -83,26 +83,23 @@ class FirestoreService {
     return List.from(snap.docs);
   }
 
-  /// Increment the count of the instances of [collection] into the DB
-  Future<void> _incrementBaseCollectionCounter(
-      Collection collection, int increment) async {
-    var utils = await _firestore
-        .collection(collection.value)
-        .doc(Collection.UTILS.value)
-        .get();
+  /// It takes the [increment] amount and increments the user's counter into the DB
+  /// within the [transaction]
+  Future<void> _incrementBaseUsersCounter(
+      Transaction transaction, int increment) async {
+    var utilsReference = _firestore
+        .collection(Collection.BASE_USERS.value)
+        .doc(Collection.UTILS.value);
+    var utils = await transaction.get(utilsReference);
     int counter;
     utils.data() != null ? counter = utils.get('userCounter') : counter = 0;
-    await _firestore
-        .collection(collection.value)
-        .doc(Collection.UTILS.value)
-        .set({'userCounter': counter + increment}).catchError(
-            (error) => print("Failed to update the counter: $error"));
+    transaction.set(utilsReference, {'userCounter': counter + increment});
   }
 
-  /// Get the counter of the intances of [collection] from the DB
-  Future<int> _getBaseCollectionCounter(Collection collection) async {
+  /// Get the counter of the intances of base users from the DB
+  Future<int> _getBaseUsersCounter() async {
     var utils = await _firestore
-        .collection(collection.value)
+        .collection(Collection.BASE_USERS.value)
         .doc(Collection.UTILS.value)
         .get();
     return utils.get('userCounter');
@@ -110,46 +107,47 @@ class FirestoreService {
 
   /// Get random user from the DB. It takes the [user] and the auto-generated [randomId] and it returns a Future BaseUser instance
   // 1. Check if the number of chats of the user is less than the total number of users, if not return null
-  // 2. Get all the active and pending chat users id
-  // 3. Take the ordered list of users with the id <= randomId and take the first
+  // 2. Get all the active, pending and request chat ids set
+  // 3. Take the list of the first _limit users with the id <= randomId and id > randomId and sample a random
   // user id that is not the sender him/herself or that is not in the list of active/pending chat ids
-  // 4. If no user is returned, repeat the search with the ids > randomId
   Future<BaseUser> getRandomUserFromDB(BaseUser user, String randomId) async {
-    if (await _getBaseCollectionCounter(Collection.BASE_USERS) - 1 >
-        await _getChatsCounterFromDB(user)) {
-      List<String> activeIds = await _getChatIds(user, ActiveChat());
-      List<String> pendingIds = await _getChatIds(user, PendingChat());
-      List<String> requests = await _getChatIds(user, Request());
-      var snapshot = await _firestore
-          .collection(user.collection.value)
-          .where('uid', isLessThanOrEqualTo: randomId)
-          .orderBy('uid', descending: true)
-          .limit(_limit)
-          .get();
-      while (true) {
-        for (var doc in snapshot.docs) {
-          if (user.id != doc.get('uid') &&
-              !activeIds.contains(doc.get('uid')) &&
-              !pendingIds.contains(doc.get('uid')) &&
-              !requests.contains(doc.get('uid'))) {
-            var user = BaseUser();
-            user.setFromDocument(doc);
-            return user;
-          }
-        }
-        snapshot = await _firestore
-            .collection(user.collection.value)
-            .where('uid', isGreaterThan: randomId)
-            .orderBy('uid', descending: true)
-            .limit(_limit)
-            .get();
+    if (await _getBaseUsersCounter() - 1 < await _getChatsCounterFromDB(user)) {
+      return null;
+    }
+    HashSet<String> activeIds = await _getChatIdsSet(user, ActiveChat());
+    HashSet<String> pendingIds = await _getChatIdsSet(user, PendingChat());
+    HashSet<String> requests = await _getChatIdsSet(user, Request());
+    var snapshotLess = await _firestore
+        .collection(user.collection.value)
+        .where('uid', isLessThanOrEqualTo: randomId)
+        .orderBy('uid', descending: true)
+        .limit(_limit)
+        .get();
+    var snapshotGreater = await _firestore
+        .collection(user.collection.value)
+        .where('uid', isGreaterThan: randomId)
+        .orderBy('uid', descending: true)
+        .limit(_limit)
+        .get();
+    Random rand = new Random();
+    List randomUsers = new List.from(snapshotLess.docs);
+    randomUsers.addAll(snapshotGreater.docs);
+    while (randomUsers.length != 0) {
+      var doc = randomUsers.removeAt(rand.nextInt(randomUsers.length));
+      if (user.id != doc.get('uid') &&
+          !activeIds.contains(doc.get('uid')) &&
+          !pendingIds.contains(doc.get('uid')) &&
+          !requests.contains(doc.get('uid'))) {
+        var user = BaseUser();
+        user.setFromDocument(doc);
+        return user;
       }
     }
     return null;
   }
 
   /// Find the collection of the user [id] inside the base collections of the DB
-  Future<Collection> findUserInCollections(String id) async {
+  Future<Collection> findUsersCollection(String id) async {
     var baseCollections = [Collection.BASE_USERS, Collection.EXPERTS];
     for (var collection in baseCollections) {
       try {
@@ -170,39 +168,35 @@ class FirestoreService {
     uploadTask.whenComplete(() async {
       updateUserFieldIntoDB(
           user, 'profilePhoto', await firebaseStorageRef.getDownloadURL());
-    }).catchError((err) {
-      print(err);
     });
   }
 
   /***************************************** MESSAGES *****************************************/
 
-  /// It updates the field of the lastMessage of the sender and peer Users. If the chat is new, it
-  /// adds it to the list of chats of the 2 users in the collection specified
-  /// into the [conversation] field and updates the chat counters,
-  Future<void> _updateChatInfo(Conversation conversation, timestamp) async {
-    await _firestore
+  /// It updates within a [transaction] the field of the lastMessage of the sender and peer Users.
+  /// If the chat is new, it   /// adds it to the list of chats of the 2 users in the collection specified
+  /// into the [conversation] field and updates the chat counters
+  Future<void> _updateChatInfo(
+      Transaction transaction, Conversation conversation, timestamp) async {
+    var senderUserRef = _firestore
         .collection(conversation.senderUser.collection.value)
         .doc(conversation.senderUser.id)
         .collection(conversation.senderUserChat.chatCollection.value)
-        .doc(conversation.peerUser.id)
-        .set({'lastMessage': timestamp}).catchError(
-            (error) => print("Error on updating last message: $error"));
-    await _firestore
+        .doc(conversation.peerUser.id);
+    var peerUserRef = _firestore
         .collection(conversation.peerUser.collection.value)
         .doc(conversation.peerUser.id)
         .collection(conversation.peerUserChat.chatCollection.value)
-        .doc(conversation.senderUser.id)
-        .set({'lastMessage': timestamp}).catchError(
-            (error) => print("Error on updating last message: $error"));
+        .doc(conversation.senderUser.id);
     // Increments the counter only if the sender and the peer users are base users and if
     // this is their first message
-    if (conversation.senderUser.collection == Collection.BASE_USERS &&
-        conversation.peerUser.collection == Collection.BASE_USERS &&
-        !await hasMessages(conversation.pairChatId)) {
-      _incrementChatsCounter(conversation.senderUser, 1);
-      _incrementChatsCounter(conversation.peerUser, 1);
+    if (!(await transaction.get(senderUserRef)).exists &&
+        conversation.senderUser.collection == Collection.BASE_USERS &&
+        conversation.peerUser.collection == Collection.BASE_USERS) {
+      await _incrementConversationCounter(transaction, conversation, 1);
     }
+    transaction.set(senderUserRef, {'lastMessage': timestamp});
+    transaction.set(peerUserRef, {'lastMessage': timestamp});
   }
 
   /// It takes the [pairChatId] that is the composite id of the 2 users, the [senderUserChat],
@@ -210,14 +204,15 @@ class FirestoreService {
   /// Then it calls the updateChatInfo method
   Future<void> addMessageIntoDB(Conversation conversation, content) async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
-    var documentReference = _firestore
+    var messagesReference = _firestore
         .collection(Collection.MESSAGES.value)
         .doc(conversation.pairChatId)
         .collection(conversation.pairChatId)
         .doc(timestamp.toString());
-    FirebaseFirestore.instance.runTransaction((transaction) async {
+    await _firestore.runTransaction((transaction) async {
+      await _updateChatInfo(transaction, conversation, timestamp);
       transaction.set(
-        documentReference,
+        messagesReference,
         {
           'idFrom': conversation.senderUser.id,
           'idTo': conversation.peerUser.id,
@@ -226,7 +221,6 @@ class FirestoreService {
         },
       );
     });
-    _updateChatInfo(conversation, timestamp);
   }
 
   /// It takes the [pairChatId] that is the composite id of the 2 users and
@@ -240,19 +234,6 @@ class FirestoreService {
         .snapshots();
   }
 
-  /// It takes the [pairChatId] that is the composite id of the 2 users and returns true
-  /// if there is at least 1 between the pair of users from the DB, false otherwise
-  Future<bool> hasMessages(String pairChatId) async {
-    var snap = await _firestore
-        .collection(Collection.MESSAGES.value)
-        .doc(pairChatId)
-        .collection(pairChatId)
-        .limit(1)
-        .get();
-    if (snap.docs.isNotEmpty) return true;
-    return false;
-  }
-
   /// It takes the [pairChatId] and removes the messages between the 2 users from the DB
   Future<void> removeMessagesFromDB(String pairChatId) async {
     var messages = await _firestore
@@ -260,14 +241,15 @@ class FirestoreService {
         .doc(pairChatId)
         .collection(pairChatId)
         .get();
-    messages.docs.forEach((doc) async {
-      await _firestore
-          .collection(Collection.MESSAGES.value)
-          .doc(pairChatId)
-          .collection(pairChatId)
-          .doc(doc.id)
-          .delete()
-          .catchError((error) => print("Error on remove messages: $error"));
+    await _firestore.runTransaction((transaction) async {
+      for (var doc in messages.docs) {
+        var messagesReference = _firestore
+            .collection(Collection.MESSAGES.value)
+            .doc(pairChatId)
+            .collection(pairChatId)
+            .doc(doc.id);
+        transaction.delete(messagesReference);
+      }
     });
   }
 
@@ -276,95 +258,101 @@ class FirestoreService {
   /// Upgrade a [pendingUserChat] with a [peerUser] to an active chat for both the users.
   Future<void> upgradePendingToActiveChatIntoDB(
       Conversation conversation) async {
-    if (conversation.senderUserChat.chatCollection ==
+    if (conversation.senderUserChat.chatCollection !=
         Collection.PENDING_CHATS) {
-      // Pending chat of the sender user is moved into active chats
-      var pendingChat = await _firestore
-          .collection(conversation.senderUser.collection.value)
-          .doc(conversation.senderUser.id)
-          .collection(conversation.senderUserChat.chatCollection.value)
-          .doc(conversation.peerUser.id)
-          .get();
-      await _firestore
-          .collection(conversation.senderUser.collection.value)
-          .doc(conversation.senderUser.id)
-          .collection(conversation.senderUserChat.chatCollection.value)
-          .doc(conversation.peerUser.id)
-          .delete()
-          .catchError(
-              (error) => print("Error on upgrading pending chats: $error"));
-      await _firestore
-          .collection(conversation.senderUser.collection.value)
-          .doc(conversation.senderUser.id)
-          .collection(Collection.ACTIVE_CHATS.value)
-          .doc(conversation.peerUser.id)
-          .set({'lastMessage': pendingChat.get('lastMessage')}).catchError(
-              (error) => print("Error on upgrading pending chats: $error"));
-      // Request chat of the peer user is moved into active chats
-      var request = await _firestore
-          .collection(conversation.peerUser.collection.value)
-          .doc(conversation.peerUser.id)
-          .collection(conversation.peerUserChat.chatCollection.value)
-          .doc(conversation.senderUser.id)
-          .get();
-      await _firestore
-          .collection(conversation.peerUser.collection.value)
-          .doc(conversation.peerUser.id)
-          .collection(conversation.peerUserChat.chatCollection.value)
-          .doc(conversation.senderUser.id)
-          .delete()
-          .catchError(
-              (error) => print("Error on upgrading pending chats: $error"));
-      await _firestore
-          .collection(conversation.peerUser.collection.value)
-          .doc(conversation.peerUser.id)
-          .collection(Collection.ACTIVE_CHATS.value)
-          .doc(conversation.senderUser.id)
-          .set({'lastMessage': request.get('lastMessage')}).catchError(
-              (error) => print("Error on upgrading pending chats: $error"));
+      return;
     }
+    var pendingChatsReference = _firestore
+        .collection(conversation.senderUser.collection.value)
+        .doc(conversation.senderUser.id)
+        .collection(Collection.PENDING_CHATS.value)
+        .doc(conversation.peerUser.id);
+    var senderActiveChatsReference = _firestore
+        .collection(conversation.senderUser.collection.value)
+        .doc(conversation.senderUser.id)
+        .collection(Collection.ACTIVE_CHATS.value)
+        .doc(conversation.peerUser.id);
+    var requestsReference = _firestore
+        .collection(conversation.peerUser.collection.value)
+        .doc(conversation.peerUser.id)
+        .collection(Collection.REQUESTS_CHATS.value)
+        .doc(conversation.senderUser.id);
+    var peerActiveChatsReference = _firestore
+        .collection(conversation.peerUser.collection.value)
+        .doc(conversation.peerUser.id)
+        .collection(Collection.ACTIVE_CHATS.value)
+        .doc(conversation.senderUser.id);
+
+    await _firestore.runTransaction((transaction) async {
+      var pendingChats = await transaction.get(pendingChatsReference);
+      var request = await transaction.get(requestsReference);
+      // Pending chat of the sender user is moved into active chats
+      transaction.delete(pendingChatsReference);
+      transaction.set(senderActiveChatsReference,
+          {'lastMessage': pendingChats.get('lastMessage')});
+      // Request chat of the peer user is moved into active chats
+      transaction.delete(requestsReference);
+      transaction.set(peerActiveChatsReference,
+          {'lastMessage': request.get('lastMessage')});
+    });
   }
 
-  /// Remove the [conversation] between the [peerUser] and the [senderUser] list
+  /// Remove the [conversation] between the [peerUser] and the [senderUser]
   Future<void> removeChatFromDB(Conversation conversation) async {
-    await _firestore
+    var senderUserReference = _firestore
         .collection(conversation.senderUser.collection.value)
         .doc(conversation.senderUser.id)
         .collection(conversation.senderUserChat.chatCollection.value)
-        .doc(conversation.peerUser.id)
-        .delete()
-        .catchError((error) => print("Error on removing chat: $error"));
-    await _incrementChatsCounter(conversation.senderUser, -1);
-    await _firestore
+        .doc(conversation.peerUser.id);
+    var peerUserReference = _firestore
         .collection(conversation.peerUser.collection.value)
         .doc(conversation.peerUser.id)
         .collection(conversation.peerUserChat.chatCollection.value)
-        .doc(conversation.senderUser.id)
-        .delete()
-        .catchError((error) => print("Error on removing chat: $error"));
-    await _incrementChatsCounter(conversation.peerUser, -1);
+        .doc(conversation.senderUser.id);
+    await _firestore.runTransaction((transaction) async {
+      transaction.delete(senderUserReference);
+      transaction.delete(peerUserReference);
+      await _incrementConversationCounter(transaction, conversation, -1);
+    });
   }
 
   /// It takes the [user] and returns the list of all the [chat] of the
   /// user based on the [chatCollection] field of the Chat.
-  Future<List> getChatsFromDB(User user, Chat chat) async {
-    var ids = await _getChatIds(user, chat);
+  Future<PriorityQueue> getChatsFromDB(User user, Chat chat) async {
+    var ids = await _getChatIdsList(user, chat);
+    var chats =
+        PriorityQueue((a, b) => ids.indexOf(b.id).compareTo(ids.indexOf(a.id)));
     List<List<String>> subList = [];
-    List chats = [];
     for (var i = 0; i < ids.length; i += 10) {
       subList.add(ids.sublist(i, i + 10 > ids.length ? ids.length : i + 10));
     }
     await Future.forEach(subList, (list) async {
       chats.addAll(await _getUsersByList(chat.targetCollection, list));
     });
-    chats.sort((a, b) => ids.indexOf(b.id).compareTo(ids.indexOf(a.id)));
     return chats;
   }
 
-  /// It takes the [user] and returns the list of ids of all the [chat] of the
+  /// It takes the [user] and returns the set of ids of all the [chat] of the
   /// user based on the [chatCollection] field of the Chat.
-  Future<List> _getChatIds(User user, Chat chat) async {
-    List<String> ids = new List.from([]);
+  Future<List> _getChatIdsList(User user, Chat chat) async {
+    List<String> ids = [];
+    var snap = await _firestore
+        .collection(user.collection.value)
+        .doc(user.id)
+        .collection(chat.chatCollection.value)
+        .orderBy('lastMessage')
+        .limit(_limit)
+        .get();
+    for (var doc in snap.docs) {
+      ids.add(doc.id);
+    }
+    return ids;
+  }
+
+  /// It takes the [user] and returns the set of ids of all the [chat] of the
+  /// user based on the [chatCollection] field of the Chat.
+  Future<HashSet> _getChatIdsSet(User user, Chat chat) async {
+    HashSet<String> ids = new HashSet();
     var snap = await _firestore
         .collection(user.collection.value)
         .doc(user.id)
@@ -389,33 +377,41 @@ class FirestoreService {
     return true;
   }
 
-  /// It takes the [user] and the [increment] amount and increments the anonymous chat's counter of the user into the DB
-  Future<void> _incrementChatsCounter(User user, int increment) async {
-    var utils = await _firestore
-        .collection(user.collection.value)
-        .doc(user.id)
+  /// It takes the [conversation] and the [increment] amount and increments the anonymous chat's counter of the users 
+  /// into the DB within the [transaction]
+  Future<void> _incrementConversationCounter(
+      Transaction transaction, Conversation conversation, int increment) async {
+    var utilsSenderReference = _firestore
+        .collection(conversation.senderUser.collection.value)
+        .doc(conversation.senderUser.id)
         .collection(Collection.UTILS.value)
-        .doc(Collection.UTILS.value)
-        .get();
-    int oldCounter;
-    utils.data() != null
-        ? oldCounter = utils.get('anonymousChatCounter')
-        : oldCounter = 0;
-    int newCounter = oldCounter + increment;
-    await _firestore
-        .collection(user.collection.value)
-        .doc(user.id)
+        .doc(Collection.UTILS.value);
+    var utilsPeerReference = _firestore
+        .collection(conversation.peerUser.collection.value)
+        .doc(conversation.peerUser.id)
         .collection(Collection.UTILS.value)
-        .doc(Collection.UTILS.value)
-        .set({
-      'anonymousChatCounter': newCounter < 0 ? 0 : newCounter
-    }).catchError((error) => print("Failed to update the counter: $error"));
+        .doc(Collection.UTILS.value);
+    var utilsSender = await transaction.get(utilsSenderReference);
+    var utilsPeer = await transaction.get(utilsPeerReference);
+    int oldCounterSender, oldCounterPeer;
+    utilsSender.data() != null
+        ? oldCounterSender = utilsSender.get('anonymousChatCounter')
+        : oldCounterSender = 0;
+    utilsPeer.data() != null
+        ? oldCounterPeer = utilsPeer.get('anonymousChatCounter')
+        : oldCounterPeer = 0;
+    int newCounterSender = oldCounterSender + increment;
+    int newCounterPeer = oldCounterPeer + increment;
+    transaction.set(utilsSenderReference,
+        {'anonymousChatCounter': newCounterSender < 0 ? 0 : newCounterSender});
+    transaction.set(utilsPeerReference,
+        {'anonymousChatCounter': newCounterPeer < 0 ? 0 : newCounterPeer});
   }
 
   /// It takes the [user] and returns the anonymous chat's counter from the DB
   Future<int> _getChatsCounterFromDB(User user) async {
     var utils = await _firestore
-        .collection(user.collection.value)
+        .collection(Collection.BASE_USERS.value)
         .doc(user.id)
         .collection(Collection.UTILS.value)
         .doc(Collection.UTILS.value)
@@ -436,8 +432,7 @@ class FirestoreService {
         .doc(id)
         .collection('reportsList')
         .doc(report.id)
-        .set(report.getData())
-        .catchError((error) => print("Error on adding report: $error"));
+        .set(report.getData());
   }
 
   /// It takes the [id] of an user and return the stream of all the reports of the user from the DB

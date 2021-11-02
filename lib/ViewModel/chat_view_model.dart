@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:collection/collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/random_id.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
@@ -86,16 +87,12 @@ class ChatViewModel {
     }
   }
 
-  Future<bool> hasMessages() async {
-    return await firestoreService.hasMessages(conversation.pairChatId);
-  }
-
   Future<bool> hasPendingChats() async {
     return await firestoreService.hasPendingChats(conversation.senderUser);
   }
 
   /// Chat with a [user]
-  Future<void> chatWithUser(User user) async {
+  void chatWithUser(User user) {
     conversation.peerUser = user;
     conversation.computePairChatId();
     _isNewMessageController.add(false);
@@ -106,7 +103,11 @@ class ChatViewModel {
   Future<void> getNewRandomUser() async {
     var randomUser = await firestoreService.getRandomUserFromDB(
         conversation.senderUser, RandomId.generate());
-    if (randomUser == null) _isNewRandomUserController.add(false);
+    if (randomUser == null) {
+      _isNewRandomUserController.add(false);
+      return;
+    }
+    newCurrentUser = false;
     conversation.peerUser = randomUser;
     conversation.computePairChatId();
     _isNewRandomUserController.add(true);
@@ -114,7 +115,7 @@ class ChatViewModel {
 
   /// Load the chat list starting from the [conversation.senderUser] and the
   /// [conversation.senderUserChat]
-  Future<List> loadChats() async {
+  Future<PriorityQueue> loadChats() async {
     try {
       return await firestoreService.getChatsFromDB(
           conversation.senderUser, conversation.senderUserChat);
