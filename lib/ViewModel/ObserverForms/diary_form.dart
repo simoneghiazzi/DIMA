@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Model/Services/diary/InputValidator.dart';
+import 'package:dima_colombo_ghiazzi/Model/Services/diary/input_validator.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class DiaryFormInterface {
@@ -26,11 +26,11 @@ class DiaryForm implements DiaryFormInterface {
 
   @override
   Stream<bool> get titleController =>
-      _titleStream.stream.map((title) => InputValidator.title(title));
+      _titleStream.stream.map((title) => title.isNotEmpty);
 
   @override
   Stream<bool> get contentController =>
-      _contentStream.stream.map((content) => InputValidator.content(content));
+      _contentStream.stream.map((content) => content.isNotEmpty);
 
   @override
   Stream<String> get errorTitleText => titleController.map((isCorrect) =>

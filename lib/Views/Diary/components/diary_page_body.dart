@@ -1,21 +1,19 @@
-/*import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dear_diary/models/entry.dart';
-import 'package:dear_diary/ui/common/diary_confirm_dialog.dart';
-import 'package:dear_diary/ui/entries/edit_entry.dart';
-import 'package:dear_diary/view_model/entry.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../home.dart';
+class DiaryPageBody extends StatefulWidget {
+  final DiaryViewModel diaryViewModel;
 
-class ViewEntry extends StatefulWidget {
-  static const routeName = 'view-entry';
+  DiaryPageBody({Key key, @required this.diaryViewModel}) : super(key: key);
+
 
   @override
-  _ViewEntryState createState() => _ViewEntryState();
+  _DiaryPageBodyState createState() => _DiaryPageBodyState();
 }
 
-class _ViewEntryState extends State<ViewEntry>
+class _DiaryPageBodyState extends State<DiaryPageBody>
     with SingleTickerProviderStateMixin {
   AnimationController _optionsAnimationController;
   Animation<Offset> _optionsAnimation, _optionsDelayedAnimation;
@@ -42,7 +40,8 @@ class _ViewEntryState extends State<ViewEntry>
 
   @override
   Widget build(BuildContext context) {
-    final Entry entry = ModalRoute.of(context).settings.arguments;
+    return Scaffold();
+    /*final Entry entry = ModalRoute.of(context).settings.arguments;
     final String heroTag = 'diary-image-${entry.id}';
 
     return Scaffold(
@@ -243,7 +242,7 @@ class _ViewEntryState extends State<ViewEntry>
           ),
         ],
       ),
-    );
+    );*/
   }
 
   void _setOptionsStatus(AnimationStatus status) {
@@ -263,7 +262,7 @@ class _ViewEntryState extends State<ViewEntry>
 
   // TODO: Handle delete action loading state
 
-  void _onDeleteClicked(int entryId) {
+  /*void _onDeleteClicked(int entryId) {
     showDialog(
       context: context,
       builder: (_) => DiaryConfirmDialog(
@@ -280,7 +279,7 @@ class _ViewEntryState extends State<ViewEntry>
     if (response) {
       Navigator.of(context).popAndPushNamed(Home.routeName);
     }
-  }
+  }*/
 
   @override
   void dispose() {
@@ -318,4 +317,3 @@ class EntryHeaderImage extends StatelessWidget {
     );
   }
 }
-*/

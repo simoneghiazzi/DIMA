@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/db_item.dart';
 
-class Entry implements DbItem {
+class Note implements DbItem {
   String id;
   String title;
   String content;
   DateTime date;
 
-  Entry({this.id, this.title, this.content, this.date});
+  Note({this.id, this.title, this.content, this.date});
 
   void setFromDocument(DocumentSnapshot doc) {
     try {
@@ -21,7 +21,7 @@ class Entry implements DbItem {
       content = doc.get('content');
     } catch (e) {}
     try {
-      date = doc.get('date');
+      date = doc.get('date').toDate();
     } catch (e) {}
   }
 
@@ -29,5 +29,5 @@ class Entry implements DbItem {
     return {'id': id, 'title': title, 'content': content, 'date': date};
   }
 
-  Collection get collection => Collection.REPORTS;
+  Collection get collection => Collection.DIARY;
 }

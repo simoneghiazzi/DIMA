@@ -2,60 +2,56 @@ import 'dart:async';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Diary/add_page_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Diary/add_diary_page_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Diary/diary_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-class AddEntry extends StatefulWidget {
-  static const routeName = 'add-entry';
+class AddDiaryPageBody extends StatefulWidget {
+  final DiaryViewModel diaryViewModel;
 
-  AddEntry({Key key}) : super(key: key);
+  AddDiaryPageBody({Key key, @required this.diaryViewModel}) : super(key: key);
 
-  _AddEntryState createState() => _AddEntryState();
+  _AddDiaryPageBodyState createState() => _AddDiaryPageBodyState();
 }
 
-class _AddEntryState extends State<AddEntry>
+class _AddDiaryPageBodyState extends State<AddDiaryPageBody>
     with SingleTickerProviderStateMixin {
   AnimationController _optionsAnimationController;
   Animation<Offset> _optionsAnimation, _optionsDelayedAnimation;
   bool _optionsIsOpen = false;
 
   BaseUserViewModel baseUserViewModel;
-  DiaryViewModel diaryViewModel;
   AppRouterDelegate routerDelegate;
   Alert errorAlert;
   Alert successAlert;
-  StreamSubscription<bool> successSubscriber;
-  StreamSubscription<bool> failureSubscriber;
+  StreamSubscription<bool> subscription;
 
   @override
   void initState() {
-    super.initState();
     _optionsAnimationController =
         AnimationController(duration: Duration(milliseconds: 500), vsync: this);
     _optionsAnimation = Tween<Offset>(begin: Offset(100, 0), end: Offset(0, 0))
         .animate(CurvedAnimation(
             parent: _optionsAnimationController, curve: Curves.easeOutBack))
-          ..addListener(() {
-            setState(() {});
-          })
-          ..addStatusListener(_setOptionsStatus);
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener(_setOptionsStatus);
     _optionsDelayedAnimation =
         Tween<Offset>(begin: Offset(100, 0), end: Offset(0, 0)).animate(
             CurvedAnimation(
                 parent: _optionsAnimationController,
                 curve: Interval(0.2, 1.0, curve: Curves.easeOutBack)));
-
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
-    diaryViewModel = DiaryViewModel(baseUserViewModel.id);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
-    successSubscriber = subscribeToSuccessViewModel();
-    failureSubscriber = subscribeToFailureViewModel();
+    subscription = subscribeToSuccessViewModel();
+    super.initState();
   }
 
   @override
@@ -93,10 +89,12 @@ class _AddEntryState extends State<AddEntry>
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         alignment: Alignment.bottomLeft,
                         child: StreamBuilder<String>(
-                            stream: diaryViewModel.diaryForm.errorTitleText,
+                            stream:
+                                widget.diaryViewModel.diaryForm.errorTitleText,
                             builder: (context, snapshot) {
                               return TextField(
-                                controller: diaryViewModel.titleController,
+                                controller:
+                                    widget.diaryViewModel.titleController,
                                 cursorColor: kPrimaryColor,
                                 style: TextStyle(
                                     color: kPrimaryColor,
@@ -194,10 +192,10 @@ class _AddEntryState extends State<AddEntry>
               Container(
                 padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 50.0),
                 child: StreamBuilder<String>(
-                    stream: diaryViewModel.diaryForm.errorContentText,
+                    stream: widget.diaryViewModel.diaryForm.errorContentText,
                     builder: (context, snapshot) {
                       return TextField(
-                          controller: diaryViewModel.contentController,
+                          controller: widget.diaryViewModel.contentController,
                           cursorColor: kPrimaryColor,
                           style: TextStyle(color: kPrimaryColor, fontSize: 20),
                           keyboardType: TextInputType.multiline,
@@ -265,28 +263,31 @@ class _AddEntryState extends State<AddEntry>
                 padding: const EdgeInsets.symmetric(
                     horizontal: 15.0, vertical: 15.0),
                 child: StreamBuilder(
-                    stream: diaryViewModel.diaryForm.isButtonEnabled,
+                    stream: widget.diaryViewModel.diaryForm.isButtonEnabled,
                     builder: (context, snapshot) {
-                      return InkResponse(
-                        onTap: () {
-                          snapshot.data ? diaryViewModel.submitPage() : null;
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.black12),
-                            borderRadius: BorderRadius.circular(100),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: kPrimaryColor.withOpacity(.5),
-                                  offset: Offset(1.0, 10.0),
-                                  blurRadius: 10.0),
-                            ],
+                      if (snapshot.data ?? false) {
+                        return InkResponse(
+                          onTap: () {
+                            widget.diaryViewModel.submitPage();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(100),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: kPrimaryColor.withOpacity(.5),
+                                    offset: Offset(1.0, 10.0),
+                                    blurRadius: 10.0),
+                              ],
+                            ),
+                            child: Icon(Icons.check, color: kPrimaryColor),
                           ),
-                          child: Icon(Icons.check, color: kPrimaryColor),
-                        ),
-                      );
+                        );
+                      }
+                      return Container();
                     }),
               ),
             ),
@@ -303,23 +304,11 @@ class _AddEntryState extends State<AddEntry>
     });
   }
 
-  @override
-  void dispose() {
-    _optionsAnimationController.dispose();
-    super.dispose();
-  }
-
   StreamSubscription<bool> subscribeToSuccessViewModel() {
-    return diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
+    return widget.diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
       if (isSuccessfulAdd) {
         successAlert.show();
-      }
-    });
-  }
-
-  StreamSubscription<bool> subscribeToFailureViewModel() {
-    return diaryViewModel.isPageNotAdded.listen((isUnsuccesfullAdd) {
-      if (isUnsuccesfullAdd) {
+      } else {
         errorAlert.show();
       }
     });
@@ -345,8 +334,7 @@ class _AddEntryState extends State<AddEntry>
                 fontWeight: FontWeight.bold),
           ),
           onPressed: () {
-            //routerDelegate.pushPage(name: DiaryScreen.route);
-            routerDelegate.replace(name: AddPageScreen.route);
+            routerDelegate.pop();
             successAlert.dismiss();
           },
           color: Colors.transparent,
@@ -372,13 +360,20 @@ class _AddEntryState extends State<AddEntry>
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            routerDelegate.replace(name: AddPageScreen.route);
+            routerDelegate.pop();
             errorAlert.dismiss();
           },
           color: kPrimaryColor,
         )
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _optionsAnimationController.dispose();
+    subscription.cancel();
+    super.dispose();
   }
 }
 

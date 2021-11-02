@@ -236,7 +236,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                                     ),
                                     onTap: () {
                                       chatViewModel.chatWithUser(widget.expert);
-                                      routerDelegate.replaceAllButNumber(1, [
+                                      routerDelegate.replaceAllButNumber(2, [
                                         RouteSettings(
                                             name: ExpertChatsListScreen.route),
                                         RouteSettings(

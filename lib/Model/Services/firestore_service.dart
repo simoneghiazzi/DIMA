@@ -3,7 +3,7 @@ import 'package:collection/collection.dart';
 import 'dart:io';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/entry.dart';
+import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/note.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/conversation.dart';
@@ -377,7 +377,7 @@ class FirestoreService {
     return true;
   }
 
-  /// It takes the [conversation] and the [increment] amount and increments the anonymous chat's counter of the users 
+  /// It takes the [conversation] and the [increment] amount and increments the anonymous chat's counter of the users
   /// into the DB within the [transaction]
   Future<void> _incrementConversationCounter(
       Transaction transaction, Conversation conversation, int increment) async {
@@ -447,27 +447,25 @@ class FirestoreService {
 
   /**************************************** DIARY ********************************************/
 
-  /// Add a user into the firestore DB.
-  /// It takes the [user] and based on the type it adds him/her to the list of experts or to the list
-  /// of users and it increments the collection counter.
-  Future<void> addDiaryPageIntoDB(String userId, Entry entry) async {
+  /// It takes the [id] of an user and the [note]
+  /// and adds it into the list of diaryPages of the user into the DB
+  Future<void> addDiaryNotesIntoDB(String id, Note note) async {
     await _firestore
-        .collection(Collection.DIARY.value)
-        .doc(userId)
+        .collection(note.collection.value)
+        .doc(id)
         .collection('diaryPages')
-        .doc(entry.id)
-        .set(entry.getData())
-        .catchError((error) => print("Failed to add page: $error"));
+        .doc(note.id)
+        .set(note.getData());
   }
 
-  /// Delete a user from the firestore DB.
-  /// It takes the [user] and based on the type it deletes him/her from the list of experts or from the list
-  /// of users and it decrements the collection counter.
-  /*Future<void> removeDiaryPageFromDB(String id) async {
-    await _firestore
-        .collection(user.collection.value)
-        .doc(user.id)
-        .delete()
-        .catchError((error) => print("Failed to delete user: $error"));
-  }*/
+  /// It takes the [id] of an user and return the stream of all the diaryPages of the user from the DB
+  Future<QuerySnapshot> getDiaryNotesFromDB(
+      String id, DateTime startDate, DateTime endDate) async {
+    return await _firestore
+        .collection(Collection.DIARY.value)
+        .doc(id)
+        .collection('diaryPages')
+        .orderBy('date')
+        .startAt([startDate]).endAt([endDate]).get();
+  }
 }
