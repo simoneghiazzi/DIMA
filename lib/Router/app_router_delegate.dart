@@ -5,7 +5,8 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingCh
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Diary/add_page_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Diary/add_diary_page_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Diary/diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/diary_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
@@ -19,7 +20,7 @@ import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.d
 import 'package:dima_colombo_ghiazzi/Views/Signup/credential_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 
 class InfoArguments {
@@ -125,8 +126,15 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
       case DiaryScreen.route:
         child = DiaryScreen();
         break;
-      case AddPageScreen.route:
-        child = AddPageScreen();
+      case AddDiaryPageScreen.route:
+        child = AddDiaryPageScreen(
+          diaryViewModel: routeSettings.arguments,
+        );
+        break;
+      case DiaryPageScreen.route:
+        child = DiaryPageScreen(
+          diaryViewModel: routeSettings.arguments,
+        );
         break;
     }
     return MaterialPage(
