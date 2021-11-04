@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/note.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -31,12 +32,12 @@ class NoteDataSource extends CalendarDataSource {
 
   @override
   String getSubject(int index) {
-    return "PAGE";
+    return appointments[index].title;
   }
 
   @override
   Color getColor(int index) {
-    return Color(0xffbd8e80);
+    return kPrimaryColor;
   }
 
   @override
