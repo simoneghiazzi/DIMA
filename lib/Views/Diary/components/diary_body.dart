@@ -3,11 +3,13 @@ import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dar
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/add_diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/components/note_data_source.dart';
+import 'package:dima_colombo_ghiazzi/Views/Diary/diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/note.dart';
 
 class DiaryBody extends StatefulWidget {
   _DiaryBodyState createState() => _DiaryBodyState();
@@ -28,6 +30,7 @@ class _DiaryBodyState extends State<DiaryBody> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     DateTime now = new DateTime.now();
     return SafeArea(
         child: FutureBuilder(
@@ -43,13 +46,20 @@ class _DiaryBodyState extends State<DiaryBody> {
               SfCalendar(
                 dataSource: NoteDataSource(snapshot.data, diaryViewModel),
                 headerStyle: CalendarHeaderStyle(
-                    textStyle: TextStyle(color: kPrimaryColor, fontSize: 25)),
+                    textStyle: TextStyle(
+                        color: kPrimaryColor,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold)),
+                headerHeight: 60,
                 cellBorderColor: kPrimaryColor,
                 view: CalendarView.month,
                 monthViewSettings: const MonthViewSettings(
-                    appointmentDisplayMode:
-                        MonthAppointmentDisplayMode.appointment),
+                  appointmentDisplayMode:
+                      MonthAppointmentDisplayMode.appointment,
+                  appointmentDisplayCount: 1,
+                ),
                 loadMoreWidgetBuilder: loadMoreWidget,
+                onTap: showDetails,
               ),
               Align(
                 alignment: Alignment.lerp(
@@ -61,11 +71,11 @@ class _DiaryBodyState extends State<DiaryBody> {
                         arguments: diaryViewModel);
                   },
                   materialTapTargetSize: MaterialTapTargetSize.padded,
-                  backgroundColor: Colors.lightBlue[200],
+                  backgroundColor: kPrimaryColor,
                   child: const Icon(
                     Icons.add,
                     size: 40.0,
-                    color: kPrimaryColor,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -75,6 +85,15 @@ class _DiaryBodyState extends State<DiaryBody> {
         return Container();
       },
     ));
+  }
+
+  void showDetails(CalendarTapDetails details) {
+    if (details.appointments.isNotEmpty) {
+      final Note noteDetails = details.appointments[0];
+      routerDelegate.pushPage(
+          name: DiaryPageScreen.route,
+          arguments: DiaryArguments(diaryViewModel, noteDetails));
+    }
   }
 
   Widget loadMoreWidget(
