@@ -1,8 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/note.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 
@@ -24,8 +23,12 @@ class _DiaryPageBodyState extends State<DiaryPageBody>
   Animation<Offset> _optionsAnimation, _optionsDelayedAnimation;
 
   bool _optionsIsOpen = false;
+
+  DateTime savedDate, now, today;
+
   @override
   void initState() {
+    print(widget.diaryNote.date);
     super.initState();
     _optionsAnimationController =
         AnimationController(duration: Duration(milliseconds: 500), vsync: this);
@@ -41,6 +44,11 @@ class _DiaryPageBodyState extends State<DiaryPageBody>
             CurvedAnimation(
                 parent: _optionsAnimationController,
                 curve: Interval(0.2, 1.0, curve: Curves.easeOutBack)));
+
+    now = DateTime.now();
+    today = DateTime(now.year, now.month, now.day);
+    savedDate = DateTime(widget.diaryNote.date.year,
+        widget.diaryNote.date.month, widget.diaryNote.date.day);
   }
 
   @override
@@ -151,6 +159,58 @@ class _DiaryPageBodyState extends State<DiaryPageBody>
               ),
             ),
           ),
+          savedDate == today
+              ? Positioned(
+                  bottom: 30,
+                  right: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    //QUI MODIFICARE NON INKRESPONSE CHE DIVENTA UNA SOLA COSA CLICCABILE
+                    child: InkResponse(
+                        onTap: () {},
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.black12),
+                                borderRadius: BorderRadius.circular(100),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: kPrimaryColor.withOpacity(.5),
+                                      offset: Offset(1.0, 10.0),
+                                      blurRadius: 10.0),
+                                ],
+                              ),
+                              child: Icon(CupertinoIcons.pencil,
+                                  color: kPrimaryColor),
+                            ),
+                            SizedBox(
+                              height: 0.1,
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.black12),
+                                borderRadius: BorderRadius.circular(100),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: kPrimaryColor.withOpacity(.5),
+                                      offset: Offset(1.0, 10.0),
+                                      blurRadius: 10.0),
+                                ],
+                              ),
+                              child: Icon(CupertinoIcons.heart,
+                                  color: kPrimaryColor),
+                            ),
+                          ],
+                        )),
+                  ),
+                )
+              : Container(),
         ],
       ),
     );

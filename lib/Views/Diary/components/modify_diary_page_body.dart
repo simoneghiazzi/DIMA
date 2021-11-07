@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/note.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
@@ -8,15 +9,18 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-class AddDiaryPageBody extends StatefulWidget {
+class ModifyDiaryPageBody extends StatefulWidget {
   final DiaryViewModel diaryViewModel;
+  final Note diaryNote;
 
-  AddDiaryPageBody({Key key, @required this.diaryViewModel}) : super(key: key);
+  ModifyDiaryPageBody(
+      {Key key, @required this.diaryViewModel, @required this.diaryNote})
+      : super(key: key);
 
-  _AddDiaryPageBodyState createState() => _AddDiaryPageBodyState();
+  _ModifyDiaryPageBodyState createState() => _ModifyDiaryPageBodyState();
 }
 
-class _AddDiaryPageBodyState extends State<AddDiaryPageBody>
+class _ModifyDiaryPageBodyState extends State<ModifyDiaryPageBody>
     with SingleTickerProviderStateMixin {
   AnimationController _optionsAnimationController;
   Animation<Offset> _optionsAnimation, _optionsDelayedAnimation;
@@ -90,7 +94,8 @@ class _AddDiaryPageBodyState extends State<AddDiaryPageBody>
                             stream:
                                 widget.diaryViewModel.diaryForm.errorTitleText,
                             builder: (context, snapshot) {
-                              return TextField(
+                              return TextFormField(
+                                initialValue: widget.diaryNote.title,
                                 controller:
                                     widget.diaryViewModel.titleController,
                                 cursorColor: kPrimaryColor,
@@ -106,65 +111,11 @@ class _AddDiaryPageBodyState extends State<AddDiaryPageBody>
                                       ),
                                     ]),
                                 textAlign: TextAlign.center,
-                                decoration: InputDecoration(
-                                    hintText: "What's out topic of discussion?",
-                                    hintStyle: TextStyle(
-                                        color: kPrimaryColor,
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold,
-                                        shadows: <Shadow>[
-                                          Shadow(
-                                            offset: Offset(0.0, 0.0),
-                                            blurRadius: 5.0,
-                                            color: Colors.white,
-                                          ),
-                                        ])),
                                 inputFormatters: [
                                   LengthLimitingTextInputFormatter(100),
                                 ],
                               );
-
-                              /*RoundedInputField(
-                                hintText: "What's out topic of discussion?",
-                                controller: diaryViewModel.titleController,
-                                errorText: snapshot.data,
-                              );*/
-                            })
-
-                        /*TextFormField(
-                        cursorColor: kPrimaryColor,
-                        style: TextStyle(
-                            color: kPrimaryColor,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            shadows: <Shadow>[
-                              Shadow(
-                                offset: Offset(2.0, 2.0),
-                                blurRadius: 3.0,
-                                color: Colors.white,
-                              ),
-                            ]),
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                            hintText: 'What\'s our topic of discussion?',
-                            hintStyle: TextStyle(
-                                color: kPrimaryColor,
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                                shadows: <Shadow>[
-                                  Shadow(
-                                    offset: Offset(0.0, 0.0),
-                                    blurRadius: 5.0,
-                                    color: Colors.white,
-                                  ),
-                                ])),
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(100),
-                        ],
-                        validator: InputValidator.title,
-                        //onSaved: (value) => _formData['title'] = value,
-                      ),*/
-                        ),
+                            })),
                   ),
                   Positioned(
                     top: 300.0,
@@ -192,34 +143,15 @@ class _AddDiaryPageBodyState extends State<AddDiaryPageBody>
                 child: StreamBuilder<String>(
                     stream: widget.diaryViewModel.diaryForm.errorContentText,
                     builder: (context, snapshot) {
-                      return TextField(
-                          controller: widget.diaryViewModel.contentController,
-                          cursorColor: kPrimaryColor,
-                          style: TextStyle(color: kPrimaryColor, fontSize: 20),
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          decoration: InputDecoration.collapsed(
-                              hintText: 'Tell me about it...',
-                              hintStyle: TextStyle(
-                                  color: kPrimaryColor, fontSize: 20)));
-
-                      /*RoundedInputField(
-                        hintText: "Tell me about it...",
-                        controller: diaryViewModel.contentController,
-                        errorText: snapshot.data,
-                      );*/
+                      return TextFormField(
+                        controller: widget.diaryViewModel.contentController,
+                        cursorColor: kPrimaryColor,
+                        style: TextStyle(color: kPrimaryColor, fontSize: 20),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        initialValue: widget.diaryNote.content,
+                      );
                     }),
-                /*TextFormField(
-                  keyboardType: TextInputType.multiline,
-                  style: TextStyle(color: kPrimaryColor, fontSize: 20),
-                  maxLines: null,
-                  cursorColor: Color(0xFF3C4858),
-                  decoration: InputDecoration.collapsed(
-                      hintText: 'Tell me about it...',
-                      hintStyle: TextStyle(color: kPrimaryColor, fontSize: 20)),
-                  validator: InputValidator.content,
-                  onSaved: (value) => _formData['content'] = value,
-                ),*/
               )
             ],
           ),
