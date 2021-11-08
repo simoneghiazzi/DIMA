@@ -3,11 +3,13 @@ import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dar
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/add_diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/components/note_data_source.dart';
+import 'package:dima_colombo_ghiazzi/Views/Diary/diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/note.dart';
 
 class DiaryBody extends StatefulWidget {
   _DiaryBodyState createState() => _DiaryBodyState();
@@ -18,11 +20,20 @@ class _DiaryBodyState extends State<DiaryBody> {
   BaseUserViewModel baseUserViewModel;
   AppRouterDelegate routerDelegate;
 
+  //Dates and boolused to check whether a note has already been added today
+  DateTime savedDate, now, today;
+  bool canAdd;
+
   @override
   void initState() {
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     diaryViewModel = DiaryViewModel(baseUserViewModel.id);
+
+    now = DateTime.now();
+    today = DateTime(now.year, now.month, now.day);
+    canAdd = true;
+
     super.initState();
   }
 
@@ -37,44 +48,71 @@ class _DiaryBodyState extends State<DiaryBody> {
               now.year, now.month, DateTime(now.year, now.month + 1, 0).day)),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          for (Note note in snapshot.data) {
+            savedDate =
+                DateTime(note.date.year, note.date.month, note.date.day);
+            if (savedDate == today) {
+              canAdd = false;
+            }
+            print(canAdd);
+          }
           return Scaffold(
               body: Stack(
             children: <Widget>[
               SfCalendar(
+                todayHighlightColor: kPrimaryColor,
                 dataSource: NoteDataSource(snapshot.data, diaryViewModel),
                 headerStyle: CalendarHeaderStyle(
-                    textStyle: TextStyle(color: kPrimaryColor, fontSize: 25)),
+                    textStyle: TextStyle(
+                        color: kPrimaryColor,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold)),
+                headerHeight: 60,
                 cellBorderColor: kPrimaryColor,
                 view: CalendarView.month,
                 monthViewSettings: const MonthViewSettings(
-                    appointmentDisplayMode:
-                        MonthAppointmentDisplayMode.appointment),
-                loadMoreWidgetBuilder: loadMoreWidget,
-              ),
-              Align(
-                alignment: Alignment.lerp(
-                    Alignment.bottomRight, Alignment.center, 0.1),
-                child: FloatingActionButton(
-                  onPressed: () {
-                    routerDelegate.pushPage(
-                        name: AddDiaryPageScreen.route,
-                        arguments: diaryViewModel);
-                  },
-                  materialTapTargetSize: MaterialTapTargetSize.padded,
-                  backgroundColor: Colors.lightBlue[200],
-                  child: const Icon(
-                    Icons.add,
-                    size: 40.0,
-                    color: kPrimaryColor,
-                  ),
+                  appointmentDisplayMode:
+                      MonthAppointmentDisplayMode.appointment,
+                  appointmentDisplayCount: 1,
                 ),
+                loadMoreWidgetBuilder: loadMoreWidget,
+                onTap: showDetails,
               ),
+              canAdd
+                  ? Align(
+                      alignment: Alignment.lerp(
+                          Alignment.bottomRight, Alignment.center, 0.1),
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          routerDelegate.pushPage(
+                              name: AddDiaryPageScreen.route,
+                              arguments: diaryViewModel);
+                        },
+                        materialTapTargetSize: MaterialTapTargetSize.padded,
+                        backgroundColor: kPrimaryColor,
+                        child: const Icon(
+                          Icons.add,
+                          size: 40.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  : Container(),
             ],
           ));
         }
         return Container();
       },
     ));
+  }
+
+  void showDetails(CalendarTapDetails details) {
+    if (details.appointments.isNotEmpty) {
+      final Note noteDetails = details.appointments[0];
+      routerDelegate.pushPage(
+          name: DiaryPageScreen.route,
+          arguments: DiaryArguments(diaryViewModel, noteDetails));
+    }
   }
 
   Widget loadMoreWidget(

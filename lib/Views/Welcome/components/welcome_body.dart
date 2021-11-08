@@ -42,14 +42,14 @@ class _WelcomeBodyState extends State<WelcomeBody> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Text(
-              "APPrension",
+              "sApport",
               style: TextStyle(
-                color: kPrimaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
+                  color: kPrimaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 50,
+                  fontFamily: 'Gabriola'),
             ),
-            SizedBox(height: size.height * 0.07),
+            SizedBox(height: size.height * 0.05),
             Image.asset(
               "assets/icons/logo.png",
               height: size.height * 0.15,
