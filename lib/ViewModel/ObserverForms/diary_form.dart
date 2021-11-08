@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Model/Services/diary/input_validator.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class DiaryFormInterface {
