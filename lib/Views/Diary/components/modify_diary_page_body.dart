@@ -53,6 +53,10 @@ class _ModifyDiaryPageBodyState extends State<ModifyDiaryPageBody>
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
     subscription = subscribeToSuccessViewModel();
+
+    widget.diaryViewModel.titleController.text = widget.diaryNote.title;
+    widget.diaryViewModel.contentController.text = widget.diaryNote.content;
+
     super.initState();
   }
 
@@ -94,8 +98,7 @@ class _ModifyDiaryPageBodyState extends State<ModifyDiaryPageBody>
                             stream:
                                 widget.diaryViewModel.diaryForm.errorTitleText,
                             builder: (context, snapshot) {
-                              return TextFormField(
-                                initialValue: widget.diaryNote.title,
+                              return TextField(
                                 controller:
                                     widget.diaryViewModel.titleController,
                                 cursorColor: kPrimaryColor,
@@ -114,6 +117,9 @@ class _ModifyDiaryPageBodyState extends State<ModifyDiaryPageBody>
                                 inputFormatters: [
                                   LengthLimitingTextInputFormatter(100),
                                 ],
+                                decoration: new InputDecoration(
+                                  border: InputBorder.none,
+                                ),
                               );
                             })),
                   ),
@@ -143,13 +149,15 @@ class _ModifyDiaryPageBodyState extends State<ModifyDiaryPageBody>
                 child: StreamBuilder<String>(
                     stream: widget.diaryViewModel.diaryForm.errorContentText,
                     builder: (context, snapshot) {
-                      return TextFormField(
+                      return TextField(
                         controller: widget.diaryViewModel.contentController,
                         cursorColor: kPrimaryColor,
                         style: TextStyle(color: kPrimaryColor, fontSize: 20),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
-                        initialValue: widget.diaryNote.content,
+                        decoration: new InputDecoration(
+                          border: InputBorder.none,
+                        ),
                       );
                     }),
               )
@@ -191,34 +199,28 @@ class _ModifyDiaryPageBodyState extends State<ModifyDiaryPageBody>
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 15.0, vertical: 15.0),
-                child: StreamBuilder(
-                    stream: widget.diaryViewModel.diaryForm.isButtonEnabled,
-                    builder: (context, snapshot) {
-                      if (snapshot.data ?? false) {
-                        return InkResponse(
-                          onTap: () {
-                            widget.diaryViewModel.submitPage();
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.black12),
-                              borderRadius: BorderRadius.circular(100),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: kPrimaryColor.withOpacity(.5),
-                                    offset: Offset(1.0, 10.0),
-                                    blurRadius: 10.0),
-                              ],
-                            ),
-                            child: Icon(Icons.check, color: kPrimaryColor),
-                          ),
-                        );
-                      }
-                      return Container();
-                    }),
+                    horizontal: 15.0, vertical: 30.0),
+                child: InkResponse(
+                  onTap: () {
+                    widget.diaryViewModel.updatePage(
+                        widget.diaryNote.id, widget.diaryNote.isFavourite);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black12),
+                      borderRadius: BorderRadius.circular(100),
+                      boxShadow: [
+                        BoxShadow(
+                            color: kPrimaryColor.withOpacity(.5),
+                            offset: Offset(1.0, 10.0),
+                            blurRadius: 10.0),
+                      ],
+                    ),
+                    child: Icon(Icons.check, color: kPrimaryColor),
+                  ),
+                ),
               ),
             ),
           ),
@@ -248,7 +250,7 @@ class _ModifyDiaryPageBodyState extends State<ModifyDiaryPageBody>
     return Alert(
       closeIcon: null,
       context: context,
-      title: "New page submitted!",
+      title: "Page updated!",
       type: AlertType.success,
       style: AlertStyle(
         animationDuration: Duration(milliseconds: 0),

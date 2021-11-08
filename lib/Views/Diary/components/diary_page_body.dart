@@ -1,7 +1,11 @@
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/note.dart';
+import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Diary/modify_diary_page_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 
@@ -19,36 +23,28 @@ class DiaryPageBody extends StatefulWidget {
 
 class _DiaryPageBodyState extends State<DiaryPageBody>
     with SingleTickerProviderStateMixin {
-  AnimationController _optionsAnimationController;
-  Animation<Offset> _optionsAnimation, _optionsDelayedAnimation;
-
-  bool _optionsIsOpen = false;
-
   DateTime savedDate, now, today;
+
+  DiaryViewModel diaryViewModel;
+  BaseUserViewModel baseUserViewModel;
+  AppRouterDelegate routerDelegate;
+
+  bool isFavourite;
 
   @override
   void initState() {
     print(widget.diaryNote.date);
     super.initState();
-    _optionsAnimationController =
-        AnimationController(duration: Duration(milliseconds: 500), vsync: this);
-    _optionsAnimation = Tween<Offset>(begin: Offset(100, 0), end: Offset(0, 0))
-        .animate(CurvedAnimation(
-            parent: _optionsAnimationController, curve: Curves.easeOutBack))
-          ..addListener(() {
-            setState(() {});
-          })
-          ..addStatusListener(_setOptionsStatus);
-    _optionsDelayedAnimation =
-        Tween<Offset>(begin: Offset(100, 0), end: Offset(0, 0)).animate(
-            CurvedAnimation(
-                parent: _optionsAnimationController,
-                curve: Interval(0.2, 1.0, curve: Curves.easeOutBack)));
-
     now = DateTime.now();
     today = DateTime(now.year, now.month, now.day);
     savedDate = DateTime(widget.diaryNote.date.year,
         widget.diaryNote.date.month, widget.diaryNote.date.day);
+
+    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    diaryViewModel = DiaryViewModel(baseUserViewModel.id);
+
+    isFavourite = widget.diaryNote.isFavourite;
   }
 
   @override
@@ -163,15 +159,20 @@ class _DiaryPageBodyState extends State<DiaryPageBody>
               ? Positioned(
                   bottom: 30,
                   right: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    //QUI MODIFICARE NON INKRESPONSE CHE DIVENTA UNA SOLA COSA CLICCABILE
-                    child: InkResponse(
-                        onTap: () {},
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 15.0),
+                          child: InkResponse(
+                            onTap: () {
+                              routerDelegate.pushPage(
+                                  name: ModifyDiaryPageScreen.route,
+                                  arguments: DiaryArguments(
+                                      diaryViewModel, widget.diaryNote));
+                            },
+                            child: Container(
                               padding: EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -187,74 +188,83 @@ class _DiaryPageBodyState extends State<DiaryPageBody>
                               child: Icon(CupertinoIcons.pencil,
                                   color: kPrimaryColor),
                             ),
-                            SizedBox(
-                              height: 0.1,
+                          )),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                        child: InkResponse(
+                          onTap: () {
+                            diaryViewModel.favouritePage(
+                                widget.diaryNote, !isFavourite);
+                            widget.diaryNote.isFavourite = !isFavourite;
+                            setState(() {
+                              isFavourite = !isFavourite;
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(100),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: kPrimaryColor.withOpacity(.5),
+                                    offset: Offset(1.0, 10.0),
+                                    blurRadius: 10.0),
+                              ],
                             ),
-                            Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.black12),
-                                borderRadius: BorderRadius.circular(100),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: kPrimaryColor.withOpacity(.5),
-                                      offset: Offset(1.0, 10.0),
-                                      blurRadius: 10.0),
-                                ],
-                              ),
-                              child: Icon(CupertinoIcons.heart,
-                                  color: kPrimaryColor),
-                            ),
-                          ],
-                        )),
+                            child: isFavourite
+                                ? Icon(CupertinoIcons.heart_fill,
+                                    color: kPrimaryColor)
+                                : Icon(CupertinoIcons.heart,
+                                    color: kPrimaryColor),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 )
-              : Container(),
+              : Positioned(
+                  bottom: 30,
+                  right: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: InkResponse(
+                      onTap: () {
+                        diaryViewModel.favouritePage(
+                            widget.diaryNote, !widget.diaryNote.isFavourite);
+                        widget.diaryNote.isFavourite = !isFavourite;
+                        setState(() {
+                          isFavourite = !isFavourite;
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.black12),
+                          borderRadius: BorderRadius.circular(100),
+                          boxShadow: [
+                            BoxShadow(
+                                color: kPrimaryColor.withOpacity(.5),
+                                offset: Offset(1.0, 10.0),
+                                blurRadius: 10.0),
+                          ],
+                        ),
+                        child: isFavourite
+                            ? Icon(CupertinoIcons.heart_fill,
+                                color: kPrimaryColor)
+                            : Icon(CupertinoIcons.heart, color: kPrimaryColor),
+                      ),
+                    ),
+                  )),
         ],
       ),
     );
   }
 
-  void _setOptionsStatus(AnimationStatus status) {
-    setState(() {
-      _optionsIsOpen = status == AnimationStatus.forward ||
-          status == AnimationStatus.completed;
-    });
-  }
-
-  void _openOptions() {
-    _optionsAnimationController.forward();
-  }
-
-  void _closeOptions() {
-    _optionsAnimationController.reverse();
-  }
-
-  // TODO: Handle delete action loading state
-
-  /*void _onDeleteClicked(int entryId) {
-    showDialog(
-      context: context,
-      builder: (_) => DiaryConfirmDialog(
-        message: "Are you sure you want to delete this?",
-        onConfirmed: () => _deleteConfirmed(entryId),
-      ),
-    );
-  }
-
-  void _deleteConfirmed(int entryId) async {
-    // Navigator.of(context).pop();
-    final response = await Provider.of<EntryViewModel>(context, listen: false)
-        .delete(entryId);
-    if (response) {
-      Navigator.of(context).popAndPushNamed(Home.routeName);
-    }
-  }*/
-
   @override
   void dispose() {
-    _optionsAnimationController.dispose();
     super.dispose();
   }
 }

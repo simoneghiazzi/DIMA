@@ -10,6 +10,7 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_
 import 'package:dima_colombo_ghiazzi/Views/Diary/add_diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/diary_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Diary/modify_diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
@@ -142,6 +143,13 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
         break;
       case DiaryPageScreen.route:
         child = DiaryPageScreen(
+          diaryViewModel:
+              (routeSettings.arguments as DiaryArguments).diaryViewModel,
+          diaryNote: (routeSettings.arguments as DiaryArguments).diaryNote,
+        );
+        break;
+      case ModifyDiaryPageScreen.route:
+        child = ModifyDiaryPageScreen(
           diaryViewModel:
               (routeSettings.arguments as DiaryArguments).diaryViewModel,
           diaryNote: (routeSettings.arguments as DiaryArguments).diaryNote,

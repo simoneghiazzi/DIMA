@@ -107,6 +107,7 @@ class _AddDiaryPageBodyState extends State<AddDiaryPageBody>
                                     ]),
                                 textAlign: TextAlign.center,
                                 decoration: InputDecoration(
+                                    border: InputBorder.none,
                                     hintText: "What's out topic of discussion?",
                                     hintStyle: TextStyle(
                                         color: kPrimaryColor,

@@ -20,17 +20,25 @@ class _DiaryBodyState extends State<DiaryBody> {
   BaseUserViewModel baseUserViewModel;
   AppRouterDelegate routerDelegate;
 
+  //Dates and boolused to check whether a note has already been added today
+  DateTime savedDate, now, today;
+  bool canAdd;
+
   @override
   void initState() {
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     diaryViewModel = DiaryViewModel(baseUserViewModel.id);
+
+    now = DateTime.now();
+    today = DateTime(now.year, now.month, now.day);
+    canAdd = true;
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     DateTime now = new DateTime.now();
     return SafeArea(
         child: FutureBuilder(
@@ -40,10 +48,19 @@ class _DiaryBodyState extends State<DiaryBody> {
               now.year, now.month, DateTime(now.year, now.month + 1, 0).day)),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          for (Note note in snapshot.data) {
+            savedDate =
+                DateTime(note.date.year, note.date.month, note.date.day);
+            if (savedDate == today) {
+              canAdd = false;
+            }
+            print(canAdd);
+          }
           return Scaffold(
               body: Stack(
             children: <Widget>[
               SfCalendar(
+                todayHighlightColor: kPrimaryColor,
                 dataSource: NoteDataSource(snapshot.data, diaryViewModel),
                 headerStyle: CalendarHeaderStyle(
                     textStyle: TextStyle(
@@ -61,24 +78,26 @@ class _DiaryBodyState extends State<DiaryBody> {
                 loadMoreWidgetBuilder: loadMoreWidget,
                 onTap: showDetails,
               ),
-              Align(
-                alignment: Alignment.lerp(
-                    Alignment.bottomRight, Alignment.center, 0.1),
-                child: FloatingActionButton(
-                  onPressed: () {
-                    routerDelegate.pushPage(
-                        name: AddDiaryPageScreen.route,
-                        arguments: diaryViewModel);
-                  },
-                  materialTapTargetSize: MaterialTapTargetSize.padded,
-                  backgroundColor: kPrimaryColor,
-                  child: const Icon(
-                    Icons.add,
-                    size: 40.0,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              canAdd
+                  ? Align(
+                      alignment: Alignment.lerp(
+                          Alignment.bottomRight, Alignment.center, 0.1),
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          routerDelegate.pushPage(
+                              name: AddDiaryPageScreen.route,
+                              arguments: diaryViewModel);
+                        },
+                        materialTapTargetSize: MaterialTapTargetSize.padded,
+                        backgroundColor: kPrimaryColor,
+                        child: const Icon(
+                          Icons.add,
+                          size: 40.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  : Container(),
             ],
           ));
         }
