@@ -1,7 +1,6 @@
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Diary/add_diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/components/note_data_source.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
@@ -19,27 +18,19 @@ class _DiaryBodyState extends State<DiaryBody> {
   DiaryViewModel diaryViewModel;
   BaseUserViewModel baseUserViewModel;
   AppRouterDelegate routerDelegate;
-
-  //Dates and boolused to check whether a note has already been added today
-  DateTime savedDate, now, today;
-  bool canAdd;
+  DateTime now;
 
   @override
   void initState() {
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    diaryViewModel = DiaryViewModel(baseUserViewModel.id);
-
     now = DateTime.now();
-    today = DateTime(now.year, now.month, now.day);
-    canAdd = true;
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = new DateTime.now();
     return SafeArea(
         child: FutureBuilder(
       future: diaryViewModel.loadPages(
@@ -48,14 +39,6 @@ class _DiaryBodyState extends State<DiaryBody> {
               now.year, now.month, DateTime(now.year, now.month + 1, 0).day)),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          for (Note note in snapshot.data) {
-            savedDate =
-                DateTime(note.date.year, note.date.month, note.date.day);
-            if (savedDate == today) {
-              canAdd = false;
-            }
-            print(canAdd);
-          }
           return Scaffold(
               body: Stack(
             children: <Widget>[
@@ -78,15 +61,13 @@ class _DiaryBodyState extends State<DiaryBody> {
                 loadMoreWidgetBuilder: loadMoreWidget,
                 onTap: showDetails,
               ),
-              canAdd
+              !diaryViewModel.hasNoteToday
                   ? Align(
                       alignment: Alignment.lerp(
                           Alignment.bottomRight, Alignment.center, 0.1),
                       child: FloatingActionButton(
                         onPressed: () {
-                          routerDelegate.pushPage(
-                              name: AddDiaryPageScreen.route,
-                              arguments: diaryViewModel);
+                          routerDelegate.pushPage(name: DiaryPageScreen.route);
                         },
                         materialTapTargetSize: MaterialTapTargetSize.padded,
                         backgroundColor: kPrimaryColor,
@@ -107,11 +88,12 @@ class _DiaryBodyState extends State<DiaryBody> {
   }
 
   void showDetails(CalendarTapDetails details) {
-    if (details.appointments.isNotEmpty) {
-      final Note noteDetails = details.appointments[0];
-      routerDelegate.pushPage(
-          name: DiaryPageScreen.route,
-          arguments: DiaryArguments(diaryViewModel, noteDetails));
+    if (details.appointments != null) {
+      if (details.appointments.isNotEmpty) {
+        final Note noteDetails = details.appointments[0];
+        routerDelegate.pushPage(
+            name: DiaryPageScreen.route, arguments: noteDetails);
+      }
     }
   }
 

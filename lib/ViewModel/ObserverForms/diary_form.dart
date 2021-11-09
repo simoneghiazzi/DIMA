@@ -7,8 +7,6 @@ abstract class DiaryFormInterface {
   Stream<bool> get titleController;
   Stream<bool> get contentController;
   Stream<bool> get isButtonEnabled;
-  Stream<String> get errorTitleText;
-  Stream<String> get errorContentText;
 
   void dispose();
 }
@@ -30,14 +28,6 @@ class DiaryForm implements DiaryFormInterface {
   @override
   Stream<bool> get contentController =>
       _contentStream.stream.map((content) => content.isNotEmpty);
-
-  @override
-  Stream<String> get errorTitleText => titleController.map((isCorrect) =>
-      isCorrect ? false : "You should give a title to this page!");
-
-  @override
-  Stream<String> get errorContentText => contentController.map((isCorrect) =>
-      isCorrect ? false : "You should write something in this page!");
 
   @override
   Stream<bool> get isButtonEnabled =>

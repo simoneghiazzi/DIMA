@@ -1,5 +1,6 @@
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
@@ -17,13 +18,16 @@ class BaseUserGrid extends StatefulWidget {
 class _BaseUserGridState extends State<BaseUserGrid> {
   BaseUserViewModel baseUserViewModel;
   ChatViewModel chatViewModel;
+  DiaryViewModel diaryViewModel;
   AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    diaryViewModel.loggedId = baseUserViewModel.loggedUser.id;
     chatViewModel.conversation.senderUser = baseUserViewModel.loggedUser;
     super.initState();
   }

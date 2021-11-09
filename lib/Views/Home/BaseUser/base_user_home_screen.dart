@@ -9,13 +9,22 @@ import 'package:provider/provider.dart';
 
 class BaseUserHomeScreen extends StatefulWidget {
   static const route = '/baseUserHomeScreen';
+  final int pageIndex;
+
+  BaseUserHomeScreen({Key key, @required this.pageIndex}) : super(key: key);
 
   @override
   _BaseUserHomeScreenState createState() => _BaseUserHomeScreenState();
 }
 
 class _BaseUserHomeScreenState extends State<BaseUserHomeScreen> {
-  int _currentIndex = 0;
+  int _currentIndex;
+
+  @override
+  void initState() {
+    _currentIndex = widget.pageIndex ?? 0;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +37,7 @@ class _BaseUserHomeScreenState extends State<BaseUserHomeScreen> {
       DiaryScreen(),
       UserProfileScreen(user: baseUserViewModel.loggedUser)
     ];
-    return new WillPopScope(
+    return WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
           body: IndexedStack(

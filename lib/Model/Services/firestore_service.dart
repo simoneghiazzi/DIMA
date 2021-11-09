@@ -458,6 +458,19 @@ class FirestoreService {
         .set(note.getData());
   }
 
+  /// It takes the [id] of an user and the [note] and set it as favourite or not
+  Future<void> setFavouriteDiaryNotesIntoDB(String id, Note note) async {
+    var data = note.getData();
+    await _firestore
+        .collection(note.collection.value)
+        .doc(id)
+        .collection('diaryPages')
+        .doc(note.id)
+        .update({
+      'favourite': data['favourite'],
+    });
+  }
+
   /// It takes the [id] of an user and return the stream of all the diaryPages of the user from the DB
   Future<QuerySnapshot> getDiaryNotesFromDB(
       String id, DateTime startDate, DateTime endDate) async {

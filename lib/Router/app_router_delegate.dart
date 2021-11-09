@@ -1,16 +1,12 @@
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/note.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_info_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Diary/add_diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/diary_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Diary/modify_diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
@@ -31,13 +27,6 @@ class InfoArguments {
   final UserViewModel userViewModel;
 
   InfoArguments(this.userInfoViewModel, this.userViewModel);
-}
-
-class DiaryArguments {
-  final DiaryViewModel diaryViewModel;
-  final Note diaryNote;
-
-  DiaryArguments(this.diaryViewModel, this.diaryNote);
 }
 
 class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
@@ -116,7 +105,9 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
         child = ActiveChatsExpertsScreen();
         break;
       case BaseUserHomeScreen.route:
-        child = BaseUserHomeScreen();
+        child = BaseUserHomeScreen(
+          pageIndex: routeSettings.arguments,
+        );
         break;
       case ChatPageScreen.route:
         child = ChatPageScreen();
@@ -130,29 +121,12 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
       case ActiveChatsListScreen.route:
         child = ActiveChatsListScreen();
         break;
-      case BaseUserHomeScreen.route:
-        child = BaseUserHomeScreen();
-        break;
       case DiaryScreen.route:
         child = DiaryScreen();
         break;
-      case AddDiaryPageScreen.route:
-        child = AddDiaryPageScreen(
-          diaryViewModel: routeSettings.arguments,
-        );
-        break;
       case DiaryPageScreen.route:
         child = DiaryPageScreen(
-          diaryViewModel:
-              (routeSettings.arguments as DiaryArguments).diaryViewModel,
-          diaryNote: (routeSettings.arguments as DiaryArguments).diaryNote,
-        );
-        break;
-      case ModifyDiaryPageScreen.route:
-        child = ModifyDiaryPageScreen(
-          diaryViewModel:
-              (routeSettings.arguments as DiaryArguments).diaryViewModel,
-          diaryNote: (routeSettings.arguments as DiaryArguments).diaryNote,
+          diaryNote: routeSettings.arguments,
         );
         break;
     }
