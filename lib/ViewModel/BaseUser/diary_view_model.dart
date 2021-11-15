@@ -9,78 +9,60 @@ class DiaryViewModel {
   final DiaryForm diaryForm = DiaryForm();
   final TextEditingController titleController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
+  Note submittedNote;
+  var hasNoteToday = false;
   var isPageCorrectlyAdded = StreamController<bool>.broadcast();
 
-  final String loggedId;
+  String loggedId;
 
-  DiaryViewModel(this.loggedId) {
+  DiaryViewModel() {
     titleController
         .addListener(() => diaryForm.titleText.add(titleController.text));
     contentController
         .addListener(() => diaryForm.contentText.add(contentController.text));
   }
 
-  Future<void> submitPage() async {
+  Future<void> submitPage({String pageId, bool isFavourite = false}) async {
     var timestamp = DateTime.now();
-    _firestoreService
-        .addDiaryNotesIntoDB(
-            loggedId,
-            Note(
-                id: timestamp.millisecondsSinceEpoch.toString(),
-                title: titleController.text,
-                content: contentController.text,
-                date: timestamp,
-                isFavourite: false))
+    var date = DateTime(timestamp.year, timestamp.month, timestamp.day);
+    submittedNote = Note(
+        id: pageId ?? timestamp.millisecondsSinceEpoch.toString(),
+        title: titleController.text,
+        content: contentController.text,
+        date: date,
+        favourite: isFavourite);
+    await _firestoreService
+        .addDiaryNotesIntoDB(loggedId, submittedNote)
         .then((value) {
       isPageCorrectlyAdded.add(true);
-      titleController.clear();
-      contentController.clear();
     }).catchError((error) {
       isPageCorrectlyAdded.add(false);
     });
   }
 
-  Future<void> updatePage(String pageId, bool isFavourite) async {
-    var timestamp = DateTime.now();
-    _firestoreService
-        .addDiaryNotesIntoDB(
-            loggedId,
-            Note(
-                id: pageId,
-                title: titleController.text,
-                content: contentController.text,
-                date: timestamp,
-                isFavourite: isFavourite))
-        .then((value) {
-      isPageCorrectlyAdded.add(true);
-      titleController.clear();
-      contentController.clear();
-    }).catchError((error) {
-      isPageCorrectlyAdded.add(false);
-    });
+  void clearControllers() {
+    titleController.clear();
+    contentController.clear();
+    diaryForm.titleText.add(null);
+    diaryForm.contentText.add(null);
   }
 
-  Future<void> favouritePage(Note note, bool isFavourite) async {
-    _firestoreService
-        .addDiaryNotesIntoDB(
-            loggedId,
-            Note(
-                id: note.id,
-                title: note.title,
-                content: note.content,
-                date: note.date,
-                isFavourite: isFavourite))
-        .then((value) {
-      isPageCorrectlyAdded.add(true);
-      titleController.clear();
-      contentController.clear();
-    }).catchError((error) {
-      isPageCorrectlyAdded.add(false);
-    });
+  /// Get the data text from the controllers
+  void getData() {
+    if (titleController.text.isNotEmpty)
+      diaryForm.titleText.add(titleController.text);
+    if (contentController.text.isNotEmpty)
+      diaryForm.contentText.add(contentController.text);
+  }
+
+  Future<void> setFavourite(String pageId, bool isFavourite) async {
+    await _firestoreService.setFavouriteDiaryNotesIntoDB(
+        loggedId, Note(id: pageId, favourite: isFavourite));
   }
 
   Future<List<Note>> loadPages(DateTime startDate, DateTime endDate) async {
     final List<Note> pages = List.from([]);
+    var now = DateTime.now();
     var data = await _firestoreService.getDiaryNotesFromDB(
       loggedId,
       startDate,
@@ -90,6 +72,11 @@ class DiaryViewModel {
       Note n = Note();
       n.setFromDocument(doc);
       pages.add(n);
+      if (now.isAfter(startDate) &&
+          now.isBefore(endDate) &&
+          n.date == DateTime(now.year, now.month, now.day)) {
+        hasNoteToday = true;
+      }
     }
     return pages;
   }

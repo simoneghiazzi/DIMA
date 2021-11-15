@@ -60,6 +60,7 @@ dependencies:
   dio: ^4.0.0
   cached_network_image: ^3.1.0
   syncfusion_flutter_calendar: ^19.3.47
+  back_button_interceptor: ^5.0.2
 
 dev_dependencies:
   flutter_test:

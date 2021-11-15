@@ -7,9 +7,9 @@ class Note implements DbItem {
   String title;
   String content;
   DateTime date;
-  bool isFavourite;
+  bool favourite;
 
-  Note({this.id, this.title, this.content, this.date, this.isFavourite});
+  Note({this.id, this.title, this.content, this.date, this.favourite});
 
   void setFromDocument(DocumentSnapshot doc) {
     try {
@@ -25,7 +25,7 @@ class Note implements DbItem {
       date = doc.get('date').toDate();
     } catch (e) {}
     try {
-      isFavourite = doc.get('favourite');
+      favourite = doc.get('favourite');
     } catch (e) {}
   }
 
@@ -35,7 +35,7 @@ class Note implements DbItem {
       'title': title,
       'content': content,
       'date': date,
-      'favourite': isFavourite
+      'favourite': favourite
     };
   }
 

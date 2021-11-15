@@ -4,6 +4,7 @@ import 'package:dima_colombo_ghiazzi/Model/Services/firebase_auth_service.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
@@ -114,6 +115,7 @@ class _MyAppState extends State<MyApp> {
             create: (_) => routerDelegate),
         Provider(create: (context) => AuthViewModel()),
         Provider(create: (context) => ChatViewModel()),
+        Provider(create: (context) => DiaryViewModel()),
         widget.baseUserProvider,
         widget.expertProvider
       ],
