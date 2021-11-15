@@ -47,8 +47,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     if (note == null) {
       modifiable = true;
     } else {
-      diaryViewModel.titleController.text = note.title;
-      diaryViewModel.contentController.text = note.content;
+      diaryViewModel.setTextContent(note.title, note.content);
     }
     super.initState();
   }
@@ -265,7 +264,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       child: StreamBuilder(
                           stream: diaryViewModel.diaryForm.isButtonEnabled,
                           builder: (context, snapshot) {
-                            if (snapshot.data != null) {
+                            if (snapshot.data ?? false || note != null) {
                               return InkResponse(
                                 onTap: () {
                                   if (note != null) {

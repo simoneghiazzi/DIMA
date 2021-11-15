@@ -18,7 +18,6 @@ import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_scr
 import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/credential_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
-import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
 

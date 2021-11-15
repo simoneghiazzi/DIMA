@@ -4,8 +4,6 @@ import 'package:rxdart/rxdart.dart';
 abstract class DiaryFormInterface {
   Sink get titleText;
   Sink get contentText;
-  Stream<bool> get titleController;
-  Stream<bool> get contentController;
   Stream<bool> get isButtonEnabled;
 
   void dispose();
@@ -21,17 +19,15 @@ class DiaryForm implements DiaryFormInterface {
   @override
   Sink get contentText => _contentStream;
 
-  @override
-  Stream<bool> get titleController =>
+  Stream<bool> get _titleController =>
       _titleStream.stream.map((title) => title.isNotEmpty);
 
-  @override
-  Stream<bool> get contentController =>
+  Stream<bool> get _contentController =>
       _contentStream.stream.map((content) => content.isNotEmpty);
 
   @override
   Stream<bool> get isButtonEnabled =>
-      Rx.combineLatest2(titleController, contentController, (a, b) => a && b);
+      Rx.combineLatest2(_titleController, _contentController, (a, b) => a && b);
 
   @override
   void dispose() {

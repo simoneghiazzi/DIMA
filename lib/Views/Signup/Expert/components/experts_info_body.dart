@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_info_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/components/background.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/credential_screen.dart';
@@ -10,14 +10,11 @@ import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_acheck.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-
-import '../experts_signup_screen.dart';
 
 class ExpertsInfoBody extends StatefulWidget {
   @override

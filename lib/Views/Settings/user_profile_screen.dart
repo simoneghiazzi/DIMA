@@ -1,5 +1,4 @@
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'components/user_profile_body.dart';
 
