@@ -7,8 +7,8 @@ import 'package:flutter/widgets.dart';
 class DiaryViewModel {
   FirestoreService _firestoreService = FirestoreService();
   final DiaryForm diaryForm = DiaryForm();
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController contentController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _contentController = TextEditingController();
   Note submittedNote;
   var hasNoteToday = false;
   var isPageCorrectlyAdded = StreamController<bool>.broadcast();
@@ -16,10 +16,10 @@ class DiaryViewModel {
   String loggedId;
 
   DiaryViewModel() {
-    titleController
-        .addListener(() => diaryForm.titleText.add(titleController.text));
-    contentController
-        .addListener(() => diaryForm.contentText.add(contentController.text));
+    _titleController
+        .addListener(() => diaryForm.titleText.add(_titleController.text));
+    _contentController
+        .addListener(() => diaryForm.contentText.add(_contentController.text));
   }
 
   Future<void> submitPage({String pageId, bool isFavourite = false}) async {
@@ -27,8 +27,8 @@ class DiaryViewModel {
     var date = DateTime(timestamp.year, timestamp.month, timestamp.day);
     submittedNote = Note(
         id: pageId ?? timestamp.millisecondsSinceEpoch.toString(),
-        title: titleController.text,
-        content: contentController.text,
+        title: _titleController.text,
+        content: _contentController.text,
         date: date,
         favourite: isFavourite);
     await _firestoreService
@@ -41,18 +41,16 @@ class DiaryViewModel {
   }
 
   void clearControllers() {
-    titleController.clear();
-    contentController.clear();
+    _titleController.clear();
+    _contentController.clear();
     diaryForm.titleText.add(null);
     diaryForm.contentText.add(null);
   }
 
-  /// Get the data text from the controllers
-  void getData() {
-    if (titleController.text.isNotEmpty)
-      diaryForm.titleText.add(titleController.text);
-    if (contentController.text.isNotEmpty)
-      diaryForm.contentText.add(contentController.text);
+  /// Set the text data
+  void setTextContent(String title, String content) {
+    _titleController.text = title;
+    _contentController.text = content;
   }
 
   Future<void> setFavourite(String pageId, bool isFavourite) async {
@@ -82,4 +80,6 @@ class DiaryViewModel {
   }
 
   Stream<bool> get isPageAdded => isPageCorrectlyAdded.stream;
+  TextEditingController get titleController => _titleController;
+  TextEditingController get contentController => _contentController;
 }

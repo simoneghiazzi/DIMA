@@ -6,7 +6,6 @@ import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:open_mail_app/open_mail_app.dart';
 import 'package:provider/provider.dart';

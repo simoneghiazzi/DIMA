@@ -4,7 +4,6 @@ import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/components/note_data_source.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
