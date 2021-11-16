@@ -260,7 +260,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                   child: SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 15.0, vertical: 15.0),
+                          horizontal: 20.0, vertical: 45.0),
                       child: StreamBuilder(
                           stream: diaryViewModel.diaryForm.isButtonEnabled,
                           builder: (context, snapshot) {
@@ -321,7 +321,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     return Alert(
       closeIcon: null,
       context: context,
-      title: "New page submitted!",
+      title: "Page submitted!",
       type: AlertType.success,
       style: AlertStyle(
         animationDuration: Duration(milliseconds: 0),
