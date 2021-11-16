@@ -31,12 +31,16 @@ class _HeaderState extends State<Header> {
     return Container(
         padding: EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(color: kPrimaryColor),
-        height: 150,
+        height: 100,
         child: ListTile(
-          contentPadding: EdgeInsets.only(left: 20, top: 60),
+          contentPadding: EdgeInsets.only(left: 20, top: 25),
           title: Text(
-            'Homepage',
-            style: TextStyle(color: Colors.white, fontSize: 32),
+            "sApport",
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 40,
+                fontFamily: 'Gabriola'),
           ),
         ));
   }
