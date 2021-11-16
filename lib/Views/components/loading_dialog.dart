@@ -30,4 +30,8 @@ class LoadingDialog {
                   ]));
         });
   }
+
+  static void hide(BuildContext context, GlobalKey key) {
+    Navigator.of(key.currentContext, rootNavigator: true).pop();
+  }
 }

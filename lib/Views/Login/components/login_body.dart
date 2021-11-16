@@ -70,7 +70,7 @@ class _LoginBodyState extends State<LoginBody> {
               controller: authViewModel.passwordController,
             ),
             StreamBuilder(
-                stream: authViewModel.loginForm.isButtonEnabled,
+                stream: authViewModel.loginForm.isLoginEnabled,
                 builder: (context, snapshot) {
                   return RoundedButton(
                     text: "LOGIN",

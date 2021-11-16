@@ -9,6 +9,8 @@ import 'dart:async';
 class AuthViewModel {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController repeatedPasswordController =
+      TextEditingController();
   final FirebaseAuthService auth = FirebaseAuthService();
   final FirestoreService firestore = FirestoreService();
   final LoginForm loginForm = LoginForm();
@@ -25,6 +27,8 @@ class AuthViewModel {
         .addListener(() => loginForm.emailText.add(emailController.text));
     passwordController
         .addListener(() => loginForm.passwordText.add(passwordController.text));
+    repeatedPasswordController.addListener(() =>
+        loginForm.repeatedPasswordText.add(repeatedPasswordController.text));
   }
 
   /// Log the user in with email and password
@@ -116,9 +120,11 @@ class AuthViewModel {
   /// Clear the email and password controllers and text
   void clearControllers() {
     passwordController.clear();
+    repeatedPasswordController.clear();
     emailController.clear();
     loginForm.emailText.add(null);
     loginForm.passwordText.add(null);
+    loginForm.repeatedPasswordText.add(null);
   }
 
   /// Resend the email verification if the user has not received it
