@@ -47,28 +47,30 @@ class ChatViewModel {
     }
   }
 
-  //DA RIVEDERE
+  /// Return true if it is the last of a group of messages sent by the sender user
   bool isLastMessageLeft(int index) {
-    if ((index > 0 &&
-            _listMessages[index - 1].get('idFrom') ==
-                conversation.senderUser.id) ||
-        index == 0) {
-      return true;
-    } else {
-      return false;
+    if (_listMessages.isNotEmpty) {
+      if ((index > 0 &&
+              _listMessages[index - 1].get('idFrom') ==
+                  conversation.senderUser.id) ||
+          index == 0) {
+        return true;
+      }
     }
+    return false;
   }
 
-  //DA RIVEDERE
+  /// Return true if it is the last of a group of messages sent by the peer user
   bool isLastMessageRight(int index) {
-    if ((index > 0 &&
-            _listMessages[index - 1].get('idFrom') ==
-                conversation.peerUser.id) ||
-        index == 0) {
-      return true;
-    } else {
-      return false;
+    if (_listMessages.isNotEmpty) {
+      if ((index > 0 &&
+              _listMessages[index - 1].get('idFrom') ==
+                  conversation.peerUser.id) ||
+          index == 0) {
+        return true;
+      }
     }
+    return false;
   }
 
   /// Get the stream of messages between the 2 users

@@ -41,7 +41,7 @@ class ReportViewModel extends FormBloc<String, String> {
   }
 
   // Get all the reports of a user from the DB
-  Stream<QuerySnapshot> loadReports() {
+  Future<QuerySnapshot> loadReports() {
     try {
       return _firestoreService.getReportsFromDB(loggedId);
     } catch (e) {
