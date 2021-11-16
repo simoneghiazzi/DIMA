@@ -87,8 +87,16 @@ class _CredentialBodyState extends State<CredentialBody> {
             RoundedPasswordField(
               controller: authViewModel.passwordController,
             ),
+            StreamBuilder<String>(
+                stream: authViewModel.loginForm.errorRepeatedPasswordText,
+                builder: (context, snapshot) {
+                  return RoundedPasswordField(
+                      controller: authViewModel.repeatedPasswordController,
+                      hintText: "Confirm Password",
+                      errorText: snapshot.data);
+                }),
             StreamBuilder(
-                stream: authViewModel.loginForm.isButtonEnabled,
+                stream: authViewModel.loginForm.isSignUpEnabled,
                 builder: (context, snapshot) {
                   return RoundedButton(
                     text: "SIGN UP",

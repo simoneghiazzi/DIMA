@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_info_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/components/background.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/credential_screen.dart';
@@ -27,11 +26,14 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
   AppRouterDelegate routerDelegate;
   bool nextEnabled;
   File _image;
+  Alert errorAlert;
+  Alert addressConfirmationAlert;
 
   @override
   void initState() {
     nextEnabled = false;
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    errorAlert = createErrorAlert();
     super.initState();
   }
 
@@ -41,7 +43,6 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
       ImagePicker _picker = ImagePicker();
       var image = await _picker.getImage(source: ImageSource.gallery);
       expertInfoViewModel.profilePhoto = image.path.toString();
-
       setState(() {
         _image = File(image.path);
         nextEnabled = true;
@@ -77,14 +78,12 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               LoadingDialog.show(context, _keyLoader);
                             },
                             onSuccess: (context, state) {
-                              Navigator.of(_keyLoader.currentContext,
-                                      rootNavigator: true)
-                                  .pop();
-                              _addressConfirmation(context);
+                              addressConfirmationAlert =
+                                  createAddressConfirmationAlert();
+                              addressConfirmationAlert.show();
                             },
                             onFailure: (context, state) {
-                              _onAddressError(context);
-                              setState(() {});
+                              errorAlert.show();
                             },
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -295,8 +294,8 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
     );
   }
 
-  _onAddressError(context) {
-    Alert(
+  Alert createErrorAlert() {
+    return Alert(
       closeIcon: null,
       context: context,
       title: "NO ADDRESS FOUND",
@@ -311,16 +310,17 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
           onPressed: () {
-            routerDelegate.replace(name: ExpertsSignUpScreen.route);
+            errorAlert.dismiss();
+            LoadingDialog.hide(context, _keyLoader);
           },
           color: kPrimaryColor,
         )
       ],
-    ).show();
+    );
   }
 
-  _addressConfirmation(context) {
-    Alert(
+  Alert createAddressConfirmationAlert() {
+    return Alert(
       closeIcon: null,
       context: context,
       title: "Found address: " + expertInfoViewModel.infoAddress,
@@ -351,6 +351,8 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                 fontWeight: FontWeight.bold),
           ),
           onPressed: () {
+            addressConfirmationAlert.dismiss();
+            LoadingDialog.hide(context, _keyLoader);
             routerDelegate.pushPage(
                 name: CredentialScreen.route,
                 arguments: InfoArguments(expertInfoViewModel,
@@ -365,11 +367,12 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                 color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onPressed: () {
-            routerDelegate.replace(name: ExpertsSignUpScreen.route);
+            addressConfirmationAlert.dismiss();
+            LoadingDialog.hide(context, _keyLoader);
           },
           color: Colors.transparent,
         )
       ],
-    ).show();
+    );
   }
 }
