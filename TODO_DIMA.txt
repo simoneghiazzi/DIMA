@@ -1,10 +1,14 @@
 TODO DIMA
 
-- Diary (link con gli esperti?)
+- titolo home
+- bottone calendario
+- pagina personale release
+- upper case mail
+- parent widget error
+
 - Fix chat
 - Delete account
 - Grafica (aspetto e layout tablet/smartphone)
 - Testing porcoooo
-- Doppio check per email e password 
 
 - (Appuntamenti con esperti) 
