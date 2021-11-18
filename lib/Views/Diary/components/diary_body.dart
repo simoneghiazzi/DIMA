@@ -30,6 +30,7 @@ class _DiaryBodyState extends State<DiaryBody> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return SafeArea(
         child: FutureBuilder(
       future: diaryViewModel.loadPages(
@@ -49,14 +50,20 @@ class _DiaryBodyState extends State<DiaryBody> {
                         color: kPrimaryColor,
                         fontSize: 30,
                         fontWeight: FontWeight.bold)),
-                headerHeight: 60,
+                headerHeight: size.height / 10,
                 cellBorderColor: kPrimaryColor,
                 view: CalendarView.month,
-                monthViewSettings: const MonthViewSettings(
-                  appointmentDisplayMode:
-                      MonthAppointmentDisplayMode.appointment,
-                  appointmentDisplayCount: 1,
-                ),
+                monthViewSettings: MonthViewSettings(
+                    appointmentDisplayMode:
+                        MonthAppointmentDisplayMode.appointment,
+                    appointmentDisplayCount: 1,
+                    showAgenda: true,
+                    agendaViewHeight: size.height / 8,
+                    agendaItemHeight: size.height / 15,
+                    monthCellStyle: MonthCellStyle(
+                      trailingDatesBackgroundColor: kPrimaryLightColor,
+                      leadingDatesBackgroundColor: kPrimaryLightColor,
+                    )),
                 loadMoreWidgetBuilder: loadMoreWidget,
                 onTap: showDetails,
               ),
@@ -88,7 +95,8 @@ class _DiaryBodyState extends State<DiaryBody> {
 
   void showDetails(CalendarTapDetails details) {
     if (details.appointments != null) {
-      if (details.appointments.isNotEmpty) {
+      if (details.appointments.isNotEmpty &&
+          details.targetElement == CalendarElement.appointment) {
         final Note noteDetails = details.appointments[0];
         routerDelegate.pushPage(
             name: DiaryPageScreen.route, arguments: noteDetails);

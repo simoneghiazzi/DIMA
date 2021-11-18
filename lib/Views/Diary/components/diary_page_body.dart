@@ -84,6 +84,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                         alignment: Alignment.bottomLeft,
                         child: Center(
                             child: TextField(
+                          textCapitalization: TextCapitalization.sentences,
                           enabled: modifiable,
                           controller: diaryViewModel.titleController,
                           cursorColor: kPrimaryColor,
@@ -142,6 +143,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
               Container(
                   padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 50.0),
                   child: TextField(
+                      textCapitalization: TextCapitalization.sentences,
                       enabled: modifiable,
                       controller: diaryViewModel.contentController,
                       cursorColor: kPrimaryColor,
@@ -260,7 +262,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                   child: SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 15.0, vertical: 15.0),
+                          horizontal: 20.0, vertical: 45.0),
                       child: StreamBuilder(
                           stream: diaryViewModel.diaryForm.isButtonEnabled,
                           builder: (context, snapshot) {
@@ -321,7 +323,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     return Alert(
       closeIcon: null,
       context: context,
-      title: "New page submitted!",
+      title: "Page submitted!",
       type: AlertType.success,
       style: AlertStyle(
         animationDuration: Duration(milliseconds: 0),

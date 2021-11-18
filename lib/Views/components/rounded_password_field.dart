@@ -8,20 +8,21 @@ class RoundedPasswordField extends StatelessWidget {
   final String errorText;
   final String hintText;
 
-  const RoundedPasswordField({
-    Key key,
-    this.onChanged,
-    this.controller,
-    this.hintText = "Password",
-    this.errorText
-  }) : super(key: key);
+  const RoundedPasswordField(
+      {Key key,
+      this.onChanged,
+      this.controller,
+      this.hintText = "Password",
+      this.errorText})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFieldContainer(
       child: TextField(
+        textCapitalization: TextCapitalization.sentences,
         obscureText: true,
-        onChanged: onChanged,  
+        onChanged: onChanged,
         controller: controller,
         cursorColor: kPrimaryColor,
         decoration: InputDecoration(
