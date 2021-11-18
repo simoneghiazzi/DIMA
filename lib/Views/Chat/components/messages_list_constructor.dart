@@ -12,18 +12,19 @@ class MessagesListConstructor extends StatefulWidget {
 
 class _MessagesListConstructorState extends State<MessagesListConstructor> {
   final ScrollController listScrollController = ScrollController();
+  ChatViewModel chatViewModel;
   Message messageItem = Message();
   int _limitIncrement = 20;
 
   @override
   void initState() {
-    super.initState();
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     listScrollController.addListener(scrollListener);
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     return Flexible(
         child: StreamBuilder(
       stream: chatViewModel.loadMessages(),

@@ -75,8 +75,8 @@ class _ReportsListBodyState extends State<ReportsListBody> {
                 },
               ),
             ),
-            StreamBuilder(
-              stream: widget.reportViewModel.loadReports(),
+            FutureBuilder(
+              future: widget.reportViewModel.loadReports(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(

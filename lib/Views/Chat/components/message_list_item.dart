@@ -3,6 +3,7 @@ import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MessageListItem extends StatefulWidget {
@@ -24,20 +25,39 @@ class _MessageListItemState extends State<MessageListItem> {
       if (widget.messageItem.getData()['idFrom'] ==
           chatViewModel.conversation.senderUser.id) {
         // Right (my message)
-        return Row(
+        return Column(
           children: <Widget>[
-            Container(
-              child: Text(
-                widget.messageItem.getData()['content'],
-                style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
-              ),
-              padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-              width: 200.0,
-              decoration: BoxDecoration(
-                  color: kPrimaryLightColor,
-                  borderRadius: BorderRadius.circular(15.0)),
-              margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
-            )
+            Row(
+              children: [
+                Container(
+                  child: Text(
+                    widget.messageItem.getData()['content'],
+                    style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
+                  ),
+                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                  width: 200.0,
+                  decoration: BoxDecoration(
+                      color: kPrimaryLightColor,
+                      borderRadius: BorderRadius.circular(15.0)),
+                  margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
+                ),
+              ],
+              mainAxisAlignment: MainAxisAlignment.end,
+            ),
+            // Time
+            chatViewModel.isLastMessageRight(widget.index)
+                ? Container(
+                    child: Text(
+                      DateFormat('dd MMM kk:mm')
+                          .format(widget.messageItem.getData()['timestamp']),
+                      style: TextStyle(
+                          color: greyColor,
+                          fontSize: 12.0,
+                          fontStyle: FontStyle.italic),
+                    ),
+                    margin: EdgeInsets.only(left: 225.0, top: 1.0, bottom: 5.0),
+                  )
+                : Container()
           ],
           mainAxisAlignment: MainAxisAlignment.end,
         );
@@ -101,21 +121,20 @@ class _MessageListItemState extends State<MessageListItem> {
                 ],
               ),
               // Time
-              // widget.chatViewModel.isLastMessageLeft(index)
-              //     ? Container(
-              //         child: Text(
-              //           DateFormat('dd MMM kk:mm').format(
-              //               DateTime.fromMillisecondsSinceEpoch(
-              //                   int.parse(document.get('timestamp')))),
-              //           style: TextStyle(
-              //               color: greyColor,
-              //               fontSize: 12.0,
-              //               fontStyle: FontStyle.italic),
-              //         ),
-              //         margin:
-              //             EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
-              //       )
-              //     : Container()
+              chatViewModel.isLastMessageLeft(widget.index)
+                  ? Container(
+                      child: Text(
+                        DateFormat('dd MMM kk:mm')
+                            .format(widget.messageItem.getData()['timestamp']),
+                        style: TextStyle(
+                            color: greyColor,
+                            fontSize: 12.0,
+                            fontStyle: FontStyle.italic),
+                      ),
+                      margin:
+                          EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
+                    )
+                  : Container()
             ],
             crossAxisAlignment: CrossAxisAlignment.start,
           ),

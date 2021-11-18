@@ -19,7 +19,9 @@ class Message implements DbItem {
       idTo = doc.get('idTo');
     } catch (e) {}
     try {
-      timestamp = doc.get('timestamp');
+      int milli = doc.get('timestamp');
+      timestamp =
+          DateTime.fromMillisecondsSinceEpoch(milli);
     } catch (e) {}
     try {
       content = doc.get('content');

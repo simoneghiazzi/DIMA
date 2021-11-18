@@ -435,14 +435,14 @@ class FirestoreService {
         .set(report.getData());
   }
 
-  /// It takes the [id] of an user and return the stream of all the reports of the user from the DB
-  Stream<QuerySnapshot> getReportsFromDB(String id) {
-    return _firestore
+  /// It takes the [id] of an user and return the reports of the user from the DB
+  Future<QuerySnapshot> getReportsFromDB(String id) async {
+    return await _firestore
         .collection(Collection.REPORTS.value)
         .doc(id)
         .collection('reportsList')
         .orderBy('date', descending: true)
-        .snapshots();
+        .get();
   }
 
   /**************************************** DIARY ********************************************/
