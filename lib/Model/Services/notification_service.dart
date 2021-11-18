@@ -47,8 +47,8 @@ class NotificationService {
       Platform.isAndroid
           ? 'com.dfa.flutterchatdemo'
           : 'com.duytq.flutterchatdemo',
-      'DIMA app',
-      'messages notification',
+      'sApport',
+      channelDescription: 'messages notification',
       playSound: true,
       enableVibration: true,
       importance: Importance.max,

@@ -23,44 +23,44 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  provider: ^5.0.0
+  provider: ^6.0.1
   rxdart: ^0.26.0
   email_validator: ^2.0.1
   google_sign_in: ^5.0.3
   flutter_facebook_auth: ^3.5.0
-  firebase_auth: ^1.1.2
-  cloud_firestore: ^2.2.0
+  firebase_auth: ^3.2.0
+  cloud_firestore: ^3.1.0
   firebase_core: ^1.1.0
-  firebase_storage: ^9.0.0
-  firebase_messaging: ^10.0.4
-  flutter_local_notifications: ^8.1.1+1
+  firebase_storage: ^10.1.0
+  firebase_messaging: ^11.1.0
+  flutter_local_notifications: ^9.1.2+1
   intl: ^0.17.0
   async: ^2.6.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  flutter_svg: ^0.19.1
+  flutter_svg: ^0.23.0+1
   google_maps_flutter: ^2.0.3
   geolocator: ^7.0.3
-  geocoder: ^0.2.1
   flutter_google_places: ^0.3.0
   http: ^0.13.3
   rflutter_alert: ^2.0.2
   flutter_form_bloc: ^0.20.1
   flutter_app_badger: ^1.2.0
-  image_picker: ^0.7.4
-  form_builder_image_picker: ^1.0.0-nullsafety.0
+  image_picker: ^0.8.4+4
+  form_builder_image_picker: ^2.0.0
   form_builder_validators: ^7.0.0-beta.0
   firebase_app_check: ^0.0.2+1
-  open_mail_app: ^0.2.0
+  open_mail_app: ^0.3.0
   google_fonts: ^2.1.0
-  auto_size_text: ^2.1.0
+  auto_size_text: ^3.0.0
   url_launcher: ^6.0.9
   dio: ^4.0.0
   cached_network_image: ^3.1.0
   syncfusion_flutter_calendar: ^19.3.47
   back_button_interceptor: ^5.0.2
+  geocoding: ^2.0.1
 
 dev_dependencies:
   flutter_test:

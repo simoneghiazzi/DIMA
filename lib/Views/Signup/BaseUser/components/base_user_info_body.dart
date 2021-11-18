@@ -2,7 +2,6 @@ import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_info_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/credential_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/components/background.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_acheck.dart';
@@ -12,7 +11,6 @@ import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:provider/provider.dart';
 
 class BaseUserInfoBody extends StatelessWidget {
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   @override
   Widget build(BuildContext context) {
     AppRouterDelegate routerDelegate =

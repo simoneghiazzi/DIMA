@@ -41,7 +41,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
   Widget build(BuildContext context) {
     Future getImage() async {
       ImagePicker _picker = ImagePicker();
-      var image = await _picker.getImage(source: ImageSource.gallery);
+      var image = await _picker.pickImage(source: ImageSource.gallery);
       expertInfoViewModel.profilePhoto = image.path.toString();
       setState(() {
         _image = File(image.path);
