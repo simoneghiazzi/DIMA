@@ -25,120 +25,85 @@ class _MessageListItemState extends State<MessageListItem> {
       if (widget.messageItem.getData()['idFrom'] ==
           chatViewModel.conversation.senderUser.id) {
         // Right (my message)
-        return Column(
-          children: <Widget>[
-            Row(
-              children: [
-                Container(
-                  child: Text(
-                    widget.messageItem.getData()['content'],
-                    style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
-                  ),
-                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                  width: 200.0,
-                  decoration: BoxDecoration(
-                      color: kPrimaryLightColor,
-                      borderRadius: BorderRadius.circular(15.0)),
-                  margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
-                ),
-              ],
-              mainAxisAlignment: MainAxisAlignment.end,
-            ),
-            // Time
-            chatViewModel.isLastMessageRight(widget.index)
-                ? Container(
-                    child: Text(
-                      DateFormat('dd MMM kk:mm')
-                          .format(widget.messageItem.getData()['timestamp']),
-                      style: TextStyle(
-                          color: greyColor,
-                          fontSize: 12.0,
-                          fontStyle: FontStyle.italic),
+        return Row(
+          children: [
+            Container(
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                        child: Text(
+                          widget.messageItem.getData()['content'],
+                          style:
+                              GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
+                        ),
+                      ),
                     ),
-                    margin: EdgeInsets.only(left: 225.0, top: 1.0, bottom: 5.0),
-                  )
-                : Container()
+                    // Time
+                    Container(
+                      padding: EdgeInsets.only(right: 8, bottom: 5),
+                      child: Text(
+                        DateFormat('kk:mm')
+                            .format(widget.messageItem.getData()['timestamp']),
+                        style: TextStyle(
+                            color: greyColor,
+                            fontSize: 10.0,
+                            fontStyle: FontStyle.italic),
+                      ),
+                    )
+                  ]),
+              width: 200.0,
+              decoration: BoxDecoration(
+                  color: kPrimaryLightColor,
+                  borderRadius: BorderRadius.circular(15.0)),
+              margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
+            ),
           ],
           mainAxisAlignment: MainAxisAlignment.end,
         );
       } else {
         // Left (peer message)
-        return Container(
-          child: Column(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  chatViewModel.isLastMessageLeft(widget.index)
-                      ? Material(
-                          child: chatViewModel.conversation.peerUser
-                                      .getData()['profileImage'] !=
-                                  null
-                              // Profile Image
-                              ? Image.network(
-                                  chatViewModel.conversation.peerUser
-                                      .getData()['profileImage'],
-                                  loadingBuilder: (BuildContext context,
-                                      Widget child,
-                                      ImageChunkEvent loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        color: kPrimaryColor,
-                                        value: loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null &&
-                                                loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                            ? loadingProgress
-                                                    .cumulativeBytesLoaded /
-                                                loadingProgress
-                                                    .expectedTotalBytes
-                                            : null,
-                                      ),
-                                    );
-                                  },
-                                )
-                              : Icon(
-                                  Icons.account_circle,
-                                  size: 40,
-                                  color: kPrimaryColor,
-                                ))
-                      : Container(width: 35.0),
-                  // Message content
-                  Container(
-                    child: Text(
-                      widget.messageItem.getData()['content'],
-                      style: GoogleFonts.ubuntuCondensed(color: Colors.white),
+        return Row(
+          children: [
+            Container(
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                        child: Text(
+                          widget.messageItem.getData()['content'],
+                          style:
+                              GoogleFonts.ubuntuCondensed(color: Colors.white),
+                        ),
+                      ),
                     ),
-                    padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                    width: 200.0,
-                    decoration: BoxDecoration(
-                        color: kPrimaryColor,
-                        borderRadius: BorderRadius.circular(15.0)),
-                    margin: EdgeInsets.only(left: 10.0),
-                  )
-                ],
-              ),
-              // Time
-              chatViewModel.isLastMessageLeft(widget.index)
-                  ? Container(
+                    // Time
+                    Container(
+                      padding: EdgeInsets.only(right: 8, bottom: 5),
                       child: Text(
-                        DateFormat('dd MMM kk:mm')
+                        DateFormat('kk:mm')
                             .format(widget.messageItem.getData()['timestamp']),
                         style: TextStyle(
                             color: greyColor,
-                            fontSize: 12.0,
+                            fontSize: 10.0,
                             fontStyle: FontStyle.italic),
                       ),
-                      margin:
-                          EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
                     )
-                  : Container()
-            ],
-            crossAxisAlignment: CrossAxisAlignment.start,
-          ),
-          margin: EdgeInsets.only(bottom: 10.0),
+                  ]),
+              width: 200.0,
+              decoration: BoxDecoration(
+                  color: kPrimaryColor,
+                  borderRadius: BorderRadius.circular(15.0)),
+              margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.start,
         );
       }
     } else {

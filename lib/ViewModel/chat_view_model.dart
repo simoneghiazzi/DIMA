@@ -50,10 +50,10 @@ class ChatViewModel {
   /// Return true if it is the last of a group of messages sent by the sender user
   bool isLastMessageLeft(int index) {
     if (_listMessages.isNotEmpty) {
-      if ((index > 0 &&
+      if (index == 0 ||
+          index > 0 &&
               _listMessages[index - 1].get('idFrom') ==
-                  conversation.senderUser.id) ||
-          index == 0) {
+                  conversation.senderUser.id) {
         return true;
       }
     }
@@ -63,10 +63,10 @@ class ChatViewModel {
   /// Return true if it is the last of a group of messages sent by the peer user
   bool isLastMessageRight(int index) {
     if (_listMessages.isNotEmpty) {
-      if ((index > 0 &&
+      if (index == 0 ||
+          index > 0 &&
               _listMessages[index - 1].get('idFrom') ==
-                  conversation.peerUser.id) ||
-          index == 0) {
+                  conversation.peerUser.id) {
         return true;
       }
     }
@@ -78,7 +78,7 @@ class ChatViewModel {
     try {
       var snapshots =
           firestoreService.getStreamMessagesFromDB(conversation.pairChatId);
-      _listMessages.clear();
+      //_listMessages.clear();
       snapshots.forEach((element) {
         _listMessages.addAll(element.docs);
       });

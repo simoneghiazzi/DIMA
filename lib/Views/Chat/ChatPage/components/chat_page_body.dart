@@ -47,6 +47,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
             children: <Widget>[
               peerUser.collection == Collection.EXPERTS
                   ? TopBarChats(
+                      peerExpert: true,
                       circleAvatar: CircleAvatar(
                         radius: 20,
                         backgroundColor: Colors.white,
@@ -94,11 +95,29 @@ class _ChatPageBodyState extends State<ChatPageBody>
                     )
                   : widget.isExpert
                       ? TopBarChats(
+                          peerExpert: false,
+                          circleAvatar: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            child: Icon(
+                              Icons.account_circle,
+                              size: 40,
+                              color: kPrimaryColor,
+                            ),
+                          ),
                           text: peerUser.getData()['name'] +
                               " " +
                               peerUser.getData()['surname'],
                         )
                       : TopBarChats(
+                          peerExpert: false,
+                          circleAvatar: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            child: Icon(
+                              Icons.account_circle,
+                              size: 40,
+                              color: kPrimaryColor,
+                            ),
+                          ),
                           text: peerUser.getData()['name'],
                         ),
               // List of messages

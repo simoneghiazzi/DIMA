@@ -1,10 +1,6 @@
 TODO DIMA
 
-- titolo home
 - bottone calendario
-- pagina personale release
-- upper case mail
-- parent widget error
 
 - Fix chat
 - Delete account

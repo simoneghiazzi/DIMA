@@ -8,12 +8,14 @@ import 'package:provider/provider.dart';
 
 class TopBarChats extends StatelessWidget {
   final String text;
+  final bool peerExpert;
   final CircleAvatar circleAvatar;
 
   TopBarChats({
     Key key,
     @required this.text,
-    this.circleAvatar,
+    @required this.circleAvatar,
+    @required this.peerExpert,
   }) : super(key: key);
 
   @override
@@ -60,7 +62,7 @@ class TopBarChats extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       onTap: () {
-                        if (circleAvatar != null) {
+                        if (peerExpert) {
                           routerDelegate.pushPage(
                               name: ExpertProfileScreen.route,
                               arguments: chatViewModel.conversation.peerUser
