@@ -84,6 +84,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                         alignment: Alignment.bottomLeft,
                         child: Center(
                             child: TextField(
+                          textCapitalization: TextCapitalization.sentences,
                           enabled: modifiable,
                           controller: diaryViewModel.titleController,
                           cursorColor: kPrimaryColor,
@@ -142,6 +143,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
               Container(
                   padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 50.0),
                   child: TextField(
+                      textCapitalization: TextCapitalization.sentences,
                       enabled: modifiable,
                       controller: diaryViewModel.contentController,
                       cursorColor: kPrimaryColor,

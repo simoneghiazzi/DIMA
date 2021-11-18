@@ -95,7 +95,8 @@ class _DiaryBodyState extends State<DiaryBody> {
 
   void showDetails(CalendarTapDetails details) {
     if (details.appointments != null) {
-      if (details.appointments.isNotEmpty) {
+      if (details.appointments.isNotEmpty &&
+          details.targetElement == CalendarElement.appointment) {
         final Note noteDetails = details.appointments[0];
         routerDelegate.pushPage(
             name: DiaryPageScreen.route, arguments: noteDetails);

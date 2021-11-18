@@ -202,6 +202,7 @@ class _MapBodyState extends State<MapBody> {
                 ),
                 Expanded(
                   child: TextField(
+                    textCapitalization: TextCapitalization.sentences,
                     cursorColor: kPrimaryColor,
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.go,

@@ -36,6 +36,7 @@ class _ChatTextInputState extends State<ChatTextInput>
                 child: Padding(
               padding: EdgeInsets.only(left: 20),
               child: TextField(
+                textCapitalization: TextCapitalization.sentences,
                 onSubmitted: (value) {
                   listScrollController.animateTo(0.0,
                       duration: Duration(milliseconds: 300),
