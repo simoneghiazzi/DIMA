@@ -409,7 +409,6 @@ class _UserProfileBodyState extends State<UserProfileBody> {
           isCloseButton: false,
         ),
         content: TextField(
-          textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(
             icon: Icon(Icons.lock, color: kPrimaryColor),
             labelText: 'Password',
