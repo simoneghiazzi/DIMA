@@ -53,11 +53,11 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
               routerDelegate.pushPage(name: MapScreen.route);
             },
             materialTapTargetSize: MaterialTapTargetSize.padded,
-            backgroundColor: Colors.lightBlue[200],
+            backgroundColor: kPrimaryColor,
             child: const Icon(
               Icons.add,
               size: 40.0,
-              color: kPrimaryColor,
+              color: Colors.white,
             ),
           ),
         ),
