@@ -29,20 +29,25 @@ class _HeaderState extends State<Header> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(bottom: 20),
-        decoration: BoxDecoration(color: kPrimaryColor),
-        height: 100,
-        child: ListTile(
-          contentPadding: EdgeInsets.only(left: 20, top: 25),
-          title: Text(
-            "sApport",
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 40,
-                fontFamily: 'Gabriola'),
+      decoration: BoxDecoration(color: kPrimaryColor),
+      height: 100,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0),
+            child: Text(
+              "sApport",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 40,
+                  fontFamily: 'Gabriola'),
+            ),
           ),
-        ));
+        ],
+      ),
+    );
   }
 
   StreamSubscription<bool> subscribeToViewModel() {

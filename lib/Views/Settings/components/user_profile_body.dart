@@ -96,175 +96,169 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                 color: kPrimaryColor,
               ),
               Padding(
-                  padding: EdgeInsets.only(top: 40),
-                  child: Positioned.fill(
-                    child: Container(
-                      padding: EdgeInsets.only(
-                          left: size.width / 10, right: size.width / 10),
-                      color: Colors.white,
-                      child: Center(
-                        child: Column(
-                          children: <Widget>[
-                            Center(
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      color: kPrimaryLightColor,
-                                    ),
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Flexible(
-                                              child: Text(
-                                            widget.user.name.toUpperCase() +
-                                                " " +
-                                                widget.user.surname
-                                                    .toUpperCase(),
-                                            style: TextStyle(
-                                                color: kPrimaryColor,
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.bold),
-                                            textAlign: TextAlign.center,
-                                          ))
-                                        ]))),
-                            Column(
-                              children: <Widget>[
-                                SizedBox(
-                                  height: size.height * 0.05,
+                padding: EdgeInsets.only(top: 40),
+                child: Container(
+                  padding: EdgeInsets.only(
+                      left: size.width / 10, right: size.width / 10),
+                  color: Colors.white,
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Center(
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: kPrimaryLightColor,
                                 ),
-                                widget.user.getData()['profilePhoto'] != null
-                                    ? Row(
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.phone,
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Flexible(
+                                          child: Text(
+                                        widget.user.name.toUpperCase() +
+                                            " " +
+                                            widget.user.surname.toUpperCase(),
+                                        style: TextStyle(
                                             color: kPrimaryColor,
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,
+                                      ))
+                                    ]))),
+                        Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: size.height * 0.05,
+                            ),
+                            widget.user.getData()['profilePhoto'] != null
+                                ? Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.phone,
+                                        color: kPrimaryColor,
+                                      ),
+                                      SizedBox(
+                                        width: size.width * 0.05,
+                                      ),
+                                      Text(widget.user.getData()['phoneNumber'],
+                                          style: TextStyle(
+                                            color: kPrimaryColor,
+                                            fontSize: 15,
+                                          ))
+                                    ],
+                                  )
+                                : Container(),
+                            Container(),
+                            SizedBox(
+                              height: size.height * 0.03,
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.mail,
+                                  color: kPrimaryColor,
+                                ),
+                                SizedBox(
+                                  width: size.width * 0.05,
+                                ),
+                                Flexible(
+                                    child: widget.user.email != null
+                                        ? Text(widget.user.email,
+                                            style: TextStyle(
+                                              color: kPrimaryColor,
+                                              fontSize: 15,
+                                            ))
+                                        : Text(
+                                            "You are logged in with Facebook or with a Google account",
+                                            style: TextStyle(
+                                              color: kPrimaryColor,
+                                              fontSize: 15,
+                                            ))),
+                              ],
+                            ),
+                            widget.user.email != null
+                                ? Column(children: [
+                                    SizedBox(
+                                      height: size.height * 0.03,
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.lock,
+                                          color: kPrimaryColor,
+                                        ),
+                                        SizedBox(
+                                          width: size.width * 0.05,
+                                        ),
+                                        Flexible(
+                                          child: GestureDetector(
+                                            child: Text(
+                                              "Reset password",
+                                              style: TextStyle(
+                                                color: kPrimaryColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                            onTap: () {
+                                              authViewModel.resetPassword(
+                                                  widget.user.email);
+                                              showSnackBar();
+                                            },
                                           ),
-                                          SizedBox(
-                                            width: size.width * 0.05,
-                                          ),
-                                          Text(
-                                              widget.user
-                                                  .getData()['phoneNumber'],
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 0.03,
+                                    ),
+                                  ])
+                                : SizedBox(
+                                    height: size.height * 0.03,
+                                  ),
+                            widget.user.getData()['profilePhoto'] != null
+                                ? Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.house,
+                                        color: kPrimaryColor,
+                                      ),
+                                      SizedBox(
+                                        width: size.width * 0.05,
+                                      ),
+                                      Flexible(
+                                        child: GestureDetector(
+                                          child: Text(
+                                              widget.user.getData()['address'],
                                               style: TextStyle(
                                                 color: kPrimaryColor,
                                                 fontSize: 15,
-                                              ))
-                                        ],
-                                      )
-                                    : Container(),
-                                Container(),
-                                SizedBox(
-                                  height: size.height * 0.03,
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.mail,
-                                      color: kPrimaryColor,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * 0.05,
-                                    ),
-                                    Flexible(
-                                        child: widget.user.email != null
-                                            ? Text(widget.user.email,
-                                                style: TextStyle(
-                                                  color: kPrimaryColor,
-                                                  fontSize: 15,
-                                                ))
-                                            : Text(
-                                                "You are logged in with Facebook or with a Google account",
-                                                style: TextStyle(
-                                                  color: kPrimaryColor,
-                                                  fontSize: 15,
-                                                ))),
-                                  ],
-                                ),
-                                widget.user.email != null
-                                    ? Column(children: [
-                                        SizedBox(
-                                          height: size.height * 0.03,
+                                              )),
+                                          onTap: () {
+                                            openMaps();
+                                          },
                                         ),
-                                        Row(
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.lock,
-                                              color: kPrimaryColor,
-                                            ),
-                                            SizedBox(
-                                              width: size.width * 0.05,
-                                            ),
-                                            Flexible(
-                                              child: GestureDetector(
-                                                child: Text(
-                                                  "Reset password",
-                                                  style: TextStyle(
-                                                    color: kPrimaryColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 15,
-                                                  ),
-                                                ),
-                                                onTap: () {
-                                                  authViewModel.resetPassword(
-                                                      widget.user.email);
-                                                  showSnackBar();
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: size.height * 0.03,
-                                        ),
-                                      ])
-                                    : SizedBox(
-                                        height: size.height * 0.03,
                                       ),
-                                widget.user.getData()['profilePhoto'] != null
-                                    ? Row(
-                                        children: <Widget>[
-                                          Icon(
-                                            Icons.house,
-                                            color: kPrimaryColor,
-                                          ),
-                                          SizedBox(
-                                            width: size.width * 0.05,
-                                          ),
-                                          Flexible(
-                                            child: GestureDetector(
-                                              child: Text(
-                                                  widget.user
-                                                      .getData()['address'],
-                                                  style: TextStyle(
-                                                    color: kPrimaryColor,
-                                                    fontSize: 15,
-                                                  )),
-                                              onTap: () {
-                                                openMaps();
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Container(),
-                                SizedBox(
-                                  height: size.height * 0.05,
-                                ),
-                                Divider(
-                                  color: kPrimaryColor,
-                                  height: 1.5,
-                                ),
-                                SizedBox(
-                                  height: size.height * 0.08,
-                                ),
-                              ],
+                                    ],
+                                  )
+                                : Container(),
+                            SizedBox(
+                              height: size.height * 0.05,
+                            ),
+                            Divider(
+                              color: kPrimaryColor,
+                              height: 1.5,
+                            ),
+                            SizedBox(
+                              height: size.height * 0.08,
                             ),
                           ],
                         ),
-                      ),
+                      ],
                     ),
-                  ))
+                  ),
+                ),
+              )
             ],
           )),
           Positioned(
