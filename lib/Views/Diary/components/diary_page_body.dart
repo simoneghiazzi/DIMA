@@ -77,13 +77,15 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                         ),
                       )),
                   Positioned(
-                    top: 200.0,
+                    top: size.height / 5,
                     child: Container(
                         width: MediaQuery.of(context).size.width,
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         alignment: Alignment.bottomLeft,
                         child: Center(
                             child: TextField(
+                          keyboardType: TextInputType.multiline,
+                          maxLines: 2,
                           textCapitalization: TextCapitalization.sentences,
                           enabled: modifiable,
                           controller: diaryViewModel.titleController,
@@ -115,7 +117,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                                     ),
                                   ])),
                           inputFormatters: [
-                            LengthLimitingTextInputFormatter(100),
+                            LengthLimitingTextInputFormatter(50),
                           ],
                         ))),
                   ),
