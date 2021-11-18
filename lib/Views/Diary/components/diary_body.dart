@@ -17,14 +17,17 @@ class _DiaryBodyState extends State<DiaryBody> {
   DiaryViewModel diaryViewModel;
   BaseUserViewModel baseUserViewModel;
   AppRouterDelegate routerDelegate;
-  DateTime now;
+  DateTime startDate, endDate;
 
   @override
   void initState() {
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    now = DateTime.now();
+    var now = DateTime.now();
+    startDate = DateTime(now.year, now.month, 1);
+    endDate =
+        DateTime(now.year, now.month, DateTime(now.year, now.month + 1, 0).day);
     super.initState();
   }
 
@@ -33,16 +36,14 @@ class _DiaryBodyState extends State<DiaryBody> {
     Size size = MediaQuery.of(context).size;
     return SafeArea(
         child: FutureBuilder(
-      future: diaryViewModel.loadPages(
-          DateTime(now.year, now.month, 1),
-          DateTime(
-              now.year, now.month, DateTime(now.year, now.month + 1, 0).day)),
+      future: diaryViewModel.loadPages(startDate, endDate),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Scaffold(
               body: Stack(
             children: <Widget>[
               SfCalendar(
+                onViewChanged: viewChanged,
                 todayHighlightColor: kPrimaryColor,
                 dataSource: NoteDataSource(snapshot.data, diaryViewModel),
                 headerStyle: CalendarHeaderStyle(
@@ -102,6 +103,12 @@ class _DiaryBodyState extends State<DiaryBody> {
             name: DiaryPageScreen.route, arguments: noteDetails);
       }
     }
+  }
+
+  void viewChanged(ViewChangedDetails viewChangedDetails) {
+    startDate = viewChangedDetails.visibleDates[0];
+    endDate = viewChangedDetails
+        .visibleDates[viewChangedDetails.visibleDates.length - 1];
   }
 
   Widget loadMoreWidget(
