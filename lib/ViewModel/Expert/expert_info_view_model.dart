@@ -73,7 +73,7 @@ class ExpertInfoViewModel extends BaseUserInfoViewModel {
       infoAddress = address.first.description;
       expertAddress =
           await mapViewModel.getExpertLocation(address.first.placeId);
-      emitSuccess();
+      emitSuccess(canSubmitAgain: true);
     } else {
       emitFailure();
     }

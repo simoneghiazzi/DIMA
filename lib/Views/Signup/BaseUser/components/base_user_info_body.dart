@@ -43,13 +43,8 @@ class BaseUserInfoBody extends StatelessWidget {
                               ),
                               child: FormBlocListener<BaseUserInfoViewModel,
                                   String, String>(
-                                onSubmitting: (context, state) {
-                                  LoadingDialog.show(context, _keyLoader);
-                                },
+                                onSubmitting: (context, state) {},
                                 onSuccess: (context, state) {
-                                  Navigator.of(_keyLoader.currentContext,
-                                          rootNavigator: true)
-                                      .pop();
                                   routerDelegate.pushPage(
                                       name: CredentialScreen.route,
                                       arguments: InfoArguments(

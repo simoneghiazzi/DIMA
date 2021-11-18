@@ -34,7 +34,7 @@ class BaseUserInfoViewModel extends FormBloc<String, String> {
   @override
   void onSubmitting() async {
     try {
-      emitSuccess();
+      emitSuccess(canSubmitAgain: true);
     } catch (e) {
       emitFailure();
     }
