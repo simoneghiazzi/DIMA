@@ -49,6 +49,7 @@ class _BaseUserHomeScreenState extends State<BaseUserHomeScreen> {
               showSelectedLabels: true,
               showUnselectedLabels: false,
               unselectedItemColor: kPrimaryColor,
+              selectedItemColor: kPrimaryMediumColor,
               onTap: _onBottomNavTapped,
               items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(

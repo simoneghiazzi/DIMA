@@ -35,7 +35,7 @@ class _HeaderState extends State<Header> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 10.0),
+            padding: const EdgeInsets.only(left: 20.0),
             child: Text(
               "sApport",
               style: TextStyle(
