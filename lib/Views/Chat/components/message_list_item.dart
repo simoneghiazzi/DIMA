@@ -59,7 +59,7 @@ class _MessageListItemState extends State<MessageListItem> {
               decoration: BoxDecoration(
                   color: kPrimaryLightColor,
                   borderRadius: BorderRadius.circular(15.0)),
-              margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
+              margin: EdgeInsets.only(bottom: 10.0),
             ),
           ],
           mainAxisAlignment: MainAxisAlignment.end,
@@ -100,7 +100,7 @@ class _MessageListItemState extends State<MessageListItem> {
               decoration: BoxDecoration(
                   color: kPrimaryColor,
                   borderRadius: BorderRadius.circular(15.0)),
-              margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
+              margin: EdgeInsets.only(bottom: 10.0),
             ),
           ],
           mainAxisAlignment: MainAxisAlignment.start,
