@@ -409,6 +409,7 @@ class _UserProfileBodyState extends State<UserProfileBody> {
           isCloseButton: false,
         ),
         content: TextField(
+          obscureText: true,
           decoration: InputDecoration(
             icon: Icon(Icons.lock, color: kPrimaryColor),
             labelText: 'Password',
