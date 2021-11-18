@@ -59,7 +59,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                         MonthAppointmentDisplayMode.appointment,
                     appointmentDisplayCount: 1,
                     showAgenda: true,
-                    agendaViewHeight: size.height / 8,
+                    agendaViewHeight: size.height / 6,
                     agendaItemHeight: size.height / 15,
                     monthCellStyle: MonthCellStyle(
                       trailingDatesBackgroundColor: kPrimaryLightColor,
@@ -71,7 +71,7 @@ class _DiaryBodyState extends State<DiaryBody> {
               !diaryViewModel.hasNoteToday
                   ? Align(
                       alignment: Alignment.lerp(
-                          Alignment.bottomRight, Alignment.center, 0.1),
+                          Alignment.bottomRight, Alignment.center, 0.05),
                       child: FloatingActionButton(
                         onPressed: () {
                           routerDelegate.pushPage(name: DiaryPageScreen.route);
