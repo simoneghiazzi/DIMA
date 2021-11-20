@@ -7,6 +7,7 @@ import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/components/background.dart';
@@ -22,6 +23,7 @@ class LoginBody extends StatefulWidget {
 }
 
 class _LoginBodyState extends State<LoginBody> {
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
   FirestoreService firestoreService = FirestoreService();
@@ -75,7 +77,10 @@ class _LoginBodyState extends State<LoginBody> {
                   return RoundedButton(
                     text: "LOGIN",
                     press: () async {
+                      FocusScope.of(context).requestFocus(new FocusNode());
+                      LoadingDialog.show(context, _keyLoader);
                       var id = await authViewModel.logIn();
+                      LoadingDialog.hide(context, _keyLoader);
                       if (id != null) navigateToHome(id);
                     },
                     enabled: snapshot.data ?? false,

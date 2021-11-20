@@ -5,6 +5,7 @@ import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
@@ -19,6 +20,7 @@ class WelcomeBody extends StatefulWidget {
 }
 
 class _WelcomeBodyState extends State<WelcomeBody> {
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   AuthViewModel authViewModel;
   BaseUserViewModel baseUserViewModel;
   String id;
@@ -92,13 +94,17 @@ class _WelcomeBodyState extends State<WelcomeBody> {
               SocialIcon(
                   iconSrc: "assets/icons/facebook.png",
                   press: () async {
+                    LoadingDialog.show(context, _keyLoader);
                     id = await authViewModel.logInWithFacebook();
+                    LoadingDialog.hide(context, _keyLoader);
                     if (id != null) navigateToHome();
                   }),
               SocialIcon(
                   iconSrc: "assets/icons/google.png",
                   press: () async {
+                    LoadingDialog.show(context, _keyLoader);
                     id = await authViewModel.logInWithGoogle();
+                    LoadingDialog.hide(context, _keyLoader);
                     if (id != null) navigateToHome();
                   }),
             ]),

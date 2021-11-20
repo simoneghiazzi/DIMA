@@ -4,6 +4,7 @@ import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_info_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
@@ -31,6 +32,7 @@ class CredentialBody extends StatefulWidget {
 }
 
 class _CredentialBodyState extends State<CredentialBody> {
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final BaseUserInfoViewModel infoViewModel;
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
@@ -101,7 +103,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                   return RoundedButton(
                     text: "SIGN UP",
                     press: () {
-                      // LoadingDialog.show(context, _keyLoader, text: 'Creating a new user...');
+                      LoadingDialog.show(context, _keyLoader);
                       infoViewModel.email = authViewModel.emailController.text;
                       user = widget.userViewModel.createUser(infoViewModel);
                       authViewModel.signUpUser(user);
@@ -114,8 +116,9 @@ class _CredentialBodyState extends State<CredentialBody> {
                 stream: authViewModel.authMessage,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    // Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+                    LoadingDialog.hide(context, _keyLoader); 
                   }
+                  //FocusScope.of(context).requestFocus(new FocusNode());
                   return RichText(
                       text: TextSpan(
                           text: snapshot.data,
@@ -137,6 +140,7 @@ class _CredentialBodyState extends State<CredentialBody> {
   StreamSubscription<bool> subscribeToViewModel() {
     return authViewModel.isUserCreated.listen((isSuccessfulLogin) {
       if (isSuccessfulLogin) {
+        LoadingDialog.hide(context, _keyLoader);
         showSnackBar();
         routerDelegate.pushPage(name: LoginScreen.route);
       }
