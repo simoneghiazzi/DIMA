@@ -1,7 +1,6 @@
 TODO DIMA
 
-- bottone calendario
-
+- Aggiornamento chat experts
 - Fix chat
 - Delete account
 - Grafica (aspetto e layout tablet/smartphone)

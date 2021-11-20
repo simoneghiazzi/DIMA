@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/report_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -75,10 +76,10 @@ class _ReportsListBodyState extends State<ReportsListBody> {
                 },
               ),
             ),
-            FutureBuilder(
-              future: widget.reportViewModel.loadReports(),
+            StreamBuilder(
+              stream: widget.reportViewModel.loadReports(),
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.connectionState == ConnectionState.active) {
                   return ListView.builder(
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) =>
@@ -88,7 +89,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
                     shrinkWrap: true,
                   );
                 } else
-                  return Container();
+                  return LoadingDialog().widget(context);
               },
             ),
           ],

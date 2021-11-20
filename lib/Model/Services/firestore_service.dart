@@ -253,6 +253,16 @@ class FirestoreService {
     });
   }
 
+  /// It takes the [user] and listen for new messages
+  /// It is used in order to update the list of chats when a new message arrives
+  Stream<QuerySnapshot> listenToNewMessages(User user, Chat chat) {
+    return _firestore
+        .collection(user.collection.value)
+        .doc(user.id)
+        .collection(chat.chatCollection.value)
+        .snapshots();
+  }
+
   /***************************************** CHATS *****************************************/
 
   /// Upgrade a [pendingUserChat] with a [peerUser] to an active chat for both the users.
@@ -332,7 +342,7 @@ class FirestoreService {
     return chats;
   }
 
-  /// It takes the [user] and returns the set of ids of all the [chat] of the
+  /// It takes the [user] and returns the list of ids of all the [chat] of the
   /// user based on the [chatCollection] field of the Chat.
   Future<List> _getChatIdsList(User user, Chat chat) async {
     List<String> ids = [];
@@ -436,13 +446,13 @@ class FirestoreService {
   }
 
   /// It takes the [id] of an user and return the reports of the user from the DB
-  Future<QuerySnapshot> getReportsFromDB(String id) async {
-    return await _firestore
+  Stream<QuerySnapshot> getReportsFromDB(String id) {
+    return _firestore
         .collection(Collection.REPORTS.value)
         .doc(id)
         .collection('reportsList')
         .orderBy('date', descending: true)
-        .get();
+        .snapshots();
   }
 
   /**************************************** DIARY ********************************************/
@@ -479,6 +489,8 @@ class FirestoreService {
         .doc(id)
         .collection('diaryPages')
         .orderBy('date')
-        .startAt([startDate]).endAt([endDate]).get();
+        .startAt([startDate])
+        .endAt([endDate])
+        .get();    
   }
 }
