@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_info_view_model.dart';
@@ -32,7 +33,7 @@ class CredentialBody extends StatefulWidget {
 }
 
 class _CredentialBodyState extends State<CredentialBody> {
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  GlobalKey<State> _keyLoader;
   final BaseUserInfoViewModel infoViewModel;
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
@@ -46,9 +47,11 @@ class _CredentialBodyState extends State<CredentialBody> {
 
   @override
   void initState() {
+    _keyLoader = new GlobalKey<State>();
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     subscriber = subscribeToViewModel();
+    BackButtonInterceptor.add(backButtonInterceptor);
     WidgetsBinding.instance
         .addPostFrameCallback((_) => authViewModel.getData());
     super.initState();
@@ -102,11 +105,11 @@ class _CredentialBodyState extends State<CredentialBody> {
                 builder: (context, snapshot) {
                   return RoundedButton(
                     text: "SIGN UP",
-                    press: () {
+                    press: () async {
                       LoadingDialog.show(context, _keyLoader);
                       infoViewModel.email = authViewModel.emailController.text;
                       user = widget.userViewModel.createUser(infoViewModel);
-                      authViewModel.signUpUser(user);
+                      await authViewModel.signUpUser(user);
                     },
                     enabled: snapshot.data ?? false,
                   );
@@ -115,10 +118,6 @@ class _CredentialBodyState extends State<CredentialBody> {
             StreamBuilder<String>(
                 stream: authViewModel.authMessage,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    LoadingDialog.hide(context, _keyLoader); 
-                  }
-                  //FocusScope.of(context).requestFocus(new FocusNode());
                   return RichText(
                       text: TextSpan(
                           text: snapshot.data,
@@ -128,7 +127,9 @@ class _CredentialBodyState extends State<CredentialBody> {
             AlreadyHaveAnAccountCheck(
               login: false,
               press: () {
-                routerDelegate.replace(name: LoginScreen.route);
+                authViewModel.clearControllers();
+                routerDelegate.replaceAllButNumber(
+                    1, [RouteSettings(name: LoginScreen.route)]);
               },
             ),
           ],
@@ -139,8 +140,10 @@ class _CredentialBodyState extends State<CredentialBody> {
 
   StreamSubscription<bool> subscribeToViewModel() {
     return authViewModel.isUserCreated.listen((isSuccessfulLogin) {
+      //authViewModel.clearPasswordControllers();
+      LoadingDialog.hide(context, _keyLoader);
+      FocusScope.of(context).unfocus();
       if (isSuccessfulLogin) {
-        LoadingDialog.hide(context, _keyLoader);
         showSnackBar();
         routerDelegate.pushPage(name: LoginScreen.route);
       }
@@ -162,9 +165,16 @@ class _CredentialBodyState extends State<CredentialBody> {
     ));
   }
 
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    authViewModel.clearControllers();
+    routerDelegate.pop();
+    return true;
+  }
+
   @override
   void dispose() {
     subscriber.cancel();
+    BackButtonInterceptor.remove(backButtonInterceptor);
     super.dispose();
   }
 }

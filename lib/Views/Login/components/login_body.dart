@@ -1,3 +1,4 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
@@ -23,15 +24,17 @@ class LoginBody extends StatefulWidget {
 }
 
 class _LoginBodyState extends State<LoginBody> {
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  GlobalKey<State> _keyLoader;
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
   FirestoreService firestoreService = FirestoreService();
 
   @override
   void initState() {
+    _keyLoader = new GlobalKey<State>();
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    BackButtonInterceptor.add(backButtonInterceptor);
     WidgetsBinding.instance
         .addPostFrameCallback((_) => authViewModel.getData());
     super.initState();
@@ -77,7 +80,7 @@ class _LoginBodyState extends State<LoginBody> {
                   return RoundedButton(
                     text: "LOGIN",
                     press: () async {
-                      FocusScope.of(context).requestFocus(new FocusNode());
+                      FocusScope.of(context).unfocus();
                       LoadingDialog.show(context, _keyLoader);
                       var id = await authViewModel.logIn();
                       LoadingDialog.hide(context, _keyLoader);
@@ -98,6 +101,7 @@ class _LoginBodyState extends State<LoginBody> {
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
               press: () {
+                authViewModel.clearControllers();
                 routerDelegate.replace(name: BaseUsersSignUpScreen.route);
               },
             ),
@@ -108,7 +112,6 @@ class _LoginBodyState extends State<LoginBody> {
   }
 
   void navigateToHome(String id) async {
-    FocusScope.of(context).unfocus();
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     Collection collection =
         await firestoreService.findUsersCollection(authViewModel.id);
@@ -129,5 +132,17 @@ class _LoginBodyState extends State<LoginBody> {
         break;
       default:
     }
+  }
+
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    authViewModel.clearControllers();
+    routerDelegate.pop();
+    return true;
+  }
+
+  @override
+  void dispose() {
+    BackButtonInterceptor.remove(backButtonInterceptor);
+    super.dispose();
   }
 }

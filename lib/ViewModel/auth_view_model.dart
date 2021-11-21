@@ -122,9 +122,8 @@ class AuthViewModel {
     passwordController.clear();
     repeatedPasswordController.clear();
     emailController.clear();
-    loginForm.emailText.add(null);
-    loginForm.passwordText.add(null);
-    loginForm.repeatedPasswordText.add(null);
+    authMessageController.add(null);
+    loginForm.resetControllers();
   }
 
   /// Resend the email verification if the user has not received it

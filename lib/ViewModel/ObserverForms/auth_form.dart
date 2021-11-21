@@ -18,8 +18,8 @@ class LoginForm implements AuthFormInterface {
   var _emailStream = StreamController<String>.broadcast();
   var _passwordStream = StreamController<String>.broadcast();
   var _repeatedPasswordStream = StreamController<String>.broadcast();
-  String lastPassword = "";
-  String lastRepeatedPassword = "";
+  String _lastPassword = "";
+  String _lastRepeatedPassword = "";
 
   @override
   Sink get emailText => _emailStream;
@@ -35,17 +35,17 @@ class LoginForm implements AuthFormInterface {
 
   Stream<bool> get _passwordController =>
       _passwordStream.stream.map((password) {
-        lastPassword = password;
-        if (lastRepeatedPassword.isNotEmpty) {
-          _repeatedPasswordStream.add(lastRepeatedPassword);
+        _lastPassword = password;
+        if (_lastRepeatedPassword.isNotEmpty) {
+          _repeatedPasswordStream.add(_lastRepeatedPassword);
         }
         return password.isNotEmpty;
       });
 
   Stream<bool> get _repeatedPasswordController =>
       _repeatedPasswordStream.stream.map((repeatedPassword) {
-        lastRepeatedPassword = repeatedPassword;
-        return repeatedPassword == lastPassword;
+        _lastRepeatedPassword = repeatedPassword;
+        return repeatedPassword == _lastPassword;
       });
 
   @override
@@ -66,6 +66,11 @@ class LoginForm implements AuthFormInterface {
   @override
   Stream<String> get errorRepeatedPasswordText => _repeatedPasswordController
       .map((isCorrect) => isCorrect ? false : "Password does not match");
+
+  void resetControllers() {
+    _lastPassword = "";
+    _lastRepeatedPassword = "";
+  }
 
   @override
   void dispose() {

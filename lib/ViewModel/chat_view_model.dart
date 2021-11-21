@@ -7,17 +7,12 @@ import 'package:dima_colombo_ghiazzi/Model/Chat/conversation.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 class ChatViewModel {
   FirestoreService firestoreService = FirestoreService();
   Conversation conversation = Conversation();
-  List<QueryDocumentSnapshot> _listMessages = new List.from([]);
-  PriorityQueue _listChats = PriorityQueue();
   TextEditingController textEditingController = TextEditingController();
   var _isNewRandomUserController = StreamController<bool>.broadcast();
-  var _isNewMessageController = StreamController<bool>.broadcast();
-  bool newCurrentUser;
 
   /// Update the ChattingWith field of the [senderUserChat] inside the DB
   /// It is used in order to show or not the notification on new messages
@@ -43,10 +38,6 @@ class ChatViewModel {
     String content = textEditingController.text;
     textEditingController.clear();
     await firestoreService.addMessageIntoDB(conversation, content);
-    if (newCurrentUser) {
-      _isNewMessageController.add(true);
-      newCurrentUser = false;
-    }
   }
 
   /// Get the stream of messages between the 2 users
@@ -54,10 +45,6 @@ class ChatViewModel {
     try {
       var snapshots =
           firestoreService.getStreamMessagesFromDB(conversation.pairChatId);
-      //_listMessages.clear();
-      snapshots.forEach((element) {
-        _listMessages.addAll(element.docs);
-      });
       return snapshots;
     } catch (e) {
       print(e);
@@ -73,8 +60,6 @@ class ChatViewModel {
   void chatWithUser(User user) {
     conversation.peerUser = user;
     conversation.computePairChatId();
-    _isNewMessageController.add(false);
-    newCurrentUser = true;
   }
 
   /// Look for a new random anonymous user
@@ -85,7 +70,6 @@ class ChatViewModel {
       _isNewRandomUserController.add(false);
       return;
     }
-    newCurrentUser = false;
     conversation.peerUser = randomUser;
     conversation.computePairChatId();
     _isNewRandomUserController.add(true);
@@ -120,7 +104,6 @@ class ChatViewModel {
 
   TextEditingController get textController => textEditingController;
   Stream<bool> get isNewRandomUser => _isNewRandomUserController.stream;
-  Stream<bool> get isNewMessage => _isNewMessageController.stream;
   Stream<QuerySnapshot> get newChat => firestoreService.listenToNewMessages(
       conversation.senderUser, conversation.senderUserChat);
 }

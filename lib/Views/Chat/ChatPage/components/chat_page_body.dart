@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/pending_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
@@ -36,7 +34,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     peerUser = chatViewModel.conversation.peerUser;
     chatViewModel.updateChattingWith();
-    BackButtonInterceptor.add(myInterceptor);
+    BackButtonInterceptor.add(backButtonInterceptor);
     super.initState();
   }
 
@@ -137,7 +135,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
     );
   }
 
-  bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     chatViewModel.resetChattingWith();
     routerDelegate.pop();
     return true;
@@ -155,7 +153,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
 
   @override
   void dispose() {
-    BackButtonInterceptor.remove(myInterceptor);
+    BackButtonInterceptor.remove(backButtonInterceptor);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }

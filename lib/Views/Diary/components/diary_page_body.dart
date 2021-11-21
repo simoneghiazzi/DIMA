@@ -43,7 +43,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
     subscription = subscribeToSuccessViewModel();
-    BackButtonInterceptor.add(myInterceptor);
+    BackButtonInterceptor.add(backButtonInterceptor);
     if (note == null) {
       modifiable = true;
     } else {
@@ -374,7 +374,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     );
   }
 
-  bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     diaryViewModel.clearControllers();
     routerDelegate.replaceAllButNumber(
         1, [RouteSettings(name: BaseUserHomeScreen.route, arguments: 1)]);
@@ -383,7 +383,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
 
   @override
   void dispose() {
-    BackButtonInterceptor.remove(myInterceptor);
+    BackButtonInterceptor.remove(backButtonInterceptor);
     subscription.cancel();
     super.dispose();
   }
