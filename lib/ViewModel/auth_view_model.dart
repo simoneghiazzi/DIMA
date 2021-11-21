@@ -11,7 +11,7 @@ class AuthViewModel {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController repeatedPasswordController =
       TextEditingController();
-  final FirebaseAuthService auth = FirebaseAuthService();
+  final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
   final FirestoreService firestore = FirestoreService();
   final LoginForm loginForm = LoginForm();
   NotificationService notificationService;
@@ -34,7 +34,7 @@ class AuthViewModel {
   /// Log the user in with email and password
   Future<String> logIn() async {
     try {
-      id = await auth.signInWithEmailAndPassword(
+      id = await _firebaseAuthService.signInWithEmailAndPassword(
           emailController.text, passwordController.text);
       if (id != null) {
         authMessageController.add("");
@@ -52,21 +52,17 @@ class AuthViewModel {
   /// Login a user with google. If the user is new, it automatically creates a new account
   Future<String> logInWithGoogle() async {
     try {
-      id = await auth.signInWithGoogle();
+      id = await _firebaseAuthService.signInWithGoogle();
       authMessageController.add("");
       return id;
-    } catch (e) {
-      if (e.code == 'account-exists-with-different-credential')
-        authMessageController.add(
-            "An account already exists with the same email address but different sign-in credentials.");
-    }
+    } catch (e) {}
     return null;
   }
 
   /// Login a user with facebook. If the user is new, it automatically creates a new account
   Future<String> logInWithFacebook() async {
     try {
-      id = await auth.signInWithFacebook();
+      id = await _firebaseAuthService.signInWithFacebook();
       authMessageController.add("");
       return id;
     } catch (e) {
@@ -79,9 +75,9 @@ class AuthViewModel {
 
   Future<String> signUpUser(User loggedUser) async {
     try {
-      id = await auth.createUserWithEmailAndPassword(
+      id = await _firebaseAuthService.createUserWithEmailAndPassword(
           emailController.text, passwordController.text, loggedUser);
-      await auth.sendEmailVerification();
+      await _firebaseAuthService.sendEmailVerification();
       authMessageController.add("");
       isUserCreatedController.add(true);
     } catch (e) {
@@ -97,8 +93,12 @@ class AuthViewModel {
 
   Future<void> resetPassword(String email) async {
     try {
-      auth.resetPassword(email);
+      await _firebaseAuthService.resetPassword(email);
     } catch (e) {}
+  }
+
+  String authProvider() {
+    return _firebaseAuthService.getAuthProvider();
   }
 
   /// Get the data text from the controllers
@@ -111,7 +111,7 @@ class AuthViewModel {
 
   /// Log out a user from the app
   Future<void> logOut() async {
-    await auth.signOut();
+    await _firebaseAuthService.signOut();
     id = '';
     isUserLoggedController.add(false);
     clearControllers();
@@ -141,7 +141,7 @@ class AuthViewModel {
 
   /// Delete a user
   Future<void> deleteUser(User loggedUser) async {
-    await auth.deleteUser(loggedUser);
+    await _firebaseAuthService.deleteUser(loggedUser);
   }
 
   Stream<bool> get isUserLogged => isUserLoggedController.stream;

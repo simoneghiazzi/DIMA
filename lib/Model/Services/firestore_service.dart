@@ -31,8 +31,8 @@ class FirestoreService {
     var userReference =
         _firestore.collection(user.collection.value).doc(user.id);
     await _firestore.runTransaction((transaction) async {
-      transaction.set(userReference, user.getData());
       await _incrementBaseUsersCounter(transaction, 1);
+      transaction.set(userReference, user.getData());
     });
   }
 
@@ -43,8 +43,8 @@ class FirestoreService {
     var userReference =
         _firestore.collection(user.collection.value).doc(user.id);
     await _firestore.runTransaction((transaction) async {
-      transaction.delete(userReference);
       await _incrementBaseUsersCounter(transaction, -1);
+      transaction.delete(userReference);
     });
   }
 
@@ -489,8 +489,6 @@ class FirestoreService {
         .doc(id)
         .collection('diaryPages')
         .orderBy('date')
-        .startAt([startDate])
-        .endAt([endDate])
-        .get();    
+        .startAt([startDate]).endAt([endDate]).get();
   }
 }

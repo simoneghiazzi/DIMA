@@ -12,13 +12,10 @@ class MessagesListConstructor extends StatefulWidget {
 }
 
 class _MessagesListConstructorState extends State<MessagesListConstructor> {
-  final ScrollController listScrollController = ScrollController();
-  int _limitIncrement = 20;
   ChatViewModel chatViewModel;
 
   @override
   void initState() {
-    listScrollController.addListener(scrollListener);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     super.initState();
   }
@@ -38,22 +35,11 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
               return MessageListItem(messageItem: messageItem, index: index);
             },
             itemCount: snapshot.data.docs.length,
-            controller: listScrollController,
             reverse: true,
           );
         }
         return LoadingDialog().widget(context);
       },
     ));
-  }
-
-  void scrollListener() {
-    if (listScrollController.offset >=
-            listScrollController.position.maxScrollExtent &&
-        !listScrollController.position.outOfRange) {
-      setState(() {
-        _limitIncrement += _limitIncrement;
-      });
-    }
   }
 }

@@ -108,7 +108,6 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                     if (id != null) navigateToHome();
                   }),
             ]),
-            SizedBox(height: size.height * 0.05),
             StreamBuilder<String>(
                 stream: authViewModel.authMessage,
                 builder: (context, snapshot) {

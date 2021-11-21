@@ -8,6 +8,7 @@ abstract class AuthFormInterface {
   Sink get repeatedPasswordText;
   Stream<bool> get isSignUpEnabled;
   Stream<bool> get isLoginEnabled;
+  Stream<bool> get isResetPasswordEnabled;
   Stream<String> get errorEmailText;
   Stream<String> get errorRepeatedPasswordText;
 
@@ -58,6 +59,10 @@ class LoginForm implements AuthFormInterface {
   @override
   Stream<bool> get isLoginEnabled => Rx.combineLatest2(
       _emailController, _passwordController, (a, b) => a && b);
+
+  @override
+  Stream<bool> get isResetPasswordEnabled =>
+      _emailController.map((isCorrect) => isCorrect);
 
   @override
   Stream<String> get errorEmailText =>

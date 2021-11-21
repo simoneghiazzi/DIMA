@@ -5,7 +5,6 @@ import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileBody extends StatefulWidget {
   final User user;
@@ -152,70 +151,118 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                             SizedBox(
                               height: size.height * 0.03,
                             ),
-                            Row(
+                            Column(
                               children: <Widget>[
-                                Icon(
-                                  Icons.mail,
-                                  color: kPrimaryColor,
-                                ),
-                                SizedBox(
-                                  width: size.width * 0.05,
-                                ),
-                                Flexible(
-                                    child: widget.user.email != null
-                                        ? Text(widget.user.email,
-                                            style: TextStyle(
-                                              color: kPrimaryColor,
-                                              fontSize: 15,
-                                            ))
-                                        : Text(
-                                            "You are logged in with Facebook or with a Google account",
-                                            style: TextStyle(
-                                              color: kPrimaryColor,
-                                              fontSize: 15,
-                                            ))),
-                              ],
-                            ),
-                            widget.user.email != null
-                                ? Column(children: [
-                                    SizedBox(
-                                      height: size.height * 0.03,
-                                    ),
-                                    Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.lock,
-                                          color: kPrimaryColor,
-                                        ),
-                                        SizedBox(
-                                          width: size.width * 0.05,
-                                        ),
-                                        Flexible(
-                                          child: GestureDetector(
-                                            child: Text(
-                                              "Reset password",
+                                if (widget.user.email != null) ...[
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.mail,
+                                        color: kPrimaryColor,
+                                      ),
+                                      SizedBox(
+                                        width: size.width * 0.05,
+                                      ),
+                                      Flexible(
+                                          child: Text(widget.user.email,
                                               style: TextStyle(
                                                 color: kPrimaryColor,
-                                                fontWeight: FontWeight.bold,
                                                 fontSize: 15,
-                                              ),
-                                            ),
-                                            onTap: () {
-                                              authViewModel.resetPassword(
-                                                  widget.user.email);
-                                              showSnackBar();
-                                            },
-                                          ),
-                                        )
-                                      ],
+                                              ))),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: size.height * 0.05,
+                                  ),
+                                ],
+                                if (authViewModel.authProvider() ==
+                                    "google.com") ...[
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/google.png",
+                                        height: 25,
+                                        width: 25,
+                                      ),
+                                      SizedBox(
+                                        width: size.width * 0.05,
+                                      ),
+                                      Flexible(
+                                          child: Text(
+                                              "You are logged in with a Google account",
+                                              style: TextStyle(
+                                                color: kPrimaryColor,
+                                                fontSize: 15,
+                                              ))),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: size.height * 0.05,
+                                  ),
+                                ],
+                                if (authViewModel.authProvider() ==
+                                    "facebook.com") ...[
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/facebook.pn",
+                                        height: 25,
+                                        width: 25,
+                                      ),
+                                      SizedBox(
+                                        width: size.width * 0.05,
+                                      ),
+                                      Flexible(
+                                          child: Text(
+                                              "You are logged in with a Facebook account",
+                                              style: TextStyle(
+                                                color: kPrimaryColor,
+                                                fontSize: 15,
+                                              ))),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: size.height * 0.05,
+                                  ),
+                                ],
+                              ],
+                            ),
+                            if (widget.user.email != null) ...[
+                              Column(children: [
+                                Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.lock,
+                                      color: kPrimaryColor,
                                     ),
                                     SizedBox(
-                                      height: size.height * 0.03,
+                                      width: size.width * 0.05,
                                     ),
-                                  ])
-                                : SizedBox(
-                                    height: size.height * 0.03,
-                                  ),
+                                    Flexible(
+                                      child: GestureDetector(
+                                        child: Text(
+                                          "Reset password",
+                                          style: TextStyle(
+                                            color: kPrimaryColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          authViewModel
+                                              .resetPassword(widget.user.email);
+                                          showSnackBar();
+                                          authViewModel.logOut();
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: size.height * 0.03,
+                                ),
+                              ]),
+                            ],
                             widget.user.getData()['profilePhoto'] != null
                                 ? Row(
                                     children: <Widget>[
@@ -227,17 +274,12 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                                         width: size.width * 0.05,
                                       ),
                                       Flexible(
-                                        child: GestureDetector(
-                                          child: Text(
-                                              widget.user.getData()['address'],
-                                              style: TextStyle(
-                                                color: kPrimaryColor,
-                                                fontSize: 15,
-                                              )),
-                                          onTap: () {
-                                            openMaps();
-                                          },
-                                        ),
+                                        child: Text(
+                                            widget.user.getData()['address'],
+                                            style: TextStyle(
+                                              color: kPrimaryColor,
+                                              fontSize: 15,
+                                            )),
                                       ),
                                     ],
                                   )
@@ -338,7 +380,7 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                         ),
                       ),
                       onTap: () {
-                        _onDeleteAccount(context);
+                        alert.show();
                       },
                     ),
                   ),
@@ -367,34 +409,11 @@ class _UserProfileBodyState extends State<UserProfileBody> {
     );
   }
 
-  void openMaps() async {
-    var lat = widget.user.getData()['latLng'].latitude;
-    var lng = widget.user.getData()['latLng'].longitude;
-    var uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
-    if (await canLaunch(uri.toString())) {
-      await launch(uri.toString());
-    } else {
-      throw 'Could not launch ${uri.toString()}';
-    }
-  }
-
-  _onDeleteAccount(context) {
-    alert.show();
-  }
-
   void showSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content:
           const Text('Please check your email for the password reset link.'),
-      action: SnackBarAction(
-        label: 'RESEND EMAIL',
-        onPressed: () {
-          authViewModel.resetPassword(widget.user.email);
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          showSnackBar();
-        },
-      ),
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 20),
     ));
   }
 

@@ -44,6 +44,10 @@ class FirebaseAuthService {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
+  // Future<void> linkProviders() async {
+  //   await _userCredential.user.linkWithCredential(credential)
+  // }
+
   /// Sign in a user if it exists or create a new user through the google account.
   /// It retrieves the name, surname and birthDate information from the google account of the user.
   Future<String> signInWithGoogle() async {
@@ -118,10 +122,15 @@ class FirebaseAuthService {
     }
   }
 
+  /// Get the authentication provider of the current user
+  String getAuthProvider() {
+    return _firebaseAuth.currentUser.providerData[0].providerId;
+  }
+
   /// Delete a user
   Future deleteUser(User user) async {
-    await _firebaseAuth.currentUser.delete();
     await _firestoreService.removeUserFromDB(user);
+    await _firebaseAuth.currentUser.delete();
     _userCredential = null;
   }
 

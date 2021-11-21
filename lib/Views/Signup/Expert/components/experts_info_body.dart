@@ -6,7 +6,7 @@ import 'package:dima_colombo_ghiazzi/Views/Signup/components/background.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/credential_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_acheck.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_check.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';

@@ -4,7 +4,7 @@ import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dar
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/credential_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/components/background.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_acheck.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_check.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
@@ -146,6 +146,7 @@ class BaseUserInfoBody extends StatelessWidget {
                                               name: LoginScreen.route);
                                         },
                                       ),
+                                      SizedBox(height: size.height * 0.01),
                                     ],
                                   ),
                                 ),

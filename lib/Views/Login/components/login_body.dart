@@ -7,12 +7,14 @@ import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Login/forgot_password_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/forgot_password.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/components/background.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_acheck.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_check.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_input_field.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_password_field.dart';
@@ -74,6 +76,14 @@ class _LoginBodyState extends State<LoginBody> {
             RoundedPasswordField(
               controller: authViewModel.passwordController,
             ),
+            SizedBox(height: size.height * 0.01),
+            ForgotPassword(
+              press: () {
+                authViewModel.clearControllers();
+                routerDelegate.pushPage(name: ForgotPasswordScreen.route);
+              },
+            ),
+            SizedBox(height: size.height * 0.03),
             StreamBuilder(
                 stream: authViewModel.loginForm.isLoginEnabled,
                 builder: (context, snapshot) {
@@ -105,6 +115,7 @@ class _LoginBodyState extends State<LoginBody> {
                 routerDelegate.replace(name: BaseUsersSignUpScreen.route);
               },
             ),
+            SizedBox(height: size.height * 0.01),
           ],
         ),
       ),
