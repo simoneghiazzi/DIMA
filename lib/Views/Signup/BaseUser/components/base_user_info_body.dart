@@ -119,6 +119,7 @@ class BaseUserInfoBody extends StatelessWidget {
                                       SizedBox(height: size.height * 0.04),
                                       ElevatedButton(
                                         onPressed: () {
+                                          FocusScope.of(context).unfocus();
                                           infoViewModel.submit();
                                         },
                                         style: ButtonStyle(

@@ -276,6 +276,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                 RoundedButton(
                   text: "NEXT",
                   press: () {
+                    FocusScope.of(context).unfocus();
                     expertInfoViewModel.submit();
                   },
                   enabled: nextEnabled,

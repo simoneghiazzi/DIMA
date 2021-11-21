@@ -106,6 +106,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                   return RoundedButton(
                     text: "SIGN UP",
                     press: () async {
+                      FocusScope.of(context).unfocus();
                       LoadingDialog.show(context, _keyLoader);
                       infoViewModel.email = authViewModel.emailController.text;
                       user = widget.userViewModel.createUser(infoViewModel);
@@ -140,9 +141,7 @@ class _CredentialBodyState extends State<CredentialBody> {
 
   StreamSubscription<bool> subscribeToViewModel() {
     return authViewModel.isUserCreated.listen((isSuccessfulLogin) {
-      //authViewModel.clearPasswordControllers();
       LoadingDialog.hide(context, _keyLoader);
-      FocusScope.of(context).unfocus();
       if (isSuccessfulLogin) {
         showSnackBar();
         routerDelegate.pushPage(name: LoginScreen.route);
