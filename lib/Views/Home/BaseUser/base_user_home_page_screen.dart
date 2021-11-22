@@ -1,23 +1,23 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/diary_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/components/base_user_home_page.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/components/base_user_home_page_body.dart';
 import 'package:dima_colombo_ghiazzi/Views/Settings/user_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class BaseUserHomeScreen extends StatefulWidget {
+class BaseUserHomePageScreen extends StatefulWidget {
   static const route = '/baseUserHomeScreen';
   final int pageIndex;
 
-  BaseUserHomeScreen({Key key, @required this.pageIndex}) : super(key: key);
+  BaseUserHomePageScreen({Key key, @required this.pageIndex}) : super(key: key);
 
   @override
-  _BaseUserHomeScreenState createState() => _BaseUserHomeScreenState();
+  _BaseUserHomePageScreenState createState() => _BaseUserHomePageScreenState();
 }
 
-class _BaseUserHomeScreenState extends State<BaseUserHomeScreen> {
+class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
   int _currentIndex;
 
   @override
@@ -33,7 +33,7 @@ class _BaseUserHomeScreenState extends State<BaseUserHomeScreen> {
     var authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     authViewModel.setNotification(baseUserViewModel.loggedUser);
     final List<Widget> _pages = [
-      BaseUserHomePage(),
+      BaseUserHomePageBody(),
       DiaryScreen(),
       UserProfileScreen(user: baseUserViewModel.loggedUser)
     ];

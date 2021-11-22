@@ -5,6 +5,7 @@ import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/network_avatar.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:open_mail_app/open_mail_app.dart';
@@ -254,45 +255,11 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
         ),
         // Profile image
         Positioned(
-          top: 100.0, // (background container size) - (circle height / 2)
-          child: CircleAvatar(
-            radius: 60,
-            backgroundColor: Colors.white,
-            child: ClipOval(
-              child: Image.network(
-                widget.expert.getData()['profilePhoto'],
-                fit: BoxFit.cover,
-                width: 120.0,
-                height: 120.0,
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return SizedBox(
-                    width: 120.0,
-                    height: 120.0,
-                    child: CircularProgressIndicator(
-                      color: kPrimaryColor,
-                      value: loadingProgress.expectedTotalBytes != null &&
-                              loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes
-                          : null,
-                    ),
-                  );
-                },
-                errorBuilder: (context, object, stackTrace) {
-                  return CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Colors.white,
-                      child: Text(
-                        "${widget.expert.name[0]}",
-                        style: TextStyle(color: kPrimaryColor, fontSize: 30),
-                      ));
-                },
-              ),
-            ),
-          ),
-        ),
+            top: 100.0, // (background container size) - (circle height / 2)
+            child: NetworkAvatar(
+              img: widget.expert.getData()['profilePhoto'],
+              radius: 60.0,
+            )),
         Positioned(
           top: 60,
           left: 25,

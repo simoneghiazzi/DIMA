@@ -13,12 +13,12 @@ import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ActiveChatsExpertsBody extends StatefulWidget {
+class ExpertHomePageBody extends StatefulWidget {
   @override
-  _ActiveChatsExpertsBodyState createState() => _ActiveChatsExpertsBodyState();
+  _ExpertHomePageBodyState createState() => _ExpertHomePageBodyState();
 }
 
-class _ActiveChatsExpertsBodyState extends State<ActiveChatsExpertsBody> {
+class _ExpertHomePageBodyState extends State<ExpertHomePageBody> {
   bool newPendingChats;
   ChatViewModel chatViewModel;
   ExpertViewModel expertViewModel;

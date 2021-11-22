@@ -1,6 +1,7 @@
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/network_avatar.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -42,45 +43,9 @@ class _UserProfileBodyState extends State<UserProfileBody> {
               Container(
                 padding: EdgeInsets.only(top: 40, bottom: 10),
                 child: widget.user.getData()['profilePhoto'] != null
-                    ? CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.white,
-                        child: ClipOval(
-                          child: Image.network(
-                            widget.user.getData()['profilePhoto'],
-                            fit: BoxFit.cover,
-                            width: 100.0,
-                            height: 100.0,
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return SizedBox(
-                                width: 100.0,
-                                height: 100.0,
-                                child: CircularProgressIndicator(
-                                  color: kPrimaryColor,
-                                  value: loadingProgress.expectedTotalBytes !=
-                                              null &&
-                                          loadingProgress.expectedTotalBytes !=
-                                              null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes
-                                      : null,
-                                ),
-                              );
-                            },
-                            errorBuilder: (context, object, stackTrace) {
-                              return CircleAvatar(
-                                  radius: 50,
-                                  backgroundColor: Colors.white,
-                                  child: Text(
-                                    "${widget.user.name[0]}",
-                                    style: TextStyle(
-                                        color: kPrimaryColor, fontSize: 30),
-                                  ));
-                            },
-                          ),
-                        ),
+                    ? NetworkAvatar(
+                        img: widget.user.getData()['profilePhoto'],
+                        radius: 50.0,
                       )
                     : CircleAvatar(
                         radius: 50,

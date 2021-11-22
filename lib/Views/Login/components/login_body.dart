@@ -5,8 +5,8 @@ import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/Expert/expert_home_page_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/forgot_password_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/forgot_password.dart';
@@ -133,14 +133,14 @@ class _LoginBodyState extends State<LoginBody> {
             Provider.of<BaseUserViewModel>(context, listen: false);
         baseUserViewModel.id = id;
         await baseUserViewModel.loadLoggedUser();
-        routerDelegate.replace(name: BaseUserHomeScreen.route);
+        routerDelegate.replace(name: BaseUserHomePageScreen.route);
         break;
       case Collection.EXPERTS:
         var expertViewModel =
             Provider.of<ExpertViewModel>(context, listen: false);
         expertViewModel.id = id;
         await expertViewModel.loadLoggedUser();
-        routerDelegate.replace(name: ActiveChatsExpertsScreen.route);
+        routerDelegate.replace(name: ExpertHomePageScreen.route);
         break;
       default:
     }

@@ -4,10 +4,10 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveCha
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/Expert/expert_home_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/diary_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/forgot_password_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
@@ -53,8 +53,8 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
   @override
   Future<bool> popRoute() {
     if (_pages.length > 1 &&
-        _pages.last.name != BaseUserHomeScreen.route &&
-        _pages.last.name != ActiveChatsExpertsScreen.route) {
+        _pages.last.name != BaseUserHomePageScreen.route &&
+        _pages.last.name != ExpertHomePageScreen.route) {
       _pages.removeLast();
       notifyListeners();
       return Future.value(true);
@@ -104,11 +104,11 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
       case UserProfileScreen.route:
         child = UserProfileScreen(user: routeSettings.arguments);
         break;
-      case ActiveChatsExpertsScreen.route:
-        child = ActiveChatsExpertsScreen();
+      case ExpertHomePageScreen.route:
+        child = ExpertHomePageScreen();
         break;
-      case BaseUserHomeScreen.route:
-        child = BaseUserHomeScreen(
+      case BaseUserHomePageScreen.route:
+        child = BaseUserHomePageScreen(
           pageIndex: routeSettings.arguments,
         );
         break;

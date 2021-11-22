@@ -76,6 +76,7 @@ class BaseUserInfoBody extends StatelessWidget {
                           ),
                           SizedBox(height: size.height * 0.05),
                           TextFieldBlocBuilder(
+                            textCapitalization: TextCapitalization.sentences,
                             textFieldBloc: infoViewModel.nameText,
                             decoration: InputDecoration(
                               filled: true,
@@ -88,6 +89,7 @@ class BaseUserInfoBody extends StatelessWidget {
                             ),
                           ),
                           TextFieldBlocBuilder(
+                            textCapitalization: TextCapitalization.sentences,
                             textFieldBloc: infoViewModel.surnameText,
                             decoration: InputDecoration(
                               filled: true,

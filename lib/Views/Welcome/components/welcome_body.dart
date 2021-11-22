@@ -2,7 +2,7 @@ import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
@@ -127,6 +127,6 @@ class _WelcomeBodyState extends State<WelcomeBody> {
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
     baseUserViewModel.id = id;
     await baseUserViewModel.loadLoggedUser();
-    routerDelegate.pushPage(name: BaseUserHomeScreen.route);
+    routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
   }
 }

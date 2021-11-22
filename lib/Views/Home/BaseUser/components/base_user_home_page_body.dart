@@ -3,12 +3,12 @@ import 'package:flutter/cupertino.dart';
 
 import 'base_user_grid.dart';
 
-class BaseUserHomePage extends StatefulWidget {
+class BaseUserHomePageBody extends StatefulWidget {
   @override
-  _BaseUserHomePageState createState() => _BaseUserHomePageState();
+  _BaseUserHomePageBodyState createState() => _BaseUserHomePageBodyState();
 }
 
-class _BaseUserHomePageState extends State<BaseUserHomePage> {
+class _BaseUserHomePageBodyState extends State<BaseUserHomePageBody> {
   @override
   void initState() {
     super.initState();

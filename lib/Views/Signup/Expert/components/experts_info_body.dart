@@ -95,6 +95,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                             ),
                             SizedBox(height: size.height * 0.04),
                             TextFieldBlocBuilder(
+                              textCapitalization: TextCapitalization.sentences,
                               textFieldBloc: expertInfoViewModel.nameText,
                               decoration: InputDecoration(
                                 filled: true,
@@ -107,6 +108,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               ),
                             ),
                             TextFieldBlocBuilder(
+                              textCapitalization: TextCapitalization.sentences,
                               textFieldBloc: expertInfoViewModel.surnameText,
                               decoration: InputDecoration(
                                 filled: true,
@@ -135,6 +137,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                                   )),
                             ),
                             TextFieldBlocBuilder(
+                              textCapitalization: TextCapitalization.sentences,
                               textFieldBloc: expertInfoViewModel.countryText,
                               decoration: InputDecoration(
                                 filled: true,
@@ -147,6 +150,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               ),
                             ),
                             TextFieldBlocBuilder(
+                              textCapitalization: TextCapitalization.sentences,
                               textFieldBloc: expertInfoViewModel.cityText,
                               decoration: InputDecoration(
                                 filled: true,
@@ -159,6 +163,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               ),
                             ),
                             TextFieldBlocBuilder(
+                              textCapitalization: TextCapitalization.sentences,
                               textFieldBloc: expertInfoViewModel.streetText,
                               decoration: InputDecoration(
                                 filled: true,

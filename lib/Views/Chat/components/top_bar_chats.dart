@@ -1,6 +1,7 @@
 import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/network_avatar.dart';
 import 'package:dima_colombo_ghiazzi/Views/Profile/expert_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +11,13 @@ class TopBarChats extends StatelessWidget {
   final String text;
   final bool peerExpert;
   final CircleAvatar circleAvatar;
+  final NetworkAvatar networkAvatar;
 
   TopBarChats({
     Key key,
     @required this.text,
-    @required this.circleAvatar,
+    this.circleAvatar,
+    this.networkAvatar,
     @required this.peerExpert,
   }) : super(key: key);
 
@@ -45,8 +48,8 @@ class TopBarChats extends StatelessWidget {
                       routerDelegate.pop();
                     },
                   ),
-                  circleAvatar ?? Container(),
-                  circleAvatar != null
+                  circleAvatar ?? networkAvatar ?? Container(),
+                  circleAvatar != null || networkAvatar != null
                       ? SizedBox(
                           width: size.width * 0.04,
                         )
