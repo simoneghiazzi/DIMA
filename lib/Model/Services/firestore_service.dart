@@ -30,10 +30,12 @@ class FirestoreService {
   Future<void> addUserIntoDB(User user) async {
     var userReference =
         _firestore.collection(user.collection.value).doc(user.id);
-    await _firestore.runTransaction((transaction) async {
-      await _incrementBaseUsersCounter(transaction, 1);
-      transaction.set(userReference, user.getData());
-    });
+    if (user.collection == Collection.BASE_USERS) {
+      await _firestore.runTransaction((transaction) async {
+        await _incrementBaseUsersCounter(transaction, 1);
+        transaction.set(userReference, user.getData());
+      });
+    }
   }
 
   /// Delete a user from the firestore DB.
