@@ -21,8 +21,7 @@ class BaseUserInfoBody extends StatelessWidget {
         child: SingleChildScrollView(
             child: Padding(
       padding: EdgeInsets.only(left: 40, right: 40),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <
-          Widget>[
+      child: Column(children: <Widget>[
         BlocProvider(
           create: (context) => BaseUserInfoViewModel(),
           child: Builder(
@@ -54,86 +53,82 @@ class BaseUserInfoBody extends StatelessWidget {
                     onFailure: (context, state) {
                       //Add what to do
                     },
-                    child: Container(
-                      width: double.infinity,
-                      height: size.height,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(height: size.height * 0.08),
-                          Text(
-                            "Personal information",
-                            style: TextStyle(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(height: size.height * 0.08),
+                        Text(
+                          "Personal information",
+                          style: TextStyle(
+                            color: kPrimaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25,
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.08),
+                        Image.asset(
+                          "assets/icons/logo.png",
+                          height: size.height * 0.15,
+                        ),
+                        SizedBox(height: size.height * 0.05),
+                        TextFieldBlocBuilder(
+                          textCapitalization: TextCapitalization.sentences,
+                          textFieldBloc: infoViewModel.nameText,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: kPrimaryLightColor,
+                            labelText: 'First name',
+                            prefixIcon: Icon(
+                              Icons.text_fields,
                               color: kPrimaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25,
                             ),
                           ),
-                          SizedBox(height: size.height * 0.08),
-                          Image.asset(
-                            "assets/icons/logo.png",
-                            height: size.height * 0.15,
+                        ),
+                        TextFieldBlocBuilder(
+                          textCapitalization: TextCapitalization.sentences,
+                          textFieldBloc: infoViewModel.surnameText,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: kPrimaryLightColor,
+                            labelText: 'Last name',
+                            prefixIcon: Icon(
+                              Icons.text_fields,
+                              color: kPrimaryColor,
+                            ),
                           ),
-                          SizedBox(height: size.height * 0.05),
-                          TextFieldBlocBuilder(
-                            textCapitalization: TextCapitalization.sentences,
-                            textFieldBloc: infoViewModel.nameText,
-                            decoration: InputDecoration(
+                        ),
+                        DateTimeFieldBlocBuilder(
+                          dateTimeFieldBloc: infoViewModel.birthDateTime,
+                          format: DateFormat.yMEd(),
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1920),
+                          lastDate: DateTime.now(),
+                          decoration: InputDecoration(
                               filled: true,
                               fillColor: kPrimaryLightColor,
-                              labelText: 'First name',
+                              labelText: 'Birth date',
                               prefixIcon: Icon(
-                                Icons.text_fields,
+                                Icons.date_range,
                                 color: kPrimaryColor,
-                              ),
-                            ),
-                          ),
-                          TextFieldBlocBuilder(
-                            textCapitalization: TextCapitalization.sentences,
-                            textFieldBloc: infoViewModel.surnameText,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: kPrimaryLightColor,
-                              labelText: 'Last name',
-                              prefixIcon: Icon(
-                                Icons.text_fields,
-                                color: kPrimaryColor,
-                              ),
-                            ),
-                          ),
-                          DateTimeFieldBlocBuilder(
-                            dateTimeFieldBloc: infoViewModel.birthDateTime,
-                            format: DateFormat.yMEd(),
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1920),
-                            lastDate: DateTime.now(),
-                            decoration: InputDecoration(
-                                filled: true,
-                                fillColor: kPrimaryLightColor,
-                                labelText: 'Birth date',
-                                prefixIcon: Icon(
-                                  Icons.date_range,
-                                  color: kPrimaryColor,
-                                )),
-                          ),
-                          SizedBox(height: size.height * 0.02),
-                          RoundedButton(
-                            press: () {
-                              FocusScope.of(context).unfocus();
-                              infoViewModel.submit();
-                            },
-                            text: "NEXT",
-                          ),
-                          SizedBox(height: size.height * 0.05),
-                          AlreadyHaveAnAccountCheck(
-                            login: false,
-                            press: () {
-                              routerDelegate.replace(name: LoginScreen.route);
-                            },
-                          ),
-                          SizedBox(height: size.height * 0.05),
-                        ],
-                      ),
+                              )),
+                        ),
+                        SizedBox(height: size.height * 0.02),
+                        RoundedButton(
+                          press: () {
+                            FocusScope.of(context).unfocus();
+                            infoViewModel.submit();
+                          },
+                          text: "NEXT",
+                        ),
+                        SizedBox(height: size.height * 0.05),
+                        AlreadyHaveAnAccountCheck(
+                          login: false,
+                          press: () {
+                            routerDelegate.replace(name: LoginScreen.route);
+                          },
+                        ),
+                        SizedBox(height: size.height * 0.05),
+                      ],
                     ),
                   ));
             },
