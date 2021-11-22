@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BaseUserHomePageScreen extends StatefulWidget {
-  static const route = '/baseUserHomeScreen';
+  static const route = '/baseUserHomePageScreen';
   final int pageIndex;
 
   BaseUserHomePageScreen({Key key, @required this.pageIndex}) : super(key: key);

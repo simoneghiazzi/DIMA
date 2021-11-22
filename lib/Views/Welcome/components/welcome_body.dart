@@ -79,16 +79,22 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                   press: () async {
                     LoadingDialog.show(context, _keyLoader);
                     id = await authViewModel.logInWithFacebook();
-                    LoadingDialog.hide(context, _keyLoader);
-                    if (id != null) navigateToHome();
+                    if (id == null) {
+                      LoadingDialog.hide(context, _keyLoader);
+                    } else {
+                      navigateToHome();
+                    }
                   }),
               SocialIcon(
                   iconSrc: "assets/icons/google.png",
                   press: () async {
                     LoadingDialog.show(context, _keyLoader);
                     id = await authViewModel.logInWithGoogle();
-                    LoadingDialog.hide(context, _keyLoader);
-                    if (id != null) navigateToHome();
+                    if (id == null) {
+                      LoadingDialog.hide(context, _keyLoader);
+                    } else {
+                      navigateToHome();
+                    }
                   }),
             ]),
             StreamBuilder<String>(
@@ -127,6 +133,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
     baseUserViewModel.id = id;
     await baseUserViewModel.loadLoggedUser();
+    LoadingDialog.hide(context, _keyLoader);
     routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
   }
 }

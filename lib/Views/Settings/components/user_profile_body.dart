@@ -60,7 +60,7 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                 color: kPrimaryColor,
               ),
               Padding(
-                padding: EdgeInsets.only(top: 40),
+                padding: EdgeInsets.only(top: 30),
                 child: Container(
                   padding: EdgeInsets.only(
                       left: size.width / 10, right: size.width / 10),
@@ -94,28 +94,52 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                             SizedBox(
                               height: size.height * 0.05,
                             ),
-                            widget.user.getData()['profilePhoto'] != null
-                                ? Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.phone,
+                            if (widget.user.getData()['address'] != null) ...[
+                              Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.house,
+                                    color: kPrimaryColor,
+                                  ),
+                                  SizedBox(
+                                    width: size.width * 0.05,
+                                  ),
+                                  Flexible(
+                                    child:
+                                        Text(widget.user.getData()['address'],
+                                            style: TextStyle(
+                                              color: kPrimaryColor,
+                                              fontSize: 15,
+                                            )),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: size.height * 0.04,
+                              ),
+                            ],
+                            if (widget.user.getData()['phoneNumber'] !=
+                                null) ...[
+                              Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.phone,
+                                    color: kPrimaryColor,
+                                  ),
+                                  SizedBox(
+                                    width: size.width * 0.05,
+                                  ),
+                                  Text(widget.user.getData()['phoneNumber'],
+                                      style: TextStyle(
                                         color: kPrimaryColor,
-                                      ),
-                                      SizedBox(
-                                        width: size.width * 0.05,
-                                      ),
-                                      Text(widget.user.getData()['phoneNumber'],
-                                          style: TextStyle(
-                                            color: kPrimaryColor,
-                                            fontSize: 15,
-                                          ))
-                                    ],
-                                  )
-                                : Container(),
-                            Container(),
-                            SizedBox(
-                              height: size.height * 0.03,
-                            ),
+                                        fontSize: 15,
+                                      ))
+                                ],
+                              ),
+                              SizedBox(
+                                height: size.height * 0.04,
+                              ),
+                            ],
                             Column(
                               children: <Widget>[
                                 if (widget.user.email != null) ...[
@@ -224,42 +248,98 @@ class _UserProfileBodyState extends State<UserProfileBody> {
                                   ],
                                 ),
                                 SizedBox(
-                                  height: size.height * 0.03,
+                                  height: size.height * 0.05,
                                 ),
                               ]),
                             ],
-                            widget.user.getData()['profilePhoto'] != null
-                                ? Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.house,
-                                        color: kPrimaryColor,
-                                      ),
-                                      SizedBox(
-                                        width: size.width * 0.05,
-                                      ),
-                                      Flexible(
-                                        child: Text(
-                                            widget.user.getData()['address'],
-                                            style: TextStyle(
-                                              color: kPrimaryColor,
-                                              fontSize: 15,
-                                            )),
-                                      ),
-                                    ],
-                                  )
-                                : Container(),
-                            SizedBox(
-                              height: size.height * 0.05,
-                            ),
                             Divider(
                               color: kPrimaryColor,
                               height: 1.5,
                             ),
                             SizedBox(
-                              height: size.height * 0.08,
+                              height: size.height * 0.05,
                             ),
                           ],
+                        ),
+                        Center(
+                          child: InkWell(
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  left: 8, right: 8, top: 2, bottom: 2),
+                              height: size.height * 0.05,
+                              width: size.width * 0.5,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: kPrimaryColor,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    "Logout",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Icon(
+                                    Icons.logout,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            onTap: () {
+                              authViewModel.logOut();
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height * 0.03,
+                        ),
+                        Center(
+                          child: InkWell(
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  left: 8, right: 8, top: 2, bottom: 2),
+                              height: size.height * 0.05,
+                              width: size.width * 0.5,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: Colors.red,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    "Delete account",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Icon(
+                                    Icons.delete,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            onTap: () {
+                              alert.show();
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height * 0.03,
                         ),
                       ],
                     ),
@@ -268,107 +348,6 @@ class _UserProfileBodyState extends State<UserProfileBody> {
               )
             ],
           )),
-          Positioned(
-              bottom: 50,
-              child: Column(
-                children: [
-                  Center(
-                    child: InkWell(
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            left: 8, right: 8, top: 2, bottom: 2),
-                        height: size.height * 0.05,
-                        width: size.width * 0.5,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: kPrimaryColor,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Logout",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Icon(
-                              Icons.logout,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        authViewModel.logOut();
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: size.height * 0.03,
-                  ),
-                  Center(
-                    child: InkWell(
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            left: 8, right: 8, top: 2, bottom: 2),
-                        height: size.height * 0.05,
-                        width: size.width * 0.5,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.red,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Delete account",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        alert.show();
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: size.height * 0.03,
-                  ),
-                ],
-              )),
-          widget.user.getData()['profilePhoto'] != null
-              ? Positioned(
-                  top: 60,
-                  left: 25,
-                  child: FloatingActionButton(
-                    mini: true,
-                    onPressed: () {
-                      routerDelegate.pop();
-                    },
-                    materialTapTargetSize: MaterialTapTargetSize.padded,
-                    backgroundColor: Colors.transparent,
-                    child: const Icon(Icons.arrow_back, size: 40.0),
-                  ),
-                )
-              : Container(),
         ],
       ),
     );

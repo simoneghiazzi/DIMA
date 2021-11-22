@@ -94,7 +94,10 @@ class _LoginBodyState extends State<LoginBody> {
                       FocusScope.of(context).unfocus();
                       LoadingDialog.show(context, _keyLoader);
                       var id = await authViewModel.logIn();
-                      if (id != null) navigateToHome(id);
+                      if (id == null) {
+                        LoadingDialog.hide(context, _keyLoader);
+                      }
+                      navigateToHome(id);
                     },
                     enabled: snapshot.data ?? false,
                   );

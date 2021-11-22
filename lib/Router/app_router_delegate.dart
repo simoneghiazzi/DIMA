@@ -105,7 +105,9 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
         child = UserProfileScreen(user: routeSettings.arguments);
         break;
       case ExpertHomePageScreen.route:
-        child = ExpertHomePageScreen();
+        child = ExpertHomePageScreen(
+          pageIndex: routeSettings.arguments,
+        );
         break;
       case BaseUserHomePageScreen.route:
         child = BaseUserHomePageScreen(

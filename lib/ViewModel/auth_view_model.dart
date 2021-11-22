@@ -54,6 +54,11 @@ class AuthViewModel {
   Future<String> logInWithGoogle() async {
     try {
       id = await _firebaseAuthService.signInWithGoogle();
+      if (id == null) {
+        authMessageController.add(
+            "An account already exists with the same email address but different sign-in credentials.");
+        return null;
+      }
       authMessageController.add("");
       return id;
     } catch (e) {}
@@ -102,6 +107,7 @@ class AuthViewModel {
     return _firebaseAuthService.getAuthProvider();
   }
 
+  /// Return true if the user has the password as authentication provider
   Future<bool> hasPasswordAuthentication(String email) async {
     var list = await _firebaseAuthService.fetchSignInMethods(email);
     if (list.contains("password")) {

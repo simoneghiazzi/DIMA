@@ -58,32 +58,39 @@ class FirebaseAuthService {
     ]);
     GoogleSignInAccount googleUser = await googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    Firebase.AuthCredential credential = Firebase.GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    _userCredential = await _firebaseAuth.signInWithCredential(credential);
+    var signInMethods =
+        await fetchSignInMethods(googleSignIn.currentUser.email);
+    if (signInMethods.contains("google.com") || signInMethods.isEmpty) {
+      Firebase.AuthCredential credential =
+          Firebase.GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      _userCredential = await _firebaseAuth.signInWithCredential(credential);
 
-    // Check if it is a new user. If yes, insert the data into the DB
-    if (await _firestoreService.getUserByIdFromDB(
-            Collection.BASE_USERS, _userCredential.user.uid) ==
-        null) {
-      final headers = await googleSignIn.currentUser.authHeaders;
-      final res = jsonDecode((await get(
-              Uri.parse(
-                  "https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
-              headers: {"Authorization": headers["Authorization"]}))
-          .body)['birthdays'][0]['date'];
-      var displayName = googleSignIn.currentUser.displayName.split(" ");
-      String birthDate = '${res['year']}-${res['month']}-${res['day']}';
+      // Check if it is a new user. If yes, insert the data into the DB
+      if (await _firestoreService.getUserByIdFromDB(
+              Collection.BASE_USERS, _userCredential.user.uid) ==
+          null) {
+        final headers = await googleSignIn.currentUser.authHeaders;
+        final res = jsonDecode((await get(
+                Uri.parse(
+                    "https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
+                headers: {"Authorization": headers["Authorization"]}))
+            .body)['birthdays'][0]['date'];
+        var displayName = googleSignIn.currentUser.displayName.split(" ");
+        String birthDate = '${res['year']}-${res['month']}-${res['day']}';
 
-      await _firestoreService.addUserIntoDB(BaseUser(
-          id: _userCredential.user.uid,
-          name: displayName[0],
-          surname: displayName[1],
-          birthDate: DateTime.parse(birthDate)));
+        await _firestoreService.addUserIntoDB(BaseUser(
+            id: _userCredential.user.uid,
+            name: displayName[0],
+            surname: displayName[1],
+            birthDate: DateTime.parse(birthDate)));
+      }
+      return _userCredential.user.uid;
+    } else {
+      return null;
     }
-    return _userCredential.user.uid;
   }
 
   /// Sign in a user if it exists or create a new user through the facebook account.
