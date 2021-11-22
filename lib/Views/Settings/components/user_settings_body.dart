@@ -1,6 +1,9 @@
+import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Welcome/components/social_icon.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/network_avatar.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +20,7 @@ class UserSettingsBody extends StatefulWidget {
 }
 
 class _UserSettingsBodyState extends State<UserSettingsBody> {
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
   Alert alert;
@@ -137,124 +141,183 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               height: size.height * 0.04,
                             ),
                           ],
-                          Column(
-                            children: <Widget>[
-                              if (widget.user.email != null) ...[
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.mail,
-                                      color: kPrimaryColor,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * 0.05,
-                                    ),
-                                    Flexible(
-                                        child: Text(widget.user.email,
-                                            style: TextStyle(
-                                              color: kPrimaryColor,
-                                              fontSize: 15,
-                                            ))),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: size.height * 0.05,
-                                ),
-                              ],
-                              if (authViewModel.authProvider() ==
-                                  "google.com") ...[
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/google.png",
-                                      height: 25,
-                                      width: 25,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * 0.05,
-                                    ),
-                                    Flexible(
-                                        child: Text(
-                                            "You are logged in with a Google account",
-                                            style: TextStyle(
-                                              color: kPrimaryColor,
-                                              fontSize: 15,
-                                            ))),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: size.height * 0.05,
-                                ),
-                              ],
-                              if (authViewModel.authProvider() ==
-                                  "facebook.com") ...[
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/facebook.pn",
-                                      height: 25,
-                                      width: 25,
-                                    ),
-                                    SizedBox(
-                                      width: size.width * 0.05,
-                                    ),
-                                    Flexible(
-                                        child: Text(
-                                            "You are logged in with a Facebook account",
-                                            style: TextStyle(
-                                              color: kPrimaryColor,
-                                              fontSize: 15,
-                                            ))),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: size.height * 0.05,
-                                ),
-                              ],
-                            ],
-                          ),
                           if (widget.user.email != null) ...[
-                            Column(children: [
-                              Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.lock,
-                                    color: kPrimaryColor,
-                                  ),
-                                  SizedBox(
-                                    width: size.width * 0.05,
-                                  ),
-                                  Flexible(
-                                    child: GestureDetector(
-                                      child: Text(
-                                        "Reset password",
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.mail,
+                                  color: kPrimaryColor,
+                                ),
+                                SizedBox(
+                                  width: size.width * 0.05,
+                                ),
+                                Flexible(
+                                    child: Text(widget.user.email,
                                         style: TextStyle(
                                           color: kPrimaryColor,
-                                          fontWeight: FontWeight.bold,
                                           fontSize: 15,
+                                        ))),
+                              ],
+                            ),
+                            SizedBox(
+                              height: size.height * 0.04,
+                            ),
+                          ],
+                          FutureBuilder(
+                              future: authViewModel
+                                  .hasPasswordAuthentication(widget.user.email),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Column(children: [
+                                    Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.lock,
+                                          color: kPrimaryColor,
                                         ),
-                                      ),
-                                      onTap: () {
-                                        authViewModel
-                                            .resetPassword(widget.user.email);
-                                        showSnackBar();
-                                        authViewModel.logOut();
-                                      },
+                                        SizedBox(
+                                          width: size.width * 0.05,
+                                        ),
+                                        Flexible(
+                                          child: GestureDetector(
+                                            child: Text(
+                                              "Reset password",
+                                              style: TextStyle(
+                                                color: kPrimaryColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                            onTap: () {
+                                              authViewModel.resetPassword(
+                                                  widget.user.email);
+                                              showSnackBar(
+                                                  "Please check your email for the password reset link.");
+                                              authViewModel.logOut();
+                                            },
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  )
-                                ],
+                                    SizedBox(
+                                      height: size.height * 0.04,
+                                    ),
+                                  ]);
+                                } else {
+                                  return Container();
+                                }
+                              }),
+                          if (authViewModel.authProvider() == "google.com") ...[
+                            Row(
+                              children: [
+                                Image.asset(
+                                  "assets/icons/google.png",
+                                  height: 25,
+                                  width: 25,
+                                ),
+                                SizedBox(
+                                  width: size.width * 0.05,
+                                ),
+                                Flexible(
+                                    child: Text(
+                                        "Your Google account is linked with this profile",
+                                        style: TextStyle(
+                                          color: kPrimaryColor,
+                                          fontSize: 15,
+                                        ))),
+                              ],
+                            ),
+                            SizedBox(
+                              height: size.height * 0.05,
+                            ),
+                          ],
+                          if (authViewModel.authProvider() ==
+                              "facebook.com") ...[
+                            Row(
+                              children: [
+                                Image.asset(
+                                  "assets/icons/facebook.png",
+                                  height: 25,
+                                  width: 25,
+                                ),
+                                SizedBox(
+                                  width: size.width * 0.05,
+                                ),
+                                Flexible(
+                                    child: Text(
+                                        "Your Facebook account is linked with this profile",
+                                        style: TextStyle(
+                                          color: kPrimaryColor,
+                                          fontSize: 15,
+                                        ))),
+                              ],
+                            ),
+                            SizedBox(
+                              height: size.height * 0.05,
+                            ),
+                          ],
+                          if (authViewModel.authProvider() == "password" &&
+                              widget.user.collection ==
+                                  Collection.BASE_USERS) ...[
+                            Divider(
+                              color: kPrimaryLightColor,
+                            ),
+                            SizedBox(
+                              height: size.height * 0.02,
+                            ),
+                            Text(
+                              "Link your social accounts:",
+                              style: TextStyle(
+                                color: kPrimaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
                               ),
-                              SizedBox(
-                                height: size.height * 0.05,
-                              ),
-                            ]),
+                            ),
+                            SizedBox(
+                              height: size.height * 0.02,
+                            ),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  SocialIcon(
+                                      iconSrc: "assets/icons/facebook.png",
+                                      press: () async {
+                                        LoadingDialog.show(context, _keyLoader);
+                                        var id = await authViewModel
+                                            .logInWithFacebook(link: true);
+                                        LoadingDialog.hide(context, _keyLoader);
+                                        if (id == null) {
+                                          showSnackBar(
+                                              "This social account is already linked with another profile or the email is already registered.");
+                                        } else {
+                                          setState(() {});
+                                        }
+                                      }),
+                                  SocialIcon(
+                                      iconSrc: "assets/icons/google.png",
+                                      press: () async {
+                                        LoadingDialog.show(context, _keyLoader);
+                                        var id = await authViewModel
+                                            .logInWithGoogle(link: true);
+                                        LoadingDialog.hide(context, _keyLoader);
+                                        if (id == null) {
+                                          showSnackBar(
+                                              "This social account is already linked with another profile or the email is already registered.");
+                                        } else {
+                                          setState(() {});
+                                        }
+                                      }),
+                                ]),
+                            SizedBox(
+                              height: size.height * 0.03,
+                            ),
                           ],
                           Divider(
                             color: kPrimaryColor,
                             height: 1.5,
                           ),
                           SizedBox(
-                            height: size.height * 0.05,
+                            height: size.height * 0.04,
                           ),
                         ],
                       ),
@@ -336,7 +399,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                         ),
                       ),
                       SizedBox(
-                        height: size.height * 0.05,
+                        height: size.height * 0.03,
                       ),
                     ],
                   ),
@@ -349,11 +412,10 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
     );
   }
 
-  void showSnackBar() {
+  void showSnackBar(String text) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content:
-          const Text('Please check your email for the password reset link.'),
-      duration: const Duration(seconds: 20),
+      content: Text(text),
+      duration: const Duration(seconds: 10),
     ));
   }
 

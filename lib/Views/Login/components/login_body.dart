@@ -96,8 +96,9 @@ class _LoginBodyState extends State<LoginBody> {
                       var id = await authViewModel.logIn();
                       if (id == null) {
                         LoadingDialog.hide(context, _keyLoader);
+                      } else {
+                        navigateToHome(id);
                       }
-                      navigateToHome(id);
                     },
                     enabled: snapshot.data ?? false,
                   );
@@ -111,7 +112,7 @@ class _LoginBodyState extends State<LoginBody> {
                           text: snapshot.data,
                           style: TextStyle(color: Colors.red, fontSize: 15)));
                 }),
-            SizedBox(height: size.height * 0.01),
+            SizedBox(height: size.height * 0.02),
             AlreadyHaveAnAccountCheck(
               press: () {
                 authViewModel.clearControllers();

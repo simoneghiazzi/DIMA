@@ -44,13 +44,14 @@ class FirebaseAuthService {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
-  // Future<void> linkProviders() async {
-  //   await _userCredential.user.linkWithCredential(credential)
-  // }
+  Future<Firebase.UserCredential> linkProviders(
+      Firebase.AuthCredential credential) async {
+    return await _userCredential.user.linkWithCredential(credential);
+  }
 
   /// Sign in a user if it exists or create a new user through the google account.
   /// It retrieves the name, surname and birthDate information from the google account of the user.
-  Future<String> signInWithGoogle() async {
+  Future<String> signInWithGoogle(bool link) async {
     GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
       'email',
       "https://www.googleapis.com/auth/userinfo.profile",
@@ -60,12 +61,17 @@ class FirebaseAuthService {
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
     var signInMethods =
         await fetchSignInMethods(googleSignIn.currentUser.email);
+    Firebase.AuthCredential credential = Firebase.GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    if (link) {
+      _userCredential = await linkProviders(credential);
+      return _userCredential.user.uid;
+    }
+
     if (signInMethods.contains("google.com") || signInMethods.isEmpty) {
-      Firebase.AuthCredential credential =
-          Firebase.GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
       _userCredential = await _firebaseAuth.signInWithCredential(credential);
 
       // Check if it is a new user. If yes, insert the data into the DB
@@ -85,6 +91,7 @@ class FirebaseAuthService {
             id: _userCredential.user.uid,
             name: displayName[0],
             surname: displayName[1],
+            email: googleSignIn.currentUser.email,
             birthDate: DateTime.parse(birthDate)));
       }
       return _userCredential.user.uid;
@@ -95,12 +102,18 @@ class FirebaseAuthService {
 
   /// Sign in a user if it exists or create a new user through the facebook account.
   /// It retrieves the name, surname and birthDate information from the facebook account of the user.
-  Future<String> signInWithFacebook() async {
+  Future<String> signInWithFacebook(bool link) async {
     LoginResult result = await FacebookAuth.instance
         .login(permissions: ['public_profile', 'user_birthday']);
     AccessToken accessToken = result.accessToken;
     var facebookAuthCredential =
         Firebase.FacebookAuthProvider.credential(accessToken.token);
+
+    if (link) {
+      _userCredential = await linkProviders(facebookAuthCredential);
+      return _userCredential.user.uid;
+    }
+
     _userCredential =
         await _firebaseAuth.signInWithCredential(facebookAuthCredential);
 
@@ -117,6 +130,7 @@ class FirebaseAuthService {
           id: _userCredential.user.uid,
           name: userData['name'].split(" ")[0],
           surname: userData['name'].split(" ")[1],
+          email: _userCredential.user.email,
           birthDate: DateTime.parse(birthDate)));
     }
     return _userCredential.user.uid;

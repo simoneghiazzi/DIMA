@@ -11,9 +11,9 @@ class AuthViewModel {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController repeatedPasswordController =
       TextEditingController();
-  var isUserLoggedController = StreamController<bool>.broadcast();
-  var isUserCreatedController = StreamController<bool>.broadcast();
-  var authMessageController = StreamController<String>.broadcast();
+  var _isUserLoggedController = StreamController<bool>.broadcast();
+  var _isUserCreatedController = StreamController<bool>.broadcast();
+  var _authMessageController = StreamController<String>.broadcast();
   final LoginForm loginForm = LoginForm();
 
   final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
@@ -38,42 +38,42 @@ class AuthViewModel {
       id = await _firebaseAuthService.signInWithEmailAndPassword(
           emailController.text, passwordController.text);
       if (id != null) {
-        authMessageController.add("");
+        _authMessageController.add("");
         return id;
       } else
-        authMessageController.add("The email is not verified");
+        _authMessageController.add("The email is not verified");
     } catch (e) {
-      isUserCreatedController.add(false);
+      _isUserCreatedController.add(false);
       if (e.code == 'user-not-found' || e.code == 'wrong-password')
-        authMessageController.add("Wrong email or password.");
+        _authMessageController.add("Wrong email or password.");
     }
     return null;
   }
 
   /// Login a user with google. If the user is new, it automatically creates a new account
-  Future<String> logInWithGoogle() async {
+  Future<String> logInWithGoogle({bool link = false}) async {
     try {
-      id = await _firebaseAuthService.signInWithGoogle();
+      id = await _firebaseAuthService.signInWithGoogle(link);
       if (id == null) {
-        authMessageController.add(
+        _authMessageController.add(
             "An account already exists with the same email address but different sign-in credentials.");
         return null;
       }
-      authMessageController.add("");
+      _authMessageController.add("");
       return id;
     } catch (e) {}
     return null;
   }
 
   /// Login a user with facebook. If the user is new, it automatically creates a new account
-  Future<String> logInWithFacebook() async {
+  Future<String> logInWithFacebook({bool link = false}) async {
     try {
-      id = await _firebaseAuthService.signInWithFacebook();
-      authMessageController.add("");
+      id = await _firebaseAuthService.signInWithFacebook(link);
+      _authMessageController.add("");
       return id;
     } catch (e) {
       if (e.code == 'account-exists-with-different-credential')
-        authMessageController.add(
+        _authMessageController.add(
             "An account already exists with the same email address but different sign-in credentials.");
     }
     return null;
@@ -84,14 +84,14 @@ class AuthViewModel {
       id = await _firebaseAuthService.createUserWithEmailAndPassword(
           emailController.text, passwordController.text, loggedUser);
       await _firebaseAuthService.sendEmailVerification();
-      authMessageController.add("");
-      isUserCreatedController.add(true);
+      _authMessageController.add("");
+      _isUserCreatedController.add(true);
     } catch (e) {
-      isUserCreatedController.add(false);
+      _isUserCreatedController.add(false);
       if (e.code == 'email-already-in-use')
-        authMessageController.add('The account already exists.');
+        _authMessageController.add('The account already exists.');
       else if (e.code == 'weak-password')
-        authMessageController
+        _authMessageController
             .add('The password is too weak.\nIt has to be at least 6 chars.');
     }
     return id;
@@ -128,7 +128,7 @@ class AuthViewModel {
   Future<void> logOut() async {
     await _firebaseAuthService.signOut();
     id = '';
-    isUserLoggedController.add(false);
+    _isUserLoggedController.add(false);
     clearControllers();
   }
 
@@ -137,7 +137,7 @@ class AuthViewModel {
     passwordController.clear();
     repeatedPasswordController.clear();
     emailController.clear();
-    authMessageController.add(null);
+    _authMessageController.add(null);
     loginForm.resetControllers();
   }
 
@@ -159,9 +159,9 @@ class AuthViewModel {
     await _firebaseAuthService.deleteUser(loggedUser);
   }
 
-  Stream<bool> get isUserLogged => isUserLoggedController.stream;
+  Stream<bool> get isUserLogged => _isUserLoggedController.stream;
 
-  Stream<bool> get isUserCreated => isUserCreatedController.stream;
+  Stream<bool> get isUserCreated => _isUserCreatedController.stream;
 
-  Stream<String> get authMessage => authMessageController.stream;
+  Stream<String> get authMessage => _authMessageController.stream;
 }
