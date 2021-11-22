@@ -14,10 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatPageBody extends StatefulWidget {
-  final bool isExpert;
-
-  ChatPageBody({Key key, this.isExpert = false}) : super(key: key);
-
   @override
   _ChatPageBodyState createState() => _ChatPageBodyState();
 }
@@ -26,7 +22,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
     with WidgetsBindingObserver {
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
-  User peerUser;
+  User peerUser, senderUser;
 
   @override
   void initState() {
@@ -34,6 +30,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     peerUser = chatViewModel.conversation.peerUser;
+    senderUser = chatViewModel.conversation.senderUser;
     chatViewModel.updateChattingWith();
     BackButtonInterceptor.add(backButtonInterceptor);
     super.initState();
@@ -48,43 +45,28 @@ class _ChatPageBodyState extends State<ChatPageBody>
             children: <Widget>[
               peerUser.collection == Collection.EXPERTS
                   ? TopBarChats(
-                      peerExpert: true,
                       networkAvatar: NetworkAvatar(
-                        img: chatViewModel.conversation.peerUser
-                            .getData()['profilePhoto'],
+                        img: peerUser.getData()['profilePhoto'],
                         radius: 20.0,
                       ),
                       text: peerUser.getData()['name'] +
                           " " +
                           peerUser.getData()['surname'],
                     )
-                  : widget.isExpert
-                      ? TopBarChats(
-                          peerExpert: false,
-                          circleAvatar: CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            child: Icon(
-                              Icons.account_circle,
-                              size: 40,
-                              color: kPrimaryColor,
-                            ),
-                          ),
-                          text: peerUser.getData()['name'] +
-                              " " +
-                              peerUser.getData()['surname'],
-                        )
-                      : TopBarChats(
-                          peerExpert: false,
-                          circleAvatar: CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            child: Icon(
-                              Icons.account_circle,
-                              size: 40,
-                              color: kPrimaryColor,
-                            ),
-                          ),
-                          text: peerUser.getData()['name'],
+                  : TopBarChats(
+                      circleAvatar: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        child: Icon(
+                          Icons.account_circle,
+                          size: 40,
+                          color: kPrimaryColor,
                         ),
+                      ),
+                      text: peerUser.getData()['name'] +
+                          (senderUser.collection == Collection.EXPERTS
+                              ? " " + peerUser.getData()['surname']
+                              : ""),
+                    ),
               // List of messages
               MessagesListConstructor(),
               // Input content

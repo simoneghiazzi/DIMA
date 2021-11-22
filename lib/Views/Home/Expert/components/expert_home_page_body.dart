@@ -97,7 +97,6 @@ class _ExpertHomePageBodyState extends State<ExpertHomePageBody> {
                     }),
               ),
               ChatsListConstructor(
-                isExpert: true,
                 createUserCallback: createUserCallback,
               ),
             ],

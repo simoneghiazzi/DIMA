@@ -141,9 +141,9 @@ class _CredentialBodyState extends State<CredentialBody> {
   }
 
   StreamSubscription<bool> subscribeToViewModel() {
-    return authViewModel.isUserCreated.listen((isSuccessfulLogin) {
+    return authViewModel.isUserCreated.listen((isUserCreated) {
       LoadingDialog.hide(context, _keyLoader);
-      if (isSuccessfulLogin) {
+      if (isUserCreated) {
         showSnackBar();
         routerDelegate.pushPage(name: LoginScreen.route);
       }

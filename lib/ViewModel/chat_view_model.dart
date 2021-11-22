@@ -52,8 +52,8 @@ class ChatViewModel {
     }
   }
 
-  Future<bool> hasPendingChats() async {
-    return await firestoreService.hasPendingChats(conversation.senderUser);
+  Stream<QuerySnapshot> hasPendingChats() {
+    return firestoreService.hasPendingChats(conversation.senderUser);
   }
 
   /// Chat with a [user]

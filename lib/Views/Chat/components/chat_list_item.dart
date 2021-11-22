@@ -10,10 +10,8 @@ import 'package:provider/provider.dart';
 
 class ChatListItem extends StatefulWidget {
   final User userItem;
-  final bool isExpert;
 
-  ChatListItem({Key key, @required this.userItem, this.isExpert = false})
-      : super(key: key);
+  ChatListItem({Key key, @required this.userItem}) : super(key: key);
 
   @override
   _ChatListItemState createState() => _ChatListItemState();
@@ -52,25 +50,19 @@ class _ChatListItemState extends State<ChatListItem> {
               Flexible(
                 child: widget.userItem.collection == Collection.EXPERTS
                     ? Text(
-                        widget.userItem.name + ' ' + widget.userItem.surname,
+                        widget.userItem.name + " " + widget.userItem.surname,
                         maxLines: 1,
                         style: TextStyle(color: kPrimaryColor, fontSize: 18),
                       )
-                    : widget.isExpert
-                        ? Text(
-                            widget.userItem.name +
-                                ' ' +
-                                widget.userItem.surname,
-                            maxLines: 1,
-                            style:
-                                TextStyle(color: kPrimaryColor, fontSize: 18),
-                          )
-                        : Text(
-                            widget.userItem.name,
-                            maxLines: 1,
-                            style:
-                                TextStyle(color: kPrimaryColor, fontSize: 18),
-                          ),
+                    : Text(
+                        widget.userItem.name +
+                            (chatViewModel.conversation.senderUser.collection ==
+                                    Collection.EXPERTS
+                                ? " " + widget.userItem.surname
+                                : ""),
+                        maxLines: 1,
+                        style: TextStyle(color: kPrimaryColor, fontSize: 18),
+                      ),
               ),
             ],
           ),

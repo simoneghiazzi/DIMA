@@ -376,15 +376,12 @@ class FirestoreService {
     return ids;
   }
 
-  Future<bool> hasPendingChats(User user) async {
-    var snap = await _firestore
+  Stream<QuerySnapshot> hasPendingChats(User user) {
+    return _firestore
         .collection(user.collection.value)
         .doc(user.id)
         .collection(Collection.PENDING_CHATS.value)
-        .limit(1)
-        .get();
-    if (snap.docs.isEmpty) return false;
-    return true;
+        .snapshots();
   }
 
   /// It takes the [conversation] and the [increment] amount and increments the anonymous chat's counter of the users

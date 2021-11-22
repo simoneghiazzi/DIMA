@@ -94,7 +94,6 @@ class _LoginBodyState extends State<LoginBody> {
                       FocusScope.of(context).unfocus();
                       LoadingDialog.show(context, _keyLoader);
                       var id = await authViewModel.logIn();
-                      LoadingDialog.hide(context, _keyLoader);
                       if (id != null) navigateToHome(id);
                     },
                     enabled: snapshot.data ?? false,
@@ -133,6 +132,7 @@ class _LoginBodyState extends State<LoginBody> {
             Provider.of<BaseUserViewModel>(context, listen: false);
         baseUserViewModel.id = id;
         await baseUserViewModel.loadLoggedUser();
+        LoadingDialog.hide(context, _keyLoader);
         routerDelegate.replace(name: BaseUserHomePageScreen.route);
         break;
       case Collection.EXPERTS:
@@ -140,6 +140,7 @@ class _LoginBodyState extends State<LoginBody> {
             Provider.of<ExpertViewModel>(context, listen: false);
         expertViewModel.id = id;
         await expertViewModel.loadLoggedUser();
+        LoadingDialog.hide(context, _keyLoader);
         routerDelegate.replace(name: ExpertHomePageScreen.route);
         break;
       default:

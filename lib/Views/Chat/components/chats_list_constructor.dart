@@ -6,11 +6,9 @@ import 'package:provider/provider.dart';
 
 class ChatsListConstructor extends StatefulWidget {
   final Function createUserCallback;
-  final bool isExpert;
 
   ChatsListConstructor({
     Key key,
-    this.isExpert = false,
     this.createUserCallback,
   }) : super(key: key);
 
@@ -46,7 +44,6 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) {
                       return ChatListItem(
-                          isExpert: widget.isExpert,
                           userItem: widget
                               .createUserCallback(snapshot.data.removeFirst()));
                     },
