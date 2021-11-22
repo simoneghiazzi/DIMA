@@ -320,9 +320,9 @@ class FirestoreService {
         .collection(conversation.peerUserChat.chatCollection.value)
         .doc(conversation.senderUser.id);
     await _firestore.runTransaction((transaction) async {
+      await _incrementConversationCounter(transaction, conversation, -1);
       transaction.delete(senderUserReference);
       transaction.delete(peerUserReference);
-      await _incrementConversationCounter(transaction, conversation, -1);
     });
   }
 

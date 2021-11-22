@@ -3,6 +3,7 @@ import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +13,8 @@ class ChatAcceptDenyInput extends StatefulWidget {
 }
 
 class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  
   @override
   Widget build(BuildContext context) {
     var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
@@ -50,9 +53,11 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
           ),
         ),
         onTap: () async {
+          LoadingDialog.show(context, _keyLoader);
           await chatViewModel.acceptPendingChat();
           chatViewModel.conversation.senderUserChat = ActiveChat();
           chatViewModel.conversation.peerUserChat = ActiveChat();
+          LoadingDialog.hide(context, _keyLoader);
           routerDelegate.replaceAllButNumber(2, [
             RouteSettings(name: ActiveChatsListScreen.route),
             RouteSettings(name: ChatPageScreen.route)
@@ -93,7 +98,9 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
           ),
         ),
         onTap: () async {
+          LoadingDialog.show(context, _keyLoader);
           await chatViewModel.deleteChat();
+          LoadingDialog.hide(context, _keyLoader);
           routerDelegate.replaceAllButNumber(2, [
             RouteSettings(name: ActiveChatsListScreen.route),
           ]);
