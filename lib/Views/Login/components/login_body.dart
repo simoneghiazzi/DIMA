@@ -79,6 +79,7 @@ class _LoginBodyState extends State<LoginBody> {
             SizedBox(height: size.height * 0.01),
             ForgotPassword(
               press: () {
+                FocusScope.of(context).unfocus();
                 authViewModel.clearControllers();
                 routerDelegate.pushPage(name: ForgotPasswordScreen.route);
               },
@@ -108,7 +109,7 @@ class _LoginBodyState extends State<LoginBody> {
                           text: snapshot.data,
                           style: TextStyle(color: Colors.red, fontSize: 15)));
                 }),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.01),
             AlreadyHaveAnAccountCheck(
               press: () {
                 authViewModel.clearControllers();

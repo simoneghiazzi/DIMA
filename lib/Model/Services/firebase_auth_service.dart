@@ -127,6 +127,10 @@ class FirebaseAuthService {
     return _firebaseAuth.currentUser.providerData[0].providerId;
   }
 
+  Future<List<String>> fetchSignInMethods(String email) async {
+    return await _firebaseAuth.fetchSignInMethodsForEmail(email);
+  }
+
   /// Delete a user
   Future deleteUser(User user) async {
     await _firestoreService.removeUserFromDB(user);

@@ -11,13 +11,14 @@ class AuthViewModel {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController repeatedPasswordController =
       TextEditingController();
-  final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
-  final FirestoreService firestore = FirestoreService();
-  final LoginForm loginForm = LoginForm();
-  NotificationService notificationService;
   var isUserLoggedController = StreamController<bool>.broadcast();
   var isUserCreatedController = StreamController<bool>.broadcast();
   var authMessageController = StreamController<String>.broadcast();
+  final LoginForm loginForm = LoginForm();
+
+  final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
+  final FirestoreService firestore = FirestoreService();
+  NotificationService notificationService;
 
   String id;
 
@@ -99,6 +100,14 @@ class AuthViewModel {
 
   String authProvider() {
     return _firebaseAuthService.getAuthProvider();
+  }
+
+  Future<bool> hasPasswordAuthentication(String email) async {
+    var list = await _firebaseAuthService.fetchSignInMethods(email);
+    if (list.contains("password")) {
+      return true;
+    }
+    return false;
   }
 
   /// Get the data text from the controllers

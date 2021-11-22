@@ -124,7 +124,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                           text: snapshot.data,
                           style: TextStyle(color: Colors.red, fontSize: 15)));
                 }),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.01),
             AlreadyHaveAnAccountCheck(
               login: false,
               press: () {
@@ -133,7 +133,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                     1, [RouteSettings(name: LoginScreen.route)]);
               },
             ),
-            SizedBox(height: size.height * 0.01),
+            SizedBox(height: size.height * 0.06),
           ],
         ),
       ),

@@ -6,6 +6,7 @@ import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.d
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
@@ -51,43 +52,25 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                   fontSize: 50,
                   fontFamily: 'Gabriola'),
             ),
-            SizedBox(height: size.height * 0.05),
+            SizedBox(height: size.height * 0.03),
             Image.asset(
               "assets/icons/logo.png",
               height: size.height * 0.15,
             ),
-            SizedBox(height: size.height * 0.07),
-            ElevatedButton(
-              onPressed: () {
+            SizedBox(height: size.height * 0.05),
+            RoundedButton(
+              press: () {
                 routerDelegate.pushPage(name: LoginScreen.route);
               },
-              style: ButtonStyle(
-                  fixedSize: MaterialStateProperty.all<Size>(
-                      Size(size.width / 2, size.height / 20)),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(kPrimaryColor),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(29)))),
-              child: Text('LOGIN'),
+              text: "LOGIN",
             ),
-            SizedBox(height: size.height * 0.02),
-            ElevatedButton(
-              onPressed: () {
+            RoundedButton(
+              press: () {
                 routerDelegate.pushPage(name: BaseUsersSignUpScreen.route);
               },
-              style: ButtonStyle(
-                  fixedSize: MaterialStateProperty.all<Size>(
-                      Size(size.width / 2, size.height / 20)),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(kPrimaryLightColor),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(29)))),
-              child: Text(
-                'SIGNUP',
-                style: TextStyle(color: Colors.black),
-              ),
+              text: "SIGNUP",
+              color: kPrimaryLightColor,
+              textColor: Colors.black,
             ),
             OrDivider(),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[

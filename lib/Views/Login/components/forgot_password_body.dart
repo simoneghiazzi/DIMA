@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
@@ -18,6 +20,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
   FirestoreService firestoreService = FirestoreService();
+  var _errorTextController = StreamController<String>.broadcast();
 
   @override
   void initState() {
@@ -58,18 +61,33 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                     errorText: snapshot.data,
                   );
                 }),
-            SizedBox(height: size.height * 0.05),
+            StreamBuilder<String>(
+                stream: errorText,
+                builder: (context, snapshot) {
+                  return RichText(
+                      text: TextSpan(
+                          text: snapshot.data,
+                          style: TextStyle(color: Colors.red, fontSize: 15)));
+                }),
+            SizedBox(height: size.height * 0.03),
             StreamBuilder(
                 stream: authViewModel.loginForm.isResetPasswordEnabled,
                 builder: (context, snapshot) {
                   return RoundedButton(
                     text: "Send link",
                     press: () async {
+                      _errorTextController.add(null);
                       FocusScope.of(context).unfocus();
-                      await authViewModel
-                          .resetPassword(authViewModel.emailController.text);
-                      showSnackBar();
-                      routerDelegate.pop();
+                      if (await authViewModel.hasPasswordAuthentication(
+                          authViewModel.emailController.text)) {
+                        await authViewModel
+                            .resetPassword(authViewModel.emailController.text);
+                        showSnackBar();
+                        routerDelegate.pop();
+                      } else {
+                        _errorTextController
+                            .add("No account found with this email.");
+                      }
                     },
                     enabled: snapshot.data ?? false,
                   );
@@ -92,6 +110,8 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
     authViewModel.clearControllers();
     return true;
   }
+
+  Stream<String> get errorText => _errorTextController.stream;
 
   @override
   void dispose() {

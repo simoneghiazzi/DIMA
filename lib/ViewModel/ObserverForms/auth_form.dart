@@ -75,6 +75,9 @@ class LoginForm implements AuthFormInterface {
   void resetControllers() {
     _lastPassword = "";
     _lastRepeatedPassword = "";
+    emailText.add(null);
+    passwordText.add(null);
+    repeatedPasswordText.add(null);
   }
 
   @override
