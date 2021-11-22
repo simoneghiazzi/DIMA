@@ -14,7 +14,7 @@ import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Profile/expert_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/create_report_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/reports_list_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Settings/user_profile_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Settings/user_settings_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/credential_screen.dart';
@@ -101,8 +101,8 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
       case ForgotPasswordScreen.route:
         child = ForgotPasswordScreen();
         break;
-      case UserProfileScreen.route:
-        child = UserProfileScreen(user: routeSettings.arguments);
+      case UserSettingsScreen.route:
+        child = UserSettingsScreen(user: routeSettings.arguments);
         break;
       case ExpertHomePageScreen.route:
         child = ExpertHomePageScreen(

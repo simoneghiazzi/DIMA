@@ -1,7 +1,7 @@
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Home/Expert/components/expert_home_page_body.dart';
-import 'package:dima_colombo_ghiazzi/Views/Settings/user_profile_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Settings/user_settings_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +33,7 @@ class _ExpertHomePageScreenState extends State<ExpertHomePageScreen> {
     final List<Widget> _pages = [
       ExpertHomePageBody(),
       //Claendar(),
-      UserProfileScreen(user: expertViewModel.loggedUser)
+      UserSettingsScreen(user: expertViewModel.loggedUser)
     ];
     return WillPopScope(
         onWillPop: () async => false,

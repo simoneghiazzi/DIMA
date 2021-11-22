@@ -7,16 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-class UserProfileBody extends StatefulWidget {
+class UserSettingsBody extends StatefulWidget {
   final User user;
 
-  UserProfileBody({Key key, @required this.user}) : super(key: key);
+  UserSettingsBody({Key key, @required this.user}) : super(key: key);
 
   @override
-  _UserProfileBodyState createState() => _UserProfileBodyState();
+  _UserSettingsBodyState createState() => _UserSettingsBodyState();
 }
 
-class _UserProfileBodyState extends State<UserProfileBody> {
+class _UserSettingsBodyState extends State<UserSettingsBody> {
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
   Alert alert;
