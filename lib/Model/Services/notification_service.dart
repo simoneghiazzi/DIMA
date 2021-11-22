@@ -14,7 +14,7 @@ class NotificationService {
 
   NotificationService(this.user);
 
-  // Register the token of the specific user phone and listen for new notification to show
+  /// Register the token of the specific user phone and listen for new notification to show
   void registerNotification() {
     _firebaseMessaging.requestPermission();
 
@@ -40,7 +40,7 @@ class NotificationService {
     });
   }
 
-  // Show notification on Android and IOS
+  /// Show notification on Android and IOS
   void showNotification(RemoteNotification remoteNotification) async {
     AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(

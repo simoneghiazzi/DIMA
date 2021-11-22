@@ -12,11 +12,11 @@ class BaseUserInfoViewModel extends FormBloc<String, String> {
   ]);
 
   final birthDateTime = InputFieldBloc<DateTime, Object>(
-      validators: [
-        FieldBlocValidators.required,
-      ],
-      initialValue: new DateTime(
-          DateTime.now().year - 18, DateTime.now().month, DateTime.now().day));
+    validators: [
+      FieldBlocValidators.required,
+      FieldBlocValidators.underage,
+    ],
+  );
 
   BaseUserInfoViewModel() {
     addFieldBlocs(fieldBlocs: [nameText, surnameText, birthDateTime]);

@@ -4,7 +4,7 @@ import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/note.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +43,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
     subscription = subscribeToSuccessViewModel();
-    BackButtonInterceptor.add(myInterceptor);
+    BackButtonInterceptor.add(backButtonInterceptor);
     if (note == null) {
       modifiable = true;
     } else {
@@ -169,7 +169,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     diaryViewModel.clearControllers();
                     routerDelegate.replaceAllButNumber(1, [
                       RouteSettings(
-                          name: BaseUserHomeScreen.route, arguments: 1)
+                          name: BaseUserHomePageScreen.route, arguments: 1)
                     ]);
                   },
                   child: Container(
@@ -374,16 +374,16 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     );
   }
 
-  bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     diaryViewModel.clearControllers();
     routerDelegate.replaceAllButNumber(
-        1, [RouteSettings(name: BaseUserHomeScreen.route, arguments: 1)]);
+        1, [RouteSettings(name: BaseUserHomePageScreen.route, arguments: 1)]);
     return true;
   }
 
   @override
   void dispose() {
-    BackButtonInterceptor.remove(myInterceptor);
+    BackButtonInterceptor.remove(backButtonInterceptor);
     subscription.cancel();
     super.dispose();
   }

@@ -8,15 +8,12 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_accept_deny.dart
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_text_input.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/messages_list_constructor.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar_chats.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/network_avatar.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatPageBody extends StatefulWidget {
-  final bool isExpert;
-
-  ChatPageBody({Key key, this.isExpert = false}) : super(key: key);
-
   @override
   _ChatPageBodyState createState() => _ChatPageBodyState();
 }
@@ -25,7 +22,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
     with WidgetsBindingObserver {
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
-  User peerUser;
+  User peerUser, senderUser;
 
   @override
   void initState() {
@@ -33,8 +30,9 @@ class _ChatPageBodyState extends State<ChatPageBody>
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     peerUser = chatViewModel.conversation.peerUser;
+    senderUser = chatViewModel.conversation.senderUser;
     chatViewModel.updateChattingWith();
-    BackButtonInterceptor.add(myInterceptor);
+    BackButtonInterceptor.add(backButtonInterceptor);
     super.initState();
   }
 
@@ -47,79 +45,28 @@ class _ChatPageBodyState extends State<ChatPageBody>
             children: <Widget>[
               peerUser.collection == Collection.EXPERTS
                   ? TopBarChats(
-                      peerExpert: true,
-                      circleAvatar: CircleAvatar(
-                        radius: 20,
-                        backgroundColor: Colors.white,
-                        child: ClipOval(
-                          child: Image.network(
-                            chatViewModel.conversation.peerUser
-                                .getData()['profilePhoto'],
-                            fit: BoxFit.cover,
-                            width: 40.0,
-                            height: 40.0,
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return SizedBox(
-                                width: 40.0,
-                                height: 40.0,
-                                child: CircularProgressIndicator(
-                                  color: kPrimaryColor,
-                                  value: loadingProgress.expectedTotalBytes !=
-                                              null &&
-                                          loadingProgress.expectedTotalBytes !=
-                                              null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes
-                                      : null,
-                                ),
-                              );
-                            },
-                            errorBuilder: (context, object, stackTrace) {
-                              return CircleAvatar(
-                                  radius: 20,
-                                  backgroundColor: Colors.white,
-                                  child: Text(
-                                    "${chatViewModel.conversation.peerUser.name[0]}",
-                                    style: TextStyle(
-                                        color: kPrimaryColor, fontSize: 30),
-                                  ));
-                            },
-                          ),
-                        ),
+                      networkAvatar: NetworkAvatar(
+                        img: peerUser.getData()['profilePhoto'],
+                        radius: 20.0,
                       ),
                       text: peerUser.getData()['name'] +
                           " " +
                           peerUser.getData()['surname'],
                     )
-                  : widget.isExpert
-                      ? TopBarChats(
-                          peerExpert: false,
-                          circleAvatar: CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            child: Icon(
-                              Icons.account_circle,
-                              size: 40,
-                              color: kPrimaryColor,
-                            ),
-                          ),
-                          text: peerUser.getData()['name'] +
-                              " " +
-                              peerUser.getData()['surname'],
-                        )
-                      : TopBarChats(
-                          peerExpert: false,
-                          circleAvatar: CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            child: Icon(
-                              Icons.account_circle,
-                              size: 40,
-                              color: kPrimaryColor,
-                            ),
-                          ),
-                          text: peerUser.getData()['name'],
+                  : TopBarChats(
+                      circleAvatar: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        child: Icon(
+                          Icons.account_circle,
+                          size: 40,
+                          color: kPrimaryColor,
                         ),
+                      ),
+                      text: peerUser.getData()['name'] +
+                          (senderUser.collection == Collection.EXPERTS
+                              ? " " + peerUser.getData()['surname']
+                              : ""),
+                    ),
               // List of messages
               MessagesListConstructor(),
               // Input content
@@ -135,7 +82,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
     );
   }
 
-  bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     chatViewModel.resetChattingWith();
     routerDelegate.pop();
     return true;
@@ -153,7 +100,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
 
   @override
   void dispose() {
-    BackButtonInterceptor.remove(myInterceptor);
+    BackButtonInterceptor.remove(backButtonInterceptor);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }

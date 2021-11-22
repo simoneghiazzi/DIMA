@@ -5,7 +5,7 @@ import 'package:dima_colombo_ghiazzi/Model/Chat/request.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chats_list_constructor.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

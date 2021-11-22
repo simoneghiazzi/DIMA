@@ -44,9 +44,14 @@ class FirebaseAuthService {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
+  Future<Firebase.UserCredential> linkProviders(
+      Firebase.AuthCredential credential) async {
+    return await _userCredential.user.linkWithCredential(credential);
+  }
+
   /// Sign in a user if it exists or create a new user through the google account.
   /// It retrieves the name, surname and birthDate information from the google account of the user.
-  Future<String> signInWithGoogle() async {
+  Future<String> signInWithGoogle(bool link) async {
     GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
       'email',
       "https://www.googleapis.com/auth/userinfo.profile",
@@ -54,42 +59,61 @@ class FirebaseAuthService {
     ]);
     GoogleSignInAccount googleUser = await googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    var signInMethods =
+        await fetchSignInMethods(googleSignIn.currentUser.email);
     Firebase.AuthCredential credential = Firebase.GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    _userCredential = await _firebaseAuth.signInWithCredential(credential);
 
-    // Check if it is a new user. If yes, insert the data into the DB
-    if (await _firestoreService.getUserByIdFromDB(
-            Collection.BASE_USERS, _userCredential.user.uid) ==
-        null) {
-      final headers = await googleSignIn.currentUser.authHeaders;
-      final res = jsonDecode((await get(
-              Uri.parse(
-                  "https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
-              headers: {"Authorization": headers["Authorization"]}))
-          .body)['birthdays'][0]['date'];
-      var displayName = googleSignIn.currentUser.displayName.split(" ");
-      String birthDate = '${res['year']}-${res['month']}-${res['day']}';
-
-      await _firestoreService.addUserIntoDB(BaseUser(
-          id: _userCredential.user.uid,
-          name: displayName[0],
-          surname: displayName[1],
-          birthDate: DateTime.parse(birthDate)));
+    if (link) {
+      _userCredential = await linkProviders(credential);
+      return _userCredential.user.uid;
     }
-    return _userCredential.user.uid;
+
+    if (signInMethods.contains("google.com") || signInMethods.isEmpty) {
+      _userCredential = await _firebaseAuth.signInWithCredential(credential);
+
+      // Check if it is a new user. If yes, insert the data into the DB
+      if (await _firestoreService.getUserByIdFromDB(
+              Collection.BASE_USERS, _userCredential.user.uid) ==
+          null) {
+        final headers = await googleSignIn.currentUser.authHeaders;
+        final res = jsonDecode((await get(
+                Uri.parse(
+                    "https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
+                headers: {"Authorization": headers["Authorization"]}))
+            .body)['birthdays'][0]['date'];
+        var displayName = googleSignIn.currentUser.displayName.split(" ");
+        String birthDate = '${res['year']}-${res['month']}-${res['day']}';
+
+        await _firestoreService.addUserIntoDB(BaseUser(
+            id: _userCredential.user.uid,
+            name: displayName[0],
+            surname: displayName[1],
+            email: googleSignIn.currentUser.email,
+            birthDate: DateTime.parse(birthDate)));
+      }
+      return _userCredential.user.uid;
+    } else {
+      return null;
+    }
   }
 
   /// Sign in a user if it exists or create a new user through the facebook account.
   /// It retrieves the name, surname and birthDate information from the facebook account of the user.
-  Future<String> signInWithFacebook() async {
+  Future<String> signInWithFacebook(bool link) async {
     LoginResult result = await FacebookAuth.instance
         .login(permissions: ['public_profile', 'user_birthday']);
     AccessToken accessToken = result.accessToken;
     var facebookAuthCredential =
         Firebase.FacebookAuthProvider.credential(accessToken.token);
+
+    if (link) {
+      _userCredential = await linkProviders(facebookAuthCredential);
+      return _userCredential.user.uid;
+    }
+
     _userCredential =
         await _firebaseAuth.signInWithCredential(facebookAuthCredential);
 
@@ -106,6 +130,7 @@ class FirebaseAuthService {
           id: _userCredential.user.uid,
           name: userData['name'].split(" ")[0],
           surname: userData['name'].split(" ")[1],
+          email: _userCredential.user.email,
           birthDate: DateTime.parse(birthDate)));
     }
     return _userCredential.user.uid;
@@ -118,10 +143,19 @@ class FirebaseAuthService {
     }
   }
 
+  /// Get the authentication provider of the current user
+  String getAuthProvider() {
+    return _firebaseAuth.currentUser.providerData[0].providerId;
+  }
+
+  Future<List<String>> fetchSignInMethods(String email) async {
+    return await _firebaseAuth.fetchSignInMethodsForEmail(email);
+  }
+
   /// Delete a user
   Future deleteUser(User user) async {
-    await _firebaseAuth.currentUser.delete();
     await _firestoreService.removeUserFromDB(user);
+    await _firebaseAuth.currentUser.delete();
     _userCredential = null;
   }
 

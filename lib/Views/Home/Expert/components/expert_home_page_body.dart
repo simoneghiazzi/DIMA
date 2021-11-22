@@ -1,31 +1,38 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/expert_chat.dart';
-import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
+import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chats_list_constructor.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/top_bar.dart';
-import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/components/header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ExpertChatsListBody extends StatefulWidget {
+class ExpertHomePageBody extends StatefulWidget {
   @override
-  _ExpertChatsListBodyState createState() => _ExpertChatsListBodyState();
+  _ExpertHomePageBodyState createState() => _ExpertHomePageBodyState();
 }
 
-class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
+class _ExpertHomePageBodyState extends State<ExpertHomePageBody> {
+  bool newPendingChats;
   ChatViewModel chatViewModel;
+  ExpertViewModel expertViewModel;
+  AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
+    super.initState();
+    expertViewModel = Provider.of<ExpertViewModel>(context, listen: false);
+    authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    initExpertChats();
-    super.initState();
+    authViewModel.setNotification(expertViewModel.loggedUser);
+    chatViewModel.conversation.senderUser = expertViewModel.loggedUser;
+    initActiveChats();
   }
 
   @override
@@ -38,41 +45,25 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              TopBar(text: 'Experts'),
+              Header(),
               ChatsListConstructor(
                 createUserCallback: createUserCallback,
               ),
             ],
           ),
         ),
-        Align(
-          alignment:
-              Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
-          child: FloatingActionButton(
-            onPressed: () async {
-              routerDelegate.pushPage(name: MapScreen.route);
-            },
-            materialTapTargetSize: MaterialTapTargetSize.padded,
-            backgroundColor: kPrimaryColor,
-            child: const Icon(
-              Icons.add,
-              size: 40.0,
-              color: Colors.white,
-            ),
-          ),
-        ),
       ],
     ));
   }
 
-  Expert createUserCallback(DocumentSnapshot doc) {
-    Expert user = Expert();
+  BaseUser createUserCallback(DocumentSnapshot doc) {
+    BaseUser user = BaseUser();
     user.setFromDocument(doc);
     return user;
   }
 
-  void initExpertChats() {
-    chatViewModel.conversation.senderUserChat = ExpertChat();
-    chatViewModel.conversation.peerUserChat = ActiveChat();
+  void initActiveChats() {
+    chatViewModel.conversation.senderUserChat = ActiveChat();
+    chatViewModel.conversation.peerUserChat = ExpertChat();
   }
 }

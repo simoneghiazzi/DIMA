@@ -1,9 +1,10 @@
 TODO DIMA
 
-- bottone calendario
+- link multiple providers -> add in settings page the possibility to link fb or google account
 
-- Fix chat
-- Delete account
+- Aggiornamento chat experts (+/-)
+
+- Delete account (maybe)
 - Grafica (aspetto e layout tablet/smartphone)
 - Testing porcoooo
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
 import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
@@ -10,7 +9,7 @@ import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/chats_list_constructor.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/top_bar.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,8 @@ class ActiveChatsListBody extends StatefulWidget {
 
 class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-  StreamSubscription<bool> subscriber;
+  StreamSubscription<bool> subscriberNewRandomUser;
+  StreamSubscription subscriberNewChatMessage;
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
 
@@ -32,7 +32,8 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     initActiveChats();
-    subscriber = subscribeToNewRandomUser();
+    subscriberNewRandomUser = subscribeToNewRandomUser();
+    subscriberNewChatMessage = subscribeToNewChatMessage();
     super.initState();
   }
 
@@ -47,53 +48,51 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              FutureBuilder(
-                future: chatViewModel.hasPendingChats(),
+              StreamBuilder(
+                stream: chatViewModel.hasPendingChats(),
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data) {
-                      return TopBar(
-                        text: 'Anonymous',
-                        button: InkWell(
-                          child: Container(
-                            padding: EdgeInsets.only(
-                                left: 8, right: 8, top: 2, bottom: 2),
-                            height: 30,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: kPrimaryLightColor,
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.notification_add,
-                                  color: Colors.red,
-                                  size: 20,
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                                Text(
-                                  "Requests",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: kPrimaryColor),
-                                ),
-                              ],
-                            ),
+                  if (snapshot.connectionState == ConnectionState.active &&
+                      snapshot.data.docs.isNotEmpty) {
+                    return TopBar(
+                      text: 'Anonymous',
+                      button: InkWell(
+                        child: Container(
+                          padding: EdgeInsets.only(
+                              left: 8, right: 8, top: 2, bottom: 2),
+                          height: 30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: kPrimaryLightColor,
                           ),
-                          onTap: () {
-                            routerDelegate.pushPage(
-                                name: PendingChatsListScreen.route);
-                          },
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.notification_add,
+                                color: Colors.red,
+                                size: 20,
+                              ),
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Text(
+                                "Requests",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: kPrimaryColor),
+                              ),
+                            ],
+                          ),
                         ),
-                      );
-                    } else {
-                      return TopBar(text: 'Anonymous');
-                    }
+                        onTap: () {
+                          routerDelegate.pushPage(
+                              name: PendingChatsListScreen.route);
+                        },
+                      ),
+                    );
+                  } else {
+                    return TopBar(text: 'Anonymous');
                   }
-                  return Container();
                 },
               ),
               ChatsListConstructor(
@@ -140,6 +139,12 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
     chatViewModel.conversation.peerUserChat = PendingChat();
   }
 
+  StreamSubscription subscribeToNewChatMessage() {
+    return chatViewModel.newChat.listen((event) {
+      chatViewModel.loadChats();
+    });
+  }
+
   StreamSubscription<bool> subscribeToNewRandomUser() {
     return chatViewModel.isNewRandomUser.listen((isNewRandomUser) {
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
@@ -157,7 +162,8 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
 
   @override
   void dispose() {
-    subscriber.cancel();
+    subscriberNewRandomUser.cancel();
+    subscriberNewChatMessage.cancel();
     super.dispose();
   }
 }

@@ -30,10 +30,12 @@ class FirestoreService {
   Future<void> addUserIntoDB(User user) async {
     var userReference =
         _firestore.collection(user.collection.value).doc(user.id);
-    await _firestore.runTransaction((transaction) async {
-      transaction.set(userReference, user.getData());
-      await _incrementBaseUsersCounter(transaction, 1);
-    });
+    if (user.collection == Collection.BASE_USERS) {
+      await _firestore.runTransaction((transaction) async {
+        await _incrementBaseUsersCounter(transaction, 1);
+        transaction.set(userReference, user.getData());
+      });
+    }
   }
 
   /// Delete a user from the firestore DB.
@@ -43,8 +45,8 @@ class FirestoreService {
     var userReference =
         _firestore.collection(user.collection.value).doc(user.id);
     await _firestore.runTransaction((transaction) async {
-      transaction.delete(userReference);
       await _incrementBaseUsersCounter(transaction, -1);
+      transaction.delete(userReference);
     });
   }
 
@@ -253,6 +255,16 @@ class FirestoreService {
     });
   }
 
+  /// It takes the [user] and listen for new messages
+  /// It is used in order to update the list of chats when a new message arrives
+  Stream<QuerySnapshot> listenToNewMessages(User user, Chat chat) {
+    return _firestore
+        .collection(user.collection.value)
+        .doc(user.id)
+        .collection(chat.chatCollection.value)
+        .snapshots();
+  }
+
   /***************************************** CHATS *****************************************/
 
   /// Upgrade a [pendingUserChat] with a [peerUser] to an active chat for both the users.
@@ -310,9 +322,9 @@ class FirestoreService {
         .collection(conversation.peerUserChat.chatCollection.value)
         .doc(conversation.senderUser.id);
     await _firestore.runTransaction((transaction) async {
+      await _incrementConversationCounter(transaction, conversation, -1);
       transaction.delete(senderUserReference);
       transaction.delete(peerUserReference);
-      await _incrementConversationCounter(transaction, conversation, -1);
     });
   }
 
@@ -332,7 +344,7 @@ class FirestoreService {
     return chats;
   }
 
-  /// It takes the [user] and returns the set of ids of all the [chat] of the
+  /// It takes the [user] and returns the list of ids of all the [chat] of the
   /// user based on the [chatCollection] field of the Chat.
   Future<List> _getChatIdsList(User user, Chat chat) async {
     List<String> ids = [];
@@ -366,15 +378,12 @@ class FirestoreService {
     return ids;
   }
 
-  Future<bool> hasPendingChats(User user) async {
-    var snap = await _firestore
+  Stream<QuerySnapshot> hasPendingChats(User user) {
+    return _firestore
         .collection(user.collection.value)
         .doc(user.id)
         .collection(Collection.PENDING_CHATS.value)
-        .limit(1)
-        .get();
-    if (snap.docs.isEmpty) return false;
-    return true;
+        .snapshots();
   }
 
   /// It takes the [conversation] and the [increment] amount and increments the anonymous chat's counter of the users
@@ -436,13 +445,13 @@ class FirestoreService {
   }
 
   /// It takes the [id] of an user and return the reports of the user from the DB
-  Future<QuerySnapshot> getReportsFromDB(String id) async {
-    return await _firestore
+  Stream<QuerySnapshot> getReportsFromDB(String id) {
+    return _firestore
         .collection(Collection.REPORTS.value)
         .doc(id)
         .collection('reportsList')
         .orderBy('date', descending: true)
-        .get();
+        .snapshots();
   }
 
   /**************************************** DIARY ********************************************/

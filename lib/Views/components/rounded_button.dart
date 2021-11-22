@@ -27,9 +27,14 @@ class RoundedButton extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(29),
         child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              primary: color,
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40)),
+          style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all<Size>(
+                  Size(size.width / 2, size.height / 20)),
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  enabled ? color : Color.fromARGB(255, 211, 211, 211)),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(29)))),
           onPressed: enabled ? press : null,
           child: Text(
             text,

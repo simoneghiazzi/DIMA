@@ -1,16 +1,20 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/Expert/expert_home_page_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_page_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Login/forgot_password_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/forgot_password.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/components/background.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_acheck.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_check.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_input_field.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/rounded_password_field.dart';
@@ -22,14 +26,17 @@ class LoginBody extends StatefulWidget {
 }
 
 class _LoginBodyState extends State<LoginBody> {
+  GlobalKey<State> _keyLoader;
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
   FirestoreService firestoreService = FirestoreService();
 
   @override
   void initState() {
+    _keyLoader = new GlobalKey<State>();
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    BackButtonInterceptor.add(backButtonInterceptor);
     WidgetsBinding.instance
         .addPostFrameCallback((_) => authViewModel.getData());
     super.initState();
@@ -69,14 +76,29 @@ class _LoginBodyState extends State<LoginBody> {
             RoundedPasswordField(
               controller: authViewModel.passwordController,
             ),
+            SizedBox(height: size.height * 0.01),
+            ForgotPassword(
+              press: () {
+                FocusScope.of(context).unfocus();
+                authViewModel.clearControllers();
+                routerDelegate.pushPage(name: ForgotPasswordScreen.route);
+              },
+            ),
+            SizedBox(height: size.height * 0.03),
             StreamBuilder(
                 stream: authViewModel.loginForm.isLoginEnabled,
                 builder: (context, snapshot) {
                   return RoundedButton(
                     text: "LOGIN",
                     press: () async {
+                      FocusScope.of(context).unfocus();
+                      LoadingDialog.show(context, _keyLoader);
                       var id = await authViewModel.logIn();
-                      if (id != null) navigateToHome(id);
+                      if (id == null) {
+                        LoadingDialog.hide(context, _keyLoader);
+                      } else {
+                        navigateToHome(id);
+                      }
                     },
                     enabled: snapshot.data ?? false,
                   );
@@ -90,12 +112,14 @@ class _LoginBodyState extends State<LoginBody> {
                           text: snapshot.data,
                           style: TextStyle(color: Colors.red, fontSize: 15)));
                 }),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.02),
             AlreadyHaveAnAccountCheck(
               press: () {
+                authViewModel.clearControllers();
                 routerDelegate.replace(name: BaseUsersSignUpScreen.route);
               },
             ),
+            SizedBox(height: size.height * 0.01),
           ],
         ),
       ),
@@ -103,7 +127,6 @@ class _LoginBodyState extends State<LoginBody> {
   }
 
   void navigateToHome(String id) async {
-    FocusScope.of(context).unfocus();
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     Collection collection =
         await firestoreService.findUsersCollection(authViewModel.id);
@@ -113,16 +136,30 @@ class _LoginBodyState extends State<LoginBody> {
             Provider.of<BaseUserViewModel>(context, listen: false);
         baseUserViewModel.id = id;
         await baseUserViewModel.loadLoggedUser();
-        routerDelegate.replace(name: BaseUserHomeScreen.route);
+        LoadingDialog.hide(context, _keyLoader);
+        routerDelegate.replace(name: BaseUserHomePageScreen.route);
         break;
       case Collection.EXPERTS:
         var expertViewModel =
             Provider.of<ExpertViewModel>(context, listen: false);
         expertViewModel.id = id;
         await expertViewModel.loadLoggedUser();
-        routerDelegate.replace(name: ActiveChatsExpertsScreen.route);
+        LoadingDialog.hide(context, _keyLoader);
+        routerDelegate.replace(name: ExpertHomePageScreen.route);
         break;
       default:
     }
+  }
+
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    authViewModel.clearControllers();
+    routerDelegate.pop();
+    return true;
+  }
+
+  @override
+  void dispose() {
+    BackButtonInterceptor.remove(backButtonInterceptor);
+    super.dispose();
   }
 }

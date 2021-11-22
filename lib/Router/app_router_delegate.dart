@@ -4,16 +4,17 @@ import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveCha
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/ExpertUser/active_chats_experts_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/Expert/expert_home_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/diary_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Diary/diary_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_page_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Login/forgot_password_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Profile/expert_profile_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/create_report_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Report/reports_list_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Settings/user_profile_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Settings/user_settings_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/credential_screen.dart';
@@ -52,8 +53,8 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
   @override
   Future<bool> popRoute() {
     if (_pages.length > 1 &&
-        _pages.last.name != BaseUserHomeScreen.route &&
-        _pages.last.name != ActiveChatsExpertsScreen.route) {
+        _pages.last.name != BaseUserHomePageScreen.route &&
+        _pages.last.name != ExpertHomePageScreen.route) {
       _pages.removeLast();
       notifyListeners();
       return Future.value(true);
@@ -97,14 +98,19 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
       case LoginScreen.route:
         child = LoginScreen();
         break;
-      case UserProfileScreen.route:
-        child = UserProfileScreen(user: routeSettings.arguments);
+      case ForgotPasswordScreen.route:
+        child = ForgotPasswordScreen();
         break;
-      case ActiveChatsExpertsScreen.route:
-        child = ActiveChatsExpertsScreen();
+      case UserSettingsScreen.route:
+        child = UserSettingsScreen(user: routeSettings.arguments);
         break;
-      case BaseUserHomeScreen.route:
-        child = BaseUserHomeScreen(
+      case ExpertHomePageScreen.route:
+        child = ExpertHomePageScreen(
+          pageIndex: routeSettings.arguments,
+        );
+        break;
+      case BaseUserHomePageScreen.route:
+        child = BaseUserHomePageScreen(
           pageIndex: routeSettings.arguments,
         );
         break;

@@ -11,11 +11,8 @@ import 'package:flutter/material.dart';
 class ChatViewModel {
   FirestoreService firestoreService = FirestoreService();
   Conversation conversation = Conversation();
-  List<QueryDocumentSnapshot> _listMessages = new List.from([]);
   TextEditingController textEditingController = TextEditingController();
   var _isNewRandomUserController = StreamController<bool>.broadcast();
-  var _isNewMessageController = StreamController<bool>.broadcast();
-  bool newCurrentUser;
 
   /// Update the ChattingWith field of the [senderUserChat] inside the DB
   /// It is used in order to show or not the notification on new messages
@@ -41,36 +38,6 @@ class ChatViewModel {
     String content = textEditingController.text;
     textEditingController.clear();
     await firestoreService.addMessageIntoDB(conversation, content);
-    if (newCurrentUser) {
-      _isNewMessageController.add(true);
-      newCurrentUser = false;
-    }
-  }
-
-  /// Return true if it is the last of a group of messages sent by the sender user
-  bool isLastMessageLeft(int index) {
-    if (_listMessages.isNotEmpty) {
-      if (index == 0 ||
-          index > 0 &&
-              _listMessages[index - 1].get('idFrom') ==
-                  conversation.senderUser.id) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /// Return true if it is the last of a group of messages sent by the peer user
-  bool isLastMessageRight(int index) {
-    if (_listMessages.isNotEmpty) {
-      if (index == 0 ||
-          index > 0 &&
-              _listMessages[index - 1].get('idFrom') ==
-                  conversation.peerUser.id) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /// Get the stream of messages between the 2 users
@@ -78,10 +45,6 @@ class ChatViewModel {
     try {
       var snapshots =
           firestoreService.getStreamMessagesFromDB(conversation.pairChatId);
-      //_listMessages.clear();
-      snapshots.forEach((element) {
-        _listMessages.addAll(element.docs);
-      });
       return snapshots;
     } catch (e) {
       print(e);
@@ -89,16 +52,14 @@ class ChatViewModel {
     }
   }
 
-  Future<bool> hasPendingChats() async {
-    return await firestoreService.hasPendingChats(conversation.senderUser);
+  Stream<QuerySnapshot> hasPendingChats() {
+    return firestoreService.hasPendingChats(conversation.senderUser);
   }
 
   /// Chat with a [user]
   void chatWithUser(User user) {
     conversation.peerUser = user;
     conversation.computePairChatId();
-    _isNewMessageController.add(false);
-    newCurrentUser = true;
   }
 
   /// Look for a new random anonymous user
@@ -109,7 +70,6 @@ class ChatViewModel {
       _isNewRandomUserController.add(false);
       return;
     }
-    newCurrentUser = false;
     conversation.peerUser = randomUser;
     conversation.computePairChatId();
     _isNewRandomUserController.add(true);
@@ -117,15 +77,17 @@ class ChatViewModel {
 
   /// Load the chat list starting from the [conversation.senderUser] and the
   /// [conversation.senderUserChat]
-  Future<PriorityQueue> loadChats() async {
+  Stream<PriorityQueue> loadChats() {
     try {
-      return await firestoreService.getChatsFromDB(
-          conversation.senderUser, conversation.senderUserChat);
+      return Stream.fromFuture(firestoreService.getChatsFromDB(
+          conversation.senderUser, conversation.senderUserChat));
     } catch (e) {
       print(e);
       return null;
     }
   }
+
+  void reorderChats() {}
 
   /// Accept a new pendig chat request
   Future<void> acceptPendingChat() async {
@@ -142,5 +104,6 @@ class ChatViewModel {
 
   TextEditingController get textController => textEditingController;
   Stream<bool> get isNewRandomUser => _isNewRandomUserController.stream;
-  Stream<bool> get isNewMessage => _isNewMessageController.stream;
+  Stream<QuerySnapshot> get newChat => firestoreService.listenToNewMessages(
+      conversation.senderUser, conversation.senderUserChat);
 }

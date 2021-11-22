@@ -8,6 +8,7 @@ abstract class AuthFormInterface {
   Sink get repeatedPasswordText;
   Stream<bool> get isSignUpEnabled;
   Stream<bool> get isLoginEnabled;
+  Stream<bool> get isResetPasswordEnabled;
   Stream<String> get errorEmailText;
   Stream<String> get errorRepeatedPasswordText;
 
@@ -18,8 +19,8 @@ class LoginForm implements AuthFormInterface {
   var _emailStream = StreamController<String>.broadcast();
   var _passwordStream = StreamController<String>.broadcast();
   var _repeatedPasswordStream = StreamController<String>.broadcast();
-  String lastPassword = "";
-  String lastRepeatedPassword = "";
+  String _lastPassword = "";
+  String _lastRepeatedPassword = "";
 
   @override
   Sink get emailText => _emailStream;
@@ -35,17 +36,17 @@ class LoginForm implements AuthFormInterface {
 
   Stream<bool> get _passwordController =>
       _passwordStream.stream.map((password) {
-        lastPassword = password;
-        if (lastRepeatedPassword.isNotEmpty) {
-          _repeatedPasswordStream.add(lastRepeatedPassword);
+        _lastPassword = password;
+        if (_lastRepeatedPassword.isNotEmpty) {
+          _repeatedPasswordStream.add(_lastRepeatedPassword);
         }
         return password.isNotEmpty;
       });
 
   Stream<bool> get _repeatedPasswordController =>
       _repeatedPasswordStream.stream.map((repeatedPassword) {
-        lastRepeatedPassword = repeatedPassword;
-        return repeatedPassword == lastPassword;
+        _lastRepeatedPassword = repeatedPassword;
+        return repeatedPassword == _lastPassword;
       });
 
   @override
@@ -60,12 +61,24 @@ class LoginForm implements AuthFormInterface {
       _emailController, _passwordController, (a, b) => a && b);
 
   @override
+  Stream<bool> get isResetPasswordEnabled =>
+      _emailController.map((isCorrect) => isCorrect);
+
+  @override
   Stream<String> get errorEmailText =>
       _emailController.map((isCorrect) => isCorrect ? false : "Invalid email");
 
   @override
   Stream<String> get errorRepeatedPasswordText => _repeatedPasswordController
       .map((isCorrect) => isCorrect ? false : "Password does not match");
+
+  void resetControllers() {
+    _lastPassword = "";
+    _lastRepeatedPassword = "";
+    emailText.add(null);
+    passwordText.add(null);
+    repeatedPasswordText.add(null);
+  }
 
   @override
   void dispose() {

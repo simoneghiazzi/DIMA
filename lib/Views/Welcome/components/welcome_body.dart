@@ -2,9 +2,11 @@ import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_page_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
+import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
 import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
@@ -19,6 +21,7 @@ class WelcomeBody extends StatefulWidget {
 }
 
 class _WelcomeBodyState extends State<WelcomeBody> {
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   AuthViewModel authViewModel;
   BaseUserViewModel baseUserViewModel;
   String id;
@@ -49,60 +52,51 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                   fontSize: 50,
                   fontFamily: 'Gabriola'),
             ),
-            SizedBox(height: size.height * 0.05),
+            SizedBox(height: size.height * 0.03),
             Image.asset(
               "assets/icons/logo.png",
               height: size.height * 0.15,
             ),
-            SizedBox(height: size.height * 0.07),
-            ElevatedButton(
-              onPressed: () {
+            SizedBox(height: size.height * 0.05),
+            RoundedButton(
+              press: () {
                 routerDelegate.pushPage(name: LoginScreen.route);
               },
-              style: ButtonStyle(
-                  fixedSize: MaterialStateProperty.all<Size>(
-                      Size(size.width / 2, size.height / 20)),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(kPrimaryColor),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(29)))),
-              child: Text('LOGIN'),
+              text: "LOGIN",
             ),
-            SizedBox(height: size.height * 0.02),
-            ElevatedButton(
-              onPressed: () {
+            RoundedButton(
+              press: () {
                 routerDelegate.pushPage(name: BaseUsersSignUpScreen.route);
               },
-              style: ButtonStyle(
-                  fixedSize: MaterialStateProperty.all<Size>(
-                      Size(size.width / 2, size.height / 20)),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(kPrimaryLightColor),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(29)))),
-              child: Text(
-                'SIGNUP',
-                style: TextStyle(color: Colors.black),
-              ),
+              text: "SIGNUP",
+              color: kPrimaryLightColor,
+              textColor: Colors.black,
             ),
             OrDivider(),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               SocialIcon(
                   iconSrc: "assets/icons/facebook.png",
                   press: () async {
+                    LoadingDialog.show(context, _keyLoader);
                     id = await authViewModel.logInWithFacebook();
-                    if (id != null) navigateToHome();
+                    if (id == null) {
+                      LoadingDialog.hide(context, _keyLoader);
+                    } else {
+                      navigateToHome();
+                    }
                   }),
               SocialIcon(
                   iconSrc: "assets/icons/google.png",
                   press: () async {
+                    LoadingDialog.show(context, _keyLoader);
                     id = await authViewModel.logInWithGoogle();
-                    if (id != null) navigateToHome();
+                    if (id == null) {
+                      LoadingDialog.hide(context, _keyLoader);
+                    } else {
+                      navigateToHome();
+                    }
                   }),
             ]),
-            SizedBox(height: size.height * 0.05),
             StreamBuilder<String>(
                 stream: authViewModel.authMessage,
                 builder: (context, snapshot) {
@@ -139,6 +133,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
     baseUserViewModel.id = id;
     await baseUserViewModel.loadLoggedUser();
-    routerDelegate.pushPage(name: BaseUserHomeScreen.route);
+    LoadingDialog.hide(context, _keyLoader);
+    routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
   }
 }
