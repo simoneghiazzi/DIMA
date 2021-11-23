@@ -1,5 +1,6 @@
 import 'package:dima_colombo_ghiazzi/Model/Chat/message.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
+import 'package:dima_colombo_ghiazzi/Views/Chat/components/date_item.dart';
 import 'package:dima_colombo_ghiazzi/Views/Chat/components/message_list_item.dart';
 import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class MessagesListConstructor extends StatefulWidget {
 
 class _MessagesListConstructorState extends State<MessagesListConstructor> {
   ChatViewModel chatViewModel;
+  DateTime previousDate;
 
   @override
   void initState() {
@@ -32,7 +34,30 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
             itemBuilder: (context, index) {
               Message messageItem = Message();
               messageItem.setFromDocument(snapshot.data.docs[index]);
-              return MessageListItem(messageItem: messageItem, index: index);
+              if (index == snapshot.data.docs.length - 1) {
+                var dateToPrint = previousDate;
+                previousDate = null;
+                return Column(
+                  children: [
+                    DateItem(date: messageItem.timestamp),
+                    MessageListItem(messageItem: messageItem, index: index),
+                    DateItem(date: dateToPrint),
+                  ],
+                );
+              } else if (previousDate != null &&
+                  previousDate.day != messageItem.timestamp.day) {
+                var dateToPrint = previousDate;
+                previousDate = messageItem.timestamp;
+                return Column(
+                  children: [
+                    MessageListItem(messageItem: messageItem, index: index),
+                    DateItem(date: dateToPrint),
+                  ],
+                );
+              } else {
+                previousDate = messageItem.timestamp;
+                return MessageListItem(messageItem: messageItem, index: index);
+              }
             },
             itemCount: snapshot.data.docs.length,
             reverse: true,
