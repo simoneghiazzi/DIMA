@@ -1,6 +1,7 @@
 TODO DIMA
 
-- link multiple providers -> add in settings page the possibility to link fb or google account
+- send message real time
+- add date in chat page
 
 - Aggiornamento chat experts (+/-)
 
