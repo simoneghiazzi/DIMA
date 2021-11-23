@@ -103,7 +103,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                     ),
                     Padding(
                         padding: EdgeInsets.only(
-                            top: size.height * 0.1, left: 40, right: 40),
+                            top: size.height * 0.05, left: 40, right: 40),
                         child:
                             FormBlocListener<ReportViewModel, String, String>(
                           onSubmitting: (context, state) {
@@ -128,8 +128,9 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                 selectFieldBloc: reportViewModel.reportCategory,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: kPrimaryLightColor,
+                                  fillColor: kPrimaryLightColor.withAlpha(100),
                                   labelText: 'Report category',
+                                  labelStyle: TextStyle(color: kPrimaryColor),
                                   prefixIcon: Icon(
                                     Icons.security,
                                     color: kPrimaryColor,
@@ -137,12 +138,16 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                 ),
                                 itemBuilder: (context, value) => value,
                               ),
+                              SizedBox(
+                                height: size.height * 0.01,
+                              ),
                               TextFieldBlocBuilder(
                                 textFieldBloc: reportViewModel.reportText,
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: kPrimaryLightColor,
+                                  fillColor: kPrimaryLightColor.withAlpha(100),
                                   labelText: 'Report description',
+                                  labelStyle: TextStyle(color: kPrimaryColor),
                                   prefixIcon: Icon(
                                     Icons.text_fields,
                                     color: kPrimaryColor,
@@ -150,7 +155,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                 ),
                               ),
                               SizedBox(
-                                height: size.height * 0.01,
+                                height: size.height * 0.06,
                               ),
                               ElevatedButton(
                                 onPressed: () {

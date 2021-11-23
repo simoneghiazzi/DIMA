@@ -56,9 +56,10 @@ class BaseUserInfoBody extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        SizedBox(height: size.height * 0.08),
+                        SizedBox(height: size.height * 0.09),
                         Text(
                           "Personal information",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: kPrimaryColor,
                             fontWeight: FontWeight.bold,
@@ -76,8 +77,9 @@ class BaseUserInfoBody extends StatelessWidget {
                           textFieldBloc: infoViewModel.nameText,
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: kPrimaryLightColor,
+                            fillColor: kPrimaryLightColor.withAlpha(100),
                             labelText: 'First name',
+                            labelStyle: TextStyle(color: kPrimaryColor),
                             prefixIcon: Icon(
                               Icons.text_fields,
                               color: kPrimaryColor,
@@ -89,8 +91,9 @@ class BaseUserInfoBody extends StatelessWidget {
                           textFieldBloc: infoViewModel.surnameText,
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: kPrimaryLightColor,
+                            fillColor: kPrimaryLightColor.withAlpha(100),
                             labelText: 'Last name',
+                            labelStyle: TextStyle(color: kPrimaryColor),
                             prefixIcon: Icon(
                               Icons.text_fields,
                               color: kPrimaryColor,
@@ -105,8 +108,9 @@ class BaseUserInfoBody extends StatelessWidget {
                           lastDate: DateTime.now(),
                           decoration: InputDecoration(
                               filled: true,
-                              fillColor: kPrimaryLightColor,
+                              fillColor: kPrimaryLightColor.withAlpha(100),
                               labelText: 'Birth date',
+                              labelStyle: TextStyle(color: kPrimaryColor),
                               prefixIcon: Icon(
                                 Icons.date_range,
                                 color: kPrimaryColor,

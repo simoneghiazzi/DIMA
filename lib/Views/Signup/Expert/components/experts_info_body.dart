@@ -99,8 +99,9 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               textFieldBloc: expertInfoViewModel.nameText,
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: kPrimaryLightColor,
+                                fillColor: kPrimaryLightColor.withAlpha(100),
                                 labelText: 'First name',
+                                labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.text_fields,
                                   color: kPrimaryColor,
@@ -112,8 +113,9 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               textFieldBloc: expertInfoViewModel.surnameText,
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: kPrimaryLightColor,
+                                fillColor: kPrimaryLightColor.withAlpha(100),
                                 labelText: 'Last name',
+                                labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.text_fields,
                                   color: kPrimaryColor,
@@ -129,8 +131,9 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               lastDate: DateTime.now(),
                               decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: kPrimaryLightColor,
+                                  fillColor: kPrimaryLightColor.withAlpha(100),
                                   labelText: 'Birth date',
+                                  labelStyle: TextStyle(color: kPrimaryColor),
                                   prefixIcon: Icon(
                                     Icons.date_range,
                                     color: kPrimaryColor,
@@ -141,8 +144,9 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               textFieldBloc: expertInfoViewModel.countryText,
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: kPrimaryLightColor,
+                                fillColor: kPrimaryLightColor.withAlpha(100),
                                 labelText: 'Office country',
+                                labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.streetview,
                                   color: kPrimaryColor,
@@ -154,8 +158,9 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               textFieldBloc: expertInfoViewModel.cityText,
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: kPrimaryLightColor,
+                                fillColor: kPrimaryLightColor.withAlpha(100),
                                 labelText: 'Office city',
+                                labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.location_city,
                                   color: kPrimaryColor,
@@ -167,8 +172,9 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               textFieldBloc: expertInfoViewModel.streetText,
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: kPrimaryLightColor,
+                                fillColor: kPrimaryLightColor.withAlpha(100),
                                 labelText: 'Office street',
+                                labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.location_city,
                                   color: kPrimaryColor,
@@ -181,8 +187,9 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: kPrimaryLightColor,
+                                fillColor: kPrimaryLightColor.withAlpha(100),
                                 labelText: 'Office house number',
+                                labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.house,
                                   color: kPrimaryColor,
@@ -195,8 +202,9 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: kPrimaryLightColor,
+                                fillColor: kPrimaryLightColor.withAlpha(100),
                                 labelText: 'Phone number',
+                                labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.phone,
                                   color: kPrimaryColor,

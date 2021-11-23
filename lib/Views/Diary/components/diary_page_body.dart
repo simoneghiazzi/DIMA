@@ -31,6 +31,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   Alert successAlert;
   StreamSubscription<bool> subscription;
   bool modifiable = false;
+  bool hasFocus = true;
 
   @override
   void initState() {
@@ -84,6 +85,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                         alignment: Alignment.bottomLeft,
                         child: Center(
                             child: TextField(
+                          autofocus: hasFocus,
                           keyboardType: TextInputType.multiline,
                           maxLines: 2,
                           textCapitalization: TextCapitalization.sentences,
@@ -145,6 +147,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
               Container(
                   padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 50.0),
                   child: TextField(
+                      textAlign: TextAlign.center,
                       textCapitalization: TextCapitalization.sentences,
                       enabled: modifiable,
                       controller: diaryViewModel.contentController,
@@ -205,6 +208,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                               child: InkResponse(
                                 onTap: () {
                                   setState(() {
+                                    hasFocus = true;
                                     modifiable = true;
                                   });
                                 },
