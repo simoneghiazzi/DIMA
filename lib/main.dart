@@ -17,6 +17,7 @@ import 'package:dima_colombo_ghiazzi/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:get_it/get_it.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,8 +35,9 @@ Future<void> main() async {
   await FirebaseAppCheck.instance
       .activate(webRecaptchaSiteKey: 'recaptcha-v3-site-key');
   print('FirebaseAppCheck initialization completed');
-  FirebaseAuthService firebaseAuthService = FirebaseAuthService();
-  FirestoreService firestoreService = FirestoreService();
+  setupServices();
+  FirebaseAuthService firebaseAuthService = GetIt.I<FirebaseAuthService>();
+  FirestoreService firestoreService = GetIt.I<FirestoreService>();
 
   var alreadyLoggedUserId = await firebaseAuthService.currentUser();
 
@@ -77,6 +79,12 @@ Future<void> main() async {
       firstPage: WelcomeScreen.route,
     ));
   }
+}
+
+void setupServices() {
+  var getIt = GetIt.I;
+  getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService());
+  getIt.registerSingleton<FirestoreService>(FirestoreService());
 }
 
 class MyApp extends StatefulWidget {

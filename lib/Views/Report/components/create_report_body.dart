@@ -142,6 +142,8 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                 height: size.height * 0.01,
                               ),
                               TextFieldBlocBuilder(
+                                textCapitalization:
+                                    TextCapitalization.sentences,
                                 textFieldBloc: reportViewModel.reportText,
                                 decoration: InputDecoration(
                                   filled: true,

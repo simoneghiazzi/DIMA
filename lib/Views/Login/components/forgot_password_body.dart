@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
 import 'package:dima_colombo_ghiazzi/constants.dart';
@@ -19,7 +17,6 @@ class ForgotPasswordBody extends StatefulWidget {
 class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
-  FirestoreService firestoreService = FirestoreService();
   var _errorTextController = StreamController<String>.broadcast();
 
   @override
@@ -57,7 +54,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                 builder: (context, snapshot) {
                   return RoundedInputField(
                     hintText: "Your Email",
-                    controller: authViewModel.emailController,
+                    controller: authViewModel.emailCtrl,
                     errorText: snapshot.data,
                   );
                 }),
@@ -79,9 +76,9 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                       _errorTextController.add(null);
                       FocusScope.of(context).unfocus();
                       if (await authViewModel.hasPasswordAuthentication(
-                          authViewModel.emailController.text)) {
+                          authViewModel.emailCtrl.text)) {
                         await authViewModel
-                            .resetPassword(authViewModel.emailController.text);
+                            .resetPassword(authViewModel.emailCtrl.text);
                         showSnackBar();
                         routerDelegate.pop();
                       } else {

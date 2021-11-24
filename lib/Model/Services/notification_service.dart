@@ -4,13 +4,14 @@ import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get_it/get_it.dart';
 
 class NotificationService {
   User user;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  final FirestoreService _firestoreService = FirestoreService();
+  final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
 
   NotificationService(this.user);
 

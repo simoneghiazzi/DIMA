@@ -4,9 +4,10 @@ import 'package:dima_colombo_ghiazzi/Model/BaseUser/report.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:get_it/get_it.dart';
 
 class ReportViewModel extends FormBloc<String, String> {
-  FirestoreService _firestoreService = FirestoreService();
+  FirestoreService _firestoreService = GetIt.I<FirestoreService>();
   final String loggedId;
 
   final reportCategory = SelectFieldBloc(items: [

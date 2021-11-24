@@ -7,9 +7,10 @@ import 'package:dima_colombo_ghiazzi/Model/Chat/conversation.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/Model/user.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class ChatViewModel {
-  FirestoreService firestoreService = FirestoreService();
+  FirestoreService firestoreService = GetIt.I<FirestoreService>();
   Conversation conversation = Conversation();
   TextEditingController textEditingController = TextEditingController();
   var _isNewRandomUserController = StreamController<bool>.broadcast();

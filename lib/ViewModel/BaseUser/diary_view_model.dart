@@ -3,9 +3,10 @@ import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/note.dart';
 import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
 import 'package:dima_colombo_ghiazzi/ViewModel/ObserverForms/diary_form.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
 
 class DiaryViewModel {
-  FirestoreService _firestoreService = FirestoreService();
+  FirestoreService _firestoreService = GetIt.I<FirestoreService>();
   final DiaryForm diaryForm = DiaryForm();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
