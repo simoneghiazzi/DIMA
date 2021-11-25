@@ -1,4 +1,4 @@
-# dima_colombo_ghiazzi
+# sApport
 
 Design and implementation of mobile applications - Politecnico di Milano
 

@@ -1,8 +1,8 @@
-import 'package:dima_colombo_ghiazzi/Model/Chat/message.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/date_item.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/message_list_item.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
+import 'package:sApport/Model/Chat/message.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/Views/Chat/components/date_item.dart';
+import 'package:sApport/Views/Chat/components/message_list_item.dart';
+import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

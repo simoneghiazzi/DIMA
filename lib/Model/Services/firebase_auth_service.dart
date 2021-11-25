@@ -1,66 +1,60 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
-import 'package:dima_colombo_ghiazzi/Model/user.dart';
+import 'package:sApport/Model/BaseUser/base_user.dart';
+import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Model/Services/firestore_service.dart';
+import 'package:sApport/Model/user.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Firebase;
+import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart';
 
 class FirebaseAuthService {
-  final FirestoreService _firestoreService = FirestoreService();
+  final FirestoreService _firestoreService = GetIt.I();
   final Firebase.FirebaseAuth _firebaseAuth = Firebase.FirebaseAuth.instance;
   Firebase.UserCredential _userCredential;
 
   /// Sign in a user with [email] and [password]
-  Future<String> signInWithEmailAndPassword(
-      String email, String password) async {
-    _userCredential = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
+  Future<String> signInWithEmailAndPassword(String email, String password) async {
+    _userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
     if (_firebaseAuth.currentUser.emailVerified) {
       return _userCredential.user.uid;
     }
-    return null;
+    return "";
   }
 
   /// Create a new user with [email] and [password]
-  Future<String> createUserWithEmailAndPassword(
-      String email, String password, User user) async {
-    _userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email, password: password);
+  Future<String> createUserWithEmailAndPassword(String email, String password, User user) async {
+    _userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
     user.id = _userCredential.user.uid;
     if (user.getData()['profilePhoto'] != null) {
-      _firestoreService.uploadProfilePhoto(
-          user, File(user.getData()['profilePhoto']));
+      _firestoreService.uploadProfilePhoto(user, File(user.getData()['profilePhoto']));
     }
-    await _firestoreService.addUserIntoDB(user);
+    _firestoreService.addUserIntoDB(user);
     return _userCredential.user.uid;
   }
 
   /// Send email for reset password
-  Future<void> resetPassword(String email) async {
-    await _firebaseAuth.sendPasswordResetEmail(email: email);
+  void resetPassword(String email) {
+    _firebaseAuth
+        .sendPasswordResetEmail(email: email)
+        .then((value) => print("Reset password email sent"))
+        .catchError((error) => print("Failed send reset password email: $error"));
   }
 
-  Future<Firebase.UserCredential> linkProviders(
-      Firebase.AuthCredential credential) async {
+  Future<Firebase.UserCredential> linkProviders(Firebase.AuthCredential credential) async {
     return await _userCredential.user.linkWithCredential(credential);
   }
 
   /// Sign in a user if it exists or create a new user through the google account.
   /// It retrieves the name, surname and birthDate information from the google account of the user.
   Future<String> signInWithGoogle(bool link) async {
-    GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
-      'email',
-      "https://www.googleapis.com/auth/userinfo.profile",
-      "https://www.googleapis.com/auth/user.birthday.read"
-    ]);
+    GoogleSignIn googleSignIn =
+        GoogleSignIn(scopes: ['email', "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/user.birthday.read"]);
     GoogleSignInAccount googleUser = await googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    var signInMethods =
-        await fetchSignInMethods(googleSignIn.currentUser.email);
+    var signInMethods = await fetchSignInMethods(googleSignIn.currentUser.email);
     Firebase.AuthCredential credential = Firebase.GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
@@ -75,13 +69,9 @@ class FirebaseAuthService {
       _userCredential = await _firebaseAuth.signInWithCredential(credential);
 
       // Check if it is a new user. If yes, insert the data into the DB
-      if (await _firestoreService.getUserByIdFromDB(
-              Collection.BASE_USERS, _userCredential.user.uid) ==
-          null) {
+      if (await _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, _userCredential.user.uid) == null) {
         final headers = await googleSignIn.currentUser.authHeaders;
-        final res = jsonDecode((await get(
-                Uri.parse(
-                    "https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
+        final res = jsonDecode((await get(Uri.parse("https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
                 headers: {"Authorization": headers["Authorization"]}))
             .body)['birthdays'][0]['date'];
         var displayName = googleSignIn.currentUser.displayName.split(" ");
@@ -103,26 +93,20 @@ class FirebaseAuthService {
   /// Sign in a user if it exists or create a new user through the facebook account.
   /// It retrieves the name, surname and birthDate information from the facebook account of the user.
   Future<String> signInWithFacebook(bool link) async {
-    LoginResult result = await FacebookAuth.instance
-        .login(permissions: ['public_profile', 'user_birthday']);
+    LoginResult result = await FacebookAuth.instance.login(permissions: ['public_profile', 'user_birthday']);
     AccessToken accessToken = result.accessToken;
-    var facebookAuthCredential =
-        Firebase.FacebookAuthProvider.credential(accessToken.token);
+    var facebookAuthCredential = Firebase.FacebookAuthProvider.credential(accessToken.token);
 
     if (link) {
       _userCredential = await linkProviders(facebookAuthCredential);
       return _userCredential.user.uid;
     }
 
-    _userCredential =
-        await _firebaseAuth.signInWithCredential(facebookAuthCredential);
+    _userCredential = await _firebaseAuth.signInWithCredential(facebookAuthCredential);
 
     // Check if it is a new user. If yes, insert the data into the DB
-    if (await _firestoreService.getUserByIdFromDB(
-            Collection.BASE_USERS, _userCredential.user.uid) ==
-        null) {
-      final userData =
-          await FacebookAuth.instance.getUserData(fields: "name, birthday");
+    if (await _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, _userCredential.user.uid) == null) {
+      final userData = await FacebookAuth.instance.getUserData(fields: "name, birthday");
 
       var res = userData['birthday'].split('/');
       String birthDate = '${res[2]}-${res[0]}-${res[1]}';
@@ -137,15 +121,22 @@ class FirebaseAuthService {
   }
 
   /// Send the email verification to the user in the sign up process
-  Future sendEmailVerification() async {
+  void sendEmailVerification() {
     if (_userCredential != null) {
-      await _firebaseAuth.currentUser.sendEmailVerification();
+      _firebaseAuth.currentUser
+          .sendEmailVerification()
+          .then((value) => print("Email verification sent"))
+          .catchError((error) => print("Failed to send email verification: $error"));
     }
   }
 
   /// Get the authentication provider of the current user
   String getAuthProvider() {
-    return _firebaseAuth.currentUser.providerData[0].providerId;
+    try {
+      return _firebaseAuth.currentUser.providerData[0].providerId;
+    } catch (e) {
+      return "";
+    }
   }
 
   Future<List<String>> fetchSignInMethods(String email) async {
@@ -169,8 +160,7 @@ class FirebaseAuthService {
   /// It checks if the email is verified in case the user has signed up with the email and password method.
   Future<String> currentUser() async {
     if (_firebaseAuth.currentUser != null) {
-      if (_firebaseAuth.currentUser.providerData[0].providerId == 'password' &&
-          !_firebaseAuth.currentUser.emailVerified) return null;
+      if (_firebaseAuth.currentUser.providerData[0].providerId == 'password' && !_firebaseAuth.currentUser.emailVerified) return null;
       return _firebaseAuth.currentUser.uid;
     }
     return null;

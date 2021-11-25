@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/components/base_user_info_body.dart';
+import 'package:sApport/Views/Signup/BaseUser/components/base_user_info_body.dart';
 import 'package:flutter/material.dart';
 
 class BaseUsersSignUpScreen extends StatelessWidget {

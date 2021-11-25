@@ -1,19 +1,17 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_info_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
+import 'package:sApport/Model/BaseUser/base_user.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
+import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/ViewModel/BaseUser/base_user_info_view_model.dart';
 
 class BaseUserViewModel extends UserViewModel {
-  BaseUserViewModel({id}) : super(id: id);
-
-  /// It takes the [id] and load the user from the DB
+  /// Load the user from the DB
   @override
   Future<BaseUser> loadLoggedUser() async {
-    if (id != null) {
+    if (id.isNotEmpty) {
       loggedUser = BaseUser();
-      loggedUser.setFromDocument(
-          await firestore.getUserByIdFromDB(Collection.BASE_USERS, id));
+      var snapshot = await firestore.getUserByIdFromDB(Collection.BASE_USERS, id);
+      loggedUser.setFromDocument(snapshot.docs[0]);
       return loggedUser;
     }
     return null;
@@ -23,12 +21,7 @@ class BaseUserViewModel extends UserViewModel {
   @override
   BaseUser createUser(BaseUserInfoViewModel infoViewModel) {
     var data = infoViewModel.values;
-    loggedUser = BaseUser(
-        id: id,
-        name: data['name'],
-        surname: data['surname'],
-        birthDate: data['birthDate'],
-        email: data['email']);
+    loggedUser = BaseUser(id: id, name: data['name'], surname: data['surname'], birthDate: data['birthDate'], email: data['email']);
     return loggedUser;
   }
 }

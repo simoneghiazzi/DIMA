@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place_search.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
+import 'package:sApport/Model/BaseUser/Map/place.dart';
+import 'package:sApport/Model/BaseUser/Map/place_search.dart';
+import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place_service.dart';
+import 'package:sApport/Model/BaseUser/Map/place_service.dart';
 
 class MapViewModel {
   var _position = StreamController<Position>.broadcast();

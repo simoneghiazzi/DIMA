@@ -1,113 +1,119 @@
-import 'package:dima_colombo_ghiazzi/Model/Services/firebase_auth_service.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/notification_service.dart';
-import 'package:dima_colombo_ghiazzi/Model/user.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/ObserverForms/auth_form.dart';
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:get_it/get_it.dart';
+import 'package:flutter/material.dart';
+import 'package:sApport/Model/user.dart';
+import 'package:sApport/Model/Services/firestore_service.dart';
+import 'package:sApport/ViewModel/ObserverForms/auth_form.dart';
+import 'package:sApport/Model/Services/notification_service.dart';
+import 'package:sApport/Model/Services/firebase_auth_service.dart';
 
 class AuthViewModel {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController repeatedPasswordController =
-      TextEditingController();
-  var _isUserLoggedController = StreamController<bool>.broadcast();
-  var _isUserCreatedController = StreamController<bool>.broadcast();
-  var _authMessageController = StreamController<String>.broadcast();
+  // Text Controllers
+  final TextEditingController emailCtrl = TextEditingController();
+  final TextEditingController pswCtrl = TextEditingController();
+  final TextEditingController repeatPswCtrl = TextEditingController();
+
+  // Stream Controllers
+  var _isUserLoggedCtrl = StreamController<bool>.broadcast();
+  var _isUserCreatedCtrl = StreamController<bool>.broadcast();
+  var _authMessageCtrl = StreamController<String>.broadcast();
+
+  // Login Form
   final LoginForm loginForm = LoginForm();
 
-  final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
-  final FirestoreService firestore = FirestoreService();
+  // Services
+  final FirebaseAuthService _firebaseAuthService = GetIt.I();
+  final FirestoreService firestore = GetIt.I();
   NotificationService notificationService;
 
-  String id;
+  // Logged User id
+  String loggedId;
 
-  /// Register the listener for the input text field
+  /// Register the listeners for the input text field
   AuthViewModel() {
-    emailController
-        .addListener(() => loginForm.emailText.add(emailController.text));
-    passwordController
-        .addListener(() => loginForm.passwordText.add(passwordController.text));
-    repeatedPasswordController.addListener(() =>
-        loginForm.repeatedPasswordText.add(repeatedPasswordController.text));
+    emailCtrl.addListener(() => loginForm.email.add(emailCtrl.text));
+    pswCtrl.addListener(() => loginForm.psw.add(pswCtrl.text));
+    repeatPswCtrl.addListener(() => loginForm.repeatPsw.add(repeatPswCtrl.text));
   }
 
   /// Log the user in with email and password
   Future<String> logIn() async {
     try {
-      id = await _firebaseAuthService.signInWithEmailAndPassword(
-          emailController.text, passwordController.text);
-      if (id != null) {
-        _authMessageController.add("");
-        return id;
-      } else
-        _authMessageController.add("The email is not verified");
+      loggedId = await _firebaseAuthService.signInWithEmailAndPassword(emailCtrl.text, pswCtrl.text);
+      if (loggedId.isEmpty) {
+        _authMessageCtrl.add("The email is not verified");
+      } else {
+        _authMessageCtrl.add("");
+      }
     } catch (e) {
-      _isUserCreatedController.add(false);
-      if (e.code == 'user-not-found' || e.code == 'wrong-password')
-        _authMessageController.add("Wrong email or password.");
+      _isUserCreatedCtrl.add(false);
+      if (e.code == "user-not-found" || e.code == "wrong-password") {
+        _authMessageCtrl.add("Wrong email or password");
+      }
     }
-    return null;
+    return loggedId;
   }
 
-  /// Login a user with google. If the user is new, it automatically creates a new account
+  /// Sign up a [newUser] with email and password
+  Future<String> signUpUser(User newUser) async {
+    try {
+      loggedId = await _firebaseAuthService.createUserWithEmailAndPassword(emailCtrl.text, pswCtrl.text, newUser);
+      _firebaseAuthService.sendEmailVerification();
+      _authMessageCtrl.add("");
+      _isUserCreatedCtrl.add(true);
+    } catch (e) {
+      _isUserCreatedCtrl.add(false);
+      if (e.code == 'email-already-in-use') {
+        _authMessageCtrl.add('The account already exists.');
+      } else if (e.code == 'weak-password') {
+        _authMessageCtrl.add('The password is too weak.\nIt has to be at least 6 chars.');
+      }
+    }
+    return loggedId;
+  }
+
+  /// Login a user with Google. If the user is new, it automatically creates a new account.
+  ///
+  /// If [link] is true, it links the Google account credentials to the already logged user.
   Future<String> logInWithGoogle({bool link = false}) async {
     try {
-      id = await _firebaseAuthService.signInWithGoogle(link);
-      if (id == null) {
-        _authMessageController.add(
-            "An account already exists with the same email address but different sign-in credentials.");
-        return null;
+      loggedId = await _firebaseAuthService.signInWithGoogle(link);
+      if (loggedId.isEmpty) {
+        _authMessageCtrl.add("An account already exists with the same email address but different sign-in credentials.");
       }
-      _authMessageController.add("");
-      return id;
-    } catch (e) {}
-    return null;
+      _authMessageCtrl.add("");
+    } catch (e) {
+      print("Error in signing in with Google");
+    }
+    return loggedId;
   }
 
-  /// Login a user with facebook. If the user is new, it automatically creates a new account
+  /// Login a user with Facebook. If the user is new, it automatically creates a new account
+  ///
+  /// If [link] is true, it links the Facebook account credentials to the already logged user.
   Future<String> logInWithFacebook({bool link = false}) async {
     try {
-      id = await _firebaseAuthService.signInWithFacebook(link);
-      _authMessageController.add("");
-      return id;
+      loggedId = await _firebaseAuthService.signInWithFacebook(link);
+      _authMessageCtrl.add("");
     } catch (e) {
-      if (e.code == 'account-exists-with-different-credential')
-        _authMessageController.add(
-            "An account already exists with the same email address but different sign-in credentials.");
+      if (e.code == 'account-exists-with-different-credential') {
+        _authMessageCtrl.add("An account already exists with the same email address but different sign-in credentials.");
+      }
     }
-    return null;
+    return loggedId;
   }
 
-  Future<String> signUpUser(User loggedUser) async {
-    try {
-      id = await _firebaseAuthService.createUserWithEmailAndPassword(
-          emailController.text, passwordController.text, loggedUser);
-      await _firebaseAuthService.sendEmailVerification();
-      _authMessageController.add("");
-      _isUserCreatedController.add(true);
-    } catch (e) {
-      _isUserCreatedController.add(false);
-      if (e.code == 'email-already-in-use')
-        _authMessageController.add('The account already exists.');
-      else if (e.code == 'weak-password')
-        _authMessageController
-            .add('The password is too weak.\nIt has to be at least 6 chars.');
-    }
-    return id;
+  /// Send to the user [email] the link for the password reset
+  void resetPassword(String email) {
+    _firebaseAuthService.resetPassword(email);
   }
 
-  Future<void> resetPassword(String email) async {
-    try {
-      await _firebaseAuthService.resetPassword(email);
-    } catch (e) {}
-  }
-
+  /// Get the authentication provider of the current logged user
   String authProvider() {
     return _firebaseAuthService.getAuthProvider();
   }
 
-  /// Return true if the user has the password as authentication provider
+  /// Return true if the user associated with the [email] has the password as authentication provider
   Future<bool> hasPasswordAuthentication(String email) async {
     var list = await _firebaseAuthService.fetchSignInMethods(email);
     if (list.contains("password")) {
@@ -118,50 +124,55 @@ class AuthViewModel {
 
   /// Get the data text from the controllers
   void getData() {
-    if (emailController.text.isNotEmpty)
-      loginForm.emailText.add(emailController.text);
-    if (passwordController.text.isNotEmpty)
-      loginForm.passwordText.add(emailController.text);
+    if (emailCtrl.text.isNotEmpty) {
+      loginForm.email.add(emailCtrl.text);
+    }
+    if (pswCtrl.text.isNotEmpty) {
+      loginForm.psw.add(emailCtrl.text);
+    }
   }
 
-  /// Log out a user from the app
+  /// Log out the user from the app
   Future<void> logOut() async {
     await _firebaseAuthService.signOut();
-    id = '';
-    _isUserLoggedController.add(false);
+    loggedId = '';
+    _isUserLoggedCtrl.add(false);
     clearControllers();
   }
 
-  /// Clear the email and password controllers and text
+  /// Clear all the text and stream controllers and reset the login form
   void clearControllers() {
-    passwordController.clear();
-    repeatedPasswordController.clear();
-    emailController.clear();
-    _authMessageController.add(null);
+    pswCtrl.clear();
+    repeatPswCtrl.clear();
+    emailCtrl.clear();
+    _authMessageCtrl.add(null);
     loginForm.resetControllers();
   }
 
-  /// Resend the email verification if the user has not received it
+  /// Resend the email verification to the [user]
   Future<void> resendEmailVerification(User user) async {
     await deleteUser(user);
     await signUpUser(user);
   }
 
-  /// Set the user logged in and register the notification service for that device
+  /// Register the notification service for the device of the [loggedUser]
   void setNotification(User loggedUser) {
     notificationService = NotificationService(loggedUser);
     notificationService.registerNotification();
     notificationService.configLocalNotification();
   }
 
-  /// Delete a user
+  /// Delete the [loggedUser] account
   Future<void> deleteUser(User loggedUser) async {
     await _firebaseAuthService.deleteUser(loggedUser);
   }
 
-  Stream<bool> get isUserLogged => _isUserLoggedController.stream;
+  /// Stream of the user logged controller
+  Stream<bool> get isUserLogged => _isUserLoggedCtrl.stream;
 
-  Stream<bool> get isUserCreated => _isUserCreatedController.stream;
+  /// Stream of the user created controller
+  Stream<bool> get isUserCreated => _isUserCreatedCtrl.stream;
 
-  Stream<String> get authMessage => _authMessageController.stream;
+  /// Stream of the authentication message controller
+  Stream<String> get authMessage => _authMessageCtrl.stream;
 }

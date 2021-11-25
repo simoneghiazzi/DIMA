@@ -1,16 +1,16 @@
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_page_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/experts_signup_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
+import 'package:sApport/ViewModel/auth_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
+import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
+import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
+import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
+import 'package:sApport/Views/components/loading_dialog.dart';
+import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Welcome/components/background.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/Views/Login/login_screen.dart';
+import 'package:sApport/Views/Welcome/components/background.dart';
+import 'package:sApport/constants.dart';
 import 'package:provider/provider.dart';
 import 'or_divider.dart';
 import 'social_icon.dart';
@@ -46,11 +46,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
           children: <Widget>[
             Text(
               "sApport",
-              style: TextStyle(
-                  color: kPrimaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 50,
-                  fontFamily: 'Gabriola'),
+              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 50, fontFamily: 'Gabriola'),
             ),
             SizedBox(height: size.height * 0.03),
             Image.asset(
@@ -79,7 +75,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                   press: () async {
                     LoadingDialog.show(context, _keyLoader);
                     id = await authViewModel.logInWithFacebook();
-                    if (id == null) {
+                    if (id.isEmpty) {
                       LoadingDialog.hide(context, _keyLoader);
                     } else {
                       navigateToHome();
@@ -90,7 +86,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                   press: () async {
                     LoadingDialog.show(context, _keyLoader);
                     id = await authViewModel.logInWithGoogle();
-                    if (id == null) {
+                    if (id.isEmpty) {
                       LoadingDialog.hide(context, _keyLoader);
                     } else {
                       navigateToHome();
@@ -101,13 +97,15 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                 stream: authViewModel.authMessage,
                 builder: (context, snapshot) {
                   return Container(
-                      padding: EdgeInsets.all(20.0),
-                      child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                              text: snapshot.data,
-                              style:
-                                  TextStyle(color: Colors.red, fontSize: 15))));
+                    padding: EdgeInsets.all(20.0),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        text: snapshot.data,
+                        style: TextStyle(color: Colors.red, fontSize: 15),
+                      ),
+                    ),
+                  );
                 }),
             GestureDetector(
               child: Text(

@@ -1,5 +1,5 @@
-import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
-import 'package:dima_colombo_ghiazzi/Model/Chat/chat.dart';
+import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Model/Chat/chat.dart';
 
 class ActiveChat extends Chat {
   ActiveChat()

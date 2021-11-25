@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 
 class DashCard extends StatelessWidget {

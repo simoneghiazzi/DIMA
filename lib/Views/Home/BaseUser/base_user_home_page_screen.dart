@@ -1,9 +1,9 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Diary/diary_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/components/base_user_home_page_body.dart';
-import 'package:dima_colombo_ghiazzi/Views/Settings/user_settings_screen.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
+import 'package:sApport/ViewModel/auth_view_model.dart';
+import 'package:sApport/Views/Diary/diary_screen.dart';
+import 'package:sApport/Views/Home/BaseUser/components/base_user_home_page_body.dart';
+import 'package:sApport/Views/Settings/user_settings_screen.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

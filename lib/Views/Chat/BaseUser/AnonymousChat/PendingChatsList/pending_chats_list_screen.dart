@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/components/pending_chats_list_body.dart';
+import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/components/pending_chats_list_body.dart';
 import 'package:flutter/material.dart';
 
 class PendingChatsListScreen extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Colors used into the application
 const kPrimaryColor = Color(0xFF212C8C);
 final kPrimaryLightColor = Color(0xFFC9E9FF);
 final kPrimaryDarkColorTrasparent = Color.fromARGB(158, 13, 57, 124);

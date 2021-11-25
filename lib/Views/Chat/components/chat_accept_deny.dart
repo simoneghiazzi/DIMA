@@ -1,9 +1,9 @@
-import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
+import 'package:sApport/Model/Chat/active_chat.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

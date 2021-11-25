@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/auth_view_model.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Login/components/background.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_input_field.dart';
+import 'package:sApport/Views/Login/components/background.dart';
+import 'package:sApport/Views/components/rounded_button.dart';
+import 'package:sApport/Views/components/rounded_input_field.dart';
 import 'package:provider/provider.dart';
 
 class ForgotPasswordBody extends StatefulWidget {

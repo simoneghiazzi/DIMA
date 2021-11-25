@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 
 abstract class DiaryFormInterface {
-  Sink get titleText;
-  Sink get contentText;
+  Sink get title;
+  Sink get content;
   Stream<bool> get isButtonEnabled;
 
   void dispose();
@@ -14,10 +14,10 @@ class DiaryForm implements DiaryFormInterface {
   var _contentStream = StreamController<String>.broadcast();
 
   @override
-  Sink get titleText => _titleStream;
+  Sink get title => _titleStream;
 
   @override
-  Sink get contentText => _contentStream;
+  Sink get content => _contentStream;
 
   Stream<bool> get _titleController =>
       _titleStream.stream.map((title) => title.isNotEmpty);

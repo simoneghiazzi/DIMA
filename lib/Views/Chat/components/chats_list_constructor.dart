@@ -1,15 +1,18 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_list_item.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
+import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/Views/Chat/components/chat_list_item.dart';
+import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatsListConstructor extends StatefulWidget {
   final Function createUserCallback;
+  final Collection collection;
 
   ChatsListConstructor({
     Key key,
-    this.createUserCallback,
+    @required this.createUserCallback,
+    @required this.collection,
   }) : super(key: key);
 
   @override
@@ -39,17 +42,29 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
             child: StreamBuilder(
               stream: chatViewModel.loadChats(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.connectionState == ConnectionState.active) {
                   return ListView.builder(
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) {
-                      return ChatListItem(
-                          userItem: widget
-                              .createUserCallback(snapshot.data.removeFirst()));
+                      return FutureBuilder(
+                        future: chatViewModel.getUser(widget.collection, snapshot.data.docs[index].id),
+                        builder: (context, result) {
+                          if (result.connectionState == ConnectionState.done) {
+                            if (result.hasData) {
+                              return ChatListItem(userItem: widget.createUserCallback(result.data.docs[0]));
+                            } else {
+                              return Container();
+                            }
+                          } else {
+                            return LoadingDialog().widget(context);
+                          }
+                        },
+                      );
                     },
-                    itemCount: snapshot.data.length,
+                    itemCount: snapshot.data.docs.length,
                     controller: listScrollController,
                     shrinkWrap: true,
+                    reverse: true,
                   );
                 } else {
                   return LoadingDialog().widget(context);
@@ -63,9 +78,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
   }
 
   void scrollListener() {
-    if (listScrollController.offset >=
-            listScrollController.position.maxScrollExtent &&
-        !listScrollController.position.outOfRange) {
+    if (listScrollController.offset >= listScrollController.position.maxScrollExtent && !listScrollController.position.outOfRange) {
       setState(() {
         _limitIncrement += _limitIncrement;
       });

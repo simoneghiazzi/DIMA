@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Views/Signup/Expert/components/experts_info_body.dart';
+import 'package:sApport/Views/Signup/Expert/components/experts_info_body.dart';
 import 'package:flutter/material.dart';
 
 class ExpertsSignUpScreen extends StatelessWidget {

@@ -1,7 +1,7 @@
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place_search.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/map_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_info_view_model.dart';
+import 'package:sApport/Model/BaseUser/Map/place.dart';
+import 'package:sApport/Model/BaseUser/Map/place_search.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/base_user_info_view_model.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 
 class ExpertInfoViewModel extends BaseUserInfoViewModel {

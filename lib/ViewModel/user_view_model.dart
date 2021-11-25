@@ -1,14 +1,12 @@
-import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
-import 'package:dima_colombo_ghiazzi/Model/user.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_info_view_model.dart';
+import 'package:sApport/Model/Services/firestore_service.dart';
+import 'package:sApport/Model/user.dart';
+import 'package:sApport/ViewModel/BaseUser/base_user_info_view_model.dart';
 import 'package:get_it/get_it.dart';
 
 abstract class UserViewModel {
   final FirestoreService firestore = GetIt.I<FirestoreService>();
-  String id = '';
+  String id = "";
   User loggedUser;
-
-  UserViewModel({this.id});
 
   /// It takes the [id] and return the logged User from the DB
   Future<User> loadLoggedUser();

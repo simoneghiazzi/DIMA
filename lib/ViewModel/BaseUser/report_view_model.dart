@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima_colombo_ghiazzi/Model/random_id.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/report.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
+import 'package:sApport/Model/random_id.dart';
+import 'package:sApport/Model/BaseUser/report.dart';
+import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -33,10 +33,11 @@ class ReportViewModel extends FormBloc<String, String> {
         .addReportIntoDB(
             loggedId,
             Report(
-                id: RandomId.generate(idLength: 20),
-                category: reportCategory.value,
-                description: reportText.value,
-                date: DateTime.now()))
+              id: RandomId.generate(idLength: 20),
+              category: reportCategory.value,
+              description: reportText.value,
+              date: DateTime.now(),
+            ))
         .then((value) => emitSuccess(canSubmitAgain: true))
         .catchError((error) => emitFailure());
   }
