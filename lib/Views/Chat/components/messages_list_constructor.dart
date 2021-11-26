@@ -8,8 +8,7 @@ import 'package:provider/provider.dart';
 
 class MessagesListConstructor extends StatefulWidget {
   @override
-  _MessagesListConstructorState createState() =>
-      _MessagesListConstructorState();
+  _MessagesListConstructorState createState() => _MessagesListConstructorState();
 }
 
 class _MessagesListConstructorState extends State<MessagesListConstructor> {
@@ -30,6 +29,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           return ListView.builder(
+            physics: BouncingScrollPhysics(),
             padding: EdgeInsets.all(10.0),
             itemBuilder: (context, index) {
               Message messageItem = Message();
@@ -44,8 +44,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                     DateItem(date: dateToPrint),
                   ],
                 );
-              } else if (previousDate != null &&
-                  previousDate.day != messageItem.timestamp.day) {
+              } else if (previousDate != null && previousDate.day != messageItem.timestamp.day) {
                 var dateToPrint = previousDate;
                 previousDate = messageItem.timestamp;
                 return Column(

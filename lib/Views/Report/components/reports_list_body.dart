@@ -34,18 +34,17 @@ class _ReportsListBodyState extends State<ReportsListBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(
+    return Padding(
+      padding: EdgeInsets.only(left: 5, right: 5),
+      child: Stack(children: [
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TopBar(
               text: 'Old reports',
               button: InkWell(
                 child: Container(
-                  padding:
-                      EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                  padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
                   height: 30,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
@@ -63,10 +62,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
                       ),
                       Text(
                         "Add New",
-                        style: TextStyle(
-                            color: kPrimaryColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
+                        style: TextStyle(color: kPrimaryColor, fontSize: 14, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -76,77 +72,70 @@ class _ReportsListBodyState extends State<ReportsListBody> {
                 },
               ),
             ),
-            StreamBuilder(
-              stream: widget.reportViewModel.loadReports(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.active) {
-                  return ListView.builder(
-                    padding: EdgeInsets.all(10.0),
-                    itemBuilder: (context, index) =>
-                        buildItem(context, snapshot.data?.docs[index]),
-                    itemCount: snapshot.data.docs.length,
-                    controller: listScrollController,
-                    shrinkWrap: true,
-                  );
-                } else
-                  return LoadingDialog().widget(context);
-              },
+            Flexible(
+              child: StreamBuilder(
+                stream: widget.reportViewModel.loadReports(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    return ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      padding: EdgeInsets.all(10.0),
+                      itemBuilder: (context, index) => buildItem(context, snapshot.data?.docs[index]),
+                      itemCount: snapshot.data.docs.length,
+                      shrinkWrap: true,
+                    );
+                  } else
+                    return LoadingDialog().widget(context);
+                },
+              ),
             ),
           ],
         ),
-      ),
+      ]),
     );
   }
 
   Widget buildItem(BuildContext context, DocumentSnapshot doc) {
     // This size provide us total height and width of our screen
     Size size = MediaQuery.of(context).size;
-    String date =
-        DateFormat('yyyy-MM-dd kk:mm').format(doc.get('date').toDate());
+    String date = DateFormat('yyyy-MM-dd kk:mm').format(doc.get('date').toDate());
     if (doc != null) {
       return Container(
         child: TextButton(
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+            Row(
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      radius: 25.0,
-                      child: Image.asset(
-                        "assets/icons/logo.png",
-                        height: size.height * 0.05,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      doc.get('category'),
-                      style: TextStyle(color: kPrimaryColor, fontSize: 18),
-                    ),
-                  ],
+                CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  radius: 25.0,
+                  child: Image.asset(
+                    "assets/icons/logo.png",
+                    height: size.height * 0.05,
+                  ),
                 ),
-                Column(
-                  children: <Widget>[
-                    Text(date.split(' ')[0],
-                        style: TextStyle(color: kPrimaryColor, fontSize: 10)),
-                    Text(
-                        date.split(' ')[1].split('.')[0].split(':')[0] +
-                            ":" +
-                            date.split(' ')[1].split('.')[0].split(':')[1],
-                        style: TextStyle(color: kPrimaryColor, fontSize: 10))
-                  ],
-                )
-              ]),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  doc.get('category'),
+                  style: TextStyle(color: kPrimaryColor, fontSize: 18),
+                ),
+              ],
+            ),
+            Column(
+              children: <Widget>[
+                Text(date.split(' ')[0], style: TextStyle(color: kPrimaryColor, fontSize: 10)),
+                Text(date.split(' ')[1].split('.')[0].split(':')[0] + ":" + date.split(' ')[1].split('.')[0].split(':')[1],
+                    style: TextStyle(color: kPrimaryColor, fontSize: 10))
+              ],
+            )
+          ]),
           onPressed: () {
             alert = createAlert(doc.get('category'), doc.get('description'));
             alert.show();
           },
           style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(kPrimaryLightColor),
+            backgroundColor: MaterialStateProperty.all<Color>(kPrimaryLightColor),
             shape: MaterialStateProperty.all<OutlinedBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -162,9 +151,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
   }
 
   void scrollListener() {
-    if (listScrollController.offset >=
-            listScrollController.position.maxScrollExtent &&
-        !listScrollController.position.outOfRange) {
+    if (listScrollController.offset >= listScrollController.position.maxScrollExtent && !listScrollController.position.outOfRange) {
       setState(() {
         _limitIncrement += _limitIncrement;
       });
@@ -185,10 +172,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
           DialogButton(
             child: Text(
               "CLOSE",
-              style: TextStyle(
-                  color: kPrimaryColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
             ),
             color: Colors.transparent,
             onPressed: () => alert.dismiss(),

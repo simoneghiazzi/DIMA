@@ -44,6 +44,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.active) {
                   return ListView.builder(
+                    physics: BouncingScrollPhysics(),
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) {
                       return FutureBuilder(
@@ -62,7 +63,6 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
                       );
                     },
                     itemCount: snapshot.data.docs.length,
-                    controller: listScrollController,
                     shrinkWrap: true,
                     reverse: true,
                   );
