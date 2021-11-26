@@ -1,11 +1,9 @@
 TODO DIMA
 
-- send message real time
-
 - Aggiornamento chat experts (+/-)
 
 - Delete account (maybe)
-- Grafica (aspetto e layout tablet/smartphone)
+- Grafica (aspetto e layout tablet/smartphone + DARIOOOO)
 - Testing porcoooo
 
 - (Appuntamenti con esperti) 
