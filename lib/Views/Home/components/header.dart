@@ -28,9 +28,10 @@ class _HeaderState extends State<Header> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Container(
       decoration: BoxDecoration(color: kPrimaryColor),
-      height: 100,
+      height: size.height / 8,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -38,11 +39,7 @@ class _HeaderState extends State<Header> {
             padding: const EdgeInsets.only(left: 20.0),
             child: Text(
               "sApport",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 40,
-                  fontFamily: 'Gabriola'),
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40, fontFamily: 'Gabriola'),
             ),
           ),
         ],
