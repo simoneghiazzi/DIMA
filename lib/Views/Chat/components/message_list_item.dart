@@ -40,7 +40,7 @@ class _MessageListItemState extends State<MessageListItem> {
                 Container(
                   padding: EdgeInsets.only(right: 8, bottom: 5),
                   child: Text(
-                    DateFormat('kk:mm').format(DateTime.fromMicrosecondsSinceEpoch(widget.messageItem.getData()['timestamp'])),
+                    DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.messageItem.getData()['timestamp'])),
                     style: TextStyle(color: greyColor, fontSize: 10.0, fontStyle: FontStyle.italic),
                   ),
                 )

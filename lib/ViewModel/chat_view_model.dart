@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:collection/collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/Chat/message.dart';
 import 'package:sApport/Model/Services/collections.dart';

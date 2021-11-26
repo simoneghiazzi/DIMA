@@ -184,6 +184,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
             style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onPressed: () {
+            reportViewModel.clearControllers();
             routerDelegate.pushPage(name: ReportsListScreen.route, arguments: reportViewModel);
             successAlert.dismiss();
           },

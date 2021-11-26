@@ -31,15 +31,21 @@ class ReportViewModel extends FormBloc<String, String> {
   void onSubmitting() async {
     _firestoreService
         .addReportIntoDB(
-            loggedId,
-            Report(
-              id: RandomId.generate(idLength: 20),
-              category: reportCategory.value,
-              description: reportText.value,
-              date: DateTime.now(),
-            ))
+          loggedId,
+          Report(
+            id: RandomId.generate(idLength: 20),
+            category: reportCategory.value,
+            description: reportText.value,
+            date: DateTime.now(),
+          ),
+        )
         .then((value) => emitSuccess(canSubmitAgain: true))
         .catchError((error) => emitFailure());
+  }
+
+  void clearControllers() {
+    reportCategory.clear();
+    reportText.clear();
   }
 
   // Get all the reports of a user from the DB

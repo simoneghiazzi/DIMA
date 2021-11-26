@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'package:collection/collection.dart';
 import 'dart:io';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,12 +28,12 @@ class FirestoreService {
   ///
   /// It takes the [user] and based on the type it adds him/her to the list of experts or to the list
   /// of users and it increments the collection counter.
-  void addUserIntoDB(User user) {
+  Future<void> addUserIntoDB(User user) {
     var userReference = _firestore.collection(user.collection.value).doc(user.id);
     if (user.collection == Collection.BASE_USERS) {
-      userReference.set(user.getData()).then((value) => print("User added")).catchError((error) => print("Failed to add user: $error"));
       _incrementBaseUsersCounter(1);
     }
+    return userReference.set(user.getData()).then((value) => print("User added")).catchError((error) => print("Failed to add user: $error"));
   }
 
   /// Delete a user from the firestore DB.

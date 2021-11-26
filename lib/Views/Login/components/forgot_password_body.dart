@@ -61,10 +61,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
             StreamBuilder<String>(
                 stream: errorText,
                 builder: (context, snapshot) {
-                  return RichText(
-                      text: TextSpan(
-                          text: snapshot.data,
-                          style: TextStyle(color: Colors.red, fontSize: 15)));
+                  return RichText(text: TextSpan(text: snapshot.data, style: TextStyle(color: Colors.red, fontSize: 15)));
                 }),
             SizedBox(height: size.height * 0.03),
             StreamBuilder(
@@ -75,15 +72,12 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                     press: () async {
                       _errorTextController.add(null);
                       FocusScope.of(context).unfocus();
-                      if (await authViewModel.hasPasswordAuthentication(
-                          authViewModel.emailCtrl.text)) {
-                        await authViewModel
-                            .resetPassword(authViewModel.emailCtrl.text);
+                      if (await authViewModel.hasPasswordAuthentication(authViewModel.emailCtrl.text)) {
+                        authViewModel.resetPassword(authViewModel.emailCtrl.text);
                         showSnackBar();
                         routerDelegate.pop();
                       } else {
-                        _errorTextController
-                            .add("No account found with this email.");
+                        _errorTextController.add("No account found with this email.");
                       }
                     },
                     enabled: snapshot.data ?? false,
@@ -97,8 +91,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
 
   void showSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content:
-          const Text('Please check your email for the password reset link.'),
+      content: const Text('Please check your email for the password reset link.'),
       duration: const Duration(seconds: 20),
     ));
   }

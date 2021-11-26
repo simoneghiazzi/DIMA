@@ -4,7 +4,6 @@ import 'package:sApport/Model/BaseUser/Diary/note.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

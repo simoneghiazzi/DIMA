@@ -145,8 +145,8 @@ class FirebaseAuthService {
 
   /// Delete a user
   Future deleteUser(User user) async {
-    await _firestoreService.removeUserFromDB(user);
-    await _firebaseAuth.currentUser.delete();
+    _firestoreService.removeUserFromDB(user);
+    _firebaseAuth.currentUser.delete();
     _userCredential = null;
   }
 
