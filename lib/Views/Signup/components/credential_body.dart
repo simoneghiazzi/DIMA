@@ -1,19 +1,19 @@
 import 'dart:async';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:dima_colombo_ghiazzi/Model/user.dart';
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_info_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/user_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/Model/user.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/BaseUser/base_user_info_view_model.dart';
+import 'package:sApport/ViewModel/auth_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
+import 'package:sApport/Views/components/loading_dialog.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Login/login_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/components/background.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_check.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_input_field.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_password_field.dart';
+import 'package:sApport/Views/Login/login_screen.dart';
+import 'package:sApport/Views/Signup/components/background.dart';
+import 'package:sApport/Views/components/already_have_an_account_check.dart';
+import 'package:sApport/Views/components/rounded_button.dart';
+import 'package:sApport/Views/components/rounded_input_field.dart';
+import 'package:sApport/Views/components/rounded_password_field.dart';
 import 'package:provider/provider.dart';
 
 class CredentialBody extends StatefulWidget {
@@ -85,18 +85,18 @@ class _CredentialBodyState extends State<CredentialBody> {
                 builder: (context, snapshot) {
                   return RoundedInputField(
                     hintText: "Your Email",
-                    controller: authViewModel.emailController,
+                    controller: authViewModel.emailCtrl,
                     errorText: snapshot.data,
                   );
                 }),
             RoundedPasswordField(
-              controller: authViewModel.passwordController,
+              controller: authViewModel.pswCtrl,
             ),
             StreamBuilder<String>(
-                stream: authViewModel.loginForm.errorRepeatedPasswordText,
+                stream: authViewModel.loginForm.errorRepeatPasswordText,
                 builder: (context, snapshot) {
                   return RoundedPasswordField(
-                      controller: authViewModel.repeatedPasswordController,
+                      controller: authViewModel.repeatPswCtrl,
                       hintText: "Confirm Password",
                       errorText: snapshot.data);
                 }),
@@ -108,7 +108,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                     press: () async {
                       FocusScope.of(context).unfocus();
                       LoadingDialog.show(context, _keyLoader);
-                      infoViewModel.email = authViewModel.emailController.text;
+                      infoViewModel.email = authViewModel.emailCtrl.text;
                       user = widget.userViewModel.createUser(infoViewModel);
                       await authViewModel.signUpUser(user);
                     },

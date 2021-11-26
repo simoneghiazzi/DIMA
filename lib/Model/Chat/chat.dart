@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
+import 'package:sApport/Model/Services/collections.dart';
 
 abstract class Chat {
   Collection targetCollection;

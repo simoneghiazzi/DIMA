@@ -1,5 +1,5 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';

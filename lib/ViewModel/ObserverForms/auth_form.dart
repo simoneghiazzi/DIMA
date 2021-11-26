@@ -3,87 +3,100 @@ import 'package:rxdart/rxdart.dart';
 import 'package:email_validator/email_validator.dart';
 
 abstract class AuthFormInterface {
-  Sink get emailText;
-  Sink get passwordText;
-  Sink get repeatedPasswordText;
+  /// Email sink for inserting the text stream
+  Sink get email;
+
+  /// Password sink for inserting the text stream
+  Sink get psw;
+
+  /// Repeate password sink for inserting the text stream
+  Sink get repeatPsw;
+
+  /// Enable the sign up by checking the email controller, the password controller and the repeat password controller
   Stream<bool> get isSignUpEnabled;
+
+  /// Validate the login by checking the email controller and the password controller
   Stream<bool> get isLoginEnabled;
+
+  /// Validate the reset password by checking the email controller
   Stream<bool> get isResetPasswordEnabled;
+
+  /// Error message for the email input
   Stream<String> get errorEmailText;
-  Stream<String> get errorRepeatedPasswordText;
+
+  /// Error message for the repeat password input
+  Stream<String> get errorRepeatPasswordText;
 
   void dispose();
 }
 
 class LoginForm implements AuthFormInterface {
+  // Streams
   var _emailStream = StreamController<String>.broadcast();
   var _passwordStream = StreamController<String>.broadcast();
-  var _repeatedPasswordStream = StreamController<String>.broadcast();
-  String _lastPassword = "";
-  String _lastRepeatedPassword = "";
+  var _repeatPasswordStream = StreamController<String>.broadcast();
+
+  // Variables that store the inserted password and repeated password for the check
+  String _lastPsw = "";
+  String _lastRepeatPsw = "";
+
+  // Sinks
+  @override
+  Sink get email => _emailStream;
 
   @override
-  Sink get emailText => _emailStream;
+  Sink get psw => _passwordStream;
 
   @override
-  Sink get passwordText => _passwordStream;
+  Sink get repeatPsw => _repeatPasswordStream;
 
-  @override
-  Sink get repeatedPasswordText => _repeatedPasswordStream;
+  /// Validate the inserted email with an EmailValidator
+  Stream<bool> get _emailController => _emailStream.stream.map((email) => EmailValidator.validate(email));
 
-  Stream<bool> get _emailController =>
-      _emailStream.stream.map((email) => EmailValidator.validate(email));
-
-  Stream<bool> get _passwordController =>
-      _passwordStream.stream.map((password) {
-        _lastPassword = password;
-        if (_lastRepeatedPassword.isNotEmpty) {
-          _repeatedPasswordStream.add(_lastRepeatedPassword);
+  /// Validate the inserted password by checking if it is not empty and it is equal to the repeated password
+  Stream<bool> get _passwordController => _passwordStream.stream.map((password) {
+        _lastPsw = password;
+        if (_lastRepeatPsw.isNotEmpty) {
+          _repeatPasswordStream.add(_lastRepeatPsw);
         }
         return password.isNotEmpty;
       });
 
-  Stream<bool> get _repeatedPasswordController =>
-      _repeatedPasswordStream.stream.map((repeatedPassword) {
-        _lastRepeatedPassword = repeatedPassword;
-        return repeatedPassword == _lastPassword;
+  /// Validate the inserted repeat password by checking if it is not empty and it is equal to the repeated password
+  Stream<bool> get _repeatedPasswordController => _repeatPasswordStream.stream.map((repeatedPassword) {
+        _lastRepeatPsw = repeatedPassword;
+        return repeatedPassword == _lastPsw;
       });
 
+  // Streams
   @override
-  Stream<bool> get isSignUpEnabled => Rx.combineLatest3(
-      _emailController,
-      _passwordController,
-      _repeatedPasswordController,
-      (a, b, c) => a && b && c);
+  Stream<bool> get isSignUpEnabled => Rx.combineLatest3(_emailController, _passwordController, _repeatedPasswordController, (a, b, c) => a && b && c);
 
   @override
-  Stream<bool> get isLoginEnabled => Rx.combineLatest2(
-      _emailController, _passwordController, (a, b) => a && b);
+  Stream<bool> get isLoginEnabled => Rx.combineLatest2(_emailController, _passwordController, (a, b) => a && b);
 
   @override
-  Stream<bool> get isResetPasswordEnabled =>
-      _emailController.map((isCorrect) => isCorrect);
+  Stream<bool> get isResetPasswordEnabled => _emailController.map((isCorrect) => isCorrect);
 
   @override
-  Stream<String> get errorEmailText =>
-      _emailController.map((isCorrect) => isCorrect ? false : "Invalid email");
+  Stream<String> get errorEmailText => _emailController.map((isCorrect) => isCorrect ? false : "Invalid email");
 
   @override
-  Stream<String> get errorRepeatedPasswordText => _repeatedPasswordController
-      .map((isCorrect) => isCorrect ? false : "Password does not match");
+  Stream<String> get errorRepeatPasswordText => _repeatedPasswordController.map((isCorrect) => isCorrect ? false : "Password does not match");
 
+  /// Reset all the controllers and the variables for the password check
   void resetControllers() {
-    _lastPassword = "";
-    _lastRepeatedPassword = "";
-    emailText.add(null);
-    passwordText.add(null);
-    repeatedPasswordText.add(null);
+    _lastPsw = "";
+    _lastRepeatPsw = "";
+    email.add(null);
+    psw.add(null);
+    repeatPsw.add(null);
   }
 
   @override
   void dispose() {
     _emailStream.close();
     _passwordStream.close();
-    _repeatedPasswordStream.close();
+    _repeatPasswordStream.close();
   }
 }

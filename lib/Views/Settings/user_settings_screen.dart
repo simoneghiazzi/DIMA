@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Model/user.dart';
+import 'package:sApport/Model/user.dart';
 import 'package:flutter/material.dart';
 import 'components/user_settings_body.dart';
 

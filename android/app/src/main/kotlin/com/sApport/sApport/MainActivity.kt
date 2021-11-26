@@ -1,4 +1,4 @@
-package com.example.dima_colombo_ghiazzi
+package com.sApport.sApport
 
 import io.flutter.embedding.android.FlutterActivity
 

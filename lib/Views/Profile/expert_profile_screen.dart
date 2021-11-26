@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
+import 'package:sApport/Model/Expert/expert.dart';
 import 'package:flutter/material.dart';
 import 'components/expert_profile_body.dart';
 

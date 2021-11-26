@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/note.dart';
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_page_screen.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/Model/BaseUser/Diary/note.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -90,34 +89,26 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                           maxLines: 2,
                           textCapitalization: TextCapitalization.sentences,
                           enabled: modifiable,
-                          controller: diaryViewModel.titleController,
+                          controller: diaryViewModel.titleCtrl,
                           cursorColor: kPrimaryColor,
-                          style: TextStyle(
-                              color: kPrimaryColor,
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                              shadows: <Shadow>[
-                                Shadow(
-                                  offset: Offset(2.0, 2.0),
-                                  blurRadius: 3.0,
-                                  color: Colors.white,
-                                ),
-                              ]),
+                          style: TextStyle(color: kPrimaryColor, fontSize: 25, fontWeight: FontWeight.bold, shadows: <Shadow>[
+                            Shadow(
+                              offset: Offset(2.0, 2.0),
+                              blurRadius: 3.0,
+                              color: Colors.white,
+                            ),
+                          ]),
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "What's out topic of discussion?",
-                              hintStyle: TextStyle(
-                                  color: kPrimaryColor,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                  shadows: <Shadow>[
-                                    Shadow(
-                                      offset: Offset(0.0, 0.0),
-                                      blurRadius: 5.0,
-                                      color: Colors.white,
-                                    ),
-                                  ])),
+                              hintStyle: TextStyle(color: kPrimaryColor, fontSize: 25, fontWeight: FontWeight.bold, shadows: <Shadow>[
+                                Shadow(
+                                  offset: Offset(0.0, 0.0),
+                                  blurRadius: 5.0,
+                                  color: Colors.white,
+                                ),
+                              ])),
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(50),
                           ],
@@ -130,9 +121,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       height: 40,
                       decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(100.0),
-                              topLeft: Radius.circular(100.0)),
+                          borderRadius: BorderRadius.only(topRight: Radius.circular(100.0), topLeft: Radius.circular(100.0)),
                           boxShadow: [
                             BoxShadow(
                               color: kPrimaryColor.withOpacity(.4),
@@ -145,35 +134,33 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                 ],
               ),
               Container(
-                  padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 50.0),
-                  child: TextField(
-                      textAlign: TextAlign.center,
-                      textCapitalization: TextCapitalization.sentences,
-                      enabled: modifiable,
-                      controller: diaryViewModel.contentController,
-                      cursorColor: kPrimaryColor,
-                      style: TextStyle(color: kPrimaryColor, fontSize: 20),
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      decoration: InputDecoration.collapsed(
-                          hintText: 'Tell me about it...',
-                          hintStyle:
-                              TextStyle(color: kPrimaryColor, fontSize: 20))))
+                padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 50.0),
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  textCapitalization: TextCapitalization.sentences,
+                  enabled: modifiable,
+                  controller: diaryViewModel.contentCtrl,
+                  cursorColor: kPrimaryColor,
+                  style: TextStyle(color: kPrimaryColor, fontSize: 20),
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: InputDecoration.collapsed(
+                    hintText: 'Tell me about it...',
+                    hintStyle: TextStyle(color: kPrimaryColor, fontSize: 20),
+                  ),
+                ),
+              ),
             ],
           ),
           Align(
             alignment: Alignment.topLeft,
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 15.0, vertical: 15.0),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
                 child: InkResponse(
                   onTap: () {
                     diaryViewModel.clearControllers();
-                    routerDelegate.replaceAllButNumber(1, [
-                      RouteSettings(
-                          name: BaseUserHomePageScreen.route, arguments: 1)
-                    ]);
+                    routerDelegate.pop();
                   },
                   child: Container(
                     padding: EdgeInsets.all(10),
@@ -182,10 +169,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       border: Border.all(color: Colors.black12),
                       borderRadius: BorderRadius.circular(100),
                       boxShadow: [
-                        BoxShadow(
-                            color: kPrimaryColor.withOpacity(.5),
-                            offset: Offset(1.0, 10.0),
-                            blurRadius: 10.0),
+                        BoxShadow(color: kPrimaryColor.withOpacity(.5), offset: Offset(1.0, 10.0), blurRadius: 10.0),
                       ],
                     ),
                     child: Icon(Icons.arrow_back, color: kPrimaryColor),
@@ -203,8 +187,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     children: [
                       note.date == today
                           ? Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 15.0, vertical: 15.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
                               child: InkResponse(
                                 onTap: () {
                                   setState(() {
@@ -219,14 +202,10 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                                     border: Border.all(color: Colors.black12),
                                     borderRadius: BorderRadius.circular(100),
                                     boxShadow: [
-                                      BoxShadow(
-                                          color: kPrimaryColor.withOpacity(.5),
-                                          offset: Offset(1.0, 10.0),
-                                          blurRadius: 10.0),
+                                      BoxShadow(color: kPrimaryColor.withOpacity(.5), offset: Offset(1.0, 10.0), blurRadius: 10.0),
                                     ],
                                   ),
-                                  child: Icon(CupertinoIcons.pencil,
-                                      color: kPrimaryColor),
+                                  child: Icon(CupertinoIcons.pencil, color: kPrimaryColor),
                                 ),
                               ))
                           : Container(),
@@ -235,8 +214,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                         child: InkResponse(
                           onTap: () {
                             note.favourite = !note.favourite;
-                            diaryViewModel.setFavourite(
-                                note.id, note.favourite);
+                            diaryViewModel.setFavourite(note.id, note.favourite);
                             setState(() {});
                           },
                           child: Container(
@@ -246,17 +224,12 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                               border: Border.all(color: Colors.black12),
                               borderRadius: BorderRadius.circular(100),
                               boxShadow: [
-                                BoxShadow(
-                                    color: kPrimaryColor.withOpacity(.5),
-                                    offset: Offset(1.0, 10.0),
-                                    blurRadius: 10.0),
+                                BoxShadow(color: kPrimaryColor.withOpacity(.5), offset: Offset(1.0, 10.0), blurRadius: 10.0),
                               ],
                             ),
                             child: note.favourite
-                                ? Icon(CupertinoIcons.heart_fill,
-                                    color: kPrimaryColor)
-                                : Icon(CupertinoIcons.heart,
-                                    color: kPrimaryColor),
+                                ? Icon(CupertinoIcons.heart_fill, color: kPrimaryColor)
+                                : Icon(CupertinoIcons.heart, color: kPrimaryColor),
                           ),
                         ),
                       ),
@@ -267,8 +240,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                   alignment: Alignment.bottomRight,
                   child: SafeArea(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 45.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 45.0),
                       child: StreamBuilder(
                           stream: diaryViewModel.diaryForm.isButtonEnabled,
                           builder: (context, snapshot) {
@@ -276,9 +248,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                               return InkResponse(
                                 onTap: () {
                                   if (note != null) {
-                                    diaryViewModel.submitPage(
-                                        pageId: note.id,
-                                        isFavourite: note.favourite);
+                                    diaryViewModel.submitPage(pageId: note.id, isFavourite: note.favourite);
                                   } else {
                                     diaryViewModel.submitPage();
                                   }
@@ -294,14 +264,10 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                                     border: Border.all(color: Colors.black12),
                                     borderRadius: BorderRadius.circular(100),
                                     boxShadow: [
-                                      BoxShadow(
-                                          color: kPrimaryColor.withOpacity(.5),
-                                          offset: Offset(1.0, 10.0),
-                                          blurRadius: 10.0),
+                                      BoxShadow(color: kPrimaryColor.withOpacity(.5), offset: Offset(1.0, 10.0), blurRadius: 10.0),
                                     ],
                                   ),
-                                  child:
-                                      Icon(Icons.check, color: kPrimaryColor),
+                                  child: Icon(Icons.check, color: kPrimaryColor),
                                 ),
                               );
                             }
@@ -339,10 +305,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
         DialogButton(
           child: Text(
             "OK",
-            style: TextStyle(
-                color: kPrimaryColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onPressed: () {
             successAlert.dismiss();
@@ -379,9 +342,8 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   }
 
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    routerDelegate.pop();
     diaryViewModel.clearControllers();
-    routerDelegate.replaceAllButNumber(
-        1, [RouteSettings(name: BaseUserHomePageScreen.route, arguments: 1)]);
     return true;
   }
 
@@ -412,11 +374,7 @@ class EntryHeaderImage extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           color: Colors.grey,
-          image: DecorationImage(
-              colorFilter:
-                  ColorFilter.mode(Color(0xFF3C4858), BlendMode.lighten),
-              image: imageProvider,
-              fit: BoxFit.cover),
+          image: DecorationImage(colorFilter: ColorFilter.mode(Color(0xFF3C4858), BlendMode.lighten), image: imageProvider, fit: BoxFit.cover),
         ),
       ),
     );

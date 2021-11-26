@@ -1,7 +1,6 @@
 TODO DIMA
 
 - send message real time
-- add date in chat page
 
 - Aggiornamento chat experts (+/-)
 

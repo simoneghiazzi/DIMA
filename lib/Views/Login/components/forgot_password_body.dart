@@ -1,14 +1,12 @@
 import 'dart:async';
-
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/auth_view_model.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Login/components/background.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_input_field.dart';
+import 'package:sApport/Views/Login/components/background.dart';
+import 'package:sApport/Views/components/rounded_button.dart';
+import 'package:sApport/Views/components/rounded_input_field.dart';
 import 'package:provider/provider.dart';
 
 class ForgotPasswordBody extends StatefulWidget {
@@ -19,7 +17,6 @@ class ForgotPasswordBody extends StatefulWidget {
 class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
-  FirestoreService firestoreService = FirestoreService();
   var _errorTextController = StreamController<String>.broadcast();
 
   @override
@@ -57,17 +54,14 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                 builder: (context, snapshot) {
                   return RoundedInputField(
                     hintText: "Your Email",
-                    controller: authViewModel.emailController,
+                    controller: authViewModel.emailCtrl,
                     errorText: snapshot.data,
                   );
                 }),
             StreamBuilder<String>(
                 stream: errorText,
                 builder: (context, snapshot) {
-                  return RichText(
-                      text: TextSpan(
-                          text: snapshot.data,
-                          style: TextStyle(color: Colors.red, fontSize: 15)));
+                  return RichText(text: TextSpan(text: snapshot.data, style: TextStyle(color: Colors.red, fontSize: 15)));
                 }),
             SizedBox(height: size.height * 0.03),
             StreamBuilder(
@@ -78,15 +72,12 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                     press: () async {
                       _errorTextController.add(null);
                       FocusScope.of(context).unfocus();
-                      if (await authViewModel.hasPasswordAuthentication(
-                          authViewModel.emailController.text)) {
-                        await authViewModel
-                            .resetPassword(authViewModel.emailController.text);
+                      if (await authViewModel.hasPasswordAuthentication(authViewModel.emailCtrl.text)) {
+                        authViewModel.resetPassword(authViewModel.emailCtrl.text);
                         showSnackBar();
                         routerDelegate.pop();
                       } else {
-                        _errorTextController
-                            .add("No account found with this email.");
+                        _errorTextController.add("No account found with this email.");
                       }
                     },
                     enabled: snapshot.data ?? false,
@@ -100,8 +91,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
 
   void showSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content:
-          const Text('Please check your email for the password reset link.'),
+      content: const Text('Please check your email for the password reset link.'),
       duration: const Duration(seconds: 20),
     ));
   }

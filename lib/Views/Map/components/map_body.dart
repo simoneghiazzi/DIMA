@@ -1,12 +1,12 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place_search.dart';
-import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/Views/Profile/expert_profile_screen.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/Model/BaseUser/Map/place.dart';
+import 'package:sApport/Model/BaseUser/Map/place_search.dart';
+import 'package:sApport/Model/Expert/expert.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/Views/Profile/expert_profile_screen.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/map_view_model.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -47,10 +47,7 @@ class _MapBodyState extends State<MapBody> {
     });
 
     //Icon used for custom markers
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(devicePixelRatio: 1, size: Size(2, 2)),
-            'assets/icons/pin.png')
-        .then((onValue) {
+    BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 1, size: Size(2, 2)), 'assets/icons/pin.png').then((onValue) {
       pinLocationIcon = onValue;
     });
   }
@@ -73,8 +70,7 @@ class _MapBodyState extends State<MapBody> {
                                   return GoogleMap(
                                     mapType: MapType.normal,
                                     initialCameraPosition: CameraPosition(
-                                      target: LatLng(snapshot.data.latitude,
-                                          snapshot.data.longitude),
+                                      target: LatLng(snapshot.data.latitude, snapshot.data.longitude),
                                       zoom: 16,
                                     ),
                                     compassEnabled: true,
@@ -82,56 +78,39 @@ class _MapBodyState extends State<MapBody> {
                                     myLocationButtonEnabled: false,
                                     myLocationEnabled: true,
                                     zoomControlsEnabled: false,
-                                    onMapCreated:
-                                        (GoogleMapController controller) {
-                                      mapViewModel.mapController
-                                          .complete(controller);
+                                    onMapCreated: (GoogleMapController controller) {
+                                      mapViewModel.mapController.complete(controller);
                                       removeMarkers();
                                       mapController = controller;
                                     },
                                   );
                                 } else {
-                                  for (var doc in snap.data) {
+                                  for (var doc in snap.data.docs) {
                                     if (doc.data() != null) {
                                       Expert expert = Expert();
                                       expert.setFromDocument(doc);
                                       _markers.add(Marker(
                                           markerId: MarkerId(
-                                              expert.getData()['surname'] +
-                                                  expert
-                                                      .getData()['lat']
-                                                      .toString() +
-                                                  expert
-                                                      .getData()['lng']
-                                                      .toString()),
-                                          position: LatLng(
-                                              expert.getData()['lat'],
-                                              expert.getData()['lng']),
+                                              expert.getData()['surname'] + expert.getData()['lat'].toString() + expert.getData()['lng'].toString()),
+                                          position: LatLng(expert.getData()['lat'], expert.getData()['lng']),
                                           icon: pinLocationIcon,
                                           infoWindow: InfoWindow(
                                               onTap: () {
-                                                routerDelegate.pushPage(
-                                                    name: ExpertProfileScreen
-                                                        .route,
-                                                    arguments: expert);
+                                                routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: expert);
                                               },
-                                              title:
-                                                  expert.getData()['surname'] +
-                                                      " " +
-                                                      expert.getData()['name'] +
-                                                      " (" +
-                                                      expert.getData()[
-                                                          'phoneNumber'] +
-                                                      ")",
-                                              snippet:
-                                                  expert.getData()['email'])));
+                                              title: expert.getData()['surname'] +
+                                                  " " +
+                                                  expert.getData()['name'] +
+                                                  " (" +
+                                                  expert.getData()['phoneNumber'] +
+                                                  ")",
+                                              snippet: expert.getData()['email'])));
                                     }
                                   }
                                   return GoogleMap(
                                     mapType: MapType.normal,
                                     initialCameraPosition: CameraPosition(
-                                      target: LatLng(snapshot.data.latitude,
-                                          snapshot.data.longitude),
+                                      target: LatLng(snapshot.data.latitude, snapshot.data.longitude),
                                       zoom: 16,
                                     ),
                                     compassEnabled: true,
@@ -140,10 +119,8 @@ class _MapBodyState extends State<MapBody> {
                                     myLocationButtonEnabled: false,
                                     myLocationEnabled: true,
                                     zoomControlsEnabled: false,
-                                    onMapCreated:
-                                        (GoogleMapController controller) {
-                                      mapViewModel.mapController
-                                          .complete(controller);
+                                    onMapCreated: (GoogleMapController controller) {
+                                      mapViewModel.mapController.complete(controller);
                                       removeMarkers();
                                       mapController = controller;
                                     },
@@ -156,16 +133,12 @@ class _MapBodyState extends State<MapBody> {
                             child: FloatingActionButton(
                               mini: true,
                               onPressed: () {
-                                mapController.animateCamera(
-                                    CameraUpdate.newCameraPosition(
-                                        CameraPosition(
-                                  target: LatLng(snapshot.data.latitude,
-                                      snapshot.data.longitude),
+                                mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+                                  target: LatLng(snapshot.data.latitude, snapshot.data.longitude),
                                   zoom: 16,
                                 )));
                               },
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.padded,
+                              materialTapTargetSize: MaterialTapTargetSize.padded,
                               backgroundColor: Colors.white10,
                               child: const Icon(Icons.my_location, size: 40.0),
                             ),
@@ -178,17 +151,14 @@ class _MapBodyState extends State<MapBody> {
           right: 30,
           left: 30,
           child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: kPrimaryColor.withOpacity(0.3),
-                      spreadRadius: 4,
-                      blurRadius: 6,
-                      offset: Offset(0, 3),
-                    )
-                  ]),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25.0), boxShadow: [
+                BoxShadow(
+                  color: kPrimaryColor.withOpacity(0.3),
+                  spreadRadius: 4,
+                  blurRadius: 6,
+                  offset: Offset(0, 3),
+                )
+              ]),
               child: Row(children: <Widget>[
                 IconButton(
                   splashColor: Colors.grey,
@@ -227,27 +197,21 @@ class _MapBodyState extends State<MapBody> {
                 : Column(children: [
                     Expanded(
                         child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(.6),
-                                backgroundBlendMode: BlendMode.darken),
+                            decoration: BoxDecoration(color: Colors.black.withOpacity(.6), backgroundBlendMode: BlendMode.darken),
                             child: ListView.builder(
                                 padding: EdgeInsets.only(top: 100),
                                 itemCount: snapshot.data.length,
                                 itemBuilder: (context, index) {
                                   return ListTile(
-                                      contentPadding: EdgeInsets.only(
-                                          top: 10, left: 15, right: 5),
+                                      contentPadding: EdgeInsets.only(top: 10, left: 15, right: 5),
                                       title: Text(
                                         snapshot.data[index].description,
                                         style: TextStyle(color: Colors.white),
                                       ),
                                       onTap: () {
-                                        mapViewModel.setSelectedLocation(
-                                            snapshot.data[index].placeId);
-                                        txt.text =
-                                            snapshot.data[index].description;
-                                        FocusManager.instance.primaryFocus
-                                            ?.unfocus();
+                                        mapViewModel.setSelectedLocation(snapshot.data[index].placeId);
+                                        txt.text = snapshot.data[index].description;
+                                        FocusManager.instance.primaryFocus?.unfocus();
                                       });
                                 })))
                   ]);
@@ -256,8 +220,7 @@ class _MapBodyState extends State<MapBody> {
   }
 
   Future<void> removeMarkers() async {
-    final GoogleMapController controller =
-        await mapViewModel.mapController.future;
+    final GoogleMapController controller = await mapViewModel.mapController.future;
     controller.setMapStyle(_mapStyle);
   }
 
@@ -272,14 +235,10 @@ class _MapBodyState extends State<MapBody> {
   }
 
   Future<void> _goToPlace(Place place) async {
-    final GoogleMapController controller =
-        await mapViewModel.mapController.future;
+    final GoogleMapController controller = await mapViewModel.mapController.future;
     controller.animateCamera(
       CameraUpdate.newCameraPosition(
-        CameraPosition(
-            target: LatLng(
-                place.geometry.location.lat, place.geometry.location.lng),
-            zoom: 15),
+        CameraPosition(target: LatLng(place.geometry.location.lat, place.geometry.location.lng), zoom: 15),
       ),
     );
     mapViewModel.searchPlaces("");

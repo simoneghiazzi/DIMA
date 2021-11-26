@@ -7,34 +7,26 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:514204178452:android:8e992a843a31ff95e1ef01",
+        "mobilesdk_app_id": "1:514204178452:android:c6d306e2a8279e68e1ef01",
         "android_client_info": {
-          "package_name": "com.example.dima_colombo_ghiazzi"
+          "package_name": "com.sApport.sApport"
         }
       },
       "oauth_client": [
         {
-          "client_id": "514204178452-9f17e6scadjjno3idn1m1i57cghs2jql.apps.googleusercontent.com",
+          "client_id": "514204178452-4qmv16jmrum2lvqev32ibt4ugvdpu4ql.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.dima_colombo_ghiazzi",
-            "certificate_hash": "8e733bfedee54aa275153a3d102d582c5d249f5e"
-          }
-        },
-        {
-          "client_id": "514204178452-hhqv4si7eb666ogv918dr9jjf01uer05.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.dima_colombo_ghiazzi",
+            "package_name": "com.sApport.sApport",
             "certificate_hash": "cd67bde470fb64681ddb0f12b66acae4b2f60de3"
           }
         },
         {
-          "client_id": "514204178452-u5nsok3mvq7e9fhop4nbb4mknc90as7s.apps.googleusercontent.com",
+          "client_id": "514204178452-ls3gohucdaegggjfphaffbhagft7uid9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.dima_colombo_ghiazzi",
-            "certificate_hash": "56ec7dd5fe54d216c2f945a692a4071cbedea1b8"
+            "package_name": "com.sApport.sApport",
+            "certificate_hash": "38ee245a63f106a2ce9194b115b966cecb439bec"
           }
         },
         {

@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
-import 'package:dima_colombo_ghiazzi/Model/Chat/expert_chat.dart';
-import 'package:dima_colombo_ghiazzi/Model/Expert/expert.dart';
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/chats_list_constructor.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/top_bar.dart';
-import 'package:dima_colombo_ghiazzi/Views/Map/map_screen.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/Model/Chat/active_chat.dart';
+import 'package:sApport/Model/Chat/expert_chat.dart';
+import 'package:sApport/Model/Expert/expert.dart';
+import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/Views/Chat/components/chats_list_constructor.dart';
+import 'package:sApport/Views/components/top_bar.dart';
+import 'package:sApport/Views/Map/map_screen.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -41,13 +42,13 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
               TopBar(text: 'Experts'),
               ChatsListConstructor(
                 createUserCallback: createUserCallback,
+                collection: Collection.EXPERTS,
               ),
             ],
           ),
         ),
         Align(
-          alignment:
-              Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
+          alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
           child: FloatingActionButton(
             onPressed: () async {
               routerDelegate.pushPage(name: MapScreen.route);

@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Views/Diary/components/diary_body.dart';
+import 'package:sApport/Views/Diary/components/diary_body.dart';
 import 'package:flutter/material.dart';
 
 class DiaryScreen extends StatelessWidget {

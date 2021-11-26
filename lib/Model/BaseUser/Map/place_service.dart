@@ -1,5 +1,5 @@
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place_search.dart';
+import 'package:sApport/Model/BaseUser/Map/place.dart';
+import 'package:sApport/Model/BaseUser/Map/place_search.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 

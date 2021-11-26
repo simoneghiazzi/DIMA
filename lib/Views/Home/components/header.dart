@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Welcome/welcome_screen.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/auth_view_model.dart';
+import 'package:sApport/Views/Welcome/welcome_screen.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

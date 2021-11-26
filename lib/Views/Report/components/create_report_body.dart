@@ -1,11 +1,11 @@
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/report_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/top_bar.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
-import 'package:dima_colombo_ghiazzi/Views/Report/reports_list_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Report/create_report_screen.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
+import 'package:sApport/Views/components/top_bar.dart';
+import 'package:sApport/Views/components/loading_dialog.dart';
+import 'package:sApport/Views/Report/reports_list_screen.dart';
+import 'package:sApport/Views/Report/create_report_screen.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +17,7 @@ class CreateReportBody extends StatefulWidget {
 }
 
 class _CreateReportBodyState extends State<CreateReportBody> {
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  GlobalKey<State> _keyLoader;
   BaseUserViewModel baseUserViewModel;
   ReportViewModel reportViewModel;
   AppRouterDelegate routerDelegate;
@@ -26,6 +26,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
 
   @override
   void initState() {
+    _keyLoader = new GlobalKey<State>();
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     errorAlert = createErrorAlert();
@@ -60,8 +61,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                       text: 'New report',
                       button: InkWell(
                         child: Container(
-                          padding: EdgeInsets.only(
-                              left: 8, right: 8, top: 2, bottom: 2),
+                          padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
                           height: 30,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
@@ -79,18 +79,13 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                               ),
                               Text(
                                 "List",
-                                style: TextStyle(
-                                    color: kPrimaryColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(color: kPrimaryColor, fontSize: 14, fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
                         ),
                         onTap: () {
-                          routerDelegate.pushPage(
-                              name: ReportsListScreen.route,
-                              arguments: reportViewModel);
+                          routerDelegate.pushPage(name: ReportsListScreen.route, arguments: reportViewModel);
                         },
                       ),
                     ),
@@ -102,24 +97,15 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                       height: size.height * 0.15,
                     ),
                     Padding(
-                        padding: EdgeInsets.only(
-                            top: size.height * 0.05, left: 40, right: 40),
-                        child:
-                            FormBlocListener<ReportViewModel, String, String>(
-                          onSubmitting: (context, state) {
-                            LoadingDialog.show(context, _keyLoader);
-                          },
+                        padding: EdgeInsets.only(top: size.height * 0.05, left: 40, right: 40),
+                        child: FormBlocListener<ReportViewModel, String, String>(
                           onSuccess: (context, state) {
-                            Navigator.of(_keyLoader.currentContext,
-                                    rootNavigator: true)
-                                .pop();
-                            _onReportSubmitted(context);
+                            LoadingDialog.hide(context, _keyLoader);
+                            successAlert.show();
                           },
                           onFailure: (context, state) {
-                            Navigator.of(_keyLoader.currentContext,
-                                    rootNavigator: true)
-                                .pop();
-                            _onReportError(context);
+                            LoadingDialog.hide(context, _keyLoader);
+                            errorAlert.show();
                           },
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -142,6 +128,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                 height: size.height * 0.01,
                               ),
                               TextFieldBlocBuilder(
+                                textCapitalization: TextCapitalization.sentences,
                                 textFieldBloc: reportViewModel.reportText,
                                 decoration: InputDecoration(
                                   filled: true,
@@ -159,19 +146,14 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                               ),
                               ElevatedButton(
                                 onPressed: () {
+                                  LoadingDialog.show(context, _keyLoader);
                                   reportViewModel.submit();
                                 },
                                 style: ButtonStyle(
-                                    fixedSize: MaterialStateProperty.all<Size>(
-                                        Size(size.width / 2, size.height / 20)),
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            kPrimaryColor),
-                                    shape: MaterialStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(29)))),
+                                    fixedSize: MaterialStateProperty.all<Size>(Size(size.width / 2, size.height / 20)),
+                                    backgroundColor: MaterialStateProperty.all<Color>(kPrimaryColor),
+                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(29)))),
                                 child: Text('SUBMIT'),
                               )
                             ],
@@ -183,14 +165,6 @@ class _CreateReportBodyState extends State<CreateReportBody> {
         },
       ),
     );
-  }
-
-  _onReportSubmitted(context) {
-    successAlert.show();
-  }
-
-  _onReportError(context) {
-    errorAlert.show();
   }
 
   Alert createSuccessAlert() {
@@ -207,14 +181,11 @@ class _CreateReportBodyState extends State<CreateReportBody> {
         DialogButton(
           child: Text(
             "OK",
-            style: TextStyle(
-                color: kPrimaryColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onPressed: () {
-            routerDelegate.pushPage(
-                name: ReportsListScreen.route, arguments: reportViewModel);
+            reportViewModel.clearControllers();
+            routerDelegate.pushPage(name: ReportsListScreen.route, arguments: reportViewModel);
             successAlert.dismiss();
           },
           color: Colors.transparent,

@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/ChatWithExperts/components/expert_chats_list_body.dart';
+import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/components/expert_chats_list_body.dart';
 import 'package:flutter/material.dart';
 
 class ExpertChatsListScreen extends StatelessWidget {

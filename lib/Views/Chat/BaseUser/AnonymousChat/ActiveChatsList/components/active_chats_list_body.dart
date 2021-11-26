@@ -1,17 +1,18 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/base_user.dart';
-import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
-import 'package:dima_colombo_ghiazzi/Model/Chat/pending_chat.dart';
-import 'package:dima_colombo_ghiazzi/Model/Chat/request.dart';
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/chats_list_constructor.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/top_bar.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/Model/BaseUser/base_user.dart';
+import 'package:sApport/Model/Chat/active_chat.dart';
+import 'package:sApport/Model/Chat/pending_chat.dart';
+import 'package:sApport/Model/Chat/request.dart';
+import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Views/Chat/components/chats_list_constructor.dart';
+import 'package:sApport/Views/components/top_bar.dart';
+import 'package:sApport/Views/components/loading_dialog.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -51,14 +52,12 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
               StreamBuilder(
                 stream: chatViewModel.hasPendingChats(),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.active &&
-                      snapshot.data.docs.isNotEmpty) {
+                  if (snapshot.connectionState == ConnectionState.active && snapshot.data.docs.isNotEmpty) {
                     return TopBar(
                       text: 'Anonymous',
                       button: InkWell(
                         child: Container(
-                          padding: EdgeInsets.only(
-                              left: 8, right: 8, top: 2, bottom: 2),
+                          padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
                           height: 30,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
@@ -76,17 +75,13 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
                               ),
                               Text(
                                 "Requests",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: kPrimaryColor),
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: kPrimaryColor),
                               ),
                             ],
                           ),
                         ),
                         onTap: () {
-                          routerDelegate.pushPage(
-                              name: PendingChatsListScreen.route);
+                          routerDelegate.pushPage(name: PendingChatsListScreen.route);
                         },
                       ),
                     );
@@ -97,17 +92,16 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
               ),
               ChatsListConstructor(
                 createUserCallback: createUserCallback,
+                collection: Collection.BASE_USERS,
               ),
             ],
           ),
         ),
         Align(
-          alignment:
-              Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
+          alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
           child: FloatingActionButton(
             onPressed: () {
-              LoadingDialog.show(context, _keyLoader,
-                  text: 'Looking for new random user...');
+              LoadingDialog.show(context, _keyLoader, text: 'Looking for new random user...');
               chatViewModel.getNewRandomUser();
             },
             materialTapTargetSize: MaterialTapTargetSize.padded,

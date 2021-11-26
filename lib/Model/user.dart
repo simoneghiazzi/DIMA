@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Model/db_item.dart';
+import 'package:sApport/Model/db_item.dart';
 
 abstract class User implements DbItem {
   String id;

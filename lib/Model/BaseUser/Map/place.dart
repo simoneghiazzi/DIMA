@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/geometry.dart';
+import 'package:sApport/Model/BaseUser/Map/geometry.dart';
 
 class Place {
   final Geometry geometry;

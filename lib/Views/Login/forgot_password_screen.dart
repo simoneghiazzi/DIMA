@@ -1,4 +1,4 @@
-import 'package:dima_colombo_ghiazzi/Views/Login/components/forgot_password_body.dart';
+import 'package:sApport/Views/Login/components/forgot_password_body.dart';
 import 'package:flutter/material.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Login/components/login_body.dart';
+import 'package:sApport/Views/Login/components/login_body.dart';
 
 class LoginScreen extends StatelessWidget {
   static const route = '/loginScreen';

@@ -1,15 +1,15 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:dima_colombo_ghiazzi/Model/Chat/pending_chat.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
-import 'package:dima_colombo_ghiazzi/Model/user.dart';
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_accept_deny.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/chat_text_input.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/messages_list_constructor.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/components/top_bar_chats.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/network_avatar.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/Model/Chat/pending_chat.dart';
+import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Model/user.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/Views/Chat/components/chat_accept_deny.dart';
+import 'package:sApport/Views/Chat/components/chat_text_input.dart';
+import 'package:sApport/Views/Chat/components/messages_list_constructor.dart';
+import 'package:sApport/Views/Chat/components/top_bar_chats.dart';
+import 'package:sApport/Views/components/network_avatar.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

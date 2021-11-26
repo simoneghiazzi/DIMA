@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Welcome/components/welcome_body.dart';
+import 'package:sApport/Views/Welcome/components/welcome_body.dart';
 
 class WelcomeScreen extends StatelessWidget {
   static const route = '/welcomeScreen';

@@ -1,19 +1,24 @@
-import 'dart:collection';
-
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Diary/note.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sApport/Model/BaseUser/Diary/note.dart';
+import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class NoteDataSource extends CalendarDataSource {
   DiaryViewModel diaryViewModel;
-  HashSet setIds = new HashSet();
 
-  NoteDataSource(List<Note> source, DiaryViewModel diaryViewModel) {
+  NoteDataSource(List<DocumentSnapshot> docs, DiaryViewModel diaryViewModel) {
     this.diaryViewModel = diaryViewModel;
-    for (Note n in source) {
-      setIds.add(n.id);
+    var today = DateTime.now();
+    List<Note> source = List.from([]);
+    for (DocumentSnapshot doc in docs) {
+      Note n = Note();
+      n.setFromDocument(doc);
+      source.add(n);
+      if (n.date == DateTime(today.year, today.month, today.day)) {
+        diaryViewModel.hasNoteToday = true;
+      }
     }
     appointments = source;
   }
@@ -46,18 +51,5 @@ class NoteDataSource extends CalendarDataSource {
   @override
   bool isAllDay(int index) {
     return true;
-  }
-
-  @override
-  Future<void> handleLoadMore(DateTime startDate, DateTime endDate) async {
-    var results = await diaryViewModel.loadPages(startDate, endDate);
-    List<Note> newNotes = [];
-    for (Note n in results) {
-      if (setIds.add(n.id)) {
-        newNotes.add(n);
-      }
-    }
-    appointments.addAll(newNotes);
-    notifyListeners(CalendarDataSourceAction.add, newNotes);
   }
 }

@@ -1,5 +1,5 @@
-import 'package:dima_colombo_ghiazzi/Model/Chat/chat.dart';
-import 'package:dima_colombo_ghiazzi/Model/user.dart';
+import 'package:sApport/Model/Chat/chat.dart';
+import 'package:sApport/Model/user.dart';
 
 class Conversation {
   User senderUser, peerUser;

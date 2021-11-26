@@ -1,23 +1,24 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/base_user_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/Expert/expert_view_model.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/auth_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/Expert/expert_home_page_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Home/BaseUser/base_user_home_page_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Login/forgot_password_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Signup/BaseUser/base_users_signup_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/forgot_password.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
-import 'package:dima_colombo_ghiazzi/constants.dart';
+import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Model/Services/firestore_service.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
+import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
+import 'package:sApport/ViewModel/auth_view_model.dart';
+import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
+import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
+import 'package:sApport/Views/Login/forgot_password_screen.dart';
+import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
+import 'package:sApport/Views/components/forgot_password.dart';
+import 'package:sApport/Views/components/loading_dialog.dart';
+import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Login/components/background.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/already_have_an_account_check.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_button.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_input_field.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/rounded_password_field.dart';
+import 'package:sApport/Views/Login/components/background.dart';
+import 'package:sApport/Views/components/already_have_an_account_check.dart';
+import 'package:sApport/Views/components/rounded_button.dart';
+import 'package:sApport/Views/components/rounded_input_field.dart';
+import 'package:sApport/Views/components/rounded_password_field.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 class LoginBody extends StatefulWidget {
@@ -29,7 +30,7 @@ class _LoginBodyState extends State<LoginBody> {
   GlobalKey<State> _keyLoader;
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
-  FirestoreService firestoreService = FirestoreService();
+  FirestoreService firestoreService = GetIt.I<FirestoreService>();
 
   @override
   void initState() {
@@ -69,12 +70,12 @@ class _LoginBodyState extends State<LoginBody> {
                 builder: (context, snapshot) {
                   return RoundedInputField(
                     hintText: "Your Email",
-                    controller: authViewModel.emailController,
+                    controller: authViewModel.emailCtrl,
                     errorText: snapshot.data,
                   );
                 }),
             RoundedPasswordField(
-              controller: authViewModel.passwordController,
+              controller: authViewModel.pswCtrl,
             ),
             SizedBox(height: size.height * 0.01),
             ForgotPassword(
@@ -129,7 +130,7 @@ class _LoginBodyState extends State<LoginBody> {
   void navigateToHome(String id) async {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     Collection collection =
-        await firestoreService.findUsersCollection(authViewModel.id);
+        await firestoreService.findUsersCollection(authViewModel.loggedId);
     switch (collection) {
       case Collection.BASE_USERS:
         var baseUserViewModel =

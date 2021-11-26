@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
-import 'package:dima_colombo_ghiazzi/Model/db_item.dart';
+import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Model/db_item.dart';
 
 class Message implements DbItem {
   String idFrom;
@@ -20,8 +20,7 @@ class Message implements DbItem {
     } catch (e) {}
     try {
       int milli = doc.get('timestamp');
-      timestamp =
-          DateTime.fromMillisecondsSinceEpoch(milli);
+      timestamp = DateTime.fromMillisecondsSinceEpoch(milli);
     } catch (e) {}
     try {
       content = doc.get('content');
@@ -33,7 +32,7 @@ class Message implements DbItem {
     return {
       'idFrom': idFrom,
       'idTo': idTo,
-      'timestamp': timestamp,
+      'timestamp': timestamp.millisecondsSinceEpoch,
       'content': content,
     };
   }

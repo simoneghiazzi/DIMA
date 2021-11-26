@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dima_colombo_ghiazzi/Views/Map/components/map_body.dart';
+import 'package:sApport/Views/Map/components/map_body.dart';
 
 class MapScreen extends StatelessWidget {
   static const route = '/mapScreen';

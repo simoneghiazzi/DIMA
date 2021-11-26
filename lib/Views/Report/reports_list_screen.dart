@@ -1,5 +1,5 @@
-import 'package:dima_colombo_ghiazzi/ViewModel/BaseUser/report_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Report/components/reports_list_body.dart';
+import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
+import 'package:sApport/Views/Report/components/reports_list_body.dart';
 import 'package:flutter/material.dart';
 
 class ReportsListScreen extends StatelessWidget {

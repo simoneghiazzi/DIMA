@@ -1,16 +1,18 @@
 import 'dart:async';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place_search.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/collections.dart';
-import 'package:dima_colombo_ghiazzi/Model/Services/firestore_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sApport/Model/BaseUser/Map/place.dart';
+import 'package:sApport/Model/BaseUser/Map/place_search.dart';
+import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Model/Services/firestore_service.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:dima_colombo_ghiazzi/Model/BaseUser/Map/place_service.dart';
+import 'package:sApport/Model/BaseUser/Map/place_service.dart';
 
 class MapViewModel {
   var _position = StreamController<Position>.broadcast();
   Completer<GoogleMapController> mapController = Completer();
-  FirestoreService _firestoreService = FirestoreService();
+  FirestoreService _firestoreService = GetIt.I<FirestoreService>();
 
   var _placesSearch = StreamController<List<PlaceSearch>>.broadcast();
   final placesSearch = PlaceService();
@@ -67,21 +69,9 @@ class MapViewModel {
     return await placesSearch.getPlace(place);
   }
 
-  //Create all the experts' markers
-  Future<List> getMarkers() async {
-    try {
-      var docs =
-          (await _firestoreService.getBaseCollectionFromDB(Collection.EXPERTS))
-              .docs;
-      List list = [];
-      for (var doc in docs) {
-        if (doc.id != 'utils') list.add(doc);
-      }
-      return list;
-    } catch (e) {
-      print(e);
-      return null;
-    }
+  /// Return the list of experts
+  Future<QuerySnapshot> getMarkers() async {
+    return _firestoreService.getBaseCollectionFromDB(Collection.EXPERTS);
   }
 
   Stream<Position> get position => _position.stream;

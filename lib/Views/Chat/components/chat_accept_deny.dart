@@ -1,9 +1,9 @@
-import 'package:dima_colombo_ghiazzi/Model/Chat/active_chat.dart';
-import 'package:dima_colombo_ghiazzi/Router/app_router_delegate.dart';
-import 'package:dima_colombo_ghiazzi/ViewModel/chat_view_model.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:dima_colombo_ghiazzi/Views/components/loading_dialog.dart';
+import 'package:sApport/Model/Chat/active_chat.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,12 +14,11 @@ class ChatAcceptDenyInput extends StatefulWidget {
 
 class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-  
+
   @override
   Widget build(BuildContext context) {
     var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
-    AppRouterDelegate routerDelegate =
-        Provider.of<AppRouterDelegate>(context, listen: false);
+    AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       InkWell(
@@ -44,24 +43,18 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
               ),
               Text(
                 "Accept",
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ],
           ),
         ),
         onTap: () async {
           LoadingDialog.show(context, _keyLoader);
-          await chatViewModel.acceptPendingChat();
+          chatViewModel.acceptPendingChat();
           chatViewModel.conversation.senderUserChat = ActiveChat();
           chatViewModel.conversation.peerUserChat = ActiveChat();
           LoadingDialog.hide(context, _keyLoader);
-          routerDelegate.replaceAllButNumber(2, [
-            RouteSettings(name: ActiveChatsListScreen.route),
-            RouteSettings(name: ChatPageScreen.route)
-          ]);
+          routerDelegate.replaceAllButNumber(2, [RouteSettings(name: ActiveChatsListScreen.route), RouteSettings(name: ChatPageScreen.route)]);
         },
       ),
       SizedBox(
@@ -89,17 +82,14 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
               ),
               Text(
                 "Refuse",
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ],
           ),
         ),
         onTap: () async {
           LoadingDialog.show(context, _keyLoader);
-          await chatViewModel.deleteChat();
+          chatViewModel.deleteChat();
           LoadingDialog.hide(context, _keyLoader);
           routerDelegate.replaceAllButNumber(2, [
             RouteSettings(name: ActiveChatsListScreen.route),
