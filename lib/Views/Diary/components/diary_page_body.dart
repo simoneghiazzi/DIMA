@@ -58,7 +58,65 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          ListView(
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(top: size.height / 20),
+                    child: Center(
+                        child: TextField(
+                      autofocus: hasFocus,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 2,
+                      textCapitalization: TextCapitalization.sentences,
+                      enabled: modifiable,
+                      controller: diaryViewModel.titleCtrl,
+                      cursorColor: kPrimaryColor,
+                      style: TextStyle(color: kPrimaryColor, fontSize: 25, fontWeight: FontWeight.bold, shadows: <Shadow>[
+                        Shadow(
+                          offset: Offset(2.0, 2.0),
+                          blurRadius: 3.0,
+                          color: Colors.white,
+                        ),
+                      ]),
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "What's out topic of discussion?",
+                          hintStyle: TextStyle(color: kPrimaryColor, fontSize: 25, fontWeight: FontWeight.bold, shadows: <Shadow>[
+                            Shadow(
+                              offset: Offset(0.0, 0.0),
+                              blurRadius: 5.0,
+                              color: Colors.white,
+                            ),
+                          ])),
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(50),
+                      ],
+                    ))),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextField(
+                    textCapitalization: TextCapitalization.sentences,
+                    enabled: modifiable,
+                    controller: diaryViewModel.contentCtrl,
+                    cursorColor: kPrimaryColor,
+                    style: TextStyle(color: kPrimaryColor, fontSize: 20),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    decoration: InputDecoration.collapsed(
+                      hintText: 'Tell me about it...',
+                      hintStyle: TextStyle(color: kPrimaryColor, fontSize: 20),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            //ROW DATE
+          )
+
+          /*ListView(
             padding: EdgeInsets.only(top: 0.0, left: 0.0, right: 0.0),
             physics: ClampingScrollPhysics(),
             children: <Widget>[
@@ -151,7 +209,8 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                 ),
               ),
             ],
-          ),
+          ),*/
+          ,
           Align(
             alignment: Alignment.topLeft,
             child: SafeArea(

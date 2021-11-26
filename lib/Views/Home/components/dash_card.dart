@@ -6,18 +6,20 @@ class DashCard extends StatelessWidget {
   final String text;
   final Function press;
 
-  const DashCard({Key key, this.imagePath, this.text, this.press})
-      : super(key: key);
+  const DashCard({Key key, this.imagePath, this.text, this.press}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return InkWell(
+      customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      splashColor: kPrimaryColor.withAlpha(100),
+      highlightColor: Colors.transparent,
       onTap: press,
       child: Card(
         elevation: 2,
-        shadowColor: Colors.indigo[300],
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shadowColor: kPrimaryColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -55,12 +55,15 @@ class _DiaryBodyState extends State<DiaryBody> {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(top: size.height / 8, bottom: 10.0),
+                padding: EdgeInsets.only(top: size.height / 8),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(color: Colors.black12),
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      topLeft: Radius.circular(10),
+                    ),
                     boxShadow: [
                       BoxShadow(color: kPrimaryColor.withOpacity(.5), blurRadius: 10.0),
                     ],
@@ -87,7 +90,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                           appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
                           appointmentDisplayCount: 1,
                           showAgenda: true,
-                          agendaViewHeight: size.height / 6,
+                          agendaViewHeight: diaryViewModel.hasNoteToday ? size.height / 10 : size.height / 8,
                           agendaItemHeight: size.height / 15,
                           monthCellStyle: MonthCellStyle(
                             trailingDatesBackgroundColor: kPrimaryLightColor,
@@ -106,7 +109,10 @@ class _DiaryBodyState extends State<DiaryBody> {
               ),
               !diaryViewModel.hasNoteToday
                   ? Align(
-                      alignment: Alignment.lerp(Alignment.lerp(Alignment.bottomRight, Alignment.topRight, 0.02), Alignment.center, 0.1),
+                      alignment: Alignment.lerp(
+                          Alignment.lerp(Alignment.lerp(Alignment.bottomRight, Alignment.topRight, 0.005), Alignment.center, 0.05),
+                          Alignment.bottomLeft,
+                          0.02),
                       child: FloatingActionButton(
                         onPressed: () {
                           routerDelegate.pushPage(name: DiaryPageScreen.route);
