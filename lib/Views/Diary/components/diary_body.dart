@@ -66,15 +66,15 @@ class _DiaryBodyState extends State<DiaryBody> {
                     ],
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 20.0, bottom: 40.0),
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 40.0),
                     child: SfCalendar(
                       controller: _controller,
                       todayHighlightColor: kPrimaryColor,
                       dataSource: NoteDataSource(snapshot.data.docs, diaryViewModel),
                       headerStyle: CalendarHeaderStyle(
-                        textStyle: TextStyle(color: kPrimaryColor, fontSize: 30, fontWeight: FontWeight.bold),
+                        textStyle: TextStyle(color: kPrimaryColor, fontSize: 25, fontWeight: FontWeight.bold),
                       ),
-                      headerHeight: 40,
+                      headerHeight: 50,
                       headerDateFormat: " MMM yyyy",
                       cellBorderColor: kPrimaryColor,
                       showDatePickerButton: true,
