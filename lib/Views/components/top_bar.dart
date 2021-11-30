@@ -7,8 +7,9 @@ import 'package:provider/provider.dart';
 class TopBar extends StatelessWidget {
   final String text;
   final InkWell button;
+  final Function back;
 
-  TopBar({Key key, @required this.text, this.button}) : super(key: key);
+  TopBar({Key key, @required this.text, this.button, this.back}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +32,14 @@ class TopBar extends StatelessWidget {
                       Icons.arrow_back,
                       color: kPrimaryColor,
                     ),
-                    onPressed: () {
-                      routerDelegate.pop();
-                    },
+                    onPressed: back ??
+                        () {
+                          routerDelegate.pop();
+                        },
                   ),
                   AutoSizeText(
                     text,
-                    style: TextStyle(
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.bold,
-                        color: kPrimaryColor),
+                    style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: kPrimaryColor),
                     maxLines: 1,
                   ),
                   Spacer(),
