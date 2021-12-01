@@ -9,26 +9,23 @@ class ChatTextInput extends StatefulWidget {
   _ChatTextInputState createState() => _ChatTextInputState();
 }
 
-class _ChatTextInputState extends State<ChatTextInput>
-    with WidgetsBindingObserver {
+class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserver {
   final ScrollController listScrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
-    return Stack(alignment: Alignment.bottomCenter, children: [
-      Container(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(25.0),
-            boxShadow: [
-              BoxShadow(
-                color: kPrimaryColor.withOpacity(0.3),
-                spreadRadius: 4,
-                blurRadius: 6,
-                offset: Offset(0, 3),
-              )
-            ]),
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10 , left: 8, right: 8),
+      child: Container(
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25.0), boxShadow: [
+          BoxShadow(
+            color: kPrimaryColor.withOpacity(0.25),
+            spreadRadius: 4,
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          )
+        ]),
         child: Row(
           children: <Widget>[
             // Edit text
@@ -38,9 +35,7 @@ class _ChatTextInputState extends State<ChatTextInput>
               child: TextField(
                 textCapitalization: TextCapitalization.sentences,
                 onSubmitted: (value) {
-                  listScrollController.animateTo(0.0,
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.easeOut);
+                  listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
                 },
                 textAlignVertical: TextAlignVertical.center,
                 style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
@@ -64,7 +59,7 @@ class _ChatTextInputState extends State<ChatTextInput>
             ))
           ],
         ),
-      )
-    ]);
+      ),
+    );
   }
 }

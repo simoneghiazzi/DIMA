@@ -163,7 +163,7 @@ class _MapBodyState extends State<MapBody> {
                 IconButton(
                   splashColor: Colors.grey,
                   icon: Icon(
-                    Icons.arrow_back,
+                    Icons.arrow_back_ios_new_rounded,
                     color: kPrimaryColor,
                   ),
                   onPressed: () {

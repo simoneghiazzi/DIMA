@@ -55,7 +55,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                     },
                     materialTapTargetSize: MaterialTapTargetSize.padded,
                     backgroundColor: Colors.transparent,
-                    child: const Icon(Icons.arrow_back, size: 40.0),
+                    child: const Icon(Icons.arrow_back_ios_new_rounded, size: 40.0),
                   ),
                 ),
                 alignment: Alignment.topLeft,

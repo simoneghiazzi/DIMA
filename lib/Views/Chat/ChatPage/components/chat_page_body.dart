@@ -9,7 +9,6 @@ import 'package:sApport/Views/Chat/components/chat_text_input.dart';
 import 'package:sApport/Views/Chat/components/messages_list_constructor.dart';
 import 'package:sApport/Views/Chat/components/top_bar_chats.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
-import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,8 +17,7 @@ class ChatPageBody extends StatefulWidget {
   _ChatPageBodyState createState() => _ChatPageBodyState();
 }
 
-class _ChatPageBodyState extends State<ChatPageBody>
-    with WidgetsBindingObserver {
+class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver {
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
   User peerUser, senderUser;
@@ -38,47 +36,31 @@ class _ChatPageBodyState extends State<ChatPageBody>
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      child: Stack(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              peerUser.collection == Collection.EXPERTS
-                  ? TopBarChats(
-                      networkAvatar: NetworkAvatar(
-                        img: peerUser.getData()['profilePhoto'],
-                        radius: 20.0,
-                      ),
-                      text: peerUser.getData()['name'] +
-                          " " +
-                          peerUser.getData()['surname'],
-                    )
-                  : TopBarChats(
-                      circleAvatar: CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        child: Icon(
-                          Icons.account_circle,
-                          size: 40,
-                          color: kPrimaryColor,
-                        ),
-                      ),
-                      text: peerUser.getData()['name'] +
-                          (senderUser.collection == Collection.EXPERTS
-                              ? " " + peerUser.getData()['surname']
-                              : ""),
-                    ),
-              // List of messages
-              MessagesListConstructor(),
-              // Input content
-              chatViewModel.conversation.senderUserChat.runtimeType ==
-                      PendingChat
-                  ? ChatAcceptDenyInput()
-                  : ChatTextInput(),
-            ],
-          ),
-        ],
-      ),
-      padding: EdgeInsets.only(bottom: 10, left: 5, right: 5),
+    return Column(
+      children: <Widget>[
+        peerUser.collection == Collection.EXPERTS
+            ? TopBarChats(
+                networkAvatar: NetworkAvatar(
+                  img: peerUser.getData()['profilePhoto'],
+                  radius: 20.0,
+                ),
+                text: peerUser.getData()['name'] + " " + peerUser.getData()['surname'],
+              )
+            : TopBarChats(
+                circleAvatar: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  child: Icon(
+                    Icons.account_circle,
+                    size: 40,
+                    color: Colors.white,
+                  ),
+                ),
+                text: peerUser.getData()['name'] + (senderUser.collection == Collection.EXPERTS ? " " + peerUser.getData()['surname'] : ""),
+              ), // List of messages
+        MessagesListConstructor(),
+        // Input content
+        chatViewModel.conversation.senderUserChat.runtimeType == PendingChat ? ChatAcceptDenyInput() : ChatTextInput(),
+      ],
     );
   }
 

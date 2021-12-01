@@ -21,67 +21,59 @@ class TopBarChats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppRouterDelegate routerDelegate =
-        Provider.of<AppRouterDelegate>(context, listen: false);
-    ChatViewModel chatViewModel =
-        Provider.of<ChatViewModel>(context, listen: false);
+    AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    ChatViewModel chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     Size size = MediaQuery.of(context).size;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        SafeArea(
-          child: SizedBox(
-            width: size.width,
-            child: Padding(
-              padding: EdgeInsets.only(right: 30, top: 12, bottom: 7),
-              child: Row(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: kPrimaryColor,
-                    ),
-                    onPressed: () async {
-                      FocusScope.of(context).unfocus();
-                      routerDelegate.pop();
-                    },
-                  ),
-                  circleAvatar ?? networkAvatar ?? Container(),
-                  circleAvatar != null || networkAvatar != null
-                      ? SizedBox(
-                          width: size.width * 0.04,
-                        )
-                      : Container(),
-                  Flexible(
-                    child: GestureDetector(
-                      child: Text(
-                        text,
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: kPrimaryColor),
-                        overflow: TextOverflow.ellipsis,
+    return Container(
+      height: size.height / 8,
+      color: kPrimaryColor,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SafeArea(
+            child: SizedBox(
+              width: size.width,
+              child: Padding(
+                padding: EdgeInsets.only(right: 20, left: 10, top: 8),
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        color: Colors.white,
                       ),
-                      onTap: () {
-                        if (networkAvatar != null) {
-                          routerDelegate.pushPage(
-                              name: ExpertProfileScreen.route,
-                              arguments: chatViewModel.conversation.peerUser
-                                  as Expert);
-                        }
+                      onPressed: () async {
+                        FocusScope.of(context).unfocus();
+                        routerDelegate.pop();
                       },
                     ),
-                  ),
-                ],
+                    circleAvatar ?? networkAvatar ?? Container(),
+                    circleAvatar != null || networkAvatar != null
+                        ? SizedBox(
+                            width: size.width * 0.04,
+                          )
+                        : Container(),
+                    Flexible(
+                      child: GestureDetector(
+                        child: Text(
+                          text,
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        onTap: () {
+                          if (networkAvatar != null) {
+                            routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: chatViewModel.conversation.peerUser as Expert);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        Divider(
-          color: Color(0xFFD9D9D9),
-          height: 1.5,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

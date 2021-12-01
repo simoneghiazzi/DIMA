@@ -88,17 +88,18 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     cursorColor: kPrimaryColor,
                     style: TextStyle(
                       color: kPrimaryColor,
-                      fontSize: 25,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                     decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "What's out topic of discussion?",
-                        hintStyle: TextStyle(
-                          color: kPrimaryColor,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                        )),
+                      border: InputBorder.none,
+                      hintText: "What's out topic of discussion?",
+                      hintStyle: TextStyle(
+                        color: kPrimaryDarkColorTrasparent,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(50),
                     ],
@@ -126,12 +127,12 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     enabled: modifiable,
                     controller: diaryViewModel.contentCtrl,
                     cursorColor: kPrimaryColor,
-                    style: TextStyle(color: kPrimaryColor, fontSize: 20),
+                    style: TextStyle(color: kPrimaryColor, fontSize: 18),
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     decoration: InputDecoration.collapsed(
                       hintText: 'Tell me about it...',
-                      hintStyle: TextStyle(color: kPrimaryColor, fontSize: 20),
+                      hintStyle: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 18),
                     ),
                   ),
                 ),

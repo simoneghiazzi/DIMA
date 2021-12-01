@@ -11,35 +11,42 @@ class DashCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return InkWell(
-      customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      splashColor: kPrimaryColor.withAlpha(100),
-      highlightColor: Colors.transparent,
-      onTap: press,
-      child: Card(
-        elevation: 2,
-        shadowColor: kPrimaryColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              SizedBox(height: size.height * 0.04),
-              Image.asset(
-                imagePath,
-                height: size.height * 0.15,
-              ),
-              SizedBox(height: size.height * 0.02),
-              Text(
-                text,
-                style: TextStyle(
-                  color: kPrimaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
+    return Padding(
+      padding: EdgeInsets.only(right: 12, top: 15, bottom: 15),
+      child: InkWell(
+        customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        splashColor: kPrimaryColor.withAlpha(100),
+        highlightColor: Colors.transparent,
+        onTap: press,
+        child: Container(
+          height: size.height / 3.3,
+          child: Card(
+            elevation: 3,
+            shadowColor: kPrimaryColor,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Container(
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: size.height / 25),
+                    Image.asset(
+                      imagePath,
+                      height: size.height * 0.13,
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      text,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: kPrimaryColor,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(height: size.height * 0.04),
-            ],
+            ),
           ),
         ),
       ),

@@ -36,22 +36,22 @@ class _BaseUserGridState extends State<BaseUserGrid> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-          padding: EdgeInsets.only(left: 20, right: 20),
+          padding: EdgeInsets.only(left: 12),
           child: Table(
             defaultVerticalAlignment: TableCellVerticalAlignment.middle,
             defaultColumnWidth: FlexColumnWidth(15.0),
-            children: <TableRow>[
+            children: [
               TableRow(children: <Widget>[
                 DashCard(
                   imagePath: "assets/icons/psychologist.png",
-                  text: "Experts chats",
+                  text: "Experts\nchats",
                   press: () {
                     routerDelegate.pushPage(name: ExpertChatsListScreen.route);
                   },
                 ),
                 DashCard(
                   imagePath: "assets/icons/anonymous.png",
-                  text: "Anonymous chats",
+                  text: "Anonymous\nchats",
                   press: () {
                     routerDelegate.pushPage(name: ActiveChatsListScreen.route);
                   },
@@ -60,14 +60,14 @@ class _BaseUserGridState extends State<BaseUserGrid> {
               TableRow(children: <Widget>[
                 DashCard(
                   imagePath: "assets/icons/map.png",
-                  text: "Find an expert",
+                  text: "Find an\nexpert",
                   press: () {
                     routerDelegate.pushPage(name: MapScreen.route);
                   },
                 ),
                 DashCard(
                   imagePath: "assets/icons/report.png",
-                  text: "Anonymous reports",
+                  text: "Anonymous\nreports",
                   press: () {
                     routerDelegate.pushPage(name: CreateReportScreen.route);
                   },
