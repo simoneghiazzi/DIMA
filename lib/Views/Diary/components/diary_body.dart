@@ -1,4 +1,3 @@
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
@@ -19,18 +18,13 @@ class _DiaryBodyState extends State<DiaryBody> {
   DiaryViewModel diaryViewModel;
   BaseUserViewModel baseUserViewModel;
   AppRouterDelegate routerDelegate;
-
   final CalendarController _controller = CalendarController();
-  String _headerText;
 
   @override
   void initState() {
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-
-    _headerText = "header";
-
     super.initState();
   }
 
@@ -87,21 +81,16 @@ class _DiaryBodyState extends State<DiaryBody> {
                       ),
                       view: CalendarView.month,
                       monthViewSettings: MonthViewSettings(
-                          appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-                          appointmentDisplayCount: 1,
-                          showAgenda: true,
-                          agendaViewHeight: diaryViewModel.hasNoteToday ? size.height / 10 : size.height / 8,
-                          agendaItemHeight: size.height / 15,
-                          monthCellStyle: MonthCellStyle(
-                            trailingDatesBackgroundColor: kPrimaryLightColor,
-                            leadingDatesBackgroundColor: kPrimaryLightColor,
-                          )),
-                      onViewChanged: (ViewChangedDetails viewChangedDetails) {
-                        if (_controller.view == CalendarView.month) {
-                          _headerText =
-                              DateFormat('MMM yyyy').format(viewChangedDetails.visibleDates[viewChangedDetails.visibleDates.length ~/ 2]).toString();
-                        }
-                      },
+                        appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+                        appointmentDisplayCount: 1,
+                        showAgenda: true,
+                        agendaViewHeight: diaryViewModel.hasNoteToday ? size.height / 10 : size.height / 8,
+                        agendaItemHeight: size.height / 15,
+                        monthCellStyle: MonthCellStyle(
+                          trailingDatesBackgroundColor: kPrimaryLightColor,
+                          leadingDatesBackgroundColor: kPrimaryLightColor,
+                        ),
+                      ),
                       onTap: showDetails,
                     ),
                   ),

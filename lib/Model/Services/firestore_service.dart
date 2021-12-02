@@ -18,7 +18,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 // Service used by the view models to interact with the Firestore DB
 class FirestoreService {
   // Firestore instance
-  final _firestore;
+  final FirebaseFirestore _firestore;
   // Limit of returned instances from the DB by the queries
   int _limit = 30;
 
@@ -295,7 +295,7 @@ class FirestoreService {
         .collection(user.collection.value)
         .doc(user.id)
         .collection(chat.chatCollection.value)
-        .orderBy('lastMessage')
+        .orderBy("lastMessage", descending: true)
         .limit(_limit)
         .snapshots();
   }

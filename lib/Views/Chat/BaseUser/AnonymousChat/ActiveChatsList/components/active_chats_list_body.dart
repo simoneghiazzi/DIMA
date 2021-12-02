@@ -44,58 +44,55 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
     return Scaffold(
         body: Stack(
       children: <Widget>[
-        SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              StreamBuilder(
-                stream: chatViewModel.hasPendingChats(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.active && snapshot.data.docs.isNotEmpty) {
-                    return TopBar(
-                      text: 'Anonymous',
-                      button: InkWell(
-                        child: Container(
-                          padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: kPrimaryLightColor,
-                          ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.notification_add,
-                                color: Colors.red,
-                                size: 20,
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                "Requests",
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: kPrimaryColor),
-                              ),
-                            ],
-                          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            StreamBuilder(
+              stream: chatViewModel.hasPendingChats(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.active && snapshot.data.docs.isNotEmpty) {
+                  return TopBar(
+                    text: 'Anonymous',
+                    button: InkWell(
+                      child: Container(
+                        padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                        height: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: kPrimaryLightColor,
                         ),
-                        onTap: () {
-                          routerDelegate.pushPage(name: PendingChatsListScreen.route);
-                        },
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.notification_add,
+                              color: Colors.red,
+                              size: 20,
+                            ),
+                            SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              "Requests",
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: kPrimaryColor),
+                            ),
+                          ],
+                        ),
                       ),
-                    );
-                  } else {
-                    return TopBar(text: 'Anonymous');
-                  }
-                },
-              ),
-              ChatsListConstructor(
-                createUserCallback: createUserCallback,
-                collection: Collection.BASE_USERS,
-              ),
-            ],
-          ),
+                      onTap: () {
+                        routerDelegate.pushPage(name: PendingChatsListScreen.route);
+                      },
+                    ),
+                  );
+                } else {
+                  return TopBar(text: 'Anonymous');
+                }
+              },
+            ),
+            ChatsListConstructor(
+              createUserCallback: createUserCallback,
+              peerCollection: Collection.BASE_USERS,
+            ),
+          ],
         ),
         Align(
           alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),

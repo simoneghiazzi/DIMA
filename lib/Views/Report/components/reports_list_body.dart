@@ -19,7 +19,6 @@ class ReportsListBody extends StatefulWidget {
 }
 
 class _ReportsListBodyState extends State<ReportsListBody> {
-  final ScrollController listScrollController = ScrollController();
   AppRouterDelegate routerDelegate;
   Alert alert;
   bool isLoading = false;
@@ -27,7 +26,6 @@ class _ReportsListBodyState extends State<ReportsListBody> {
 
   @override
   void initState() {
-    listScrollController.addListener(scrollListener);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     super.initState();
   }
@@ -147,14 +145,6 @@ class _ReportsListBodyState extends State<ReportsListBody> {
       );
     } else {
       return SizedBox.shrink();
-    }
-  }
-
-  void scrollListener() {
-    if (listScrollController.offset >= listScrollController.position.maxScrollExtent && !listScrollController.position.outOfRange) {
-      setState(() {
-        _limitIncrement += _limitIncrement;
-      });
     }
   }
 

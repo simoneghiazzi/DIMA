@@ -1,6 +1,5 @@
 TODO DIMA
 
-- Aggiungere background come in welcome page alla home
 - Pallino rosso nuovi messaggi su chat
 - Immagine notifica più grande
 
