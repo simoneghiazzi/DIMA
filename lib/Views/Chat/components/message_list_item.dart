@@ -77,7 +77,7 @@ class _MessageListItemState extends State<MessageListItem> {
                 )
               ]),
               width: 200.0,
-              decoration: BoxDecoration(color: kPrimaryDarkColor, borderRadius: BorderRadius.circular(15.0)),
+              decoration: BoxDecoration(color: kPrimaryColor, borderRadius: BorderRadius.circular(15.0)),
               margin: EdgeInsets.only(bottom: 10.0),
             ),
           ],

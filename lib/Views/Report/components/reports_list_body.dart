@@ -34,64 +34,29 @@ class _ReportsListBodyState extends State<ReportsListBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 5, right: 5),
-      child: Stack(children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            TopBar(
-              text: 'Old reports',
-              button: InkWell(
-                child: Container(
-                  padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                  height: 30,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: kPrimaryLightColor,
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.add,
-                        color: kPrimaryColor,
-                        size: 20,
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        "Add New",
-                        style: TextStyle(color: kPrimaryColor, fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-                onTap: () {
-                  routerDelegate.pop();
-                },
-              ),
-            ),
-            Flexible(
-              child: StreamBuilder(
-                stream: widget.reportViewModel.loadReports(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    return ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      padding: EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) => buildItem(context, snapshot.data?.docs[index]),
-                      itemCount: snapshot.data.docs.length,
-                      shrinkWrap: true,
-                    );
-                  } else
-                    return LoadingDialog().widget(context);
-                },
-              ),
-            ),
-          ],
+    return Column(
+      children: <Widget>[
+        TopBar(
+          text: 'Old reports',
         ),
-      ]),
+        Flexible(
+          child: StreamBuilder(
+            stream: widget.reportViewModel.loadReports(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.active) {
+                return ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  padding: EdgeInsets.all(10.0),
+                  itemBuilder: (context, index) => buildItem(context, snapshot.data?.docs[index]),
+                  itemCount: snapshot.data.docs.length,
+                  shrinkWrap: true,
+                );
+              } else
+                return LoadingDialog().widget(context);
+            },
+          ),
+        ),
+      ],
     );
   }
 

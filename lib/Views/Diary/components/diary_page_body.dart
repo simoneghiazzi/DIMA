@@ -62,33 +62,54 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          SingleChildScrollView(
+    return Stack(
+      children: <Widget>[
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TopBar(
+              text: title,
+              back: () {
+                diaryViewModel.clearControllers();
+                routerDelegate.pop();
+              },
+            ),
+            Container(
+              transform: Matrix4.translationValues(0.0, -5.0, 0.0),
+              height: size.height / 2,
+              color: kPrimaryColor,
+            ),
+          ],
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: size.height / 8),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.black12),
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(10),
+                topLeft: Radius.circular(10),
+              ),
+              boxShadow: [
+                BoxShadow(color: kPrimaryColor.withOpacity(.5), blurRadius: 10.0),
+              ],
+            ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TopBar(
-                  text: title,
-                  back: () {
-                    diaryViewModel.clearControllers();
-                    routerDelegate.pop();
-                  },
-                ),
                 Padding(
-                  padding: EdgeInsets.only(top: 16.0, left: 16.0),
+                  padding: const EdgeInsets.only(left: 16.0),
                   child: TextField(
                     autofocus: hasFocus,
                     keyboardType: TextInputType.multiline,
-                    maxLines: 2,
+                    maxLines: null,
                     textCapitalization: TextCapitalization.sentences,
                     enabled: modifiable,
                     controller: diaryViewModel.titleCtrl,
                     cursorColor: kPrimaryColor,
                     style: TextStyle(
                       color: kPrimaryColor,
-                      fontSize: 20,
+                      fontSize: 25,
                       fontWeight: FontWeight.bold,
                     ),
                     decoration: InputDecoration(
@@ -120,126 +141,113 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0, top: 32),
-                  child: TextField(
-                    textCapitalization: TextCapitalization.sentences,
-                    enabled: modifiable,
-                    controller: diaryViewModel.contentCtrl,
-                    cursorColor: kPrimaryColor,
-                    style: TextStyle(color: kPrimaryColor, fontSize: 18),
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    decoration: InputDecoration.collapsed(
-                      hintText: 'Tell me about it...',
-                      hintStyle: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 18),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextField(
+                        textCapitalization: TextCapitalization.sentences,
+                        enabled: modifiable,
+                        controller: diaryViewModel.contentCtrl,
+                        cursorColor: kPrimaryColor,
+                        style: TextStyle(color: kPrimaryColor, fontSize: 18),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        decoration: InputDecoration.collapsed(
+                          hintText: 'Tell me about it...',
+                          hintStyle: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 18),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          Align(alignment: Alignment.topLeft),
-          note != null && !modifiable
-              ? Positioned(
-                  bottom: 30,
-                  right: 5,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      note.date == today
-                          ? Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-                              child: InkResponse(
-                                onTap: () {
-                                  setState(() {
-                                    hasFocus = true;
-                                    modifiable = true;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(color: Colors.black12),
-                                    borderRadius: BorderRadius.circular(100),
-                                    boxShadow: [
-                                      BoxShadow(color: kPrimaryColor.withOpacity(.5), offset: Offset(1.0, 10.0), blurRadius: 10.0),
-                                    ],
-                                  ),
-                                  child: Icon(CupertinoIcons.pencil, color: kPrimaryColor),
+        ),
+        note != null && !modifiable
+            ? Positioned(
+                top: 30,
+                right: 5,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    note.date == today
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                            child: InkResponse(
+                              onTap: () {
+                                setState(() {
+                                  hasFocus = true;
+                                  modifiable = true;
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
                                 ),
-                              ))
-                          : Container(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: InkResponse(
-                          onTap: () {
-                            note.favourite = !note.favourite;
-                            diaryViewModel.setFavourite(note.id, note.favourite);
-                            setState(() {});
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.black12),
-                              borderRadius: BorderRadius.circular(100),
-                              boxShadow: [
-                                BoxShadow(color: kPrimaryColor.withOpacity(.5), offset: Offset(1.0, 10.0), blurRadius: 10.0),
-                              ],
-                            ),
-                            child: note.favourite
-                                ? Icon(CupertinoIcons.heart_fill, color: kPrimaryColor)
-                                : Icon(CupertinoIcons.heart, color: kPrimaryColor),
+                                child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white),
+                              ),
+                            ))
+                        : Container(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: InkResponse(
+                        onTap: () {
+                          note.favourite = !note.favourite;
+                          diaryViewModel.setFavourite(note.id, note.favourite);
+                          setState(() {});
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
                           ),
+                          child:
+                              note.favourite ? Icon(CupertinoIcons.heart_fill, color: Colors.white) : Icon(CupertinoIcons.heart, color: Colors.white),
                         ),
                       ),
-                    ],
-                  ),
-                )
-              : Align(
-                  alignment: Alignment.bottomRight,
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 45.0),
-                      child: StreamBuilder(
-                          stream: diaryViewModel.diaryForm.isButtonEnabled,
-                          builder: (context, snapshot) {
-                            if (snapshot.data ?? false || note != null) {
-                              return InkResponse(
-                                onTap: () {
-                                  if (note != null) {
-                                    diaryViewModel.submitPage(pageId: note.id, isFavourite: note.favourite);
-                                  } else {
-                                    diaryViewModel.submitPage();
-                                  }
-                                  setState(() {
-                                    note = diaryViewModel.submittedNote;
-                                    modifiable = false;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(color: Colors.black12),
-                                    borderRadius: BorderRadius.circular(100),
-                                    boxShadow: [
-                                      BoxShadow(color: kPrimaryColor.withOpacity(.5), offset: Offset(1.0, 10.0), blurRadius: 10.0),
-                                    ],
-                                  ),
-                                  child: Icon(Icons.check, color: kPrimaryColor),
-                                ),
-                              );
-                            }
-                            return Container();
-                          }),
                     ),
-                  ),
+                  ],
                 ),
-        ],
-      ),
+              )
+            : Positioned(
+                top: 30,
+                right: 5,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+                  child: StreamBuilder(
+                      stream: diaryViewModel.diaryForm.isButtonEnabled,
+                      builder: (context, snapshot) {
+                        if (snapshot.data ?? false || note != null) {
+                          return InkResponse(
+                            onTap: () {
+                              if (note != null) {
+                                diaryViewModel.submitPage(pageId: note.id, isFavourite: note.favourite);
+                              } else {
+                                diaryViewModel.submitPage();
+                              }
+                              setState(() {
+                                note = diaryViewModel.submittedNote;
+                                modifiable = false;
+                              });
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Icon(Icons.check, color: Colors.white),
+                            ),
+                          );
+                        }
+                        return Container();
+                      }),
+                ),
+              ),
+      ],
     );
   }
 

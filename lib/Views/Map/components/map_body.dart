@@ -148,12 +148,12 @@ class _MapBodyState extends State<MapBody> {
               })),
       Positioned(
           top: 60,
-          right: 30,
-          left: 30,
+          right: 20,
+          left: 20,
           child: Container(
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25.0), boxShadow: [
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20.0), boxShadow: [
                 BoxShadow(
-                  color: kPrimaryColor.withOpacity(0.3),
+                  color: kPrimaryDarkColor.withOpacity(0.3),
                   spreadRadius: 4,
                   blurRadius: 6,
                   offset: Offset(0, 3),
