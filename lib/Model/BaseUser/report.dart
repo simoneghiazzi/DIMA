@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/db_item.dart';
 
-class Report implements DbItem{
+class Report implements DbItem {
   String id;
   String category;
   String description;
@@ -21,17 +21,12 @@ class Report implements DbItem{
       description = doc.get('description');
     } catch (e) {}
     try {
-      date = doc.get('date');
+      date = doc.get('date').toDate();
     } catch (e) {}
   }
 
   getData() {
-    return {
-      'id': id,
-      'category': category,
-      'description': description,
-      'date': date
-    };
+    return {'id': id, 'category': category, 'description': description, 'date': date};
   }
 
   Collection get collection => Collection.REPORTS;

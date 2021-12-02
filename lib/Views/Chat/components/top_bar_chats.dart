@@ -34,7 +34,7 @@ class TopBarChats extends StatelessWidget {
             child: SizedBox(
               width: size.width,
               child: Padding(
-                padding: EdgeInsets.only(right: 20, left: 10, top: 8),
+                padding: EdgeInsets.only(right: 20, top: 8),
                 child: Row(
                   children: <Widget>[
                     IconButton(

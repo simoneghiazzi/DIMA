@@ -25,12 +25,11 @@ class TopBar extends StatelessWidget {
             child: SizedBox(
               width: size.width,
               child: Padding(
-                padding: EdgeInsets.only(right: 20, left: 10, top: 8),
+                padding: EdgeInsets.only(right: 20, top: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     IconButton(
-                      padding: EdgeInsets.all(0.0),
                       icon: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         color: Colors.white,
