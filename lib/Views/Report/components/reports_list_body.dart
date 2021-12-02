@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sApport/Model/BaseUser/report.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
+import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/constants.dart';
@@ -34,72 +36,39 @@ class _ReportsListBodyState extends State<ReportsListBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 5, right: 5),
-      child: Stack(children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            TopBar(
-              text: 'Old reports',
-              button: InkWell(
-                child: Container(
-                  padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                  height: 30,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: kPrimaryLightColor,
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.add,
-                        color: kPrimaryColor,
-                        size: 20,
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        "Add New",
-                        style: TextStyle(color: kPrimaryColor, fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-                onTap: () {
-                  routerDelegate.pop();
-                },
-              ),
-            ),
-            Flexible(
-              child: StreamBuilder(
-                stream: widget.reportViewModel.loadReports(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    return ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      padding: EdgeInsets.all(10.0),
-                      itemBuilder: (context, index) => buildItem(context, snapshot.data?.docs[index]),
-                      itemCount: snapshot.data.docs.length,
-                      shrinkWrap: true,
-                    );
-                  } else
-                    return LoadingDialog().widget(context);
-                },
-              ),
-            ),
-          ],
+    return Column(
+      children: <Widget>[
+        TopBar(
+          text: 'Old reports',
         ),
-      ]),
+        Flexible(
+          child: StreamBuilder(
+            stream: widget.reportViewModel.loadReports(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.active) {
+                return ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  padding: EdgeInsets.all(10.0),
+                  itemBuilder: (context, index) => buildItem(context, snapshot.data?.docs[index]),
+                  itemCount: snapshot.data.docs.length,
+                  shrinkWrap: true,
+                );
+              } else
+                return LoadingDialog().widget(context);
+            },
+          ),
+        ),
+      ],
     );
   }
 
   Widget buildItem(BuildContext context, DocumentSnapshot doc) {
     // This size provide us total height and width of our screen
     Size size = MediaQuery.of(context).size;
-    String date = DateFormat('yyyy-MM-dd kk:mm').format(doc.get('date').toDate());
     if (doc != null) {
+      Report report = new Report();
+      report.setFromDocument(doc);
+      String date = DateFormat('yyyy-MM-dd kk:mm').format(report.date);
       return Container(
         child: TextButton(
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
@@ -117,7 +86,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
                   width: 5,
                 ),
                 Text(
-                  doc.get('category'),
+                  report.category,
                   style: TextStyle(color: kPrimaryColor, fontSize: 18),
                 ),
               ],
@@ -131,8 +100,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
             )
           ]),
           onPressed: () {
-            alert = createAlert(doc.get('category'), doc.get('description'));
-            alert.show();
+            routerDelegate.pushPage(name: ReportDetailsScreen.route, arguments: report);
           },
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(kPrimaryLightColor),
@@ -156,27 +124,5 @@ class _ReportsListBodyState extends State<ReportsListBody> {
         _limitIncrement += _limitIncrement;
       });
     }
-  }
-
-  Alert createAlert(String title, String description) {
-    return Alert(
-        context: context,
-        title: title,
-        desc: description,
-        image: Image.asset("assets/icons/small_logo.png"),
-        closeIcon: Icon(
-          Icons.close,
-          color: kPrimaryColor,
-        ),
-        buttons: [
-          DialogButton(
-            child: Text(
-              "CLOSE",
-              style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            color: Colors.transparent,
-            onPressed: () => alert.dismiss(),
-          )
-        ]);
   }
 }

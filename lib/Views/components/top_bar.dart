@@ -6,10 +6,10 @@ import 'package:provider/provider.dart';
 
 class TopBar extends StatelessWidget {
   final String text;
-  final InkWell button;
+  final List<InkWell> buttons;
   final Function back;
 
-  TopBar({Key key, @required this.text, this.button, this.back}) : super(key: key);
+  TopBar({Key key, @required this.text, this.buttons, this.back}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +25,11 @@ class TopBar extends StatelessWidget {
             child: SizedBox(
               width: size.width,
               child: Padding(
-                padding: EdgeInsets.only(right: 20, left: 10, top: 8),
+                padding: EdgeInsets.only(right: 20, top: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     IconButton(
-                      padding: EdgeInsets.all(0.0),
                       icon: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         color: Colors.white,
@@ -46,7 +45,7 @@ class TopBar extends StatelessWidget {
                       maxLines: 1,
                     ),
                     Spacer(),
-                    button ?? Container(),
+                    if (buttons != null) ...[...buttons],
                   ],
                 ),
               ),

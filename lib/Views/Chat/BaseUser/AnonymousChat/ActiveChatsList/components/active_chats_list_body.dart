@@ -41,21 +41,19 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   @override
   Widget build(BuildContext context) {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
-    return Scaffold(
-        body: Stack(
+    return Stack(
       children: <Widget>[
-        SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              StreamBuilder(
-                stream: chatViewModel.hasPendingChats(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.active && snapshot.data.docs.isNotEmpty) {
-                    return TopBar(
-                      text: 'Anonymous',
-                      button: InkWell(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            StreamBuilder(
+              stream: chatViewModel.hasPendingChats(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.active && snapshot.data.docs.isNotEmpty) {
+                  return TopBar(
+                    text: 'Anonymous',
+                    buttons: [
+                      InkWell(
                         child: Container(
                           padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
                           height: 30,
@@ -83,19 +81,19 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
                         onTap: () {
                           routerDelegate.pushPage(name: PendingChatsListScreen.route);
                         },
-                      ),
-                    );
-                  } else {
-                    return TopBar(text: 'Anonymous');
-                  }
-                },
-              ),
-              ChatsListConstructor(
-                createUserCallback: createUserCallback,
-                collection: Collection.BASE_USERS,
-              ),
-            ],
-          ),
+                      )
+                    ],
+                  );
+                } else {
+                  return TopBar(text: 'Anonymous');
+                }
+              },
+            ),
+            ChatsListConstructor(
+              createUserCallback: createUserCallback,
+              collection: Collection.BASE_USERS,
+            ),
+          ],
         ),
         Align(
           alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
@@ -114,7 +112,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
           ),
         ),
       ],
-    ));
+    );
   }
 
   BaseUser createUserCallback(DocumentSnapshot doc) {
