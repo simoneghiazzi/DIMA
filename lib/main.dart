@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
@@ -80,7 +81,7 @@ Future<void> main() async {
 
 void setupServices() {
   var getIt = GetIt.I;
-  getIt.registerSingleton<FirestoreService>(FirestoreService());
+  getIt.registerSingleton<FirestoreService>(FirestoreService(FirebaseFirestore.instance));
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService());
 }
 

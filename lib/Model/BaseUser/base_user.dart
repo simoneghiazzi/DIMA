@@ -3,18 +3,8 @@ import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/user.dart';
 
 class BaseUser extends User {
-  BaseUser(
-      {String id,
-      String name,
-      String surname,
-      DateTime birthDate,
-      String email})
-      : super(
-            id: id,
-            name: name,
-            surname: surname,
-            birthDate: birthDate,
-            email: email);
+  BaseUser({String id, String name, String surname, DateTime birthDate, String email})
+      : super(id: id, name: name, surname: surname, birthDate: birthDate, email: email);
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
@@ -22,16 +12,16 @@ class BaseUser extends User {
       id = doc.id;
     } catch (e) {}
     try {
-      name = doc.get('name');
+      name = doc.get("name");
     } catch (e) {}
     try {
-      surname = doc.get('surname');
+      surname = doc.get("surname");
     } catch (e) {}
     try {
-      birthDate = doc.get('birthDate');
+      birthDate = doc.get("birthDate").toDate();
     } catch (e) {}
     try {
-      email = doc.get('email');
+      email = doc.get("email");
     } catch (e) {}
   }
 

@@ -18,9 +18,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 // Service used by the view models to interact with the Firestore DB
 class FirestoreService {
   // Firestore instance
-  final _firestore = FirebaseFirestore.instance;
+  final _firestore;
   // Limit of returned instances from the DB by the queries
   int _limit = 30;
+
+  FirestoreService(this._firestore);
 
   /***************************************** USERS *****************************************/
 
@@ -164,12 +166,12 @@ class FirestoreService {
   /// If the chat is new, it adds it to the list of chats of the 2 users in the collection specified
   /// into the [conversation] field and updates the chat counters
   void _updateChatInfo(WriteBatch batch, Conversation conversation, int timestamp) {
-    var senderUserRef = _firestore
+    DocumentReference senderUserRef = _firestore
         .collection(conversation.senderUser.collection.value)
         .doc(conversation.senderUser.id)
         .collection(conversation.senderUserChat.chatCollection.value)
         .doc(conversation.peerUser.id);
-    var peerUserRef = _firestore
+    DocumentReference peerUserRef = _firestore
         .collection(conversation.peerUser.collection.value)
         .doc(conversation.peerUser.id)
         .collection(conversation.peerUserChat.chatCollection.value)
