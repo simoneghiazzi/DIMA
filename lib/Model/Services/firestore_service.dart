@@ -71,12 +71,6 @@ class FirestoreService {
     return _firestore.collection(collection.value).where(FieldPath.documentId, isEqualTo: id).get();
   }
 
-  /// It takes the [list] of ids and the [collection] (users/experts)
-  /// and returns a list of docs with all the information of the retrieved users
-  Future<QuerySnapshot> _getUsersByList(Collection collection, List list) {
-    return _firestore.collection(collection.value).where(FieldPath.documentId, whereIn: list).get();
-  }
-
   /// It takes the [increment] amount and increments the user's counter into the DB
   Future<void> _incrementBaseUsersCounter(int increment) async {
     var utilsReference = _firestore.collection(Collection.BASE_USERS.value).doc(Collection.UTILS.value);

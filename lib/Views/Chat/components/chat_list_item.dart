@@ -3,7 +3,6 @@ import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';

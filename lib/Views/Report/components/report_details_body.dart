@@ -2,7 +2,6 @@ import 'package:intl/intl.dart';
 import 'package:sApport/Model/BaseUser/report.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ReportDetailsBody extends StatefulWidget {
