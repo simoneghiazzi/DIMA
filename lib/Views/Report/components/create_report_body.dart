@@ -59,35 +59,37 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                   children: <Widget>[
                     TopBar(
                       text: 'New report',
-                      button: InkWell(
-                        child: Container(
-                          padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: kPrimaryLightColor,
+                      buttons: [
+                        InkWell(
+                          child: Container(
+                            padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              //color: kPrimaryLightColor,
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.list_rounded,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                                SizedBox(
+                                  width: 2,
+                                ),
+                                Text(
+                                  "List",
+                                  style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                           ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.book,
-                                color: kPrimaryColor,
-                                size: 20,
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Text(
-                                "List",
-                                style: TextStyle(color: kPrimaryColor, fontSize: 14, fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          routerDelegate.pushPage(name: ReportsListScreen.route, arguments: reportViewModel);
-                        },
-                      ),
+                          onTap: () {
+                            routerDelegate.pushPage(name: ReportsListScreen.route, arguments: reportViewModel);
+                          },
+                        )
+                      ],
                     ),
                     SizedBox(
                       height: size.height * 0.1,

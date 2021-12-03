@@ -13,6 +13,7 @@ import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/Views/Report/create_report_screen.dart';
+import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/Views/Report/reports_list_screen.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
@@ -29,8 +30,7 @@ class InfoArguments {
   InfoArguments(this.userInfoViewModel, this.userViewModel);
 }
 
-class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<RouteSettings>> {
+class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<RouteSettings>> {
   final _pages = <Page>[];
   @override
   final navigatorKey = GlobalKey<NavigatorState>();
@@ -52,9 +52,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
 
   @override
   Future<bool> popRoute() {
-    if (_pages.length > 1 &&
-        _pages.last.name != BaseUserHomePageScreen.route &&
-        _pages.last.name != ExpertHomePageScreen.route) {
+    if (_pages.length > 1 && _pages.last.name != BaseUserHomePageScreen.route && _pages.last.name != ExpertHomePageScreen.route) {
       _pages.removeLast();
       notifyListeners();
       return Future.value(true);
@@ -70,10 +68,8 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
         break;
       case CredentialScreen.route:
         child = CredentialScreen(
-            infoViewModel:
-                (routeSettings.arguments as InfoArguments).userInfoViewModel,
-            userViewModel:
-                (routeSettings.arguments as InfoArguments).userViewModel);
+            infoViewModel: (routeSettings.arguments as InfoArguments).userInfoViewModel,
+            userViewModel: (routeSettings.arguments as InfoArguments).userViewModel);
         break;
       case ExpertsSignUpScreen.route:
         child = ExpertsSignUpScreen();
@@ -84,6 +80,11 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
       case ReportsListScreen.route:
         child = ReportsListScreen(
           reportViewModel: routeSettings.arguments,
+        );
+        break;
+      case ReportDetailsScreen.route:
+        child = ReportDetailsScreen(
+          report: routeSettings.arguments,
         );
         break;
       case CreateReportScreen.route:
@@ -175,8 +176,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
       _pages.removeRange(start, _pages.length);
     }
     list.forEach((item) {
-      _pages.add(_createPage(
-          RouteSettings(name: item.name, arguments: item.arguments)));
+      _pages.add(_createPage(RouteSettings(name: item.name, arguments: item.arguments)));
     });
     notifyListeners();
   }
@@ -184,8 +184,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>>
   void addAll(List<RouteSettings> list) {
     _pages.clear();
     list.forEach((item) {
-      _pages.add(_createPage(
-          RouteSettings(name: item.name, arguments: item.arguments)));
+      _pages.add(_createPage(RouteSettings(name: item.name, arguments: item.arguments)));
     });
     notifyListeners();
   }

@@ -45,7 +45,7 @@ class NoteDataSource extends CalendarDataSource {
     if (appointments[index].favourite) {
       return kPrimaryGoldenColor;
     }
-    return kPrimaryMediumColor;
+    return kPrimaryColor;
   }
 
   @override

@@ -41,8 +41,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   @override
   Widget build(BuildContext context) {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
-    return Scaffold(
-        body: Stack(
+    return Stack(
       children: <Widget>[
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,35 +52,37 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
                 if (snapshot.connectionState == ConnectionState.active && snapshot.data.docs.isNotEmpty) {
                   return TopBar(
                     text: 'Anonymous',
-                    button: InkWell(
-                      child: Container(
-                        padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                        height: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: kPrimaryLightColor,
+                    buttons: [
+                      InkWell(
+                        child: Container(
+                          padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                          height: 30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: kPrimaryLightColor,
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.notification_add,
+                                color: Colors.red,
+                                size: 20,
+                              ),
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Text(
+                                "Requests",
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: kPrimaryColor),
+                              ),
+                            ],
+                          ),
                         ),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.notification_add,
-                              color: Colors.red,
-                              size: 20,
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Text(
-                              "Requests",
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: kPrimaryColor),
-                            ),
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        routerDelegate.pushPage(name: PendingChatsListScreen.route);
-                      },
-                    ),
+                        onTap: () {
+                          routerDelegate.pushPage(name: PendingChatsListScreen.route);
+                        },
+                      )
+                    ],
                   );
                 } else {
                   return TopBar(text: 'Anonymous');
@@ -111,7 +112,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
           ),
         ),
       ],
-    ));
+    );
   }
 
   BaseUser createUserCallback(DocumentSnapshot doc) {

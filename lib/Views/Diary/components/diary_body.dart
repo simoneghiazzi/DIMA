@@ -66,7 +66,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                     padding: const EdgeInsets.only(top: 10.0, bottom: 40.0),
                     child: SfCalendar(
                       controller: _controller,
-                      todayHighlightColor: kPrimaryColor,
+                      todayHighlightColor: kPrimaryMediumColor,
                       dataSource: NoteDataSource(snapshot.data.docs, diaryViewModel),
                       headerStyle: CalendarHeaderStyle(
                         textStyle: TextStyle(color: kPrimaryColor, fontSize: 25, fontWeight: FontWeight.bold),
