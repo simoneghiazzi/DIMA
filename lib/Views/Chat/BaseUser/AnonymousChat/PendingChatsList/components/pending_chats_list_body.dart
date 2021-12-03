@@ -30,18 +30,15 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            TopBar(text: 'Requests'),
-            ChatsListConstructor(
-              createUserCallback: createUserCallback,
-              collection: Collection.BASE_USERS,
-            ),
-          ],
-        ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          TopBar(text: 'Requests'),
+          ChatsListConstructor(
+            createUserCallback: createUserCallback,
+            peerCollection: Collection.BASE_USERS,
+          ),
+        ],
       ),
     );
   }

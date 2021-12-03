@@ -21,7 +21,6 @@ class ReportsListBody extends StatefulWidget {
 }
 
 class _ReportsListBodyState extends State<ReportsListBody> {
-  final ScrollController listScrollController = ScrollController();
   AppRouterDelegate routerDelegate;
   Alert alert;
   bool isLoading = false;
@@ -29,7 +28,6 @@ class _ReportsListBodyState extends State<ReportsListBody> {
 
   @override
   void initState() {
-    listScrollController.addListener(scrollListener);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     super.initState();
   }
@@ -117,12 +115,25 @@ class _ReportsListBodyState extends State<ReportsListBody> {
       return SizedBox.shrink();
     }
   }
-
-  void scrollListener() {
-    if (listScrollController.offset >= listScrollController.position.maxScrollExtent && !listScrollController.position.outOfRange) {
-      setState(() {
-        _limitIncrement += _limitIncrement;
-      });
-    }
+  Alert createAlert(String title, String description) {
+    return Alert(
+        context: context,
+        title: title,
+        desc: description,
+        image: Image.asset("assets/icons/small_logo.png"),
+        closeIcon: Icon(
+          Icons.close,
+          color: kPrimaryColor,
+        ),
+        buttons: [
+          DialogButton(
+            child: Text(
+              "CLOSE",
+              style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            color: Colors.transparent,
+            onPressed: () => alert.dismiss(),
+          )
+        ]);
   }
 }

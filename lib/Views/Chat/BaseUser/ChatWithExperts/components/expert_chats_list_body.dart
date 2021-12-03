@@ -34,18 +34,15 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
     return Scaffold(
         body: Stack(
       children: <Widget>[
-        SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TopBar(text: 'Experts'),
-              ChatsListConstructor(
-                createUserCallback: createUserCallback,
-                collection: Collection.EXPERTS,
-              ),
-            ],
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TopBar(text: 'Experts'),
+            ChatsListConstructor(
+              createUserCallback: createUserCallback,
+              peerCollection: Collection.EXPERTS,
+            ),
+          ],
         ),
         Align(
           alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),

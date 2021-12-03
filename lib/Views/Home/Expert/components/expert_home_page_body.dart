@@ -39,20 +39,13 @@ class _ExpertHomePageBodyState extends State<ExpertHomePageBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
+        body: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Header(),
-              ChatsListConstructor(
-                createUserCallback: createUserCallback,
-                collection: Collection.BASE_USERS,
-              ),
-            ],
-          ),
+        Header(),
+        ChatsListConstructor(
+          createUserCallback: createUserCallback,
+          peerCollection: Collection.BASE_USERS,
         ),
       ],
     ));

@@ -91,7 +91,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
             ),
             ChatsListConstructor(
               createUserCallback: createUserCallback,
-              collection: Collection.BASE_USERS,
+              peerCollection: Collection.BASE_USERS,
             ),
           ],
         ),
