@@ -1,5 +1,4 @@
 import 'package:sApport/Model/Services/collections.dart';
-import 'package:sApport/Model/user.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/components/chat_list_item.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';

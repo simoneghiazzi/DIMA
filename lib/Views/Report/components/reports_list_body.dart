@@ -24,7 +24,6 @@ class _ReportsListBodyState extends State<ReportsListBody> {
   AppRouterDelegate routerDelegate;
   Alert alert;
   bool isLoading = false;
-  int _limitIncrement = 20;
 
   @override
   void initState() {
