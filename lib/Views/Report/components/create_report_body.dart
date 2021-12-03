@@ -99,7 +99,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                       height: size.height * 0.15,
                     ),
                     Padding(
-                        padding: EdgeInsets.only(top: size.height * 0.05, left: 40, right: 40),
+                        padding: EdgeInsets.only(top: size.height * 0.05, left: 30, right: 30),
                         child: FormBlocListener<ReportViewModel, String, String>(
                           onSuccess: (context, state) {
                             LoadingDialog.hide(context, _keyLoader);
@@ -114,7 +114,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                             children: <Widget>[
                               DropdownFieldBlocBuilder<String>(
                                 selectFieldBloc: reportViewModel.reportCategory,
-                                decoration: InputDecoration(
+                                decoration: InputDecoration(                                
                                   filled: true,
                                   fillColor: kPrimaryLightColor.withAlpha(100),
                                   labelText: 'Report category',

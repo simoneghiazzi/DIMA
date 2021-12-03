@@ -37,12 +37,11 @@ Future<void> main() async {
   setupServices();
   FirebaseAuthService firebaseAuthService = GetIt.I<FirebaseAuthService>();
   FirestoreService firestoreService = GetIt.I<FirestoreService>();
-
   var alreadyLoggedUserId = await firebaseAuthService.currentUser();
-
   print('Already logged user check completed');
+
   if (alreadyLoggedUserId != null) {
-    var collection = await firestoreService.findUsersCollection(alreadyLoggedUserId);
+    var collection = await firestoreService.findUserCollection(alreadyLoggedUserId);
     switch (collection) {
       case Collection.BASE_USERS:
         var baseUserViewModel = BaseUserViewModel();

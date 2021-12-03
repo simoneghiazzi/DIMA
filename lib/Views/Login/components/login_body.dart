@@ -130,7 +130,7 @@ class _LoginBodyState extends State<LoginBody> {
   void navigateToHome(String id) async {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     Collection collection =
-        await firestoreService.findUsersCollection(authViewModel.loggedId);
+        await firestoreService.findUserCollection(authViewModel.loggedId);
     switch (collection) {
       case Collection.BASE_USERS:
         var baseUserViewModel =

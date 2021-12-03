@@ -131,11 +131,11 @@ class FirestoreService {
   }
 
   /// Find the collection of the user [id] inside the base collections of the DB
-  Future<Collection> findUsersCollection(String id) async {
+  Future<Collection> findUserCollection(String id) async {
     for (var collection in [Collection.BASE_USERS, Collection.EXPERTS]) {
       try {
-        var snap = await _firestore.collection(collection.value).where(FieldPath.documentId, isEqualTo: id).get();
-        if (snap.docs.isNotEmpty) {
+        var snap = await _firestore.collection(collection.value).doc(id).get();
+        if (snap.exists) {
           return collection;
         }
       } catch (e) {}
