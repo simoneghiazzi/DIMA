@@ -15,6 +15,7 @@ class ChatViewModel {
   Conversation conversation = Conversation();
   TextEditingController textEditingController = TextEditingController();
   var _isNewRandomUserController = StreamController<bool>.broadcast();
+  var _isChatOpenController = StreamController<bool>.broadcast();
 
   /// Update the ChattingWith field of the [senderUserChat] inside the DB
   /// It is used in order to show or not the notification on new messages
@@ -63,6 +64,7 @@ class ChatViewModel {
   void chatWithUser(User user) {
     conversation.peerUser = user;
     conversation.computePairChatId();
+    _isChatOpenController.add(true);
   }
 
   /// Look for a new random anonymous user
@@ -107,5 +109,6 @@ class ChatViewModel {
 
   TextEditingController get textController => textEditingController;
   Stream<bool> get isNewRandomUser => _isNewRandomUserController.stream;
+  Stream<bool> get isChatOpen => _isChatOpenController.stream;
   Stream<QuerySnapshot> get newChat => firestoreService.listenToNewMessages(conversation.senderUser, conversation.senderUserChat);
 }
