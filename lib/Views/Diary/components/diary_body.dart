@@ -72,7 +72,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                     padding: const EdgeInsets.only(top: 10.0, bottom: 40.0),
                     child: SfCalendar(
                       controller: _controller,
-                      todayHighlightColor: kPrimaryMediumColor,
+                      todayHighlightColor: kPrimaryColor,
                       dataSource: NoteDataSource(snapshot.data.docs, diaryViewModel),
                       headerStyle: CalendarHeaderStyle(
                         textStyle: TextStyle(color: kPrimaryColor, fontSize: 25, fontWeight: FontWeight.bold),
@@ -93,8 +93,8 @@ class _DiaryBodyState extends State<DiaryBody> {
                           agendaViewHeight: diaryViewModel.hasNoteToday ? size.height / 10 : size.height / 8,
                           agendaItemHeight: size.height / 15,
                           monthCellStyle: MonthCellStyle(
-                            trailingDatesBackgroundColor: kPrimaryLightColor.withAlpha(150),
-                            leadingDatesBackgroundColor: kPrimaryLightColor.withAlpha(150),
+                            trailingDatesBackgroundColor: kPrimaryLightColor,
+                            leadingDatesBackgroundColor: kPrimaryLightColor,
                           )),
                       onViewChanged: (ViewChangedDetails viewChangedDetails) {
                         if (_controller.view == CalendarView.month) {

@@ -40,6 +40,7 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
       children: <Widget>[
         peerUser.collection == Collection.EXPERTS
             ? TopBarChats(
+                isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
                 networkAvatar: NetworkAvatar(
                   img: peerUser.getData()['profilePhoto'],
                   radius: 20.0,
@@ -47,6 +48,7 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
                 text: peerUser.getData()['name'] + " " + peerUser.getData()['surname'],
               )
             : TopBarChats(
+                isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
                 circleAvatar: CircleAvatar(
                   backgroundColor: Colors.transparent,
                   child: Icon(

@@ -8,8 +8,9 @@ class TopBar extends StatelessWidget {
   final String text;
   final List<InkWell> buttons;
   final Function back;
+  final bool isPortrait;
 
-  TopBar({Key key, @required this.text, this.buttons, this.back}) : super(key: key);
+  TopBar({Key key, @required this.text, this.buttons, this.back, this.isPortrait = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +30,18 @@ class TopBar extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: Colors.white,
-                      ),
-                      onPressed: back ??
-                          () {
-                            routerDelegate.pop();
-                          },
-                    ),
+                    isPortrait
+                        ? Container()
+                        : IconButton(
+                            icon: Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white,
+                            ),
+                            onPressed: back ??
+                                () {
+                                  routerDelegate.pop();
+                                },
+                          ),
                     AutoSizeText(
                       text,
                       style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold, color: Colors.white),

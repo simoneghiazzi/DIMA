@@ -11,13 +11,9 @@ class TopBarChats extends StatelessWidget {
   final String text;
   final CircleAvatar circleAvatar;
   final NetworkAvatar networkAvatar;
+  final bool isPortrait;
 
-  TopBarChats({
-    Key key,
-    @required this.text,
-    this.circleAvatar,
-    this.networkAvatar,
-  }) : super(key: key);
+  TopBarChats({Key key, @required this.text, this.circleAvatar, this.networkAvatar, this.isPortrait = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +33,20 @@ class TopBarChats extends StatelessWidget {
                 padding: EdgeInsets.only(right: 20, top: 8),
                 child: Row(
                   children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: Colors.white,
-                      ),
-                      onPressed: () async {
-                        FocusScope.of(context).unfocus();
-                        routerDelegate.pop();
-                      },
+                    isPortrait
+                        ? Container()
+                        : IconButton(
+                            icon: Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white,
+                            ),
+                            onPressed: () async {
+                              FocusScope.of(context).unfocus();
+                              routerDelegate.pop();
+                            },
+                          ),
+                    SizedBox(
+                      width: size.width * 0.01,
                     ),
                     circleAvatar ?? networkAvatar ?? Container(),
                     circleAvatar != null || networkAvatar != null

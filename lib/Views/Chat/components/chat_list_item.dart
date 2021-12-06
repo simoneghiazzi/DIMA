@@ -21,8 +21,7 @@ class _ChatListItemState extends State<ChatListItem> {
   @override
   Widget build(BuildContext context) {
     var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
-    AppRouterDelegate routerDelegate =
-        Provider.of<AppRouterDelegate>(context, listen: false);
+    AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     if (widget.userItem != null) {
       return Container(
@@ -56,10 +55,7 @@ class _ChatListItemState extends State<ChatListItem> {
                       )
                     : Text(
                         widget.userItem.name +
-                            (chatViewModel.conversation.senderUser.collection ==
-                                    Collection.EXPERTS
-                                ? " " + widget.userItem.surname
-                                : ""),
+                            (chatViewModel.conversation.senderUser.collection == Collection.EXPERTS ? " " + widget.userItem.surname : ""),
                         maxLines: 1,
                         style: TextStyle(color: kPrimaryColor, fontSize: 18),
                       ),
@@ -68,11 +64,12 @@ class _ChatListItemState extends State<ChatListItem> {
           ),
           onPressed: () {
             chatViewModel.chatWithUser(widget.userItem);
-            routerDelegate.pushPage(name: ChatPageScreen.route);
+            if (MediaQuery.of(context).orientation != Orientation.landscape) {
+              routerDelegate.pushPage(name: ChatPageScreen.route);
+            }
           },
           style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(kPrimaryLightColor),
+            backgroundColor: MaterialStateProperty.all<Color>(kPrimaryLightColor),
             shape: MaterialStateProperty.all<OutlinedBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25)),

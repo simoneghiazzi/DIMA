@@ -22,9 +22,11 @@ import 'package:get_it/get_it.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Disable landscape orientation
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
+  Size size = WidgetsBinding.instance.window.physicalSize;
+  if (size.width < 600) {
+    // Disable landscape orientation
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  }
   // Creation of the initialization Future for FirebaseApp
   await Firebase.initializeApp().catchError((e) {
     print('Initialization error');
