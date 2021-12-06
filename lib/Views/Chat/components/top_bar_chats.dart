@@ -22,55 +22,50 @@ class TopBarChats extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Container(
       height: size.height / 8,
-      color: kPrimaryColor,
+      decoration: BoxDecoration(color: kPrimaryColor),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          SafeArea(
-            child: SizedBox(
-              width: size.width,
-              child: Padding(
-                padding: EdgeInsets.only(right: 20, top: 8),
-                child: Row(
-                  children: <Widget>[
-                    isPortrait
-                        ? Container()
-                        : IconButton(
-                            icon: Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              color: Colors.white,
-                            ),
-                            onPressed: () async {
-                              FocusScope.of(context).unfocus();
-                              routerDelegate.pop();
-                            },
-                          ),
-                    SizedBox(
-                      width: size.width * 0.01,
-                    ),
-                    circleAvatar ?? networkAvatar ?? Container(),
-                    circleAvatar != null || networkAvatar != null
-                        ? SizedBox(
-                            width: size.width * 0.04,
-                          )
-                        : Container(),
-                    Flexible(
-                      child: GestureDetector(
-                        child: Text(
-                          text,
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-                          overflow: TextOverflow.ellipsis,
+          Padding(
+            padding: EdgeInsets.only(right: 20),
+            child: Row(
+              children: <Widget>[
+                isPortrait
+                    ? Container()
+                    : IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: Colors.white,
                         ),
-                        onTap: () {
-                          if (networkAvatar != null) {
-                            routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: chatViewModel.conversation.peerUser as Expert);
-                          }
+                        onPressed: () async {
+                          FocusScope.of(context).unfocus();
+                          routerDelegate.pop();
                         },
                       ),
-                    ),
-                  ],
+                SizedBox(
+                  width: size.width * 0.01,
                 ),
-              ),
+                circleAvatar ?? networkAvatar ?? Container(),
+                circleAvatar != null || networkAvatar != null
+                    ? SizedBox(
+                        width: size.width * 0.04,
+                      )
+                    : Container(),
+                Flexible(
+                  child: GestureDetector(
+                    child: Text(
+                      text,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    onTap: () {
+                      if (networkAvatar != null) {
+                        routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: chatViewModel.conversation.peerUser as Expert);
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ],

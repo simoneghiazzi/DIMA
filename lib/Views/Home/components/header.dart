@@ -35,12 +35,17 @@ class _HeaderState extends State<Header> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0, top: 23.0),
-            child: Text(
-              "sApport",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40, fontFamily: 'Gabriola'),
-            ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: Text(
+                  "sApport",
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40, fontFamily: 'Gabriola'),
+                ),
+              ),
+            ],
           ),
         ],
       ),

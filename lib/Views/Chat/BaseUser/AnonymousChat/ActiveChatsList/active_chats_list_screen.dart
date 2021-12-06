@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:provider/provider.dart';
-import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/components/active_chats_list_body.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +25,7 @@ class _ActiveChatsListScreenState extends State<ActiveChatsListScreen> {
 
     var isPortrait = MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: isPortrait
           ? SplitView(
               controller: SplitViewController(weights: [0.3, 0.7]),
