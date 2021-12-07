@@ -18,16 +18,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
+import 'package:flutter_device_type/flutter_device_type.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   Size size = WidgetsBinding.instance.window.physicalSize;
 
-  print(size.width);
-  print(size.height);
+  print("TABLET: " + Device.get().isTablet.toString());
 
-  if (size.width < 600) {
+  if (!Device.get().isTablet) {
     // Disable landscape orientation
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   }
