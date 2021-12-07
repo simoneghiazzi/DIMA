@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
@@ -43,9 +44,9 @@ class _HeaderState extends State<Header> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0),
-                    child: Text(
+                    child: AutoSizeText(
                       "sApport",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40, fontFamily: 'Gabriola'),
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 35, fontFamily: 'Gabriola'),
                     ),
                   ),
                 ],

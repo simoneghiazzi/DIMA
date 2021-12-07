@@ -37,36 +37,37 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return SizedBox.expand(
-      child: Stack(
-        alignment: Alignment.topCenter,
+      child: Column(
         children: <Widget>[
+          Container(
+            alignment: Alignment.center,
+            width: size.width,
+            color: kPrimaryColor,
+            child: SafeArea(
+              child: Container(
+                  decoration: BoxDecoration(color: kPrimaryColor),
+                  height: size.height / 12,
+                  child: widget.user.getData()['profilePhoto'] != null
+                      ? NetworkAvatar(
+                          img: widget.user.getData()['profilePhoto'],
+                          radius: 45.0,
+                        )
+                      : CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.white,
+                          child: Icon(
+                            Icons.person,
+                            size: 50,
+                            color: kPrimaryColor,
+                          ))),
+            ),
+          ),
           // background image and bottom contents
           SingleChildScrollView(
               child: Column(
             children: <Widget>[
               Container(
-                padding: EdgeInsets.only(top: 40, bottom: 10),
-                alignment: Alignment.center,
-                width: size.width,
-                color: kPrimaryColor,
-                child: Container(
-                    child: widget.user.getData()['profilePhoto'] != null
-                        ? NetworkAvatar(
-                            img: widget.user.getData()['profilePhoto'],
-                            radius: 50.0,
-                          )
-                        : CircleAvatar(
-                            radius: 50,
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              Icons.person,
-                              size: 70,
-                              color: kPrimaryColor,
-                            ))),
-              ),
-              Container(
-                padding: EdgeInsets.only(
-                    left: size.width / 10, right: size.width / 10, top: 30),
+                padding: EdgeInsets.only(left: size.width / 10, right: size.width / 10, top: 30),
                 color: Colors.white,
                 child: Center(
                   child: Column(
@@ -77,21 +78,14 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                 borderRadius: BorderRadius.circular(30),
                                 color: kPrimaryLightColor,
                               ),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Flexible(
-                                        child: Text(
-                                      widget.user.name.toUpperCase() +
-                                          " " +
-                                          widget.user.surname.toUpperCase(),
-                                      style: TextStyle(
-                                          color: kPrimaryColor,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center,
-                                    ))
-                                  ]))),
+                              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                                Flexible(
+                                    child: Text(
+                                  widget.user.name.toUpperCase() + " " + widget.user.surname.toUpperCase(),
+                                  style: TextStyle(color: kPrimaryColor, fontSize: 22, fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
+                                ))
+                              ]))),
                       Column(
                         children: <Widget>[
                           SizedBox(
@@ -164,8 +158,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                             ),
                           ],
                           FutureBuilder(
-                              future: authViewModel
-                                  .hasPasswordAuthentication(widget.user.email),
+                              future: authViewModel.hasPasswordAuthentication(widget.user.email),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   return Column(children: [
@@ -189,10 +182,8 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                               ),
                                             ),
                                             onTap: () {
-                                              authViewModel.resetPassword(
-                                                  widget.user.email);
-                                              showSnackBar(
-                                                  "Please check your email for the password reset link.");
+                                              authViewModel.resetPassword(widget.user.email);
+                                              showSnackBar("Please check your email for the password reset link.");
                                               authViewModel.logOut();
                                             },
                                           ),
@@ -219,8 +210,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   width: size.width * 0.05,
                                 ),
                                 Flexible(
-                                    child: Text(
-                                        "Your Google account is linked with this profile",
+                                    child: Text("Your Google account is linked with this profile",
                                         style: TextStyle(
                                           color: kPrimaryColor,
                                           fontSize: 15,
@@ -231,8 +221,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               height: size.height * 0.05,
                             ),
                           ],
-                          if (authViewModel.authProvider() ==
-                              "facebook.com") ...[
+                          if (authViewModel.authProvider() == "facebook.com") ...[
                             Row(
                               children: [
                                 Image.asset(
@@ -244,8 +233,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   width: size.width * 0.05,
                                 ),
                                 Flexible(
-                                    child: Text(
-                                        "Your Facebook account is linked with this profile",
+                                    child: Text("Your Facebook account is linked with this profile",
                                         style: TextStyle(
                                           color: kPrimaryColor,
                                           fontSize: 15,
@@ -256,9 +244,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               height: size.height * 0.05,
                             ),
                           ],
-                          if (authViewModel.authProvider() == "password" &&
-                              widget.user.collection ==
-                                  Collection.BASE_USERS) ...[
+                          if (authViewModel.authProvider() == "password" && widget.user.collection == Collection.BASE_USERS) ...[
                             Divider(
                               color: kPrimaryLightColor,
                             ),
@@ -276,38 +262,32 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                             SizedBox(
                               height: size.height * 0.02,
                             ),
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  SocialIcon(
-                                      iconSrc: "assets/icons/facebook.png",
-                                      press: () async {
-                                        LoadingDialog.show(context, _keyLoader);
-                                        var id = await authViewModel
-                                            .logInWithFacebook(link: true);
-                                        LoadingDialog.hide(context, _keyLoader);
-                                        if (id == null) {
-                                          showSnackBar(
-                                              "This social account is already linked with another profile or the email is already registered.");
-                                        } else {
-                                          setState(() {});
-                                        }
-                                      }),
-                                  SocialIcon(
-                                      iconSrc: "assets/icons/google.png",
-                                      press: () async {
-                                        LoadingDialog.show(context, _keyLoader);
-                                        var id = await authViewModel
-                                            .logInWithGoogle(link: true);
-                                        LoadingDialog.hide(context, _keyLoader);
-                                        if (id == null) {
-                                          showSnackBar(
-                                              "This social account is already linked with another profile or the email is already registered.");
-                                        } else {
-                                          setState(() {});
-                                        }
-                                      }),
-                                ]),
+                            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                              SocialIcon(
+                                  iconSrc: "assets/icons/facebook.png",
+                                  press: () async {
+                                    LoadingDialog.show(context, _keyLoader);
+                                    var id = await authViewModel.logInWithFacebook(link: true);
+                                    LoadingDialog.hide(context, _keyLoader);
+                                    if (id == null) {
+                                      showSnackBar("This social account is already linked with another profile or the email is already registered.");
+                                    } else {
+                                      setState(() {});
+                                    }
+                                  }),
+                              SocialIcon(
+                                  iconSrc: "assets/icons/google.png",
+                                  press: () async {
+                                    LoadingDialog.show(context, _keyLoader);
+                                    var id = await authViewModel.logInWithGoogle(link: true);
+                                    LoadingDialog.hide(context, _keyLoader);
+                                    if (id == null) {
+                                      showSnackBar("This social account is already linked with another profile or the email is already registered.");
+                                    } else {
+                                      setState(() {});
+                                    }
+                                  }),
+                            ]),
                             SizedBox(
                               height: size.height * 0.03,
                             ),
@@ -324,8 +304,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                       Center(
                         child: InkWell(
                           child: Container(
-                            padding: EdgeInsets.only(
-                                left: 8, right: 8, top: 2, bottom: 2),
+                            padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
                             height: size.height * 0.05,
                             width: size.width * 0.5,
                             decoration: BoxDecoration(
@@ -337,10 +316,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               children: <Widget>[
                                 Text(
                                   "Logout",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
                                   width: 5,
@@ -364,8 +340,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                       Center(
                         child: InkWell(
                           child: Container(
-                            padding: EdgeInsets.only(
-                                left: 8, right: 8, top: 2, bottom: 2),
+                            padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
                             height: size.height * 0.05,
                             width: size.width * 0.5,
                             decoration: BoxDecoration(
@@ -377,10 +352,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               children: <Widget>[
                                 Text(
                                   "Delete account",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
                                   width: 5,
@@ -440,8 +412,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
           DialogButton(
             child: Text(
               "DELETE",
-              style: TextStyle(
-                  color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold),
             ),
             onPressed: () {
               authViewModel.logOut();

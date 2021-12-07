@@ -23,10 +23,6 @@ import 'package:flutter_device_type/flutter_device_type.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Size size = WidgetsBinding.instance.window.physicalSize;
-
-  print("TABLET: " + Device.get().isTablet.toString());
-
   if (!Device.get().isTablet) {
     // Disable landscape orientation
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
