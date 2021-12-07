@@ -23,6 +23,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   Size size = WidgetsBinding.instance.window.physicalSize;
+
+  print(size.width);
+  print(size.height);
+
   if (size.width < 600) {
     // Disable landscape orientation
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);

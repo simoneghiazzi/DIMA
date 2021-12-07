@@ -17,39 +17,44 @@ class TopBar extends StatelessWidget {
     AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     return Container(
-      decoration: BoxDecoration(color: kPrimaryColor),
-      height: size.height / 8,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(right: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                isPortrait
-                    ? Container()
-                    : IconButton(
-                        icon: Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          color: Colors.white,
-                        ),
-                        onPressed: back ??
-                            () {
-                              routerDelegate.pop();
-                            },
-                      ),
-                AutoSizeText(
-                  text,
-                  style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold, color: Colors.white),
-                  maxLines: 1,
+      color: kPrimaryColor,
+      child: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(color: kPrimaryColor),
+          height: size.height / 12,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    isPortrait
+                        ? Container()
+                        : IconButton(
+                            icon: Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white,
+                            ),
+                            onPressed: back ??
+                                () {
+                                  routerDelegate.pop();
+                                },
+                          ),
+                    AutoSizeText(
+                      text,
+                      style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold, color: Colors.white),
+                      maxLines: 1,
+                    ),
+                    Spacer(),
+                    if (buttons != null) ...[...buttons],
+                  ],
                 ),
-                Spacer(),
-                if (buttons != null) ...[...buttons],
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

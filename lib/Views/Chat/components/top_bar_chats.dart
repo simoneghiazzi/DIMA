@@ -21,54 +21,59 @@ class TopBarChats extends StatelessWidget {
     ChatViewModel chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     return Container(
-      height: size.height / 8,
-      decoration: BoxDecoration(color: kPrimaryColor),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(right: 20),
-            child: Row(
-              children: <Widget>[
-                isPortrait
-                    ? Container()
-                    : IconButton(
-                        icon: Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          color: Colors.white,
+      color: kPrimaryColor,
+      child: SafeArea(
+        child: Container(
+          height: size.height / 12,
+          decoration: BoxDecoration(color: kPrimaryColor),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: Row(
+                  children: <Widget>[
+                    isPortrait
+                        ? Container()
+                        : IconButton(
+                            icon: Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white,
+                            ),
+                            onPressed: () async {
+                              FocusScope.of(context).unfocus();
+                              routerDelegate.pop();
+                            },
+                          ),
+                    SizedBox(
+                      width: size.width * 0.01,
+                    ),
+                    circleAvatar ?? networkAvatar ?? Container(),
+                    circleAvatar != null || networkAvatar != null
+                        ? SizedBox(
+                            width: size.width * 0.04,
+                          )
+                        : Container(),
+                    Flexible(
+                      child: GestureDetector(
+                        child: Text(
+                          text,
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        onPressed: () async {
-                          FocusScope.of(context).unfocus();
-                          routerDelegate.pop();
+                        onTap: () {
+                          if (networkAvatar != null) {
+                            routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: chatViewModel.conversation.peerUser as Expert);
+                          }
                         },
                       ),
-                SizedBox(
-                  width: size.width * 0.01,
-                ),
-                circleAvatar ?? networkAvatar ?? Container(),
-                circleAvatar != null || networkAvatar != null
-                    ? SizedBox(
-                        width: size.width * 0.04,
-                      )
-                    : Container(),
-                Flexible(
-                  child: GestureDetector(
-                    child: Text(
-                      text,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    onTap: () {
-                      if (networkAvatar != null) {
-                        routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: chatViewModel.conversation.peerUser as Expert);
-                      }
-                    },
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
