@@ -73,6 +73,73 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                 diaryViewModel.clearControllers();
                 routerDelegate.pop();
               },
+              buttons: [
+                if (note != null && !modifiable && note.date == today)
+                  InkWell(
+                      child: InkResponse(
+                    onTap: () {
+                      setState(() {
+                        hasFocus = true;
+                        modifiable = true;
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white),
+                    ),
+                  )),
+                if (note != null && !modifiable)
+                  InkWell(
+                    child: InkResponse(
+                      onTap: () {
+                        note.favourite = !note.favourite;
+                        diaryViewModel.setFavourite(note.id, note.favourite);
+                        setState(() {});
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child:
+                            note.favourite ? Icon(CupertinoIcons.heart_fill, color: Colors.white) : Icon(CupertinoIcons.heart, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                if (modifiable)
+                  InkWell(
+                    child: StreamBuilder(
+                        stream: diaryViewModel.diaryForm.isButtonEnabled,
+                        builder: (context, snapshot) {
+                          if (snapshot.data ?? false || note != null) {
+                            return InkResponse(
+                              onTap: () {
+                                if (note != null) {
+                                  diaryViewModel.submitPage(pageId: note.id, isFavourite: note.favourite);
+                                } else {
+                                  diaryViewModel.submitPage();
+                                }
+                                setState(() {
+                                  note = diaryViewModel.submittedNote;
+                                  modifiable = false;
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: Icon(Icons.check, color: Colors.white),
+                              ),
+                            );
+                          }
+                          return Container();
+                        }),
+                  )
+              ],
             ),
             Container(
               transform: Matrix4.translationValues(0.0, -5.0, 0.0),
@@ -166,87 +233,6 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
             ),
           ),
         ),
-        note != null && !modifiable
-            ? Positioned(
-                top: 30,
-                right: 5,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    note.date == today
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15.0),
-                            child: InkResponse(
-                              onTap: () {
-                                setState(() {
-                                  hasFocus = true;
-                                  modifiable = true;
-                                });
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                ),
-                                child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white),
-                              ),
-                            ))
-                        : Container(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: InkResponse(
-                        onTap: () {
-                          note.favourite = !note.favourite;
-                          diaryViewModel.setFavourite(note.id, note.favourite);
-                          setState(() {});
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child:
-                              note.favourite ? Icon(CupertinoIcons.heart_fill, color: Colors.white) : Icon(CupertinoIcons.heart, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : Positioned(
-                top: 30,
-                right: 5,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-                  child: StreamBuilder(
-                      stream: diaryViewModel.diaryForm.isButtonEnabled,
-                      builder: (context, snapshot) {
-                        if (snapshot.data ?? false || note != null) {
-                          return InkResponse(
-                            onTap: () {
-                              if (note != null) {
-                                diaryViewModel.submitPage(pageId: note.id, isFavourite: note.favourite);
-                              } else {
-                                diaryViewModel.submitPage();
-                              }
-                              setState(() {
-                                note = diaryViewModel.submittedNote;
-                                modifiable = false;
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: Icon(Icons.check, color: Colors.white),
-                            ),
-                          );
-                        }
-                        return Container();
-                      }),
-                ),
-              ),
       ],
     );
   }
