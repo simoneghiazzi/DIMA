@@ -119,13 +119,17 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = ChatPageScreen();
         break;
       case ExpertChatsListScreen.route:
-        child = ExpertChatsListScreen();
+        child = ExpertChatsListScreen(
+          chatPage: routeSettings.arguments,
+        );
         break;
       case PendingChatsListScreen.route:
         child = PendingChatsListScreen();
         break;
       case ActiveChatsListScreen.route:
-        child = ActiveChatsListScreen();
+        child = ActiveChatsListScreen(
+          chatPage: routeSettings.arguments,
+        );
         break;
       case DiaryScreen.route:
         child = DiaryScreen();
