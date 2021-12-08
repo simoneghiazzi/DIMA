@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:sApport/Model/BaseUser/Map/geometry.dart';
@@ -29,7 +28,6 @@ class _MapBodyState extends State<MapBody> {
   Position userLocation;
   StreamSubscription<Place> subscriber;
   AppRouterDelegate routerDelegate;
-  var _searching = StreamController<bool>.broadcast();
   var isPositionSearched = false;
 
   Set<Marker> _markers = Set<Marker>();
@@ -37,8 +35,6 @@ class _MapBodyState extends State<MapBody> {
   TextEditingController textController = TextEditingController();
 
   CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
-
-  var keyboardVisibilityController = KeyboardVisibilityController();
 
   //For setting the map style as specified in assets/map_style.txt
   String _mapStyle;
@@ -63,6 +59,10 @@ class _MapBodyState extends State<MapBody> {
     });
 
     getMarkers();
+
+    textController.addListener(() {
+      mapViewModel.searchPlaces(textController.text);
+    });
 
     if (!mapViewModel.positionPermission.isGranted) {
       mapViewModel.askPermission().then((permission) {
@@ -120,57 +120,55 @@ class _MapBodyState extends State<MapBody> {
         buildMap(),
       ],
       buildSearchBar(),
-      StreamBuilder(
-          stream: searching,
+      StreamBuilder<List<PlaceSearch>>(
+          stream: mapViewModel.places,
           builder: (context, snapshot) {
-            return Stack(children: [
-              AnimatedContainer(
-                height: snapshot.hasData && snapshot.data ? size.height * 0.45 : 0,
-                duration: Duration(milliseconds: (snapshot.hasData && snapshot.data) ? 500 : 200),
-                // Provide an optional curve to make the animation feel smoother.
-                curve: Curves.fastOutSlowIn,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.95),
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: kPrimaryColor.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 6,
-                      offset: Offset(0, 3),
-                    )
-                  ],
-                  border: Border.all(color: kPrimaryDarkColor.withOpacity(0.1)),
+            if (snapshot.hasData) {
+              var height = snapshot.data.length * 62.0;
+              return Stack(children: [
+                AnimatedContainer(
+                  height: height,
+                  duration: Duration(milliseconds: snapshot.data.length > 0 ? 500 : 200),
+                  // Provide an optional curve to make the animation feel smoother.
+                  curve: Curves.fastOutSlowIn,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.95),
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: kPrimaryColor.withOpacity(0.1),
+                        spreadRadius: 2,
+                        blurRadius: 6,
+                        offset: Offset(0, 3),
+                      )
+                    ],
+                    border: Border.all(color: kPrimaryDarkColor.withOpacity(0.1)),
+                  ),
+                  margin: EdgeInsets.only(top: 100, left: 20, right: 20),
+                  child: ListView.separated(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      separatorBuilder: (context, index) => Divider(height: 1, color: kPrimaryDarkColor.withOpacity(0.2)),
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                            contentPadding: EdgeInsets.only(top: 2, bottom: 2, left: 15, right: 5),
+                            title: Text(
+                              snapshot.data[index].description,
+                              style: TextStyle(color: kPrimaryColor),
+                            ),
+                            onTap: () {
+                              isPositionSearched = true;
+                              mapViewModel.setSelectedLocation(snapshot.data[index].placeId);
+                              textController.text = snapshot.data[index].description;
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            });
+                      }),
                 ),
-                margin: EdgeInsets.only(top: 100, left: 20, right: 20),
-                child: StreamBuilder<List<PlaceSearch>>(
-                    stream: mapViewModel.places,
-                    builder: (context, snapshot) {
-                      return (snapshot.data == null || snapshot.data.length == 0)
-                          ? Container()
-                          : ListView.separated(
-                              padding: EdgeInsets.zero,
-                              shrinkWrap: true,
-                              separatorBuilder: (context, index) => Divider(height: 1, color: kPrimaryDarkColor.withOpacity(0.2)),
-                              itemCount: snapshot.data.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                    contentPadding: EdgeInsets.only(top: 2, bottom: 2, left: 15, right: 5),
-                                    title: Text(
-                                      snapshot.data[index].description,
-                                      style: TextStyle(color: kPrimaryColor),
-                                    ),
-                                    onTap: () {
-                                      isPositionSearched = true;
-                                      setSearch(false);
-                                      mapViewModel.setSelectedLocation(snapshot.data[index].placeId);
-                                      textController.text = snapshot.data[index].description;
-                                      FocusManager.instance.primaryFocus?.unfocus();
-                                    });
-                              });
-                    }),
-              ),
-            ]);
+              ]);
+            } else {
+              return Container();
+            }
           }),
       CustomInfoWindow(
         controller: _customInfoWindowController,
@@ -179,12 +177,6 @@ class _MapBodyState extends State<MapBody> {
         offset: size.height * 0.04,
       ),
     ]);
-  }
-
-  Stream<bool> get searching => _searching.stream;
-
-  void setSearch(bool isSearching) {
-    _searching.add(isSearching);
   }
 
   Future<void> setMapStyle() async {
@@ -236,7 +228,6 @@ class _MapBodyState extends State<MapBody> {
   Widget buildMap({lat = 45.478195, lng = 9.2256787}) {
     return GoogleMap(
       onTap: (position) {
-        setSearch(false);
         _customInfoWindowController.hideInfoWindow();
         FocusScopeNode currentFocus = FocusScope.of(context);
         if (!currentFocus.hasPrimaryFocus) {
@@ -244,7 +235,6 @@ class _MapBodyState extends State<MapBody> {
         }
       },
       onCameraMove: (position) {
-        setSearch(false);
         _customInfoWindowController.onCameraMove();
       },
       onMapCreated: (GoogleMapController controller) async {
@@ -266,21 +256,21 @@ class _MapBodyState extends State<MapBody> {
     );
   }
 
-  Widget buildSearchBar({Function onTap, Function onChange}) {
-    return StreamBuilder(
-        stream: searching,
+  Widget buildSearchBar() {
+    return StreamBuilder<List<PlaceSearch>>(
+        stream: mapViewModel.places,
         builder: (context, snapshot) {
           return Positioned(
             top: 50,
             right: 20,
             left: 20,
             child: AnimatedContainer(
-              duration: Duration(milliseconds: (snapshot.hasData && snapshot.data) ? 100 : 500),
+              duration: Duration(milliseconds: (snapshot.hasData && snapshot.data.length > 0) ? 100 : 500),
               // Provide an optional curve to make the animation feel smoother.
               curve: Curves.fastOutSlowIn,
               decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: snapshot.hasData && snapshot.data
+                  borderRadius: snapshot.hasData && snapshot.data.length > 0
                       ? BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))
                       : BorderRadius.circular(20.0),
                   boxShadow: [
@@ -299,14 +289,11 @@ class _MapBodyState extends State<MapBody> {
                     color: kPrimaryColor,
                   ),
                   onPressed: () {
-                    if (keyboardVisibilityController.isVisible) {
-                      FocusScopeNode currentFocus = FocusScope.of(context);
-                      if (!currentFocus.hasPrimaryFocus) {
-                        currentFocus.unfocus();
-                      }
-                    } else {
-                      routerDelegate.pop();
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if (!currentFocus.hasPrimaryFocus) {
+                      currentFocus.unfocus();
                     }
+                    routerDelegate.pop();
                   },
                 ),
                 Expanded(
@@ -321,9 +308,18 @@ class _MapBodyState extends State<MapBody> {
                         fillColor: kPrimaryColor,
                         border: InputBorder.none,
                         hintText: "Search place",
-                        suffixIcon: Icon(
-                          Icons.search_rounded,
+                        suffixIcon: IconButton(
+                          icon: (textController.text.trim() != '') ? Icon(Icons.cancel) : Icon(Icons.search_rounded),
                           color: kPrimaryColor,
+                          onPressed: () {
+                            if (textController.text.trim() != '') {
+                              textController.clear();
+                              FocusScopeNode currentFocus = FocusScope.of(context);
+                              if (!currentFocus.hasPrimaryFocus) {
+                                currentFocus.unfocus();
+                              }
+                            }
+                          },
                         )),
                     onTap: () {
                       _customInfoWindowController.hideInfoWindow();
@@ -331,14 +327,6 @@ class _MapBodyState extends State<MapBody> {
                         textController.clear();
                         isPositionSearched = false;
                       }
-                    },
-                    onChanged: (value) {
-                      if (textController.text.trim() != '') {
-                        setSearch(true);
-                      } else {
-                        setSearch(false);
-                      }
-                      mapViewModel.searchPlaces(value);
                     },
                   ),
                 ),
@@ -351,6 +339,7 @@ class _MapBodyState extends State<MapBody> {
   @override
   void dispose() {
     subscriber.cancel();
+    textController.dispose();
     _customInfoWindowController.dispose();
     super.dispose();
   }
