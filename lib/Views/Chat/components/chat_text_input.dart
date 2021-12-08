@@ -16,16 +16,21 @@ class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserv
   Widget build(BuildContext context) {
     var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     return Padding(
-      padding: EdgeInsets.only(bottom: 10 , left: 8, right: 8),
+      padding: EdgeInsets.only(bottom: 10, left: 10, right: 10),
       child: Container(
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(25.0), boxShadow: [
-          BoxShadow(
-            color: kPrimaryColor.withOpacity(0.25),
-            spreadRadius: 4,
-            blurRadius: 6,
-            offset: Offset(0, 3),
-          )
-        ]),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20.0),
+          boxShadow: [
+            BoxShadow(
+              color: kPrimaryColor.withOpacity(0.1),
+              spreadRadius: 4,
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            )
+          ],
+          border: Border.all(color: kPrimaryDarkColor.withOpacity(0.2)),
+        ),
         child: Row(
           children: <Widget>[
             // Edit text

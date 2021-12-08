@@ -24,7 +24,6 @@ class ActiveChatsListBody extends StatefulWidget {
 class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   StreamSubscription<bool> subscriberNewRandomUser;
-  StreamSubscription subscriberNewChatMessage;
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
 
@@ -34,7 +33,6 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     initActiveChats();
     subscriberNewRandomUser = subscribeToNewRandomUser();
-    subscriberNewChatMessage = subscribeToNewChatMessage();
     super.initState();
   }
 
@@ -131,12 +129,6 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
     chatViewModel.conversation.peerUserChat = PendingChat();
   }
 
-  StreamSubscription subscribeToNewChatMessage() {
-    return chatViewModel.newChat.listen((event) {
-      chatViewModel.loadChats();
-    });
-  }
-
   StreamSubscription<bool> subscribeToNewRandomUser() {
     return chatViewModel.isNewRandomUser.listen((isNewRandomUser) {
       Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
@@ -155,7 +147,6 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   @override
   void dispose() {
     subscriberNewRandomUser.cancel();
-    subscriberNewChatMessage.cancel();
     super.dispose();
   }
 }

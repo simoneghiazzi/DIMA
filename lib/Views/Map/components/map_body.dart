@@ -1,9 +1,14 @@
 import 'dart:async';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:custom_info_window/custom_info_window.dart';
+import 'package:sApport/Model/BaseUser/Map/geometry.dart';
+import 'package:sApport/Model/BaseUser/Map/location.dart';
 import 'package:sApport/Model/BaseUser/Map/place.dart';
 import 'package:sApport/Model/BaseUser/Map/place_search.dart';
 import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/Views/Profile/expert_profile_screen.dart';
+import 'package:sApport/Views/Map/components/map_marker.dart';
+import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
@@ -19,14 +24,17 @@ class MapBody extends StatefulWidget {
 
 class _MapBodyState extends State<MapBody> {
   GoogleMapController mapController;
-  MapViewModel mapViewModel = MapViewModel();
+  MapViewModel mapViewModel;
   Position userLocation;
   StreamSubscription<Place> subscriber;
   AppRouterDelegate routerDelegate;
+  var isPositionSearched = false;
 
   Set<Marker> _markers = Set<Marker>();
 
-  TextEditingController txt = TextEditingController();
+  TextEditingController textController = TextEditingController();
+
+  CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
 
   //For setting the map style as specified in assets/map_style.txt
   String _mapStyle;
@@ -36,192 +44,166 @@ class _MapBodyState extends State<MapBody> {
 
   @override
   void initState() {
-    super.initState();
-    subscriber = subscribeToViewModel();
-    mapViewModel.uploadPosition();
+    mapViewModel = Provider.of<MapViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
 
-    //For setting the map style
+    subscriber = subscribeToViewModel();
+    // For setting the map style
     rootBundle.loadString('assets/map_style.txt').then((string) {
       _mapStyle = string;
     });
 
-    //Icon used for custom markers
+    // Icon used for custom markers
     BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 1, size: Size(2, 2)), 'assets/icons/pin.png').then((onValue) {
       pinLocationIcon = onValue;
     });
+
+    getMarkers();
+
+    textController.addListener(() {
+      mapViewModel.searchPlaces(textController.text);
+    });
+
+    if (!mapViewModel.positionPermission.isGranted) {
+      mapViewModel.askPermission().then((permission) {
+        if (permission) {
+          setState(() {});
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(mapViewModel.positionPermission.isPermanentlyDenied
+                ? 'You cannot access your current position. Enable the location permission in the device settings.'
+                : 'You cannot access your current position.'),
+            duration: const Duration(seconds: 5),
+          ));
+        }
+      });
+    }
+
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Stack(children: <Widget>[
-      Center(
-          child: StreamBuilder<Position>(
-              stream: mapViewModel.position,
+      if (mapViewModel.positionPermission.isGranted) ...[
+        Center(
+          child: FutureBuilder<Position>(
+              future: mapViewModel.uploadPosition(),
               builder: (context, snapshot) {
-                return snapshot.data == null
-                    ? Center(child: CircularProgressIndicator())
-                    : Stack(
-                        children: [
-                          FutureBuilder(
-                              future: mapViewModel.getMarkers(),
-                              builder: (context, snap) {
-                                if (!snap.hasData) {
-                                  return GoogleMap(
-                                    mapType: MapType.normal,
-                                    initialCameraPosition: CameraPosition(
-                                      target: LatLng(snapshot.data.latitude, snapshot.data.longitude),
-                                      zoom: 16,
-                                    ),
-                                    compassEnabled: true,
-                                    mapToolbarEnabled: false,
-                                    myLocationButtonEnabled: false,
-                                    myLocationEnabled: true,
-                                    zoomControlsEnabled: false,
-                                    onMapCreated: (GoogleMapController controller) {
-                                      mapViewModel.mapController.complete(controller);
-                                      removeMarkers();
-                                      mapController = controller;
-                                    },
-                                  );
-                                } else {
-                                  for (var doc in snap.data.docs) {
-                                    if (doc.data() != null) {
-                                      Expert expert = Expert();
-                                      expert.setFromDocument(doc);
-                                      _markers.add(Marker(
-                                          markerId: MarkerId(
-                                              expert.getData()['surname'] + expert.getData()['lat'].toString() + expert.getData()['lng'].toString()),
-                                          position: LatLng(expert.getData()['lat'], expert.getData()['lng']),
-                                          icon: pinLocationIcon,
-                                          infoWindow: InfoWindow(
-                                              onTap: () {
-                                                routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: expert);
-                                              },
-                                              title: expert.getData()['surname'] +
-                                                  " " +
-                                                  expert.getData()['name'] +
-                                                  " (" +
-                                                  expert.getData()['phoneNumber'] +
-                                                  ")",
-                                              snippet: expert.getData()['email'])));
-                                    }
-                                  }
-                                  return GoogleMap(
-                                    mapType: MapType.normal,
-                                    initialCameraPosition: CameraPosition(
-                                      target: LatLng(snapshot.data.latitude, snapshot.data.longitude),
-                                      zoom: 16,
-                                    ),
-                                    compassEnabled: true,
-                                    mapToolbarEnabled: false,
-                                    markers: _markers,
-                                    myLocationButtonEnabled: false,
-                                    myLocationEnabled: true,
-                                    zoomControlsEnabled: false,
-                                    onMapCreated: (GoogleMapController controller) {
-                                      mapViewModel.mapController.complete(controller);
-                                      removeMarkers();
-                                      mapController = controller;
-                                    },
-                                  );
-                                }
-                              }),
-                          Positioned(
-                            bottom: 40,
-                            right: 20,
-                            child: FloatingActionButton(
-                              mini: true,
-                              onPressed: () {
-                                mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-                                  target: LatLng(snapshot.data.latitude, snapshot.data.longitude),
-                                  zoom: 16,
-                                )));
-                              },
-                              materialTapTargetSize: MaterialTapTargetSize.padded,
-                              backgroundColor: Colors.white10,
-                              child: const Icon(Icons.my_location, size: 40.0),
-                            ),
-                          ),
-                        ],
-                      );
-              })),
-      Positioned(
-          top: 60,
-          right: 20,
-          left: 20,
-          child: Container(
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20.0), boxShadow: [
-                BoxShadow(
-                  color: kPrimaryDarkColor.withOpacity(0.3),
-                  spreadRadius: 4,
-                  blurRadius: 6,
-                  offset: Offset(0, 3),
-                )
-              ]),
-              child: Row(children: <Widget>[
-                IconButton(
-                  splashColor: Colors.grey,
-                  icon: Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: kPrimaryColor,
-                  ),
-                  onPressed: () {
-                    routerDelegate.pop();
-                  },
-                ),
-                Expanded(
-                  child: TextField(
-                    textCapitalization: TextCapitalization.sentences,
-                    cursorColor: kPrimaryColor,
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.go,
-                    controller: txt,
-                    decoration: InputDecoration(
-                        fillColor: kPrimaryColor,
-                        border: InputBorder.none,
-                        hintText: "Search place",
-                        suffixIcon: Icon(
-                          Icons.search,
-                          color: kPrimaryColor,
-                        )),
-                    onChanged: (value) => mapViewModel.searchPlaces(value),
-                  ),
-                ),
-              ]))),
+                if (snapshot.hasData) {
+                  return buildMap(lat: snapshot.data.latitude, lng: snapshot.data.longitude);
+                } else {
+                  return LoadingDialog().widget(context);
+                }
+              }),
+        ),
+        // Button My Position
+        Align(
+          alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
+          child: FloatingActionButton(
+            onPressed: () async {
+              textController.clear();
+              var pos = await mapViewModel.uploadPosition();
+              _goToPlace(Place(geometry: Geometry(location: Location(lat: pos.latitude, lng: pos.longitude))));
+            },
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            backgroundColor: kPrimaryColor,
+            child: const Icon(
+              Icons.my_location,
+              size: 30.0,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ] else ...[
+        buildMap(),
+      ],
+      buildSearchBar(),
       StreamBuilder<List<PlaceSearch>>(
           stream: mapViewModel.places,
           builder: (context, snapshot) {
-            return (snapshot.data == null || snapshot.data.length == 0)
-                ? Container(width: 0.0, height: 0.0)
-                : Column(children: [
-                    Expanded(
-                        child: Container(
-                            decoration: BoxDecoration(color: Colors.black.withOpacity(.6), backgroundBlendMode: BlendMode.darken),
-                            child: ListView.builder(
-                                padding: EdgeInsets.only(top: 100),
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                      contentPadding: EdgeInsets.only(top: 10, left: 15, right: 5),
-                                      title: Text(
-                                        snapshot.data[index].description,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      onTap: () {
-                                        mapViewModel.setSelectedLocation(snapshot.data[index].placeId);
-                                        txt.text = snapshot.data[index].description;
-                                        FocusManager.instance.primaryFocus?.unfocus();
-                                      });
-                                })))
-                  ]);
+            if (snapshot.hasData) {
+              var height = snapshot.data.length * 62.0;
+              return Stack(children: [
+                AnimatedContainer(
+                  height: height,
+                  duration: Duration(milliseconds: snapshot.data.length > 0 ? 500 : 200),
+                  // Provide an optional curve to make the animation feel smoother.
+                  curve: Curves.fastOutSlowIn,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.95),
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: kPrimaryColor.withOpacity(0.1),
+                        spreadRadius: 2,
+                        blurRadius: 6,
+                        offset: Offset(0, 3),
+                      )
+                    ],
+                    border: Border.all(color: kPrimaryDarkColor.withOpacity(0.1)),
+                  ),
+                  margin: EdgeInsets.only(top: 100, left: 20, right: 20),
+                  child: ListView.separated(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      separatorBuilder: (context, index) => Divider(height: 1, color: kPrimaryDarkColor.withOpacity(0.2)),
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                            contentPadding: EdgeInsets.only(top: 2, bottom: 2, left: 15, right: 5),
+                            title: Text(
+                              snapshot.data[index].description,
+                              style: TextStyle(color: kPrimaryColor),
+                            ),
+                            onTap: () {
+                              isPositionSearched = true;
+                              mapViewModel.setSelectedLocation(snapshot.data[index].placeId);
+                              textController.text = snapshot.data[index].description;
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            });
+                      }),
+                ),
+              ]);
+            } else {
+              return Container();
+            }
           }),
+      CustomInfoWindow(
+        controller: _customInfoWindowController,
+        height: size.height * 0.15,
+        width: size.width * 0.65,
+        offset: size.height * 0.04,
+      ),
     ]);
   }
 
-  Future<void> removeMarkers() async {
-    final GoogleMapController controller = await mapViewModel.mapController.future;
-    controller.setMapStyle(_mapStyle);
+  Future<void> setMapStyle() async {
+    mapController.setMapStyle(_mapStyle);
+  }
+
+  void getMarkers() {
+    mapViewModel.getMarkers().then((snapshot) {
+      for (var doc in snapshot.docs) {
+        Expert expert = Expert();
+        expert.setFromDocument(doc);
+        _markers.add(
+          Marker(
+            markerId: MarkerId(expert.getData()['surname'] + expert.getData()['lat'].toString() + expert.getData()['lng'].toString()),
+            position: LatLng(expert.getData()['lat'], expert.getData()['lng']),
+            icon: pinLocationIcon,
+            onTap: () {
+              _customInfoWindowController.addInfoWindow(
+                MapMarker(expert: expert),
+                LatLng(expert.getData()['lat'], expert.getData()['lng']),
+              );
+            },
+          ),
+        );
+      }
+      setState(() {});
+    });
   }
 
   StreamSubscription<Place> subscribeToViewModel() {
@@ -235,8 +217,7 @@ class _MapBodyState extends State<MapBody> {
   }
 
   Future<void> _goToPlace(Place place) async {
-    final GoogleMapController controller = await mapViewModel.mapController.future;
-    controller.animateCamera(
+    mapController.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(target: LatLng(place.geometry.location.lat, place.geometry.location.lng), zoom: 15),
       ),
@@ -244,9 +225,122 @@ class _MapBodyState extends State<MapBody> {
     mapViewModel.searchPlaces("");
   }
 
+  Widget buildMap({lat = 45.478195, lng = 9.2256787}) {
+    return GoogleMap(
+      onTap: (position) {
+        _customInfoWindowController.hideInfoWindow();
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      onCameraMove: (position) {
+        _customInfoWindowController.onCameraMove();
+      },
+      onMapCreated: (GoogleMapController controller) async {
+        mapController = controller;
+        _customInfoWindowController.googleMapController = controller;
+        setMapStyle();
+      },
+      mapType: MapType.normal,
+      initialCameraPosition: CameraPosition(
+        target: LatLng(lat, lng),
+        zoom: 15,
+      ),
+      compassEnabled: true,
+      mapToolbarEnabled: false,
+      markers: _markers,
+      myLocationButtonEnabled: false,
+      myLocationEnabled: true,
+      zoomControlsEnabled: false,
+    );
+  }
+
+  Widget buildSearchBar() {
+    return StreamBuilder<List<PlaceSearch>>(
+        stream: mapViewModel.places,
+        builder: (context, snapshot) {
+          return Positioned(
+            top: 50,
+            right: 20,
+            left: 20,
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: (snapshot.hasData && snapshot.data.length > 0) ? 100 : 500),
+              // Provide an optional curve to make the animation feel smoother.
+              curve: Curves.fastOutSlowIn,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: snapshot.hasData && snapshot.data.length > 0
+                      ? BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))
+                      : BorderRadius.circular(20.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: kPrimaryColor.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 6,
+                      offset: Offset(0, 3),
+                    )
+                  ],
+                  border: Border.all(color: kPrimaryDarkColor.withOpacity(0.1))),
+              child: Row(children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: kPrimaryColor,
+                  ),
+                  onPressed: () {
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if (!currentFocus.hasPrimaryFocus) {
+                      currentFocus.unfocus();
+                    }
+                    routerDelegate.pop();
+                  },
+                ),
+                Expanded(
+                  child: TextField(
+                    textCapitalization: TextCapitalization.sentences,
+                    textAlignVertical: TextAlignVertical.center,
+                    cursorColor: kPrimaryColor,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.go,
+                    controller: textController,
+                    decoration: InputDecoration(
+                        fillColor: kPrimaryColor,
+                        border: InputBorder.none,
+                        hintText: "Search place",
+                        suffixIcon: IconButton(
+                          icon: (textController.text.trim() != '') ? Icon(Icons.cancel) : Icon(Icons.search_rounded),
+                          color: kPrimaryColor,
+                          onPressed: () {
+                            if (textController.text.trim() != '') {
+                              textController.clear();
+                              FocusScopeNode currentFocus = FocusScope.of(context);
+                              if (!currentFocus.hasPrimaryFocus) {
+                                currentFocus.unfocus();
+                              }
+                            }
+                          },
+                        )),
+                    onTap: () {
+                      _customInfoWindowController.hideInfoWindow();
+                      if (isPositionSearched) {
+                        textController.clear();
+                        isPositionSearched = false;
+                      }
+                    },
+                  ),
+                ),
+              ]),
+            ),
+          );
+        });
+  }
+
   @override
   void dispose() {
     subscriber.cancel();
+    textController.dispose();
+    _customInfoWindowController.dispose();
     super.dispose();
   }
 }
