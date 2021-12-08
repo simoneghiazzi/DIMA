@@ -9,6 +9,7 @@ import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
 import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
@@ -116,6 +117,7 @@ class _MyAppState extends State<MyApp> {
         Provider(create: (context) => AuthViewModel()),
         Provider(create: (context) => ChatViewModel()),
         Provider(create: (context) => DiaryViewModel()),
+        Provider(create: (context) => MapViewModel()),
         widget.baseUserProvider,
         widget.expertProvider
       ],

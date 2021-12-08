@@ -71,33 +71,28 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                   )),
               Container(
                 transform: Matrix4.translationValues(0.0, -50.0, 0.0),
-                padding: EdgeInsets.only(
-                    left: size.width / 10, right: size.width / 10),
+                padding: EdgeInsets.only(left: size.width / 10, right: size.width / 10),
                 color: Colors.white,
                 child: Center(
                   child: Column(
                     children: <Widget>[
-                      Center(
-                          child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: kPrimaryLightColor,
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: kPrimaryLightColor,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                widget.expert.name.toUpperCase() + " " + widget.expert.surname.toUpperCase(),
+                                style: TextStyle(color: kPrimaryColor, fontSize: 22, fontWeight: FontWeight.bold),
                               ),
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Flexible(
-                                        child: Text(
-                                      widget.expert.name.toUpperCase() +
-                                          " " +
-                                          widget.expert.surname.toUpperCase(),
-                                      style: TextStyle(
-                                          color: kPrimaryColor,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center,
-                                    ))
-                                  ]))),
+                            )
+                          ],
+                        ),
+                      ),
                       Column(
                         children: <Widget>[
                           SizedBox(
@@ -115,10 +110,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                               ),
                               GestureDetector(
                                 child: Text(widget.expert.phoneNumber,
-                                    style: TextStyle(
-                                        color: kPrimaryColor,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold)),
+                                    style: TextStyle(color: kPrimaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
                                 onTap: () {
                                   launch('tel://' + widget.expert.phoneNumber);
                                 },
@@ -140,11 +132,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                               ),
                               Flexible(
                                 child: GestureDetector(
-                                  child: Text(widget.expert.email,
-                                      style: TextStyle(
-                                          color: kPrimaryColor,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold)),
+                                  child: Text(widget.expert.email, style: TextStyle(color: kPrimaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
                                   onTap: () async {
                                     EmailContent email = EmailContent(
                                       to: [
@@ -154,11 +142,8 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
 
                                     // Android: Will open mail app or show native picker.
                                     // iOS: Will open mail app if single mail app found.
-                                    OpenMailAppResult result = await OpenMailApp
-                                        .composeNewEmailInMailApp(
-                                            nativePickerTitle:
-                                                'Select email app to compose',
-                                            emailContent: email);
+                                    OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(
+                                        nativePickerTitle: 'Select email app to compose', emailContent: email);
 
                                     // If no mail apps found, show error
                                     if (!result.didOpen && !result.canOpen) {
@@ -167,8 +152,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                                       // iOS: if multiple mail apps found, show dialog to select.
                                       // There is no native intent/default app system in iOS so
                                       // you have to do it yourself.
-                                    } else if (!result.didOpen &&
-                                        result.canOpen) {
+                                    } else if (!result.didOpen && result.canOpen) {
                                       showDialog(
                                         context: context,
                                         builder: (_) {
@@ -198,11 +182,8 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                               ),
                               Flexible(
                                 child: GestureDetector(
-                                  child: Text(widget.expert.address,
-                                      style: TextStyle(
-                                          color: kPrimaryColor,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold)),
+                                  child:
+                                      Text(widget.expert.address, style: TextStyle(color: kPrimaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
                                   onTap: () {
                                     openMaps();
                                   },
@@ -225,8 +206,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                       Center(
                         child: InkWell(
                           child: Container(
-                            padding: EdgeInsets.only(
-                                left: 8, right: 8, top: 2, bottom: 2),
+                            padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
                             height: size.height * 0.05,
                             width: size.width * 0.5,
                             decoration: BoxDecoration(
@@ -238,10 +218,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                               children: <Widget>[
                                 Text(
                                   "Get in Touch",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
                                   width: 5,
@@ -256,10 +233,8 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                           ),
                           onTap: () {
                             chatViewModel.chatWithUser(widget.expert);
-                            routerDelegate.replaceAllButNumber(2, [
-                              RouteSettings(name: ExpertChatsListScreen.route),
-                              RouteSettings(name: ChatPageScreen.route)
-                            ]);
+                            routerDelegate.replaceAllButNumber(
+                                2, [RouteSettings(name: ExpertChatsListScreen.route), RouteSettings(name: ChatPageScreen.route)]);
                           },
                         ),
                       ),

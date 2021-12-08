@@ -107,5 +107,4 @@ class ChatViewModel {
 
   TextEditingController get textController => textEditingController;
   Stream<bool> get isNewRandomUser => _isNewRandomUserController.stream;
-  Stream<QuerySnapshot> get newChat => firestoreService.listenToNewMessages(conversation.senderUser, conversation.senderUserChat);
 }
