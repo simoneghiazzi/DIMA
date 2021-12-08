@@ -13,6 +13,7 @@ class MapMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     return GestureDetector(
       child: Column(
@@ -26,31 +27,49 @@ class MapMarker extends StatelessWidget {
               borderRadius: BorderRadius.only(topLeft: Radius.circular(14), topRight: Radius.circular(14)),
             ),
             child: Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   NetworkAvatar(
                     img: expert.profilePhoto,
                     radius: 20.0,
                   ),
-                  Column(
-                    children: [
-                      Text(
-                        (expert.surname + " " + expert.name),
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(color: kPrimaryColor, fontSize: 14.0, fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 15),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: <Widget>[
+                              Flexible(
+                                child: Text(
+                                  (expert.surname + " " + expert.name),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: kPrimaryColor, fontSize: 17.0, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: size.height * 0.003,
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Flexible(
+                                child: Text(
+                                  expert.email,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: kPrimaryColor, fontSize: 12.0),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      Text(
-                        expert.phoneNumber,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(color: kPrimaryColor, fontSize: 14.0),
-                      ),
-                      Text(
-                        expert.email,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(color: kPrimaryColor, fontSize: 14.0),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
@@ -60,9 +79,7 @@ class MapMarker extends StatelessWidget {
             height: 10.0,
             decoration: BoxDecoration(
               color: kPrimaryDarkColor,
-              border: Border.all(
-                color: kPrimaryDarkColor,
-              ),
+              border: Border.all(color: kPrimaryDarkColor),
               borderRadius: BorderRadius.only(bottomRight: Radius.circular(14), bottomLeft: Radius.circular(14)),
             ),
           ),
@@ -70,11 +87,14 @@ class MapMarker extends StatelessWidget {
             child: ClipPath(
               clipper: CustomClipPath(),
               child: Container(
-                height: 40.0,
-                color: kPrimaryDarkColor,
+                height: 20.0,
+                decoration: BoxDecoration(
+                  color: kPrimaryDarkColor,
+                  border: Border.all(color: kPrimaryDarkColor),
+                ),
               ),
             ),
-          )
+          ),
         ],
       ),
       onTap: () {
@@ -89,7 +109,7 @@ class CustomClipPath extends CustomClipper<Path> {
   Path getClip(Size size) {
     final path = Path();
     path.lineTo(size.width / 3, 0.0);
-    path.lineTo(size.width / 2, size.height / 3);
+    path.lineTo(size.width / 2, size.height / 2.5);
     path.lineTo(size.width - size.width / 3, 0.0);
     path.close();
     return path;
