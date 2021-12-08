@@ -37,136 +37,145 @@ class _CreateReportBodyState extends State<CreateReportBody> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return BlocProvider(
-      create: (context) => ReportViewModel(loggedId: baseUserViewModel.id),
-      child: Builder(
-        builder: (context) {
-          reportViewModel = BlocProvider.of<ReportViewModel>(context);
-          return Theme(
-              data: Theme.of(context).copyWith(
-                primaryColor: kPrimaryColor,
-                inputDecorationTheme: InputDecorationTheme(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25),
+    return Stack(children: [
+      Column(
+        children: [
+          TopBar(
+            text: 'New report',
+            buttons: [
+              InkWell(
+                child: Container(
+                  padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    //color: kPrimaryLightColor,
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.list_rounded,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text(
+                        "List",
+                        style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              child: Scaffold(
-                  body: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    TopBar(
-                      text: 'New report',
-                      buttons: [
-                        InkWell(
-                          child: Container(
-                            padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              //color: kPrimaryLightColor,
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.list_rounded,
-                                  color: Colors.white,
-                                  size: 30,
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                                Text(
-                                  "List",
-                                  style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ),
-                          onTap: () {
-                            routerDelegate.pushPage(name: ReportsListScreen.route, arguments: reportViewModel);
-                          },
-                        )
+                onTap: () {
+                  routerDelegate.pushPage(
+                    name: ReportsListScreen.route,
+                    arguments: ReportArguments(null, reportViewModel),
+                  );
+                },
+              )
+            ],
+          ),
+          SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: BlocProvider(
+              create: (context) => ReportViewModel(loggedId: baseUserViewModel.id),
+              child: Builder(
+                builder: (context) {
+                  reportViewModel = BlocProvider.of<ReportViewModel>(context);
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      primaryColor: kPrimaryColor,
+                      inputDecorationTheme: InputDecorationTheme(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        SizedBox(
+                          height: size.height * 0.1,
+                        ),
+                        Image.asset(
+                          "assets/icons/safety.png",
+                          height: size.height * 0.15,
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(top: size.height * 0.05, left: 40, right: 40),
+                            child: FormBlocListener<ReportViewModel, String, String>(
+                              onSuccess: (context, state) {
+                                LoadingDialog.hide(context, _keyLoader);
+                                successAlert.show();
+                              },
+                              onFailure: (context, state) {
+                                LoadingDialog.hide(context, _keyLoader);
+                                errorAlert.show();
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  DropdownFieldBlocBuilder<String>(
+                                    selectFieldBloc: reportViewModel.reportCategory,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: kPrimaryLightColor.withAlpha(100),
+                                      labelText: 'Report category',
+                                      labelStyle: TextStyle(color: kPrimaryColor),
+                                      prefixIcon: Icon(
+                                        Icons.security,
+                                        color: kPrimaryColor,
+                                      ),
+                                    ),
+                                    itemBuilder: (context, value) => value,
+                                  ),
+                                  SizedBox(
+                                    height: size.height * 0.01,
+                                  ),
+                                  TextFieldBlocBuilder(
+                                    textCapitalization: TextCapitalization.sentences,
+                                    textFieldBloc: reportViewModel.reportText,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: kPrimaryLightColor.withAlpha(100),
+                                      labelText: 'Report description',
+                                      labelStyle: TextStyle(color: kPrimaryColor),
+                                      prefixIcon: Icon(
+                                        Icons.text_fields,
+                                        color: kPrimaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: size.height * 0.06,
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      LoadingDialog.show(context, _keyLoader);
+                                      reportViewModel.submit();
+                                    },
+                                    style: ButtonStyle(
+                                        fixedSize: MaterialStateProperty.all<Size>(Size(size.width / 2, size.height / 20)),
+                                        backgroundColor: MaterialStateProperty.all<Color>(kPrimaryColor),
+                                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(borderRadius: BorderRadius.circular(29)))),
+                                    child: Text('SUBMIT'),
+                                  )
+                                ],
+                              ),
+                            )),
                       ],
                     ),
-                    SizedBox(
-                      height: size.height * 0.1,
-                    ),
-                    Image.asset(
-                      "assets/icons/safety.png",
-                      height: size.height * 0.15,
-                    ),
-                    Padding(
-                        padding: EdgeInsets.only(top: size.height * 0.05, left: 40, right: 40),
-                        child: FormBlocListener<ReportViewModel, String, String>(
-                          onSuccess: (context, state) {
-                            LoadingDialog.hide(context, _keyLoader);
-                            successAlert.show();
-                          },
-                          onFailure: (context, state) {
-                            LoadingDialog.hide(context, _keyLoader);
-                            errorAlert.show();
-                          },
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              DropdownFieldBlocBuilder<String>(
-                                selectFieldBloc: reportViewModel.reportCategory,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: 'Report category',
-                                  labelStyle: TextStyle(color: kPrimaryColor),
-                                  prefixIcon: Icon(
-                                    Icons.security,
-                                    color: kPrimaryColor,
-                                  ),
-                                ),
-                                itemBuilder: (context, value) => value,
-                              ),
-                              SizedBox(
-                                height: size.height * 0.01,
-                              ),
-                              TextFieldBlocBuilder(
-                                textCapitalization: TextCapitalization.sentences,
-                                textFieldBloc: reportViewModel.reportText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: 'Report description',
-                                  labelStyle: TextStyle(color: kPrimaryColor),
-                                  prefixIcon: Icon(
-                                    Icons.text_fields,
-                                    color: kPrimaryColor,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: size.height * 0.06,
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  LoadingDialog.show(context, _keyLoader);
-                                  reportViewModel.submit();
-                                },
-                                style: ButtonStyle(
-                                    fixedSize: MaterialStateProperty.all<Size>(Size(size.width / 2, size.height / 20)),
-                                    backgroundColor: MaterialStateProperty.all<Color>(kPrimaryColor),
-                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(29)))),
-                                child: Text('SUBMIT'),
-                              )
-                            ],
-                          ),
-                        )),
-                  ],
-                ),
-              )));
-        },
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
-    );
+    ]);
   }
 
   Alert createSuccessAlert() {

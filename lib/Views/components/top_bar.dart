@@ -31,7 +31,9 @@ class TopBar extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     isPortrait
-                        ? Container()
+                        ? Container(
+                            width: 15.0,
+                          )
                         : IconButton(
                             icon: Icon(
                               Icons.arrow_back_ios_new_rounded,
