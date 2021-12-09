@@ -97,7 +97,8 @@ class FirestoreService {
   /// user id that is not the sender him/herself or that is not in the list of active/pending chat ids
   Future<BaseUser> getRandomUserFromDB(BaseUser user, String randomId) async {
     var baseUserCounter = (await _getBaseUsersCounter()).get('userCounter');
-    var chatsCounter = (await _getChatsCounterFromDB(user)).get('anonymousChatCounter') ?? 0;
+    var res = (await _getChatsCounterFromDB(user));
+    var chatsCounter = res.exists ? res.get('anonymousChatCounter') : 0;
     if (baseUserCounter - 1 > chatsCounter) {
       HashSet<String> activeIds = await _getChatIdsSet(user, ActiveChat());
       HashSet<String> pendingIds = await _getChatIdsSet(user, PendingChat());
@@ -159,7 +160,7 @@ class FirestoreService {
   ///
   /// If the chat is new, it adds it to the list of chats of the 2 users in the collection specified
   /// into the [conversation] field and updates the chat counters
-  void _updateChatInfo(WriteBatch batch, Conversation conversation, int timestamp) {
+  void _updateChatInfo(Conversation conversation, int timestamp) async {
     DocumentReference senderUserRef = _firestore
         .collection(conversation.senderUser.collection.value)
         .doc(conversation.senderUser.id)
@@ -171,19 +172,17 @@ class FirestoreService {
         .collection(conversation.peerUserChat.chatCollection.value)
         .doc(conversation.senderUser.id);
 
+    // Increments the counter only if the sender and the peer users are base users and if
+    // this is their first message
+    if (conversation.senderUser.collection == Collection.BASE_USERS &&
+        conversation.peerUser.collection == Collection.BASE_USERS &&
+        !(await senderUserRef.get()).exists) {
+      _incrementConversationCounter(conversation, 1);
+    }
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     batch.set(senderUserRef, {'lastMessage': timestamp});
     batch.set(peerUserRef, {'lastMessage': timestamp});
     batch.commit().then((value) => print("Chat info updated")).catchError((error) => print("Failed to update the chat info: $error"));
-
-    // Increments the counter only if the sender and the peer users are base users and if
-    // this is their first message
-    if (conversation.senderUser.collection == Collection.BASE_USERS && conversation.peerUser.collection == Collection.BASE_USERS) {
-      senderUserRef.get().then((value) {
-        if (value.exists) {
-          _incrementConversationCounter(conversation, 1);
-        }
-      });
-    }
   }
 
   /// It takes the [conversation] between the 2 users and the message and adds it into the messages collection of the DB.
@@ -194,9 +193,8 @@ class FirestoreService {
         .doc(conversation.pairChatId)
         .collection(conversation.pairChatId)
         .doc(message.timestamp.millisecondsSinceEpoch.toString());
-    WriteBatch batch = FirebaseFirestore.instance.batch();
-    batch.set(messagesReference, message.getData());
-    _updateChatInfo(batch, conversation, message.timestamp.millisecondsSinceEpoch);
+    messagesReference.set(message.getData());
+    _updateChatInfo(conversation, message.timestamp.millisecondsSinceEpoch);
   }
 
   /// It takes the [pairChatId] that is the composite id of the 2 users and
