@@ -69,7 +69,8 @@ class FirebaseAuthService {
       _userCredential = await _firebaseAuth.signInWithCredential(credential);
 
       // Check if it is a new user. If yes, insert the data into the DB
-      if (await _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, _userCredential.user.uid) == null) {
+      var res = await _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, _userCredential.user.uid);
+      if (res.docs.isEmpty) {
         final headers = await googleSignIn.currentUser.authHeaders;
         final res = jsonDecode((await get(Uri.parse("https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
                 headers: {"Authorization": headers["Authorization"]}))
@@ -93,7 +94,7 @@ class FirebaseAuthService {
   /// Sign in a user if it exists or create a new user through the facebook account.
   /// It retrieves the name, surname and birthDate information from the facebook account of the user.
   Future<String> signInWithFacebook(bool link) async {
-    LoginResult result = await FacebookAuth.instance.login(permissions: ['public_profile', 'user_birthday']);
+    LoginResult result = await FacebookAuth.instance.login(permissions: ['email', 'public_profile', 'user_birthday']);
     AccessToken accessToken = result.accessToken;
     var facebookAuthCredential = Firebase.FacebookAuthProvider.credential(accessToken.token);
 
@@ -105,7 +106,8 @@ class FirebaseAuthService {
     _userCredential = await _firebaseAuth.signInWithCredential(facebookAuthCredential);
 
     // Check if it is a new user. If yes, insert the data into the DB
-    if (await _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, _userCredential.user.uid) == null) {
+    var res = await _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, _userCredential.user.uid);
+    if (res.docs.isEmpty) {
       final userData = await FacebookAuth.instance.getUserData(fields: "name, birthday");
 
       var res = userData['birthday'].split('/');
