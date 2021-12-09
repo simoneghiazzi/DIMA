@@ -29,13 +29,13 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
 
   @override
   void initState() {
-    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     size = MediaQuery.of(context).size;
     super.build(context);
     if (userItem == null) {

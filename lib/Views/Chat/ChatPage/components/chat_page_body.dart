@@ -1,9 +1,13 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
+import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Chat/components/chat_accept_deny.dart';
 import 'package:sApport/Views/Chat/components/chat_text_input.dart';
 import 'package:sApport/Views/Chat/components/messages_list_constructor.dart';
@@ -13,6 +17,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatPageBody extends StatefulWidget {
+  //To check which is the orientation when the page is first opened
+  bool startOrientation;
+
+  ChatPageBody({Key key, this.startOrientation = false}) : super(key: key);
+
   @override
   _ChatPageBodyState createState() => _ChatPageBodyState();
 }
@@ -20,15 +29,12 @@ class ChatPageBody extends StatefulWidget {
 class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver {
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
-  User peerUser, senderUser;
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    peerUser = chatViewModel.conversation.peerUser;
-    senderUser = chatViewModel.conversation.senderUser;
     chatViewModel.updateChattingWith();
     BackButtonInterceptor.add(backButtonInterceptor);
     super.initState();
@@ -36,10 +42,14 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
 
   @override
   Widget build(BuildContext context) {
+    detectChangeOrientation();
+    User peerUser = chatViewModel.conversation.peerUser;
+    User senderUser = chatViewModel.conversation.senderUser;
     return Column(
       children: <Widget>[
         peerUser.collection == Collection.EXPERTS
             ? TopBarChats(
+                isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
                 networkAvatar: NetworkAvatar(
                   img: peerUser.getData()['profilePhoto'],
                   radius: 20.0,
@@ -47,6 +57,7 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
                 text: peerUser.getData()['name'] + " " + peerUser.getData()['surname'],
               )
             : TopBarChats(
+                isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
                 circleAvatar: CircleAvatar(
                   backgroundColor: Colors.transparent,
                   child: Icon(
@@ -68,6 +79,32 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
     chatViewModel.resetChattingWith();
     routerDelegate.pop();
     return true;
+  }
+
+  Future<void> detectChangeOrientation() async {
+    AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    if (widget.startOrientation != (MediaQuery.of(context).orientation == Orientation.landscape)) {
+      widget.startOrientation = true;
+      await Future(() async {
+        if (chatViewModel.conversation.peerUser is Expert) {
+          routerDelegate.replaceAllButNumber(2, [
+            RouteSettings(
+                name: ExpertChatsListScreen.route,
+                arguments: ChatPageScreen(
+                  startOrientation: true,
+                ))
+          ]);
+        } else {
+          routerDelegate.replaceAllButNumber(2, [
+            RouteSettings(
+                name: ActiveChatsListScreen.route,
+                arguments: ChatPageScreen(
+                  startOrientation: true,
+                ))
+          ]);
+        }
+      });
+    }
   }
 
   @override

@@ -33,10 +33,14 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    var authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    authViewModel.setNotification(baseUserViewModel.loggedUser);
     final List<Widget> _pages = [BaseUserHomePageBody(), DiaryScreen(), UserSettingsScreen(user: baseUserViewModel.loggedUser)];
     return WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           body: IndexedStack(
             index: _currentIndex,
             children: _pages,

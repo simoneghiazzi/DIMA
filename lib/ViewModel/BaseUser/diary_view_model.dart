@@ -13,7 +13,10 @@ class DiaryViewModel {
   final TextEditingController contentCtrl = TextEditingController();
   Note submittedNote;
   var hasNoteToday = false;
-  var isPageCorrectlyAdded = StreamController<bool>.broadcast();
+  var _isPageCorrectlyAdded = StreamController<bool>.broadcast();
+  var _isPageOpenController = StreamController<bool>.broadcast();
+  bool pageOpen = false;
+  Note openedNote;
 
   String loggedId;
 
@@ -34,10 +37,10 @@ class DiaryViewModel {
     );
     return _firestoreService.addDiaryNoteIntoDB(loggedId, submittedNote).then((value) {
       print("Diary note added");
-      isPageCorrectlyAdded.add(true);
+      _isPageCorrectlyAdded.add(true);
     }).catchError((error) {
       print("Failed to add the diary note: $error");
-      isPageCorrectlyAdded.add(false);
+      _isPageCorrectlyAdded.add(false);
     });
   }
 
@@ -46,6 +49,22 @@ class DiaryViewModel {
     contentCtrl.clear();
     diaryForm.title.add(null);
     diaryForm.content.add(null);
+  }
+
+  void openPage(Note note) {
+    pageOpen = true;
+    openedNote = note;
+    if (note == null) {
+      titleCtrl.clear();
+      contentCtrl.clear();
+    }
+    _isPageOpenController.add(true);
+  }
+
+  void checkOpenPage() {
+    if (pageOpen) {
+      _isPageOpenController.add(true);
+    }
   }
 
   /// Set the text data
@@ -71,5 +90,6 @@ class DiaryViewModel {
     // return pages;
   }
 
-  Stream<bool> get isPageAdded => isPageCorrectlyAdded.stream;
+  Stream<bool> get isPageAdded => _isPageCorrectlyAdded.stream;
+  Stream<bool> get isPageOpen => _isPageOpenController.stream;
 }

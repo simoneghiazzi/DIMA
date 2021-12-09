@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/random_id.dart';
 import 'package:sApport/Model/BaseUser/report.dart';
@@ -9,6 +11,9 @@ import 'package:get_it/get_it.dart';
 class ReportViewModel extends FormBloc<String, String> {
   FirestoreService _firestoreService = GetIt.I<FirestoreService>();
   final String loggedId;
+  Report openedReport;
+  var _isReportOpenController = StreamController<bool>.broadcast();
+  var _infoReportOpenController = StreamController<Report>.broadcast();
 
   final reportCategory = SelectFieldBloc(items: [
     'Psychological violence',
@@ -48,6 +53,16 @@ class ReportViewModel extends FormBloc<String, String> {
     reportText.clear();
   }
 
+  void openReport(Report report) {
+    openedReport = report;
+    _isReportOpenController.add(true);
+    _infoReportOpenController.add(report);
+  }
+
+  void checkOpenReport() {
+    if (openedReport != null) _isReportOpenController.add(true);
+  }
+
   // Get all the reports of a user from the DB
   Stream<QuerySnapshot> loadReports() {
     try {
@@ -57,4 +72,7 @@ class ReportViewModel extends FormBloc<String, String> {
       return null;
     }
   }
+
+  Stream<bool> get isReportOpen => _isReportOpenController.stream;
+  Stream<Report> get infoReportOpen => _infoReportOpenController.stream;
 }

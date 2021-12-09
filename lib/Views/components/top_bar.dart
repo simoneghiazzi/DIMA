@@ -8,8 +8,9 @@ class TopBar extends StatelessWidget {
   final String text;
   final List<InkWell> buttons;
   final Function back;
+  final bool isPortrait;
 
-  TopBar({Key key, @required this.text, this.buttons, this.back}) : super(key: key);
+  TopBar({Key key, @required this.text, this.buttons, this.back, this.isPortrait = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,28 +18,32 @@ class TopBar extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Container(
       color: kPrimaryColor,
-      height: size.height / 8,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          SafeArea(
-            child: SizedBox(
-              width: size.width,
-              child: Padding(
-                padding: EdgeInsets.only(right: 20, top: 8),
+      child: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(color: kPrimaryColor),
+          height: size.height / 12,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(right: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: Colors.white,
-                      ),
-                      onPressed: back ??
-                          () {
-                            routerDelegate.pop();
-                          },
-                    ),
+                    isPortrait
+                        ? Container(
+                            width: 15.0,
+                          )
+                        : IconButton(
+                            icon: Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white,
+                            ),
+                            onPressed: back ??
+                                () {
+                                  routerDelegate.pop();
+                                },
+                          ),
                     AutoSizeText(
                       text,
                       style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold, color: Colors.white),
@@ -49,9 +54,9 @@ class TopBar extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

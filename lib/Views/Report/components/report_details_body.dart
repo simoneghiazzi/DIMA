@@ -1,26 +1,37 @@
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:sApport/Model/BaseUser/report.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
+import 'package:sApport/Views/Report/report_details_screen.dart';
+import 'package:sApport/Views/Report/reports_list_screen.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 
 class ReportDetailsBody extends StatefulWidget {
-  final Report report;
+  bool startOrientation;
+  final ReportViewModel reportViewModel;
 
-  ReportDetailsBody({Key key, @required this.report}) : super(key: key);
+  ReportDetailsBody({Key key, this.startOrientation = false, @required this.reportViewModel}) : super(key: key);
 
   @override
   _ReportDetailsBodyState createState() => _ReportDetailsBodyState();
 }
 
 class _ReportDetailsBodyState extends State<ReportDetailsBody> {
+  AppRouterDelegate routerDelegate;
+
   @override
   void initState() {
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    Report report = widget.reportViewModel.openedReport;
+    detectChangeOrientation();
     Size size = MediaQuery.of(context).size;
     return Stack(
       children: <Widget>[
@@ -28,13 +39,16 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TopBar(
-              text: widget.report.category,
+              text: report.category,
+              isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
             ),
-            Container(
-              transform: Matrix4.translationValues(0.0, -5.0, 0.0),
-              height: size.height / 10,
-              color: kPrimaryColor,
-            ),
+            MediaQuery.of(context).orientation == Orientation.landscape
+                ? Container()
+                : Container(
+                    transform: Matrix4.translationValues(0.0, -5.0, 0.0),
+                    height: size.height / 10,
+                    color: kPrimaryColor,
+                  ),
           ],
         ),
         Padding(
@@ -58,7 +72,7 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> {
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Text(
-                          DateFormat('dd MMM yyyy').format(widget.report.date),
+                          DateFormat('dd MMM yyyy').format(report.date),
                           style: TextStyle(
                             color: kPrimaryColor.withAlpha(150),
                             fontSize: 15,
@@ -82,7 +96,7 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> {
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20),
                     child: Text(
-                      widget.report.description,
+                      report.description,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         color: kPrimaryColor,
@@ -97,6 +111,20 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> {
         ),
       ],
     );
+  }
+
+  Future<void> detectChangeOrientation() async {
+    if (widget.startOrientation != (MediaQuery.of(context).orientation == Orientation.landscape)) {
+      widget.startOrientation = true;
+      await Future(() async {
+        routerDelegate.replaceAllButNumber(3, [
+          RouteSettings(
+              name: ReportsListScreen.route,
+              arguments:
+                  ReportArguments(ReportDetailsScreen(startOrientation: true, reportViewModel: widget.reportViewModel), widget.reportViewModel))
+        ]);
+      });
+    }
   }
 
   @override

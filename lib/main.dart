@@ -20,13 +20,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
+import 'package:flutter_device_type/flutter_device_type.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Disable landscape orientation
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
+  if (!Device.get().isTablet) {
+    // Disable landscape orientation
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  }
   // Creation of the initialization Future for FirebaseApp
   await Firebase.initializeApp().catchError((e) {
     print('Initialization error');

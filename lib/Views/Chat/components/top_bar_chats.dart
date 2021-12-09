@@ -11,13 +11,9 @@ class TopBarChats extends StatelessWidget {
   final String text;
   final CircleAvatar circleAvatar;
   final NetworkAvatar networkAvatar;
+  final bool isPortrait;
 
-  TopBarChats({
-    Key key,
-    @required this.text,
-    this.circleAvatar,
-    this.networkAvatar,
-  }) : super(key: key);
+  TopBarChats({Key key, @required this.text, this.circleAvatar, this.networkAvatar, this.isPortrait = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,27 +21,32 @@ class TopBarChats extends StatelessWidget {
     ChatViewModel chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     return Container(
-      height: size.height / 8,
       color: kPrimaryColor,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          SafeArea(
-            child: SizedBox(
-              width: size.width,
-              child: Padding(
-                padding: EdgeInsets.only(right: 20, top: 8),
+      child: SafeArea(
+        child: Container(
+          height: size.height / 12,
+          decoration: BoxDecoration(color: kPrimaryColor),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(right: 20),
                 child: Row(
                   children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: Colors.white,
-                      ),
-                      onPressed: () async {
-                        FocusScope.of(context).unfocus();
-                        routerDelegate.pop();
-                      },
+                    isPortrait
+                        ? Container()
+                        : IconButton(
+                            icon: Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white,
+                            ),
+                            onPressed: () async {
+                              FocusScope.of(context).unfocus();
+                              routerDelegate.pop();
+                            },
+                          ),
+                    SizedBox(
+                      width: size.width * 0.01,
                     ),
                     circleAvatar ?? networkAvatar ?? Container(),
                     circleAvatar != null || networkAvatar != null
@@ -70,9 +71,9 @@ class TopBarChats extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

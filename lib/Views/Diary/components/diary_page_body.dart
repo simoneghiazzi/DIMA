@@ -14,9 +14,10 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class DiaryPageBody extends StatefulWidget {
-  final Note diaryNote;
+  bool startOrientation;
+  final DiaryViewModel diaryViewModel;
 
-  DiaryPageBody({Key key, this.diaryNote}) : super(key: key);
+  DiaryPageBody({Key key, @required this.diaryViewModel, this.startOrientation = false}) : super(key: key);
 
   @override
   _DiaryPageBodyState createState() => _DiaryPageBodyState();
@@ -24,8 +25,6 @@ class DiaryPageBody extends StatefulWidget {
 
 class _DiaryPageBodyState extends State<DiaryPageBody> {
   DateTime today;
-  Note note;
-  DiaryViewModel diaryViewModel;
   BaseUserViewModel baseUserViewModel;
   AppRouterDelegate routerDelegate;
   Alert errorAlert;
@@ -39,28 +38,28 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   @override
   void initState() {
     DateTime now = DateTime.now();
-    note = widget.diaryNote;
     today = DateTime(now.year, now.month, now.day);
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
-    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
     subscription = subscribeToSuccessViewModel();
     BackButtonInterceptor.add(backButtonInterceptor);
-    if (note == null) {
-      modifiable = true;
-      DateTime now = DateTime.now();
-      title = formatter.format(now);
-    } else {
-      diaryViewModel.setTextContent(note.title, note.content);
-      title = formatter.format(note.date);
-    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    Note note = widget.diaryViewModel.openedNote;
+    detectChangeOrientation();
+    if (note == null) {
+      modifiable = true;
+      DateTime now = DateTime.now();
+      title = formatter.format(now);
+    } else {
+      widget.diaryViewModel.setTextContent(note.title, note.content);
+      title = formatter.format(note.date);
+    }
     Size size = MediaQuery.of(context).size;
     return Stack(
       children: <Widget>[
@@ -69,10 +68,78 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
           children: [
             TopBar(
               text: title,
+              isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
               back: () {
-                diaryViewModel.clearControllers();
+                widget.diaryViewModel.clearControllers();
                 routerDelegate.pop();
               },
+              buttons: [
+                if (note != null && !modifiable && note.date == today)
+                  InkWell(
+                      child: InkResponse(
+                    onTap: () {
+                      setState(() {
+                        hasFocus = true;
+                        modifiable = true;
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white),
+                    ),
+                  )),
+                if (note != null && !modifiable)
+                  InkWell(
+                    child: InkResponse(
+                      onTap: () {
+                        note.favourite = !note.favourite;
+                        widget.diaryViewModel.setFavourite(note.id, note.favourite);
+                        setState(() {});
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child:
+                            note.favourite ? Icon(CupertinoIcons.heart_fill, color: Colors.white) : Icon(CupertinoIcons.heart, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                if (modifiable)
+                  InkWell(
+                    child: StreamBuilder(
+                        stream: widget.diaryViewModel.diaryForm.isButtonEnabled,
+                        builder: (context, snapshot) {
+                          if (snapshot.data ?? false || note != null) {
+                            return InkResponse(
+                              onTap: () {
+                                if (note != null) {
+                                  widget.diaryViewModel.submitPage(pageId: note.id, isFavourite: note.favourite);
+                                } else {
+                                  widget.diaryViewModel.submitPage();
+                                }
+                                setState(() {
+                                  note = widget.diaryViewModel.submittedNote;
+                                  modifiable = false;
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: Icon(Icons.check, color: Colors.white),
+                              ),
+                            );
+                          }
+                          return Container();
+                        }),
+                  )
+              ],
             ),
             Container(
               transform: Matrix4.translationValues(0.0, -5.0, 0.0),
@@ -105,7 +172,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     maxLines: null,
                     textCapitalization: TextCapitalization.sentences,
                     enabled: modifiable,
-                    controller: diaryViewModel.titleCtrl,
+                    controller: widget.diaryViewModel.titleCtrl,
                     cursorColor: kPrimaryColor,
                     style: TextStyle(
                       color: kPrimaryColor,
@@ -149,7 +216,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       child: TextField(
                         textCapitalization: TextCapitalization.sentences,
                         enabled: modifiable,
-                        controller: diaryViewModel.contentCtrl,
+                        controller: widget.diaryViewModel.contentCtrl,
                         cursorColor: kPrimaryColor,
                         style: TextStyle(color: kPrimaryColor, fontSize: 18),
                         keyboardType: TextInputType.multiline,
@@ -166,93 +233,12 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
             ),
           ),
         ),
-        note != null && !modifiable
-            ? Positioned(
-                top: 30,
-                right: 5,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    note.date == today
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15.0),
-                            child: InkResponse(
-                              onTap: () {
-                                setState(() {
-                                  hasFocus = true;
-                                  modifiable = true;
-                                });
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                ),
-                                child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white),
-                              ),
-                            ))
-                        : Container(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: InkResponse(
-                        onTap: () {
-                          note.favourite = !note.favourite;
-                          diaryViewModel.setFavourite(note.id, note.favourite);
-                          setState(() {});
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child:
-                              note.favourite ? Icon(CupertinoIcons.heart_fill, color: Colors.white) : Icon(CupertinoIcons.heart, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : Positioned(
-                top: 30,
-                right: 5,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-                  child: StreamBuilder(
-                      stream: diaryViewModel.diaryForm.isButtonEnabled,
-                      builder: (context, snapshot) {
-                        if (snapshot.data ?? false || note != null) {
-                          return InkResponse(
-                            onTap: () {
-                              if (note != null) {
-                                diaryViewModel.submitPage(pageId: note.id, isFavourite: note.favourite);
-                              } else {
-                                diaryViewModel.submitPage();
-                              }
-                              setState(() {
-                                note = diaryViewModel.submittedNote;
-                                modifiable = false;
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: Icon(Icons.check, color: Colors.white),
-                            ),
-                          );
-                        }
-                        return Container();
-                      }),
-                ),
-              ),
       ],
     );
   }
 
   StreamSubscription<bool> subscribeToSuccessViewModel() {
-    return diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
+    return widget.diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
       if (isSuccessfulAdd) {
         successAlert.show();
       } else {
@@ -313,8 +299,17 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
 
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     routerDelegate.pop();
-    diaryViewModel.clearControllers();
+    widget.diaryViewModel.clearControllers();
     return true;
+  }
+
+  Future<void> detectChangeOrientation() async {
+    if (widget.startOrientation != (MediaQuery.of(context).orientation == Orientation.landscape)) {
+      widget.startOrientation = true;
+      await Future(() async {
+        routerDelegate.pop();
+      });
+    }
   }
 
   @override

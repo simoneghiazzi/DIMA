@@ -20,12 +20,14 @@ class _MessageListItemState extends State<MessageListItem> {
   @override
   Widget build(BuildContext context) {
     var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    Size size = MediaQuery.of(context).size;
     if (widget.messageItem != null) {
       if (widget.messageItem.getData()['idFrom'] == chatViewModel.conversation.senderUser.id) {
         // Right (my message)
         return Row(
           children: [
             Container(
+              width: size.width / 3,
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Flexible(
                   child: Container(
@@ -45,7 +47,6 @@ class _MessageListItemState extends State<MessageListItem> {
                   ),
                 )
               ]),
-              width: 200.0,
               decoration: BoxDecoration(color: kPrimaryLightColor, borderRadius: BorderRadius.circular(15.0)),
               margin: EdgeInsets.only(bottom: 10.0),
             ),
@@ -57,6 +58,7 @@ class _MessageListItemState extends State<MessageListItem> {
         return Row(
           children: [
             Container(
+              width: size.width / 3,
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Flexible(
                   child: Container(
@@ -76,7 +78,6 @@ class _MessageListItemState extends State<MessageListItem> {
                   ),
                 )
               ]),
-              width: 200.0,
               decoration: BoxDecoration(color: kPrimaryColor, borderRadius: BorderRadius.circular(15.0)),
               margin: EdgeInsets.only(bottom: 10.0),
             ),

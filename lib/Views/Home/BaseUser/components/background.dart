@@ -11,14 +11,11 @@ class Background extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      height: size.height,
-      width: double.infinity,
       child: Stack(
-        alignment: Alignment.center,
         children: <Widget>[
           Positioned(
-            top: 0,
-            left: 0,
+            top: -50,
+            left: -50,
             child: Image.asset(
               "assets/images/main_top.png",
               width: size.width * 0.3,
@@ -31,14 +28,14 @@ class Background extends StatelessWidget {
                 padding: EdgeInsets.only(top: 10),
                 child: Image.asset(
                   "assets/icons/logo.png",
-                  width: size.height * 0.07,
+                  width: size.height * 0.06,
                 ),
               ),
             ),
           ),
           Positioned(
-            bottom: 0,
-            right: 0,
+            bottom: -50,
+            right: -50,
             child: Opacity(
               opacity: 0.5,
               child: Image.asset(

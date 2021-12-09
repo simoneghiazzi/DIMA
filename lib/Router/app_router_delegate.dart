@@ -1,4 +1,6 @@
+import 'package:sApport/Model/BaseUser/report.dart';
 import 'package:sApport/ViewModel/BaseUser/base_user_info_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
@@ -28,6 +30,20 @@ class InfoArguments {
   final UserViewModel userViewModel;
 
   InfoArguments(this.userInfoViewModel, this.userViewModel);
+}
+
+class ReportArguments {
+  final Widget reportPage;
+  final ReportViewModel reportViewModel;
+
+  ReportArguments(this.reportPage, this.reportViewModel);
+}
+
+class ReportDetailsArguments {
+  final Report report;
+  final ReportViewModel reportViewModel;
+
+  ReportDetailsArguments(this.report, this.reportViewModel);
 }
 
 class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<RouteSettings>> {
@@ -79,12 +95,13 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         break;
       case ReportsListScreen.route:
         child = ReportsListScreen(
-          reportViewModel: routeSettings.arguments,
+          reportPage: (routeSettings.arguments as ReportArguments).reportPage,
+          reportViewModel: (routeSettings.arguments as ReportArguments).reportViewModel,
         );
         break;
       case ReportDetailsScreen.route:
         child = ReportDetailsScreen(
-          report: routeSettings.arguments,
+          reportViewModel: (routeSettings.arguments as ReportDetailsArguments).reportViewModel,
         );
         break;
       case CreateReportScreen.route:
@@ -119,20 +136,24 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = ChatPageScreen();
         break;
       case ExpertChatsListScreen.route:
-        child = ExpertChatsListScreen();
+        child = ExpertChatsListScreen(
+          chatPage: routeSettings.arguments,
+        );
         break;
       case PendingChatsListScreen.route:
         child = PendingChatsListScreen();
         break;
       case ActiveChatsListScreen.route:
-        child = ActiveChatsListScreen();
+        child = ActiveChatsListScreen(
+          chatPage: routeSettings.arguments,
+        );
         break;
       case DiaryScreen.route:
         child = DiaryScreen();
         break;
       case DiaryPageScreen.route:
         child = DiaryPageScreen(
-          diaryNote: routeSettings.arguments,
+          diaryViewModel: routeSettings.arguments,
         );
         break;
     }
