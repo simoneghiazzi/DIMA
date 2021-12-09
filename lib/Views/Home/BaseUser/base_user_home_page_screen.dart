@@ -18,25 +18,22 @@ class BaseUserHomePageScreen extends StatefulWidget {
 }
 
 class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
+  BaseUserViewModel baseUserViewModel;
+  AuthViewModel authViewModel;
   int _currentIndex;
 
   @override
   void initState() {
+    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    authViewModel.setNotification(baseUserViewModel.loggedUser);
     _currentIndex = widget.pageIndex ?? 0;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var baseUserViewModel =
-        Provider.of<BaseUserViewModel>(context, listen: false);
-    var authViewModel = Provider.of<AuthViewModel>(context, listen: false);
-    authViewModel.setNotification(baseUserViewModel.loggedUser);
-    final List<Widget> _pages = [
-      BaseUserHomePageBody(),
-      DiaryScreen(),
-      UserSettingsScreen(user: baseUserViewModel.loggedUser)
-    ];
+    final List<Widget> _pages = [BaseUserHomePageBody(), DiaryScreen(), UserSettingsScreen(user: baseUserViewModel.loggedUser)];
     return WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
@@ -56,10 +53,8 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
                   icon: Icon(Icons.home),
                   label: 'Home',
                 ),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.menu_book), label: 'Diary'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: 'Profile')
+                BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Diary'),
+                BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
               ]),
         ));
   }

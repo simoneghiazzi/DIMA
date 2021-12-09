@@ -1,5 +1,4 @@
 import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
-import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/Views/Home/Expert/components/expert_home_page_body.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
 import 'package:sApport/constants.dart';
@@ -28,11 +27,9 @@ class _ExpertHomePageScreenState extends State<ExpertHomePageScreen> {
   @override
   Widget build(BuildContext context) {
     var expertViewModel = Provider.of<ExpertViewModel>(context, listen: false);
-    var authViewModel = Provider.of<AuthViewModel>(context, listen: false);
-    authViewModel.setNotification(expertViewModel.loggedUser);
     final List<Widget> _pages = [
       ExpertHomePageBody(),
-      //Claendar(),
+      //Calendar(),
       UserSettingsScreen(user: expertViewModel.loggedUser)
     ];
     return WillPopScope(
@@ -55,9 +52,8 @@ class _ExpertHomePageScreenState extends State<ExpertHomePageScreen> {
                   label: 'Chats',
                 ),
                 // BottomNavigationBarItem(
-                //     icon: Icon(Icons.menu_book), label: 'Diary'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: 'Profile')
+                //     icon: Icon(Icons.menu_book), label: 'Calendar'),
+                BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile')
               ]),
         ));
   }
