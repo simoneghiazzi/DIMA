@@ -5,7 +5,6 @@ import 'package:sApport/Model/BaseUser/Diary/note.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:sApport/Views/Diary/diary_screen.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/cupertino.dart';
@@ -46,6 +45,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     successAlert = createSuccessAlert();
     subscription = subscribeToSuccessViewModel();
     BackButtonInterceptor.add(backButtonInterceptor);
+    super.initState();
   }
 
   @override
