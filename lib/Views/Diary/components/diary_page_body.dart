@@ -5,6 +5,7 @@ import 'package:sApport/Model/BaseUser/Diary/note.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/Views/Diary/diary_screen.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,9 +15,10 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class DiaryPageBody extends StatefulWidget {
-  final Note diaryNote;
+  bool startOrientation;
+  final DiaryViewModel diaryViewModel;
 
-  DiaryPageBody({Key key, this.diaryNote}) : super(key: key);
+  DiaryPageBody({Key key, @required this.diaryViewModel, this.startOrientation = false}) : super(key: key);
 
   @override
   _DiaryPageBodyState createState() => _DiaryPageBodyState();
@@ -24,8 +26,6 @@ class DiaryPageBody extends StatefulWidget {
 
 class _DiaryPageBodyState extends State<DiaryPageBody> {
   DateTime today;
-  Note note;
-  DiaryViewModel diaryViewModel;
   BaseUserViewModel baseUserViewModel;
   AppRouterDelegate routerDelegate;
   Alert errorAlert;
@@ -39,28 +39,27 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   @override
   void initState() {
     DateTime now = DateTime.now();
-    note = widget.diaryNote;
     today = DateTime(now.year, now.month, now.day);
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
-    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
     subscription = subscribeToSuccessViewModel();
     BackButtonInterceptor.add(backButtonInterceptor);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Note note = widget.diaryViewModel.openedNote;
+    detectChangeOrientation();
     if (note == null) {
       modifiable = true;
       DateTime now = DateTime.now();
       title = formatter.format(now);
     } else {
-      diaryViewModel.setTextContent(note.title, note.content);
+      widget.diaryViewModel.setTextContent(note.title, note.content);
       title = formatter.format(note.date);
     }
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Stack(
       children: <Widget>[
@@ -69,8 +68,9 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
           children: [
             TopBar(
               text: title,
+              isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
               back: () {
-                diaryViewModel.clearControllers();
+                widget.diaryViewModel.clearControllers();
                 routerDelegate.pop();
               },
               buttons: [
@@ -96,7 +96,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     child: InkResponse(
                       onTap: () {
                         note.favourite = !note.favourite;
-                        diaryViewModel.setFavourite(note.id, note.favourite);
+                        widget.diaryViewModel.setFavourite(note.id, note.favourite);
                         setState(() {});
                       },
                       child: Container(
@@ -112,18 +112,18 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                 if (modifiable)
                   InkWell(
                     child: StreamBuilder(
-                        stream: diaryViewModel.diaryForm.isButtonEnabled,
+                        stream: widget.diaryViewModel.diaryForm.isButtonEnabled,
                         builder: (context, snapshot) {
                           if (snapshot.data ?? false || note != null) {
                             return InkResponse(
                               onTap: () {
                                 if (note != null) {
-                                  diaryViewModel.submitPage(pageId: note.id, isFavourite: note.favourite);
+                                  widget.diaryViewModel.submitPage(pageId: note.id, isFavourite: note.favourite);
                                 } else {
-                                  diaryViewModel.submitPage();
+                                  widget.diaryViewModel.submitPage();
                                 }
                                 setState(() {
-                                  note = diaryViewModel.submittedNote;
+                                  note = widget.diaryViewModel.submittedNote;
                                   modifiable = false;
                                 });
                               },
@@ -172,7 +172,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     maxLines: null,
                     textCapitalization: TextCapitalization.sentences,
                     enabled: modifiable,
-                    controller: diaryViewModel.titleCtrl,
+                    controller: widget.diaryViewModel.titleCtrl,
                     cursorColor: kPrimaryColor,
                     style: TextStyle(
                       color: kPrimaryColor,
@@ -216,7 +216,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       child: TextField(
                         textCapitalization: TextCapitalization.sentences,
                         enabled: modifiable,
-                        controller: diaryViewModel.contentCtrl,
+                        controller: widget.diaryViewModel.contentCtrl,
                         cursorColor: kPrimaryColor,
                         style: TextStyle(color: kPrimaryColor, fontSize: 18),
                         keyboardType: TextInputType.multiline,
@@ -238,7 +238,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   }
 
   StreamSubscription<bool> subscribeToSuccessViewModel() {
-    return diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
+    return widget.diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
       if (isSuccessfulAdd) {
         successAlert.show();
       } else {
@@ -299,8 +299,17 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
 
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     routerDelegate.pop();
-    diaryViewModel.clearControllers();
+    widget.diaryViewModel.clearControllers();
     return true;
+  }
+
+  Future<void> detectChangeOrientation() async {
+    if (widget.startOrientation != (MediaQuery.of(context).orientation == Orientation.landscape)) {
+      widget.startOrientation = true;
+      await Future(() async {
+        routerDelegate.pop();
+      });
+    }
   }
 
   @override

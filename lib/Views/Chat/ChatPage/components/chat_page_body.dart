@@ -29,15 +29,12 @@ class ChatPageBody extends StatefulWidget {
 class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver {
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
-  User peerUser, senderUser;
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    peerUser = chatViewModel.conversation.peerUser;
-    senderUser = chatViewModel.conversation.senderUser;
     chatViewModel.updateChattingWith();
     BackButtonInterceptor.add(backButtonInterceptor);
     super.initState();
@@ -46,6 +43,8 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
   @override
   Widget build(BuildContext context) {
     detectChangeOrientation();
+    User peerUser = chatViewModel.conversation.peerUser;
+    User senderUser = chatViewModel.conversation.senderUser;
     return Column(
       children: <Widget>[
         peerUser.collection == Collection.EXPERTS

@@ -12,11 +12,14 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:sApport/Model/BaseUser/Diary/note.dart';
 
 class DiaryBody extends StatefulWidget {
+  final DiaryViewModel diaryViewModel;
+
+  const DiaryBody({Key key, @required this.diaryViewModel}) : super(key: key);
+
   _DiaryBodyState createState() => _DiaryBodyState();
 }
 
 class _DiaryBodyState extends State<DiaryBody> {
-  DiaryViewModel diaryViewModel;
   BaseUserViewModel baseUserViewModel;
   AppRouterDelegate routerDelegate;
 
@@ -26,7 +29,6 @@ class _DiaryBodyState extends State<DiaryBody> {
   @override
   void initState() {
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
-    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
 
     _headerText = "header";
@@ -38,21 +40,23 @@ class _DiaryBodyState extends State<DiaryBody> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: diaryViewModel.loadPagesStream(),
+      stream: widget.diaryViewModel.loadPagesStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Stack(
             children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Header(),
-                  Container(
-                    transform: Matrix4.translationValues(0.0, -5.0, 0.0),
-                    height: size.height / 2,
-                    color: kPrimaryColor,
-                  ),
-                ],
+              SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Header(),
+                    Container(
+                      transform: Matrix4.translationValues(0.0, -5.0, 0.0),
+                      height: size.height / 2,
+                      color: kPrimaryColor,
+                    ),
+                  ],
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(top: size.height / 8),
@@ -73,7 +77,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                     child: SfCalendar(
                       controller: _controller,
                       todayHighlightColor: kPrimaryColor,
-                      dataSource: NoteDataSource(snapshot.data.docs, diaryViewModel),
+                      dataSource: NoteDataSource(snapshot.data.docs, widget.diaryViewModel),
                       headerStyle: CalendarHeaderStyle(
                         textStyle: TextStyle(color: kPrimaryColor, fontSize: 25, fontWeight: FontWeight.bold),
                       ),
@@ -90,7 +94,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                           appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
                           appointmentDisplayCount: 1,
                           showAgenda: true,
-                          agendaViewHeight: diaryViewModel.hasNoteToday ? size.height / 10 : size.height / 8,
+                          agendaViewHeight: widget.diaryViewModel.hasNoteToday ? size.height / 10 : size.height / 8,
                           agendaItemHeight: size.height / 15,
                           monthCellStyle: MonthCellStyle(
                             trailingDatesBackgroundColor: kPrimaryLightColor,
@@ -107,7 +111,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                   ),
                 ),
               ),
-              !diaryViewModel.hasNoteToday
+              !widget.diaryViewModel.hasNoteToday
                   ? Align(
                       alignment: Alignment.lerp(
                           Alignment.lerp(Alignment.lerp(Alignment.bottomRight, Alignment.topRight, 0.005), Alignment.center, 0.05),
@@ -115,7 +119,10 @@ class _DiaryBodyState extends State<DiaryBody> {
                           0.02),
                       child: FloatingActionButton(
                         onPressed: () {
-                          routerDelegate.pushPage(name: DiaryPageScreen.route);
+                          widget.diaryViewModel.openPage(null);
+                          if (MediaQuery.of(context).orientation != Orientation.landscape) {
+                            routerDelegate.pushPage(name: DiaryPageScreen.route);
+                          }
                         },
                         materialTapTargetSize: MaterialTapTargetSize.padded,
                         backgroundColor: kPrimaryColor,
@@ -139,7 +146,10 @@ class _DiaryBodyState extends State<DiaryBody> {
     if (details.appointments != null) {
       if (details.appointments.isNotEmpty && details.targetElement == CalendarElement.appointment) {
         final Note noteDetails = details.appointments[0];
-        routerDelegate.pushPage(name: DiaryPageScreen.route, arguments: noteDetails);
+        widget.diaryViewModel.openPage(noteDetails);
+        if (MediaQuery.of(context).orientation != Orientation.landscape) {
+          routerDelegate.pushPage(name: DiaryPageScreen.route, arguments: widget.diaryViewModel);
+        }
       }
     }
   }

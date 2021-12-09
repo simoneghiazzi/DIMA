@@ -153,7 +153,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         break;
       case DiaryPageScreen.route:
         child = DiaryPageScreen(
-          diaryNote: routeSettings.arguments,
+          diaryViewModel: routeSettings.arguments,
         );
         break;
     }
