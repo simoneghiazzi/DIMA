@@ -7,6 +7,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
+import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
@@ -58,11 +61,15 @@ Future<void> main() async {
     var userViewModel = collection.userViewModel;
     await userViewModel.loadLoggedUser(alreadyLoggedUserId).then((_) => print("User of category ${collection.value} logged"));
     runApp(MyApp(
-      userProvider: Provider(create: (context) => userViewModel),
+      baseUserProvider: Provider(create: (context) => userViewModel as BaseUserViewModel),
+      expertProvider: Provider(create: (context) => userViewModel as ExpertViewModel),
       homePage: collection.homePageRoute,
     ));
   } else {
-    runApp(MyApp());
+    runApp(MyApp(
+      baseUserProvider: Provider(create: (context) => BaseUserViewModel()),
+      expertProvider: Provider(create: (context) => ExpertViewModel()),
+    ));
   }
 }
 
@@ -74,10 +81,11 @@ void setupServices() {
 }
 
 class MyApp extends StatefulWidget {
-  final Provider userProvider;
+  final Provider<BaseUserViewModel> baseUserProvider;
+  final Provider<ExpertViewModel> expertProvider;
   final String homePage;
 
-  MyApp({Key key, this.userProvider, this.homePage}) : super(key: key);
+  MyApp({Key key, @required this.baseUserProvider, @required this.expertProvider, this.homePage}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -106,7 +114,8 @@ class _MyAppState extends State<MyApp> {
         Provider(create: (context) => DiaryViewModel()),
         Provider(create: (context) => ReportViewModel()),
         Provider(create: (context) => MapViewModel()),
-        if (widget.userProvider != null) widget.userProvider,
+        widget.baseUserProvider,
+        widget.expertProvider
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
