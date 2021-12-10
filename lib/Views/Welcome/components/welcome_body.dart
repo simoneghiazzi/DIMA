@@ -23,7 +23,6 @@ class WelcomeBody extends StatefulWidget {
 class _WelcomeBodyState extends State<WelcomeBody> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   AuthViewModel authViewModel;
-  BaseUserViewModel baseUserViewModel;
   String id;
   AppRouterDelegate routerDelegate;
 
@@ -127,10 +126,8 @@ class _WelcomeBodyState extends State<WelcomeBody> {
   }
 
   void navigateToHome() async {
-    Provider<UserViewModel>.value(value: BaseUserViewModel());
-    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
-    baseUserViewModel.id = id;
-    await baseUserViewModel.loadLoggedUser();
+    BaseUserViewModel baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    await baseUserViewModel.loadLoggedUser(id);
     LoadingDialog.hide(context, _keyLoader);
     routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
   }

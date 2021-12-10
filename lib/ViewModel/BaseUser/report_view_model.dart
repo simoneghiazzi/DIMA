@@ -10,11 +10,15 @@ import 'package:get_it/get_it.dart';
 
 class ReportViewModel extends FormBloc<String, String> {
   FirestoreService _firestoreService = GetIt.I<FirestoreService>();
-  final String loggedId;
+  String loggedId;
   Report openedReport;
   var _isReportOpenController = StreamController<bool>.broadcast();
   var _infoReportOpenController = StreamController<Report>.broadcast();
 
+  ReportViewModel() {
+    addFieldBlocs(fieldBlocs: [reportCategory, reportText]);
+  }
+  
   final reportCategory = SelectFieldBloc(items: [
     'Psychological violence',
     'Physical violence',
@@ -27,10 +31,6 @@ class ReportViewModel extends FormBloc<String, String> {
   final reportText = TextFieldBloc(validators: [
     FieldBlocValidators.required,
   ]);
-
-  ReportViewModel({@required this.loggedId}) {
-    addFieldBlocs(fieldBlocs: [reportCategory, reportText]);
-  }
 
   @override
   void onSubmitting() async {

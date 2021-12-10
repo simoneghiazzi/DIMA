@@ -5,6 +5,7 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
 import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
 import 'package:sApport/Views/Login/forgot_password_screen.dart';
@@ -38,8 +39,7 @@ class _LoginBodyState extends State<LoginBody> {
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     BackButtonInterceptor.add(backButtonInterceptor);
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => authViewModel.getData());
+    WidgetsBinding.instance.addPostFrameCallback((_) => authViewModel.getData());
     super.initState();
   }
 
@@ -108,10 +108,7 @@ class _LoginBodyState extends State<LoginBody> {
             StreamBuilder<String>(
                 stream: authViewModel.authMessage,
                 builder: (context, snapshot) {
-                  return RichText(
-                      text: TextSpan(
-                          text: snapshot.data,
-                          style: TextStyle(color: Colors.red, fontSize: 15)));
+                  return RichText(text: TextSpan(text: snapshot.data, style: TextStyle(color: Colors.red, fontSize: 15)));
                 }),
             SizedBox(height: size.height * 0.02),
             AlreadyHaveAnAccountCheck(
@@ -129,27 +126,16 @@ class _LoginBodyState extends State<LoginBody> {
 
   void navigateToHome(String id) async {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    Collection collection =
-        await firestoreService.findUserCollection(authViewModel.loggedId);
-    switch (collection) {
-      case Collection.BASE_USERS:
-        var baseUserViewModel =
-            Provider.of<BaseUserViewModel>(context, listen: false);
-        baseUserViewModel.id = id;
-        await baseUserViewModel.loadLoggedUser();
-        LoadingDialog.hide(context, _keyLoader);
-        routerDelegate.replace(name: BaseUserHomePageScreen.route);
-        break;
-      case Collection.EXPERTS:
-        var expertViewModel =
-            Provider.of<ExpertViewModel>(context, listen: false);
-        expertViewModel.id = id;
-        await expertViewModel.loadLoggedUser();
-        LoadingDialog.hide(context, _keyLoader);
-        routerDelegate.replace(name: ExpertHomePageScreen.route);
-        break;
-      default:
+    Collection collection = await firestoreService.findUserCollection(id);
+    var userViewModel;
+    if (collection == Collection.BASE_USERS) {
+      userViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    } else {
+      userViewModel = Provider.of<ExpertViewModel>(context, listen: false);
     }
+    await userViewModel.loadLoggedUser(id).then((_) => print("User of category ${collection.value} logged"));
+    LoadingDialog.hide(context, _keyLoader);
+    routerDelegate.replace(name: collection.homePageRoute);
   }
 
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {

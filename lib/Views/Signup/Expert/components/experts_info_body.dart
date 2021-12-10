@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/Expert/expert_info_view_model.dart';
+import 'package:sApport/ViewModel/Forms/expert_signup_form.dart';
 import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Signup/components/background.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
@@ -22,7 +23,7 @@ class ExpertsInfoBody extends StatefulWidget {
 
 class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-  ExpertInfoViewModel expertInfoViewModel;
+  ExpertSignUpForm expertInfoViewModel;
   AppRouterDelegate routerDelegate;
   bool nextEnabled;
   File _image;
@@ -47,10 +48,10 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
         child: Column(
           children: <Widget>[
             BlocProvider(
-              create: (context) => ExpertInfoViewModel(),
+              create: (context) => ExpertSignUpForm(),
               child: Builder(
                 builder: (context) {
-                  expertInfoViewModel = BlocProvider.of<ExpertInfoViewModel>(
+                  expertInfoViewModel = BlocProvider.of<ExpertSignUpForm>(
                       context,
                       listen: false);
                   return Theme(
@@ -63,7 +64,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                         ),
                       ),
                       child:
-                          FormBlocListener<ExpertInfoViewModel, String, String>(
+                          FormBlocListener<ExpertSignUpForm, String, String>(
                         onSubmitting: (context, state) {
                           LoadingDialog.show(context, _keyLoader);
                         },

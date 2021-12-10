@@ -3,9 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
-import 'package:sApport/ViewModel/ObserverForms/auth_form.dart';
 import 'package:sApport/Model/Services/notification_service.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
+import 'package:sApport/ViewModel/Forms/auth_form.dart';
 
 class AuthViewModel {
   // Text Controllers

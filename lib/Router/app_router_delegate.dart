@@ -1,6 +1,6 @@
 import 'package:sApport/Model/BaseUser/report.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_info_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
+import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
@@ -26,24 +26,10 @@ import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
 class InfoArguments {
-  final BaseUserInfoViewModel userInfoViewModel;
+  final BaseUserSignUpForm userInfoViewModel;
   final UserViewModel userViewModel;
 
   InfoArguments(this.userInfoViewModel, this.userViewModel);
-}
-
-class ReportArguments {
-  final Widget reportPage;
-  final ReportViewModel reportViewModel;
-
-  ReportArguments(this.reportPage, this.reportViewModel);
-}
-
-class ReportDetailsArguments {
-  final Report report;
-  final ReportViewModel reportViewModel;
-
-  ReportDetailsArguments(this.report, this.reportViewModel);
 }
 
 class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<RouteSettings>> {
@@ -93,15 +79,12 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
       case BaseUsersSignUpScreen.route:
         child = BaseUsersSignUpScreen();
         break;
-      case ReportsListScreen.route:
-        child = ReportsListScreen(
-          reportPage: (routeSettings.arguments as ReportArguments).reportPage,
-          reportViewModel: (routeSettings.arguments as ReportArguments).reportViewModel,
-        );
-        break;
+      // case ReportsListScreen.route:
+      //   child = ReportsListScreen();
+      //   break;
       case ReportDetailsScreen.route:
         child = ReportDetailsScreen(
-          reportViewModel: (routeSettings.arguments as ReportDetailsArguments).reportViewModel,
+          report: routeSettings.arguments,
         );
         break;
       case CreateReportScreen.route:
@@ -136,24 +119,20 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = ChatPageScreen();
         break;
       case ExpertChatsListScreen.route:
-        child = ExpertChatsListScreen(
-          chatPage: routeSettings.arguments,
-        );
+        child = ExpertChatsListScreen();
         break;
       case PendingChatsListScreen.route:
         child = PendingChatsListScreen();
         break;
       case ActiveChatsListScreen.route:
-        child = ActiveChatsListScreen(
-          chatPage: routeSettings.arguments,
-        );
+        child = ActiveChatsListScreen();
         break;
       case DiaryScreen.route:
         child = DiaryScreen();
         break;
       case DiaryPageScreen.route:
         child = DiaryPageScreen(
-          diaryViewModel: routeSettings.arguments,
+          diaryPage: routeSettings.arguments,
         );
         break;
     }

@@ -69,10 +69,10 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                   ),
                 ),
                 onTap: () {
-                  routerDelegate.pushPage(
-                    name: ReportsListScreen.route,
-                    arguments: ReportArguments(null, reportViewModel),
-                  );
+                  // routerDelegate.pushPage(
+                  //   name: ReportsListScreen.route,
+                  //   arguments: ReportArguments(null, reportViewModel),
+                  // );
                 },
               )
             ],
@@ -80,7 +80,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
           SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: BlocProvider(
-              create: (context) => ReportViewModel(loggedId: baseUserViewModel.id),
+              create: (context) => ReportViewModel(),
               child: Builder(
                 builder: (context) {
                   reportViewModel = BlocProvider.of<ReportViewModel>(context);
@@ -196,7 +196,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
           ),
           onPressed: () {
             reportViewModel.clearControllers();
-            routerDelegate.pushPage(name: ReportsListScreen.route, arguments: reportViewModel);
+            //routerDelegate.pushPage(name: ReportsListScreen.route, arguments: reportViewModel);
             successAlert.dismiss();
           },
           color: Colors.transparent,

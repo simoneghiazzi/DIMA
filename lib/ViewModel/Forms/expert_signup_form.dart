@@ -1,10 +1,10 @@
 import 'package:sApport/Model/BaseUser/Map/place.dart';
 import 'package:sApport/Model/BaseUser/Map/place_search.dart';
+import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_info_view_model.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 
-class ExpertInfoViewModel extends BaseUserInfoViewModel {
+class ExpertSignUpForm extends BaseUserSignUpForm {
   final MapViewModel mapViewModel = MapViewModel();
   String infoAddress;
   Place expertAddress;
@@ -31,7 +31,7 @@ class ExpertInfoViewModel extends BaseUserInfoViewModel {
     FieldBlocValidators.phoneCorrect,
   ]);
 
-  ExpertInfoViewModel() {
+  ExpertSignUpForm() {
     addFieldBlocs(fieldBlocs: [
       nameText,
       surnameText,

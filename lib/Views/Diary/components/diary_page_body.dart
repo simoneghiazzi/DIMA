@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:intl/intl.dart';
-import 'package:sApport/Model/BaseUser/Diary/note.dart';
+import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
@@ -14,16 +14,16 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class DiaryPageBody extends StatefulWidget {
-  bool startOrientation;
-  final DiaryViewModel diaryViewModel;
+  final DiaryPage diaryPage;
 
-  DiaryPageBody({Key key, @required this.diaryViewModel, this.startOrientation = false}) : super(key: key);
+  DiaryPageBody({Key key, @required this.diaryPage}) : super(key: key);
 
   @override
   _DiaryPageBodyState createState() => _DiaryPageBodyState();
 }
 
 class _DiaryPageBodyState extends State<DiaryPageBody> {
+  DiaryViewModel diaryViewModel;
   DateTime today;
   BaseUserViewModel baseUserViewModel;
   AppRouterDelegate routerDelegate;
@@ -39,6 +39,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   void initState() {
     DateTime now = DateTime.now();
     today = DateTime(now.year, now.month, now.day);
+    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     errorAlert = createErrorAlert();
@@ -50,15 +51,14 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
 
   @override
   Widget build(BuildContext context) {
-    Note note = widget.diaryViewModel.openedNote;
-    detectChangeOrientation();
-    if (note == null) {
+    //detectChangeOrientation();
+    if (widget.diaryPage == null) {
       modifiable = true;
       DateTime now = DateTime.now();
       title = formatter.format(now);
     } else {
-      widget.diaryViewModel.setTextContent(note.title, note.content);
-      title = formatter.format(note.date);
+      diaryViewModel.setTextContent(widget.diaryPage.title, widget.diaryPage.content);
+      title = formatter.format(widget.diaryPage.date);
     }
     Size size = MediaQuery.of(context).size;
     return Stack(
@@ -70,11 +70,11 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
               text: title,
               isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
               back: () {
-                widget.diaryViewModel.clearControllers();
+                diaryViewModel.clearControllers();
                 routerDelegate.pop();
               },
               buttons: [
-                if (note != null && !modifiable && note.date == today)
+                if (widget.diaryPage != null && !modifiable && widget.diaryPage.date == today)
                   InkWell(
                       child: InkResponse(
                     onTap: () {
@@ -91,12 +91,12 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white),
                     ),
                   )),
-                if (note != null && !modifiable)
+                if (widget.diaryPage != null && !modifiable)
                   InkWell(
                     child: InkResponse(
                       onTap: () {
-                        note.favourite = !note.favourite;
-                        widget.diaryViewModel.setFavourite(note.id, note.favourite);
+                        widget.diaryPage.favourite = !widget.diaryPage.favourite;
+                        diaryViewModel.setFavourite(widget.diaryPage.id, widget.diaryPage.favourite);
                         setState(() {});
                       },
                       child: Container(
@@ -105,25 +105,25 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                           borderRadius: BorderRadius.circular(100),
                         ),
                         child:
-                            note.favourite ? Icon(CupertinoIcons.heart_fill, color: Colors.white) : Icon(CupertinoIcons.heart, color: Colors.white),
+                            widget.diaryPage.favourite ? Icon(CupertinoIcons.heart_fill, color: Colors.white) : Icon(CupertinoIcons.heart, color: Colors.white),
                       ),
                     ),
                   ),
                 if (modifiable)
                   InkWell(
                     child: StreamBuilder(
-                        stream: widget.diaryViewModel.diaryForm.isButtonEnabled,
+                        stream: diaryViewModel.diaryForm.isButtonEnabled,
                         builder: (context, snapshot) {
-                          if (snapshot.data ?? false || note != null) {
+                          if (snapshot.data ?? false || widget.diaryPage != null) {
                             return InkResponse(
                               onTap: () {
-                                if (note != null) {
-                                  widget.diaryViewModel.submitPage(pageId: note.id, isFavourite: note.favourite);
+                                if (widget.diaryPage != null) {
+                                  diaryViewModel.submitPage(pageId: widget.diaryPage.id, isFavourite: widget.diaryPage.favourite);
                                 } else {
-                                  widget.diaryViewModel.submitPage();
+                                  diaryViewModel.submitPage();
                                 }
                                 setState(() {
-                                  note = widget.diaryViewModel.submittedNote;
+                                  //note = diaryViewModel.submittedNote;
                                   modifiable = false;
                                 });
                               },
@@ -172,7 +172,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     maxLines: null,
                     textCapitalization: TextCapitalization.sentences,
                     enabled: modifiable,
-                    controller: widget.diaryViewModel.titleCtrl,
+                    controller: diaryViewModel.titleCtrl,
                     cursorColor: kPrimaryColor,
                     style: TextStyle(
                       color: kPrimaryColor,
@@ -216,7 +216,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       child: TextField(
                         textCapitalization: TextCapitalization.sentences,
                         enabled: modifiable,
-                        controller: widget.diaryViewModel.contentCtrl,
+                        controller: diaryViewModel.contentCtrl,
                         cursorColor: kPrimaryColor,
                         style: TextStyle(color: kPrimaryColor, fontSize: 18),
                         keyboardType: TextInputType.multiline,
@@ -238,7 +238,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   }
 
   StreamSubscription<bool> subscribeToSuccessViewModel() {
-    return widget.diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
+    return diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
       if (isSuccessfulAdd) {
         successAlert.show();
       } else {
@@ -299,18 +299,18 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
 
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     routerDelegate.pop();
-    widget.diaryViewModel.clearControllers();
+    diaryViewModel.clearControllers();
     return true;
   }
 
-  Future<void> detectChangeOrientation() async {
-    if (widget.startOrientation != (MediaQuery.of(context).orientation == Orientation.landscape)) {
-      widget.startOrientation = true;
-      await Future(() async {
-        routerDelegate.pop();
-      });
-    }
-  }
+  // Future<void> detectChangeOrientation() async {
+  //   if (widget.startOrientation != (MediaQuery.of(context).orientation == Orientation.landscape)) {
+  //     widget.startOrientation = true;
+  //     await Future(() async {
+  //       routerDelegate.pop();
+  //     });
+  //   }
+  // }
 
   @override
   void dispose() {

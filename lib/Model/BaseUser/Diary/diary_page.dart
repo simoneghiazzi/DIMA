@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/db_item.dart';
 
-class Note implements DbItem {
+class DiaryPage implements DbItem {
   String id;
   String title;
   String content;
   DateTime date;
   bool favourite;
 
-  Note({this.id, this.title, this.content, this.date, this.favourite});
+  DiaryPage({this.id, this.title, this.content, this.date, this.favourite});
 
   void setFromDocument(DocumentSnapshot doc) {
     try {

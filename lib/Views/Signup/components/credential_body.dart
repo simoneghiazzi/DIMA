@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_info_view_model.dart';
+import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
@@ -17,7 +17,7 @@ import 'package:sApport/Views/components/rounded_password_field.dart';
 import 'package:provider/provider.dart';
 
 class CredentialBody extends StatefulWidget {
-  final BaseUserInfoViewModel infoViewModel;
+  final BaseUserSignUpForm infoViewModel;
   final UserViewModel userViewModel;
 
   CredentialBody({
@@ -34,7 +34,7 @@ class CredentialBody extends StatefulWidget {
 
 class _CredentialBodyState extends State<CredentialBody> {
   GlobalKey<State> _keyLoader;
-  final BaseUserInfoViewModel infoViewModel;
+  final BaseUserSignUpForm infoViewModel;
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
   User user;

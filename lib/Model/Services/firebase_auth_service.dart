@@ -158,13 +158,14 @@ class FirebaseAuthService {
     await _firebaseAuth.signOut();
   }
 
-  /// Return the user id if it is already logged in.
+  /// Return the [uid] if it is already logged in, an empty string otherwise.
+  ///
   /// It checks if the email is verified in case the user has signed up with the email and password method.
-  Future<String> currentUser() async {
+  String currentUser() {
     if (_firebaseAuth.currentUser != null) {
       if (_firebaseAuth.currentUser.providerData[0].providerId == 'password' && !_firebaseAuth.currentUser.emailVerified) return null;
       return _firebaseAuth.currentUser.uid;
     }
-    return null;
+    return "";
   }
 }

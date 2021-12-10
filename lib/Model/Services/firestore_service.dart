@@ -2,7 +2,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/BaseUser/Diary/note.dart';
+import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Model/Chat/active_chat.dart';
 import 'package:sApport/Model/Chat/conversation.dart';
@@ -372,12 +372,12 @@ class FirestoreService {
 
   /// It takes the [id] of an user and the [note]
   /// and adds it into the list of diaryPages of the user into the DB
-  Future<void> addDiaryNoteIntoDB(String id, Note note) {
+  Future<void> addDiaryNoteIntoDB(String id, DiaryPage note) {
     return _firestore.collection(note.collection.value).doc(id).collection('diaryPages').doc(note.id).set(note.getData());
   }
 
   /// It takes the [id] of an user and the [note] and set it as favourite or not
-  Future<void> setFavouriteDiaryNotesIntoDB(String id, Note note) {
+  Future<void> setFavouriteDiaryNotesIntoDB(String id, DiaryPage note) {
     var data = note.getData();
     return _firestore
         .collection(note.collection.value)

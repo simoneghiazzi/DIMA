@@ -97,13 +97,13 @@ class _ReportsListBodyState extends State<ReportsListBody> {
             )
           ]),
           onPressed: () {
-            widget.reportViewModel.openReport(report);
-            if (MediaQuery.of(context).orientation != Orientation.landscape) {
-              routerDelegate.pushPage(
-                name: ReportDetailsScreen.route,
-                arguments: ReportDetailsArguments(widget.reportViewModel.openedReport, widget.reportViewModel),
-              );
-            }
+            // widget.reportViewModel.openReport(report);
+            // if (MediaQuery.of(context).orientation != Orientation.landscape) {
+            //   routerDelegate.pushPage(
+            //     name: ReportDetailsScreen.route,
+            //     arguments: ReportDetailsArguments(widget.reportViewModel.openedReport, widget.reportViewModel),
+            //   );
+            // }
           },
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(kPrimaryLightColor),

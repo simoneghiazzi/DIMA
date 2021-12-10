@@ -41,7 +41,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
               padding: EdgeInsets.all(10.0),
               childrenDelegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  var userId = snapshot.data.docs[index].id;
+                  var userId = snapshot.data.docs[index]._id;
                   return ChatListItem(
                       userId: userId, peerCollection: widget.peerCollection, createUserCallback: widget.createUserCallback, key: ValueKey(userId));
                 },
@@ -49,7 +49,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
                 findChildIndexCallback: (Key key) {
                   final ValueKey valueKey = key;
                   for (int index = 0; index < snapshot.data.docs.length; index++) {
-                    if (snapshot.data.docs[index].id == valueKey.value) {
+                    if (snapshot.data.docs[index]._id == valueKey.value) {
                       return index;
                     }
                   }

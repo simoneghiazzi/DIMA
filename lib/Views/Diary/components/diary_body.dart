@@ -1,7 +1,9 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Diary/components/note_data_source.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Home/components/header.dart';
@@ -9,7 +11,7 @@ import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:sApport/Model/BaseUser/Diary/note.dart';
+import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
 
 class DiaryBody extends StatefulWidget {
   final DiaryViewModel diaryViewModel;
@@ -142,7 +144,7 @@ class _DiaryBodyState extends State<DiaryBody> {
   void showDetails(CalendarTapDetails details) {
     if (details.appointments != null) {
       if (details.appointments.isNotEmpty && details.targetElement == CalendarElement.appointment) {
-        final Note noteDetails = details.appointments[0];
+        final DiaryPage noteDetails = details.appointments[0];
         widget.diaryViewModel.openPage(noteDetails);
         if (MediaQuery.of(context).orientation != Orientation.landscape) {
           routerDelegate.pushPage(name: DiaryPageScreen.route, arguments: widget.diaryViewModel);

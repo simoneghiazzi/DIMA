@@ -9,7 +9,6 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
-import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
@@ -66,10 +65,7 @@ Future<void> main() async {
       homePage: collection.homePageRoute,
     ));
   } else {
-    runApp(MyApp(
-      baseUserProvider: Provider(create: (context) => BaseUserViewModel()),
-      expertProvider: Provider(create: (context) => ExpertViewModel()),
-    ));
+    runApp(MyApp());
   }
 }
 
@@ -85,7 +81,7 @@ class MyApp extends StatefulWidget {
   final Provider<ExpertViewModel> expertProvider;
   final String homePage;
 
-  MyApp({Key key, @required this.baseUserProvider, @required this.expertProvider, this.homePage}) : super(key: key);
+  MyApp({Key key, this.baseUserProvider, this.expertProvider, this.homePage}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -114,8 +110,8 @@ class _MyAppState extends State<MyApp> {
         Provider(create: (context) => DiaryViewModel()),
         Provider(create: (context) => ReportViewModel()),
         Provider(create: (context) => MapViewModel()),
-        widget.baseUserProvider,
-        widget.expertProvider
+        widget.baseUserProvider ?? Provider(create: (context) => BaseUserViewModel()),
+        widget.expertProvider ?? Provider(create: (context) => ExpertViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

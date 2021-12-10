@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/BaseUser/Diary/note.dart';
+import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
-import 'package:sApport/ViewModel/ObserverForms/diary_form.dart';
+import 'package:sApport/ViewModel/Forms/diary_form.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 
@@ -11,12 +11,12 @@ class DiaryViewModel {
   final DiaryForm diaryForm = DiaryForm();
   final TextEditingController titleCtrl = TextEditingController();
   final TextEditingController contentCtrl = TextEditingController();
-  Note submittedNote;
+  DiaryPage submittedNote;
   var hasNoteToday = false;
   var _isPageCorrectlyAdded = StreamController<bool>.broadcast();
   var _isPageOpenController = StreamController<bool>.broadcast();
   bool pageOpen = false;
-  Note openedNote;
+  DiaryPage openedNote;
 
   String loggedId;
 
@@ -28,7 +28,7 @@ class DiaryViewModel {
   Future<void> submitPage({String pageId, bool isFavourite = false}) {
     var now = DateTime.now();
     var date = DateTime(now.year, now.month, now.day);
-    submittedNote = Note(
+    submittedNote = DiaryPage(
       id: pageId ?? now.millisecondsSinceEpoch.toString(),
       title: titleCtrl.text,
       content: contentCtrl.text,
@@ -51,7 +51,7 @@ class DiaryViewModel {
     diaryForm.content.add(null);
   }
 
-  void openPage(Note note) {
+  void openPage(DiaryPage note) {
     pageOpen = true;
     openedNote = note;
     if (note == null) {
@@ -74,7 +74,7 @@ class DiaryViewModel {
   }
 
   Future<void> setFavourite(String pageId, bool isFavourite) {
-    return _firestoreService.setFavouriteDiaryNotesIntoDB(loggedId, Note(id: pageId, favourite: isFavourite));
+    return _firestoreService.setFavouriteDiaryNotesIntoDB(loggedId, DiaryPage(id: pageId, favourite: isFavourite));
   }
 
   Stream<QuerySnapshot> loadPagesStream() {

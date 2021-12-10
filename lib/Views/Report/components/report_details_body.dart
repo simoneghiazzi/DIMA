@@ -10,28 +10,28 @@ import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 
 class ReportDetailsBody extends StatefulWidget {
-  bool startOrientation;
-  final ReportViewModel reportViewModel;
+  final Report report;
 
-  ReportDetailsBody({Key key, this.startOrientation = false, @required this.reportViewModel}) : super(key: key);
+  ReportDetailsBody({Key key, @required this.report}) : super(key: key);
 
   @override
   _ReportDetailsBodyState createState() => _ReportDetailsBodyState();
 }
 
 class _ReportDetailsBodyState extends State<ReportDetailsBody> {
+  ReportViewModel reportViewModel;
   AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    Report report = widget.reportViewModel.openedReport;
-    detectChangeOrientation();
+    //detectChangeOrientation();
     Size size = MediaQuery.of(context).size;
     return Stack(
       children: <Widget>[
@@ -39,7 +39,7 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TopBar(
-              text: report.category,
+              text: widget.report.category,
               isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
             ),
             MediaQuery.of(context).orientation == Orientation.landscape
@@ -72,7 +72,7 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> {
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Text(
-                          DateFormat('dd MMM yyyy').format(report.date),
+                          DateFormat('dd MMM yyyy').format(widget.report.date),
                           style: TextStyle(
                             color: kPrimaryColor.withAlpha(150),
                             fontSize: 15,
@@ -96,7 +96,7 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> {
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20),
                     child: Text(
-                      report.description,
+                      widget.report.description,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         color: kPrimaryColor,
@@ -113,22 +113,18 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> {
     );
   }
 
-  Future<void> detectChangeOrientation() async {
-    if (widget.startOrientation != (MediaQuery.of(context).orientation == Orientation.landscape)) {
-      widget.startOrientation = true;
-      await Future(() async {
-        routerDelegate.replaceAllButNumber(3, [
-          RouteSettings(
-              name: ReportsListScreen.route,
-              arguments:
-                  ReportArguments(ReportDetailsScreen(startOrientation: true, reportViewModel: widget.reportViewModel), widget.reportViewModel))
-        ]);
-      });
-    }
-  }
+  // Future<void> detectChangeOrientation() async {
+  //   if (widget.startOrientation != (MediaQuery.of(context).orientation == Orientation.landscape)) {
+  //     widget.startOrientation = true;
+  //     await Future(() async {
+  //       routerDelegate.replaceAllButNumber(3, [
+  //         RouteSettings(
+  //             name: ReportsListScreen.route,
+  //             arguments:
+  //                 ReportArguments(ReportDetailsScreen(startOrientation: true, reportViewModel: widget.reportViewModel), widget.reportViewModel))
+  //       ]);
+  //     });
+  //   }
+  // }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

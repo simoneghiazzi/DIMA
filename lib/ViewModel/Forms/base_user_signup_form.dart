@@ -1,6 +1,6 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 
-class BaseUserInfoViewModel extends FormBloc<String, String> {
+class BaseUserSignUpForm extends FormBloc<String, String> {
   String email;
 
   final nameText = TextFieldBloc(validators: [
@@ -16,7 +16,7 @@ class BaseUserInfoViewModel extends FormBloc<String, String> {
     FieldBlocValidators.underage,
   ], initialValue: null);
 
-  BaseUserInfoViewModel() {
+  BaseUserSignUpForm() {
     addFieldBlocs(fieldBlocs: [nameText, surnameText, birthDateTime]);
   }
 

@@ -1,5 +1,5 @@
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_info_view_model.dart';
+import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
 import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
@@ -23,10 +23,10 @@ class BaseUserInfoBody extends StatelessWidget {
       padding: EdgeInsets.only(left: 40, right: 40),
       child: Column(children: <Widget>[
         BlocProvider(
-          create: (context) => BaseUserInfoViewModel(),
+          create: (context) => BaseUserSignUpForm(),
           child: Builder(
             builder: (context) {
-              final infoViewModel = BlocProvider.of<BaseUserInfoViewModel>(
+              final infoViewModel = BlocProvider.of<BaseUserSignUpForm>(
                   context,
                   listen: false);
               return Theme(
@@ -39,7 +39,7 @@ class BaseUserInfoBody extends StatelessWidget {
                     ),
                   ),
                   child:
-                      FormBlocListener<BaseUserInfoViewModel, String, String>(
+                      FormBlocListener<BaseUserSignUpForm, String, String>(
                     onSubmitting: (context, state) {},
                     onSuccess: (context, state) {
                       routerDelegate.pushPage(

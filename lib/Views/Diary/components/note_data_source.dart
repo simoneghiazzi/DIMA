@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/BaseUser/Diary/note.dart';
+import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +11,9 @@ class NoteDataSource extends CalendarDataSource {
   NoteDataSource(List<DocumentSnapshot> docs, DiaryViewModel diaryViewModel) {
     this.diaryViewModel = diaryViewModel;
     var today = DateTime.now();
-    List<Note> source = List.from([]);
+    List<DiaryPage> source = List.from([]);
     for (DocumentSnapshot doc in docs) {
-      Note n = Note();
+      DiaryPage n = DiaryPage();
       n.setFromDocument(doc);
       source.add(n);
       if (n.date == DateTime(today.year, today.month, today.day)) {
