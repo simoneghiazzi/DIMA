@@ -1,86 +1,72 @@
 import 'dart:io';
+import 'package:get_it/get_it.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/Services/collections.dart';
-import 'package:sApport/Model/Services/firebase_auth_service.dart';
-import 'package:sApport/Model/Services/firestore_service.dart';
-import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
-import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:sApport/constants.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/ViewModel/map_view_model.dart';
-import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
-import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
+import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:flutter/material.dart';
-import 'package:sApport/constants.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:get_it/get_it.dart';
-import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:sApport/Model/Services/firestore_service.dart';
+import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
+import 'package:sApport/Model/Services/firebase_auth_service.dart';
 
 Future<void> main() async {
+  // Flutter initialization
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Check the device type and disable the landscape orientation if it is not a tablet
   if (!Device.get().isTablet) {
-    // Disable landscape orientation
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   }
-  // Creation of the initialization Future for FirebaseApp
-  await Firebase.initializeApp().catchError((e) {
-    print('Initialization error');
+
+  // Firebase initialization and functional checks
+  await Firebase.initializeApp().then((_) => print("Firebase initialization completed")).catchError((e) {
+    print('Initialization error $e');
     exit(-1);
   });
-  print('Firebase initialization completed');
-  await FirebaseAppCheck.instance.activate(webRecaptchaSiteKey: 'recaptcha-v3-site-key');
-  print('FirebaseAppCheck initialization completed');
+  await FirebaseAppCheck.instance
+      .activate(webRecaptchaSiteKey: "recaptcha-v3-site-key")
+      .then((_) => print("FirebaseAppCheck initialization completed"))
+      .catchError((e) {
+    print("FirebaseAppCheck error $e");
+    exit(-1);
+  });
+
+  // Services initialization
   setupServices();
   FirebaseAuthService firebaseAuthService = GetIt.I<FirebaseAuthService>();
   FirestoreService firestoreService = GetIt.I<FirestoreService>();
-  var alreadyLoggedUserId = await firebaseAuthService.currentUser();
-  print('Already logged user check completed');
 
-  if (alreadyLoggedUserId != null) {
+  // Already logged user check
+  var alreadyLoggedUserId = firebaseAuthService.currentUser();
+
+  // If the user is already logged, find the user collection {BaseUser, Expert},
+  // fetch the correct user data from the DB and load the relative homePage.
+  //
+  // If the user is not already logged, load the welcome page.
+  if (alreadyLoggedUserId.isNotEmpty) {
     var collection = await firestoreService.findUserCollection(alreadyLoggedUserId);
-    switch (collection) {
-      case Collection.BASE_USERS:
-        var baseUserViewModel = BaseUserViewModel();
-        baseUserViewModel.id = alreadyLoggedUserId;
-        await baseUserViewModel.loadLoggedUser();
-        print('User logged');
-        runApp(MyApp(
-          expertProvider: Provider(create: (context) => ExpertViewModel()),
-          baseUserProvider: Provider(create: (context) => baseUserViewModel),
-          firstPage: BaseUserHomePageScreen.route,
-        ));
-        break;
-      case Collection.EXPERTS:
-        var expertViewModel = ExpertViewModel();
-        expertViewModel.id = alreadyLoggedUserId;
-        await expertViewModel.loadLoggedUser();
-        print('Expert logged');
-        runApp(MyApp(
-          expertProvider: Provider(create: (context) => expertViewModel),
-          baseUserProvider: Provider(create: (context) => BaseUserViewModel()),
-          firstPage: ExpertHomePageScreen.route,
-        ));
-        break;
-      default:
-        return Container();
-        break;
-    }
-  } else {
+    var userViewModel = collection.userViewModel;
+    await userViewModel.loadLoggedUser(alreadyLoggedUserId).then((_) => print("User of category ${collection.value} logged"));
     runApp(MyApp(
-      expertProvider: Provider(create: (context) => ExpertViewModel()),
-      baseUserProvider: Provider(create: (context) => BaseUserViewModel()),
-      firstPage: WelcomeScreen.route,
+      userProvider: Provider(create: (context) => userViewModel),
+      homePage: collection.homePageRoute,
     ));
+  } else {
+    runApp(MyApp());
   }
 }
 
+/// Initialization of the services into the GetIt service locator
 void setupServices() {
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(FirestoreService(FirebaseFirestore.instance));
@@ -88,26 +74,25 @@ void setupServices() {
 }
 
 class MyApp extends StatefulWidget {
-  final baseUserProvider;
-  final expertProvider;
-  final firstPage;
+  final Provider userProvider;
+  final String homePage;
 
-  MyApp({Key key, this.baseUserProvider, this.expertProvider, this.firstPage}) : super(key: key);
+  MyApp({Key key, this.userProvider, this.homePage}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  AppRouterDelegate routerDelegate;
+  AppRouterDelegate routerDelegate = AppRouterDelegate();
 
   @override
   void initState() {
-    routerDelegate = AppRouterDelegate();
-    if (widget.firstPage != WelcomeScreen.route)
-      routerDelegate.addAll([RouteSettings(name: WelcomeScreen.route), RouteSettings(name: widget.firstPage)]);
-    else
-      routerDelegate.pushPage(name: widget.firstPage);
+    // Add the WelcomePage to the routerDelegate and the homePage only if the user is already logged
+    routerDelegate.addAll([
+      RouteSettings(name: WelcomeScreen.route),
+      if (widget.homePage != null) RouteSettings(name: widget.homePage),
+    ]);
     super.initState();
   }
 
@@ -119,13 +104,13 @@ class _MyAppState extends State<MyApp> {
         Provider(create: (context) => AuthViewModel()),
         Provider(create: (context) => ChatViewModel()),
         Provider(create: (context) => DiaryViewModel()),
+        Provider(create: (context) => ReportViewModel()),
         Provider(create: (context) => MapViewModel()),
-        widget.baseUserProvider,
-        widget.expertProvider
+        if (widget.userProvider != null) widget.userProvider,
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'sApport',
+        title: "sApport",
         theme: ThemeData(
           primaryColor: kPrimaryColor,
           scaffoldBackgroundColor: Colors.white,
