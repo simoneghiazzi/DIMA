@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/ViewModel/Forms/diary_form.dart';
 import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
+import 'package:sApport/Model/Services/firebase_auth_service.dart';
 
 class DiaryViewModel {
   // Services
@@ -48,7 +48,7 @@ class DiaryViewModel {
         .catchError((error) => _isPageCorrectlyAdded.add(false));
   }
 
-  /// Update the already existing diary page specified by [pageId] into the DB
+  /// Update the already existing diary page identified by the [pageId] into the DB
   Future<void> updatePage(String pageId) {
     var now = DateTime.now();
     return _firestoreService
@@ -65,7 +65,7 @@ class DiaryViewModel {
         .catchError((error) => _isPageCorrectlyAdded.add(false));
   }
 
-  /// Set
+  /// Set the [isFavourite] parameter of the diary page identified by the [pageId] into the DB
   Future<void> setFavourite(String pageId, bool isFavourite) {
     return _firestoreService.setFavouriteDiaryNotesIntoDB(
       _firebaseAuthService.userCredential.user.uid,
@@ -73,8 +73,9 @@ class DiaryViewModel {
     );
   }
 
+  /// Get the stream of diary pages from the DB
   Stream<QuerySnapshot> loadPagesStream() {
-    return _firestoreService.getDiaryNotesStreamFromDB(_firebaseAuthService.userCredential.user.uid);
+    return _firestoreService.getDiaryPagesStreamFromDB(_firebaseAuthService.userCredential.user.uid);
   }
 
   /// Clear all the text and stream controllers and reset the diary form
@@ -90,5 +91,6 @@ class DiaryViewModel {
     contentCtrl.text = content;
   }
 
+  /// Stream of the succesfully addition of the diary page
   Stream<bool> get isPageAdded => _isPageCorrectlyAdded.stream;
 }
