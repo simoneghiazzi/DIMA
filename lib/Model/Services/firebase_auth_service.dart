@@ -13,26 +13,26 @@ import 'package:http/http.dart';
 class FirebaseAuthService {
   final FirestoreService _firestoreService = GetIt.I();
   final Firebase.FirebaseAuth _firebaseAuth = Firebase.FirebaseAuth.instance;
-  Firebase.UserCredential _userCredential;
+  Firebase.UserCredential userCredential;
 
   /// Sign in a user with [email] and [password]
   Future<String> signInWithEmailAndPassword(String email, String password) async {
-    _userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+    userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
     if (_firebaseAuth.currentUser.emailVerified) {
-      return _userCredential.user.uid;
+      return userCredential.user.uid;
     }
     return "";
   }
 
   /// Create a new user with [email] and [password]
   Future<String> createUserWithEmailAndPassword(String email, String password, User user) async {
-    _userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-    user.id = _userCredential.user.uid;
+    userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+    user.id = userCredential.user.uid;
     if (user.getData()['profilePhoto'] != null) {
       _firestoreService.uploadProfilePhoto(user, File(user.getData()['profilePhoto']));
     }
     _firestoreService.addUserIntoDB(user);
-    return _userCredential.user.uid;
+    return userCredential.user.uid;
   }
 
   /// Send email for reset password
@@ -44,7 +44,7 @@ class FirebaseAuthService {
   }
 
   Future<Firebase.UserCredential> linkProviders(Firebase.AuthCredential credential) async {
-    return await _userCredential.user.linkWithCredential(credential);
+    return await userCredential.user.linkWithCredential(credential);
   }
 
   /// Sign in a user if it exists or create a new user through the google account.
@@ -61,15 +61,15 @@ class FirebaseAuthService {
     );
 
     if (link) {
-      _userCredential = await linkProviders(credential);
-      return _userCredential.user.uid;
+      userCredential = await linkProviders(credential);
+      return userCredential.user.uid;
     }
 
     if (signInMethods.contains("google.com") || signInMethods.isEmpty) {
-      _userCredential = await _firebaseAuth.signInWithCredential(credential);
+      userCredential = await _firebaseAuth.signInWithCredential(credential);
 
       // Check if it is a new user. If yes, insert the data into the DB
-      var res = await _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, _userCredential.user.uid);
+      var res = await _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, userCredential.user.uid);
       if (res.docs.isEmpty) {
         final headers = await googleSignIn.currentUser.authHeaders;
         final res = jsonDecode((await get(Uri.parse("https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
@@ -79,13 +79,13 @@ class FirebaseAuthService {
         String birthDate = '${res['year']}-${res['month']}-${res['day']}';
 
         await _firestoreService.addUserIntoDB(BaseUser(
-            id: _userCredential.user.uid,
+            id: userCredential.user.uid,
             name: displayName[0],
             surname: displayName[1],
             email: googleSignIn.currentUser.email,
             birthDate: DateTime.parse(birthDate)));
       }
-      return _userCredential.user.uid;
+      return userCredential.user.uid;
     } else {
       return null;
     }
@@ -99,32 +99,32 @@ class FirebaseAuthService {
     var facebookAuthCredential = Firebase.FacebookAuthProvider.credential(accessToken.token);
 
     if (link) {
-      _userCredential = await linkProviders(facebookAuthCredential);
-      return _userCredential.user.uid;
+      userCredential = await linkProviders(facebookAuthCredential);
+      return userCredential.user.uid;
     }
 
-    _userCredential = await _firebaseAuth.signInWithCredential(facebookAuthCredential);
+    userCredential = await _firebaseAuth.signInWithCredential(facebookAuthCredential);
 
     // Check if it is a new user. If yes, insert the data into the DB
-    var res = await _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, _userCredential.user.uid);
+    var res = await _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, userCredential.user.uid);
     if (res.docs.isEmpty) {
       final userData = await FacebookAuth.instance.getUserData(fields: "name, birthday");
 
       var res = userData['birthday'].split('/');
       String birthDate = '${res[2]}-${res[0]}-${res[1]}';
       await _firestoreService.addUserIntoDB(BaseUser(
-          id: _userCredential.user.uid,
+          id: userCredential.user.uid,
           name: userData['name'].split(" ")[0],
           surname: userData['name'].split(" ")[1],
-          email: _userCredential.user.email,
+          email: userCredential.user.email,
           birthDate: DateTime.parse(birthDate)));
     }
-    return _userCredential.user.uid;
+    return userCredential.user.uid;
   }
 
   /// Send the email verification to the user in the sign up process
   void sendEmailVerification() {
-    if (_userCredential != null) {
+    if (userCredential != null) {
       _firebaseAuth.currentUser
           .sendEmailVerification()
           .then((value) => print("Email verification sent"))
@@ -149,12 +149,12 @@ class FirebaseAuthService {
   Future deleteUser(User user) async {
     _firestoreService.removeUserFromDB(user);
     _firebaseAuth.currentUser.delete();
-    _userCredential = null;
+    userCredential = null;
   }
 
   /// Sign out a user
   Future signOut() async {
-    _userCredential = null;
+    userCredential = null;
     await _firebaseAuth.signOut();
   }
 

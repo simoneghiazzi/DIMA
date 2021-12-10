@@ -8,6 +8,14 @@ import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/ViewModel/Forms/auth_form.dart';
 
 class AuthViewModel {
+  // Services
+  final FirebaseAuthService _firebaseAuthService = GetIt.I();
+  final FirestoreService firestore = GetIt.I();
+  NotificationService notificationService;
+
+  // Login Form
+  final LoginForm loginForm = LoginForm();
+
   // Text Controllers
   final TextEditingController emailCtrl = TextEditingController();
   final TextEditingController pswCtrl = TextEditingController();
@@ -18,19 +26,11 @@ class AuthViewModel {
   var _isUserCreatedCtrl = StreamController<bool>.broadcast();
   var _authMessageCtrl = StreamController<String>.broadcast();
 
-  // Login Form
-  final LoginForm loginForm = LoginForm();
-
-  // Services
-  final FirebaseAuthService _firebaseAuthService = GetIt.I();
-  final FirestoreService firestore = GetIt.I();
-  NotificationService notificationService;
-
   // Logged User id
   String loggedId;
 
-  /// Register the listeners for the input text field
   AuthViewModel() {
+    // Register the listeners for the input text field
     emailCtrl.addListener(() => loginForm.email.add(emailCtrl.text));
     pswCtrl.addListener(() => loginForm.psw.add(pswCtrl.text));
     repeatPswCtrl.addListener(() => loginForm.repeatPsw.add(repeatPswCtrl.text));

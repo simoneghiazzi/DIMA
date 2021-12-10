@@ -31,7 +31,7 @@ abstract class AuthFormInterface {
 }
 
 class LoginForm implements AuthFormInterface {
-  // Streams
+  // Stream controllers
   var _emailStream = StreamController<String>.broadcast();
   var _passwordStream = StreamController<String>.broadcast();
   var _repeatPasswordStream = StreamController<String>.broadcast();

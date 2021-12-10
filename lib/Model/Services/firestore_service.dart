@@ -309,10 +309,6 @@ class FirestoreService {
     return ids;
   }
 
-  Stream<QuerySnapshot> hasPendingChats(User user) {
-    return _firestore.collection(user.collection.value).doc(user.id).collection(Collection.PENDING_CHATS.value).snapshots();
-  }
-
   /// It takes the [conversation] and the [increment] amount and increments the anonymous chat's counter of the users
   /// into the DB within the [transaction]
   void _incrementConversationCounter(Conversation conversation, int increment) {
@@ -370,10 +366,34 @@ class FirestoreService {
 
   /**************************************** DIARY ********************************************/
 
-  /// It takes the [id] of an user and the [note]
+  /// It takes the [id] of an user and the [diaryPage]
   /// and adds it into the list of diaryPages of the user into the DB
-  Future<void> addDiaryNoteIntoDB(String id, DiaryPage note) {
-    return _firestore.collection(note.collection.value).doc(id).collection('diaryPages').doc(note.id).set(note.getData());
+  Future<void> addDiaryPageIntoDB(String id, DiaryPage diaryPage) {
+    return _firestore
+        .collection(diaryPage.collection.value)
+        .doc(id)
+        .collection("diaryPages")
+        .doc(diaryPage.id)
+        .set(diaryPage.getData())
+        .then((value) => print("Diary page added"))
+        .catchError((error) => print("Failed to add the diary note: $error"));
+  }
+
+  /// It takes the [id] of an user and the new [diaryPage]
+  /// and updates the title and content fields into the DB
+  Future<void> updateDiaryPageIntoDB(String id, DiaryPage diaryPage) {
+    return _firestore
+        .collection(diaryPage.collection.value)
+        .doc(id)
+        .collection("diaryPages")
+        .doc(diaryPage.id)
+        .update({
+          "title": diaryPage.getData()["title"],
+          "content": diaryPage.getData()["content"],
+          "date": diaryPage.getData()["date"],
+        })
+        .then((value) => print("Diary page updated"))
+        .catchError((error) => print("Failed to update the diary note: $error"));
   }
 
   /// It takes the [id] of an user and the [note] and set it as favourite or not

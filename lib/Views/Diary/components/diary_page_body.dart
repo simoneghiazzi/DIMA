@@ -25,7 +25,6 @@ class DiaryPageBody extends StatefulWidget {
 class _DiaryPageBodyState extends State<DiaryPageBody> {
   DiaryViewModel diaryViewModel;
   DateTime today;
-  BaseUserViewModel baseUserViewModel;
   AppRouterDelegate routerDelegate;
   Alert errorAlert;
   Alert successAlert;
@@ -40,7 +39,6 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     DateTime now = DateTime.now();
     today = DateTime(now.year, now.month, now.day);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
-    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
@@ -104,8 +102,9 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
                         ),
-                        child:
-                            widget.diaryPage.favourite ? Icon(CupertinoIcons.heart_fill, color: Colors.white) : Icon(CupertinoIcons.heart, color: Colors.white),
+                        child: widget.diaryPage.favourite
+                            ? Icon(CupertinoIcons.heart_fill, color: Colors.white)
+                            : Icon(CupertinoIcons.heart, color: Colors.white),
                       ),
                     ),
                   ),
@@ -118,7 +117,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                             return InkResponse(
                               onTap: () {
                                 if (widget.diaryPage != null) {
-                                  diaryViewModel.submitPage(pageId: widget.diaryPage.id, isFavourite: widget.diaryPage.favourite);
+                                  diaryViewModel.updatePage(widget.diaryPage.id);
                                 } else {
                                   diaryViewModel.submitPage();
                                 }
