@@ -1,42 +1,46 @@
 import 'dart:async';
-
+import 'package:get_it/get_it.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:sApport/Model/random_id.dart';
 import 'package:sApport/Model/BaseUser/report.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:get_it/get_it.dart';
+import 'package:sApport/Model/Services/firebase_auth_service.dart';
 
 class ReportViewModel extends FormBloc<String, String> {
-  FirestoreService _firestoreService = GetIt.I<FirestoreService>();
-  String loggedId;
-  Report openedReport;
-  var _isReportOpenController = StreamController<bool>.broadcast();
-  var _infoReportOpenController = StreamController<Report>.broadcast();
+  // Services
+  final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
+  final FirebaseAuthService _firebaseAuthService = GetIt.I<FirebaseAuthService>();
 
   ReportViewModel() {
+    // Add the field blocs to the create report form
     addFieldBlocs(fieldBlocs: [reportCategory, reportText]);
   }
-  
-  final reportCategory = SelectFieldBloc(items: [
-    'Psychological violence',
-    'Physical violence',
-    'Threats',
-    'Harassment'
-  ], validators: [
-    FieldBlocValidators.required,
-  ]);
 
-  final reportText = TextFieldBloc(validators: [
-    FieldBlocValidators.required,
-  ]);
+  /// Define the report categories field bloc and add the required validator
+  final reportCategory = SelectFieldBloc(
+    items: [
+      'Psychological violence',
+      'Physical violence',
+      'Threats',
+      'Harassment',
+    ],
+    validators: [FieldBlocValidators.required],
+  );
+
+  /// Define the report text field bloc and add the required validator
+  final reportText = TextFieldBloc(validators: [FieldBlocValidators.required]);
+
+  /// Get the stream of reports from the DB
+  Stream<QuerySnapshot> loadReports() {
+    return _firestoreService.getReportsFromDB(_firebaseAuthService.userCredential.user.uid);
+  }
 
   @override
   void onSubmitting() async {
     _firestoreService
         .addReportIntoDB(
-          loggedId,
+          _firebaseAuthService.userCredential.user.uid,
           Report(
             id: RandomId.generate(idLength: 20),
             category: reportCategory.value,
@@ -48,31 +52,9 @@ class ReportViewModel extends FormBloc<String, String> {
         .catchError((error) => emitFailure());
   }
 
+  /// Clear all the text field blocs
   void clearControllers() {
     reportCategory.clear();
     reportText.clear();
   }
-
-  void openReport(Report report) {
-    openedReport = report;
-    _isReportOpenController.add(true);
-    _infoReportOpenController.add(report);
-  }
-
-  void checkOpenReport() {
-    if (openedReport != null) _isReportOpenController.add(true);
-  }
-
-  // Get all the reports of a user from the DB
-  Stream<QuerySnapshot> loadReports() {
-    try {
-      return _firestoreService.getReportsFromDB(loggedId);
-    } catch (e) {
-      print(e);
-      return null;
-    }
-  }
-
-  Stream<bool> get isReportOpen => _isReportOpenController.stream;
-  Stream<Report> get infoReportOpen => _infoReportOpenController.stream;
 }
