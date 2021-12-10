@@ -6,8 +6,11 @@ class Conversation {
   Chat senderUserChat, peerUserChat;
   String pairChatId;
 
-  Conversation(
-      {this.senderUser, this.senderUserChat, this.peerUser, this.peerUserChat});
+  /// It represents the conversation between a [senderUser] and a [peerUser].
+  /// 
+  /// It receives also the type of chat of the sender user as the [senderUserChat] 
+  /// and the type of chat of the peer user as the [peerUserChat].
+  Conversation({this.senderUser, this.senderUserChat, this.peerUser, this.peerUserChat});
 
   /// Compute the pair chat id between 2 users
   void computePairChatId() {
