@@ -2,13 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/db_item.dart';
 
-class Report implements DbItem {
-  String id;
+class Report extends DbItem {
   String category;
   String description;
   DateTime date;
 
-  Report({this.id, this.category, this.description, this.date});
+  Report({String id, this.category, this.description, this.date}) : super(id: id);
 
   void setFromDocument(DocumentSnapshot doc) {
     try {
