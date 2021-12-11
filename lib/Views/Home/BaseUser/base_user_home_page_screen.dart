@@ -5,7 +5,6 @@ import 'package:sApport/constants.dart';
 import 'package:sApport/Views/Diary/diary_screen.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/Views/Home/BaseUser/components/base_user_home_page_body.dart';
 
 class BaseUserHomePageScreen extends StatefulWidget {
@@ -20,17 +19,17 @@ class BaseUserHomePageScreen extends StatefulWidget {
 }
 
 class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
-  BaseUserViewModel baseUserViewModel;
+  UserViewModel userViewModel;
   AuthViewModel authViewModel;
   int _currentIndex;
 
   @override
   void initState() {
-    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
 
     // Register the notification service
-    authViewModel.setNotification(baseUserViewModel.loggedUser);
+    authViewModel.setNotification(userViewModel.loggedUser);
 
     _currentIndex = widget.pageIndex ?? 0;
     super.initState();
@@ -38,7 +37,7 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages = [BaseUserHomePageBody(), DiaryScreen(), UserSettingsScreen(user: baseUserViewModel.loggedUser)];
+    final List<Widget> _pages = [BaseUserHomePageBody(), DiaryScreen(), UserSettingsScreen(user: userViewModel.loggedUser)];
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: IndexedStack(

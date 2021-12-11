@@ -1,4 +1,4 @@
-import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Home/Expert/components/expert_home_page_body.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
 import 'package:sApport/constants.dart';
@@ -26,11 +26,11 @@ class _ExpertHomePageScreenState extends State<ExpertHomePageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var expertViewModel = Provider.of<ExpertViewModel>(context, listen: false);
+    var userViewModel = Provider.of<UserViewModel>(context, listen: false);
     final List<Widget> _pages = [
       ExpertHomePageBody(),
       //Calendar(),
-      UserSettingsScreen(user: expertViewModel.loggedUser)
+      UserSettingsScreen(user: userViewModel.loggedUser)
     ];
     return WillPopScope(
         onWillPop: () async => false,

@@ -274,8 +274,8 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
   }
 
   void openMaps() async {
-    var lat = widget.expert.latLng.latitude;
-    var lng = widget.expert.latLng.longitude;
+    var lat = widget.expert.latitude;
+    var lng = widget.expert.longitude;
     var uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
     if (await canLaunch(uri.toString())) {
       await launch(uri.toString());

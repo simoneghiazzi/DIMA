@@ -1,5 +1,4 @@
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -17,19 +16,18 @@ class BaseUserGrid extends StatefulWidget {
 }
 
 class _BaseUserGridState extends State<BaseUserGrid> {
-  BaseUserViewModel baseUserViewModel;
+  UserViewModel userViewModel;
   ChatViewModel chatViewModel;
   DiaryViewModel diaryViewModel;
   AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
-    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    diaryViewModel.loggedId = baseUserViewModel.loggedUser.id;
-    chatViewModel.conversation.senderUser = baseUserViewModel.loggedUser;
+    chatViewModel.conversation.senderUser = userViewModel.loggedUser;
     super.initState();
   }
 

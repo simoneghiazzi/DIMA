@@ -1,6 +1,6 @@
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/Report/reports_list_screen.dart';
@@ -18,7 +18,7 @@ class CreateReportBody extends StatefulWidget {
 
 class _CreateReportBodyState extends State<CreateReportBody> {
   GlobalKey<State> _keyLoader;
-  BaseUserViewModel baseUserViewModel;
+  UserViewModel userViewModel;
   ReportViewModel reportViewModel;
   AppRouterDelegate routerDelegate;
   Alert errorAlert;
@@ -27,7 +27,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
   @override
   void initState() {
     _keyLoader = new GlobalKey<State>();
-    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();

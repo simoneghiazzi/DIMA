@@ -22,18 +22,18 @@ class _MessageListItemState extends State<MessageListItem> {
     var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     if (widget.messageItem != null) {
-      if (widget.messageItem.getData()['idFrom'] == chatViewModel.conversation.senderUser.id) {
+      if (widget.messageItem.data['idFrom'] == chatViewModel.conversation.senderUser.id) {
         // Right (my message)
         return Row(
           children: [
             Container(
-              width: size.width / 3,
+              width: size.width / 2.5,
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Flexible(
                   child: Container(
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                     child: Text(
-                      widget.messageItem.getData()['content'],
+                      widget.messageItem.data['content'],
                       style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
                     ),
                   ),
@@ -42,7 +42,7 @@ class _MessageListItemState extends State<MessageListItem> {
                 Container(
                   padding: EdgeInsets.only(right: 8, bottom: 5),
                   child: Text(
-                    DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.messageItem.getData()['timestamp'])),
+                    DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.messageItem.data['timestamp'])),
                     style: TextStyle(color: greyColor, fontSize: 10.0, fontStyle: FontStyle.italic),
                   ),
                 )
@@ -58,13 +58,13 @@ class _MessageListItemState extends State<MessageListItem> {
         return Row(
           children: [
             Container(
-              width: size.width / 3,
+              width: size.width / 2.5,
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Flexible(
                   child: Container(
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                     child: Text(
-                      widget.messageItem.getData()['content'],
+                      widget.messageItem.data['content'],
                       style: GoogleFonts.ubuntuCondensed(color: Colors.white),
                     ),
                   ),
@@ -73,7 +73,7 @@ class _MessageListItemState extends State<MessageListItem> {
                 Container(
                   padding: EdgeInsets.only(right: 8, bottom: 5),
                   child: Text(
-                    DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.messageItem.getData()['timestamp'])),
+                    DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.messageItem.data['timestamp'])),
                     style: TextStyle(color: greyColor, fontSize: 10.0, fontStyle: FontStyle.italic),
                   ),
                 )

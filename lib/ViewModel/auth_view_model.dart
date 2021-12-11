@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Model/user.dart';
-import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/notification_service.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/ViewModel/Forms/auth_form.dart';
@@ -10,7 +9,6 @@ import 'package:sApport/ViewModel/Forms/auth_form.dart';
 class AuthViewModel {
   // Services
   final FirebaseAuthService _firebaseAuthService = GetIt.I();
-  final FirestoreService firestore = GetIt.I();
   NotificationService notificationService;
 
   // Login Form
@@ -26,9 +24,6 @@ class AuthViewModel {
   var _isUserCreatedCtrl = StreamController<bool>.broadcast();
   var _authMessageCtrl = StreamController<String>.broadcast();
 
-  // Logged User id
-  String loggedId;
-
   AuthViewModel() {
     // Register the listeners for the input text field
     emailCtrl.addListener(() => loginForm.email.add(emailCtrl.text));
@@ -36,71 +31,98 @@ class AuthViewModel {
     repeatPswCtrl.addListener(() => loginForm.repeatPsw.add(repeatPswCtrl.text));
   }
 
-  /// Log the user in with email and password
-  Future<String> logIn() async {
+  /// Log the user in with email and password.
+  ///
+  /// It adds the result of the login process to the [isUserLogged] stream controller.
+  ///
+  /// In case the login is **not successful**, it adds the error message to the [authMessage] stream controller.
+  Future<void> logIn() async {
     try {
-      loggedId = await _firebaseAuthService.signInWithEmailAndPassword(emailCtrl.text, pswCtrl.text);
-      if (loggedId.isEmpty) {
-        _authMessageCtrl.add("The email is not verified");
-      } else {
+      await _firebaseAuthService.signInWithEmailAndPassword(emailCtrl.text, pswCtrl.text);
+      if (_firebaseAuthService.firebaseUser != null) {
         _authMessageCtrl.add("");
+        _isUserLoggedCtrl.add(true);
+      } else {
+        _authMessageCtrl.add("The email is not verified");
+        _isUserLoggedCtrl.add(false);
       }
     } catch (e) {
-      _isUserCreatedCtrl.add(false);
       if (e.code == "user-not-found" || e.code == "wrong-password") {
         _authMessageCtrl.add("Wrong email or password");
+      } else {
+        _authMessageCtrl.add("Error in signing in the user. Please try again later.");
+        print("Error in signing in with email and password.");
       }
+      _isUserLoggedCtrl.add(false);
     }
-    return loggedId;
   }
 
-  /// Sign up a [newUser] with email and password
-  Future<String> signUpUser(User newUser) async {
+  /// Sign up a [newUser] with email and password.
+  ///
+  /// It adds the result of the signup process to the [isUserCreated] stream controller.
+  ///
+  /// In case the login is **not successful**, it adds the error message to the [authMessage] stream controller.
+  Future<void> signUpUser(User newUser) async {
     try {
-      loggedId = await _firebaseAuthService.createUserWithEmailAndPassword(emailCtrl.text, pswCtrl.text, newUser);
+      await _firebaseAuthService.createUserWithEmailAndPassword(emailCtrl.text, pswCtrl.text, newUser);
       _firebaseAuthService.sendEmailVerification();
       _authMessageCtrl.add("");
       _isUserCreatedCtrl.add(true);
     } catch (e) {
-      _isUserCreatedCtrl.add(false);
-      if (e.code == 'email-already-in-use') {
-        _authMessageCtrl.add('The account already exists.');
-      } else if (e.code == 'weak-password') {
-        _authMessageCtrl.add('The password is too weak.\nIt has to be at least 6 chars.');
+      if (e.code == "email-already-in-use") {
+        _authMessageCtrl.add("The account already exists.");
+      } else if (e.code == "weak-password") {
+        _authMessageCtrl.add("The password is too weak.\nIt has to be at least 6 chars.");
+      } else {
+        _authMessageCtrl.add("Error in signing up the user. Please try again later.");
+        print("Error in signing up the user.");
       }
+      _isUserCreatedCtrl.add(false);
     }
-    return loggedId;
   }
 
   /// Login a user with Google. If the user is new, it automatically creates a new account.
+  /// If [link] is true, it links the Google account credential to the already logged user.
   ///
-  /// If [link] is true, it links the Google account credentials to the already logged user.
-  Future<String> logInWithGoogle({bool link = false}) async {
+  /// It adds the result of the login process to the [isUserLogged] stream controller.
+  ///
+  /// In case the login is **not successful**, it adds the error message to the [authMessage] stream controller.
+  Future<void> logInWithGoogle({bool link = false}) async {
     try {
-      loggedId = await _firebaseAuthService.signInWithGoogle(link);
-      if (loggedId.isEmpty) {
-        _authMessageCtrl.add("An account already exists with the same email address but different sign-in credentials.");
-      }
+      await _firebaseAuthService.signInWithGoogle(link);
       _authMessageCtrl.add("");
+      _isUserLoggedCtrl.add(true);
     } catch (e) {
-      print("Error in signing in with Google");
+      if (e.code == "account-exists-with-different-credential") {
+        _authMessageCtrl.add("An account already exists with the same email address but different sign-in credentials.");
+      } else {
+        _authMessageCtrl.add("Error in signing in with the Google account. Please try again later.");
+        print("Error in signing in with the Google account");
+      }
+      _isUserLoggedCtrl.add(false);
     }
-    return loggedId;
   }
 
-  /// Login a user with Facebook. If the user is new, it automatically creates a new account
+  /// Login a user with Facebook. If the user is new, it automatically creates a new account.
+  /// If [link] is true, it links the Facebook account credential to the already logged user.
   ///
-  /// If [link] is true, it links the Facebook account credentials to the already logged user.
-  Future<String> logInWithFacebook({bool link = false}) async {
+  /// It adds the result of the login process to the [isUserLogged] stream controller.
+  ///
+  /// In case the login is **not successful**, it adds the error message to the [authMessage] stream controller.
+  Future<void> logInWithFacebook({bool link = false}) async {
     try {
-      loggedId = await _firebaseAuthService.signInWithFacebook(link);
+      await _firebaseAuthService.signInWithFacebook(link);
       _authMessageCtrl.add("");
+      _isUserLoggedCtrl.add(true);
     } catch (e) {
-      if (e.code == 'account-exists-with-different-credential') {
+      if (e.code == "account-exists-with-different-credential") {
         _authMessageCtrl.add("An account already exists with the same email address but different sign-in credentials.");
+      } else {
+        _authMessageCtrl.add("Error in signing in with the Facebook account. Please try again later.");
+        print("Error in signing in with the Facebook account");
       }
+      _isUserLoggedCtrl.add(false);
     }
-    return loggedId;
   }
 
   /// Send to the user [email] the link for the password reset
@@ -113,7 +135,7 @@ class AuthViewModel {
     return _firebaseAuthService.getAuthProvider();
   }
 
-  /// Return true if the user associated with the [email] has the password as authentication provider
+  /// Returns `true` if the user associated with the [email] has the password as authentication provider
   Future<bool> hasPasswordAuthentication(String email) async {
     var list = await _firebaseAuthService.fetchSignInMethods(email);
     if (list.contains("password")) {
@@ -122,7 +144,7 @@ class AuthViewModel {
     return false;
   }
 
-  /// Get the data text from the controllers
+  /// Get the data from the text controllers and add them to the login form sinks
   void getData() {
     if (emailCtrl.text.isNotEmpty) {
       loginForm.email.add(emailCtrl.text);
@@ -132,27 +154,20 @@ class AuthViewModel {
     }
   }
 
-  /// Log out the user from the app
+  /// Log out the user from the app, updates the [isUserLogged] stream controller and call [clearControllers].
   Future<void> logOut() async {
     await _firebaseAuthService.signOut();
-    loggedId = '';
     _isUserLoggedCtrl.add(false);
     clearControllers();
   }
 
   /// Clear all the text and stream controllers and reset the login form
   void clearControllers() {
+    emailCtrl.clear();
     pswCtrl.clear();
     repeatPswCtrl.clear();
-    emailCtrl.clear();
     _authMessageCtrl.add(null);
     loginForm.resetControllers();
-  }
-
-  /// Resend the email verification to the [user]
-  Future<void> resendEmailVerification(User user) async {
-    await deleteUser(user);
-    await signUpUser(user);
   }
 
   /// Register the notification service for the device of the [loggedUser]

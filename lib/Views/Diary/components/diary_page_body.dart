@@ -3,7 +3,6 @@ import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:intl/intl.dart';
 import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/constants.dart';
@@ -56,7 +55,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
       title = formatter.format(now);
     } else {
       diaryViewModel.setTextContent(widget.diaryPage.title, widget.diaryPage.content);
-      title = formatter.format(widget.diaryPage.date);
+      title = formatter.format(widget.diaryPage.dateTime);
     }
     Size size = MediaQuery.of(context).size;
     return Stack(
@@ -72,7 +71,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                 routerDelegate.pop();
               },
               buttons: [
-                if (widget.diaryPage != null && !modifiable && widget.diaryPage.date == today)
+                if (widget.diaryPage != null && !modifiable && widget.diaryPage.dateTime == today)
                   InkWell(
                       child: InkResponse(
                     onTap: () {

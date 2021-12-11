@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
@@ -23,13 +23,19 @@ class WelcomeBody extends StatefulWidget {
 class _WelcomeBodyState extends State<WelcomeBody> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   AuthViewModel authViewModel;
+  UserViewModel userViewModel;
   String id;
   AppRouterDelegate routerDelegate;
+
+  // Subscriber
+  StreamSubscription<bool> subscriber;
 
   @override
   void initState() {
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    subscriber = subscribeToUserLoggedStream();
     super.initState();
   }
 
@@ -71,25 +77,15 @@ class _WelcomeBodyState extends State<WelcomeBody> {
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               SocialIcon(
                   iconSrc: "assets/icons/facebook.png",
-                  press: () async {
+                  press: () {
                     LoadingDialog.show(context, _keyLoader);
-                    id = await authViewModel.logInWithFacebook();
-                    if (id.isEmpty) {
-                      LoadingDialog.hide(context, _keyLoader);
-                    } else {
-                      navigateToHome();
-                    }
+                    authViewModel.logInWithFacebook();
                   }),
               SocialIcon(
                   iconSrc: "assets/icons/google.png",
-                  press: () async {
+                  press: () {
                     LoadingDialog.show(context, _keyLoader);
-                    id = await authViewModel.logInWithGoogle();
-                    if (id.isEmpty) {
-                      LoadingDialog.hide(context, _keyLoader);
-                    } else {
-                      navigateToHome();
-                    }
+                    authViewModel.logInWithGoogle();
                   }),
             ]),
             StreamBuilder<String>(
@@ -125,10 +121,21 @@ class _WelcomeBodyState extends State<WelcomeBody> {
     );
   }
 
-  void navigateToHome() async {
-    BaseUserViewModel baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
-    await baseUserViewModel.loadLoggedUser(id);
-    LoadingDialog.hide(context, _keyLoader);
-    routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
+  StreamSubscription<bool> subscribeToUserLoggedStream() {
+    return authViewModel.isUserLogged.listen((isUserLogged) async {
+      if (isUserLogged) {
+        await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection} logged"));
+        LoadingDialog.hide(context, _keyLoader);
+        routerDelegate.replace(name: BaseUserHomePageScreen.route);
+      } else {
+        LoadingDialog.hide(context, _keyLoader);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    subscriber.cancel();
+    super.dispose();
   }
 }

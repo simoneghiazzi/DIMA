@@ -22,8 +22,9 @@ class Report extends DbItem {
   }
 
   @override
-  Map<String, Object> getData() {
+  Map<String, Object> get data {
     return {
+      "id": id,
       "category": category,
       "description": description,
       "dateTime": dateTime,

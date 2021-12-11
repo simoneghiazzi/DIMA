@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/Forms/expert_signup_form.dart';
-import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Signup/components/background.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
@@ -23,16 +23,17 @@ class ExpertsInfoBody extends StatefulWidget {
 
 class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-  ExpertSignUpForm expertInfoViewModel;
+  UserViewModel userViewModel;
+  ExpertSignUpForm expertSignUpForm;
   AppRouterDelegate routerDelegate;
-  bool nextEnabled;
+  bool nextEnabled = false;
   File _image;
   Alert errorAlert;
   Alert addressConfirmationAlert;
 
   @override
   void initState() {
-    nextEnabled = false;
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     errorAlert = createErrorAlert();
     super.initState();
@@ -51,9 +52,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
               create: (context) => ExpertSignUpForm(),
               child: Builder(
                 builder: (context) {
-                  expertInfoViewModel = BlocProvider.of<ExpertSignUpForm>(
-                      context,
-                      listen: false);
+                  expertSignUpForm = BlocProvider.of<ExpertSignUpForm>(context, listen: false);
                   return Theme(
                       data: Theme.of(context).copyWith(
                         primaryColor: kPrimaryColor,
@@ -63,14 +62,12 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                           ),
                         ),
                       ),
-                      child:
-                          FormBlocListener<ExpertSignUpForm, String, String>(
+                      child: FormBlocListener<ExpertSignUpForm, String, String>(
                         onSubmitting: (context, state) {
                           LoadingDialog.show(context, _keyLoader);
                         },
                         onSuccess: (context, state) {
-                          addressConfirmationAlert =
-                              createAddressConfirmationAlert();
+                          addressConfirmationAlert = createAddressConfirmationAlert();
                           addressConfirmationAlert.show();
                         },
                         onFailure: (context, state) {
@@ -97,11 +94,11 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                             SizedBox(height: size.height * 0.04),
                             TextFieldBlocBuilder(
                               textCapitalization: TextCapitalization.sentences,
-                              textFieldBloc: expertInfoViewModel.nameText,
+                              textFieldBloc: expertSignUpForm.nameText,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: kPrimaryLightColor.withAlpha(100),
-                                labelText: 'First name',
+                                labelText: "First name",
                                 labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.text_fields,
@@ -111,11 +108,11 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                             ),
                             TextFieldBlocBuilder(
                               textCapitalization: TextCapitalization.sentences,
-                              textFieldBloc: expertInfoViewModel.surnameText,
+                              textFieldBloc: expertSignUpForm.surnameText,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: kPrimaryLightColor.withAlpha(100),
-                                labelText: 'Last name',
+                                labelText: "Last name",
                                 labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.text_fields,
@@ -124,8 +121,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               ),
                             ),
                             DateTimeFieldBlocBuilder(
-                              dateTimeFieldBloc:
-                                  expertInfoViewModel.birthDateTime,
+                              dateTimeFieldBloc: expertSignUpForm.birthDate,
                               format: DateFormat.yMEd(),
                               initialDate: DateTime.now(),
                               firstDate: DateTime(1920),
@@ -133,7 +129,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               decoration: InputDecoration(
                                   filled: true,
                                   fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: 'Birth date',
+                                  labelText: "Birth date",
                                   labelStyle: TextStyle(color: kPrimaryColor),
                                   prefixIcon: Icon(
                                     Icons.date_range,
@@ -142,11 +138,11 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                             ),
                             TextFieldBlocBuilder(
                               textCapitalization: TextCapitalization.sentences,
-                              textFieldBloc: expertInfoViewModel.countryText,
+                              textFieldBloc: expertSignUpForm.countryText,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: kPrimaryLightColor.withAlpha(100),
-                                labelText: 'Office country',
+                                labelText: "Office country",
                                 labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.streetview,
@@ -156,11 +152,11 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                             ),
                             TextFieldBlocBuilder(
                               textCapitalization: TextCapitalization.sentences,
-                              textFieldBloc: expertInfoViewModel.cityText,
+                              textFieldBloc: expertSignUpForm.cityText,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: kPrimaryLightColor.withAlpha(100),
-                                labelText: 'Office city',
+                                labelText: "Office city",
                                 labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.location_city,
@@ -170,11 +166,11 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                             ),
                             TextFieldBlocBuilder(
                               textCapitalization: TextCapitalization.sentences,
-                              textFieldBloc: expertInfoViewModel.streetText,
+                              textFieldBloc: expertSignUpForm.streetText,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: kPrimaryLightColor.withAlpha(100),
-                                labelText: 'Office street',
+                                labelText: "Office street",
                                 labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.location_city,
@@ -183,13 +179,12 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               ),
                             ),
                             TextFieldBlocBuilder(
-                              textFieldBloc:
-                                  expertInfoViewModel.addressNumberText,
+                              textFieldBloc: expertSignUpForm.houseNumber,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: kPrimaryLightColor.withAlpha(100),
-                                labelText: 'Office house number',
+                                labelText: "Office house number",
                                 labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.house,
@@ -198,13 +193,12 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                               ),
                             ),
                             TextFieldBlocBuilder(
-                              textFieldBloc:
-                                  expertInfoViewModel.phoneNumberText,
+                              textFieldBloc: expertSignUpForm.phoneNumber,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: kPrimaryLightColor.withAlpha(100),
-                                labelText: 'Phone number',
+                                labelText: "Phone number",
                                 labelStyle: TextStyle(color: kPrimaryColor),
                                 prefixIcon: Icon(
                                   Icons.phone,
@@ -252,7 +246,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
               text: "NEXT",
               press: () {
                 FocusScope.of(context).unfocus();
-                expertInfoViewModel.submit();
+                expertSignUpForm.submit();
               },
               enabled: nextEnabled,
             ),
@@ -299,7 +293,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
     ImagePicker _picker = ImagePicker();
     var image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      expertInfoViewModel.profilePhoto = image.path.toString();
+      expertSignUpForm.profilePhoto = image.path.toString();
       setState(() {
         _image = File(image.path);
         nextEnabled = true;
@@ -311,20 +305,19 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
     return Alert(
       closeIcon: null,
       context: context,
-      title: "Found address: " + expertInfoViewModel.infoAddress,
+      title: "Found address: " + expertSignUpForm.infoAddress,
       desc: "Your personal informations: \n" +
           "Name: " +
-          expertInfoViewModel.values['name'] +
+          expertSignUpForm.data["name"] +
           "\n" +
           "Surname: " +
-          expertInfoViewModel.values['surname'] +
+          expertSignUpForm.data["surname"] +
           "\n" +
           "Date of birth: " +
-          DateFormat('MM-dd-yyyy')
-              .format(expertInfoViewModel.values['birthDate']) +
+          DateFormat('MM-dd-yyyy').format(expertSignUpForm.data["birthDate"]) +
           "\n" +
           "Phone number: " +
-          expertInfoViewModel.values['phoneNumber'],
+          expertSignUpForm.data["phoneNumber"],
       style: AlertStyle(
         animationDuration: Duration(milliseconds: 0),
         isCloseButton: false,
@@ -333,26 +326,20 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
         DialogButton(
           child: Text(
             "CONFIRM",
-            style: TextStyle(
-                color: kPrimaryColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onPressed: () {
+            userViewModel.createUser(Collection.EXPERTS, expertSignUpForm);
             addressConfirmationAlert.dismiss();
             LoadingDialog.hide(context, _keyLoader);
-            routerDelegate.pushPage(
-                name: CredentialScreen.route,
-                arguments: InfoArguments(expertInfoViewModel,
-                    Provider.of<ExpertViewModel>(context, listen: false)));
+            routerDelegate.pushPage(name: CredentialScreen.route);
           },
           color: Colors.transparent,
         ),
         DialogButton(
           child: Text(
             "RETRY",
-            style: TextStyle(
-                color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onPressed: () {
             addressConfirmationAlert.dismiss();

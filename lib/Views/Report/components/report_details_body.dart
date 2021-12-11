@@ -72,7 +72,7 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> {
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Text(
-                          DateFormat('dd MMM yyyy').format(widget.report.date),
+                          DateFormat('dd MMM yyyy').format(widget.report.dateTime),
                           style: TextStyle(
                             color: kPrimaryColor.withAlpha(150),
                             fontSize: 15,

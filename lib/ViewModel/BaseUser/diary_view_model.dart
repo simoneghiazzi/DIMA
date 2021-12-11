@@ -35,12 +35,12 @@ class DiaryViewModel {
     var now = DateTime.now();
     return _firestoreService
         .addDiaryPageIntoDB(
-          _firebaseAuthService.userCredential.user.uid,
+          _firebaseAuthService.firebaseUser.uid,
           DiaryPage(
             id: now.millisecondsSinceEpoch.toString(),
             title: titleCtrl.text,
             content: contentCtrl.text,
-            date: DateTime(now.year, now.month, now.day),
+            dateTime: now,
             favourite: false,
           ),
         )
@@ -53,12 +53,12 @@ class DiaryViewModel {
     var now = DateTime.now();
     return _firestoreService
         .updateDiaryPageIntoDB(
-          _firebaseAuthService.userCredential.user.uid,
+          _firebaseAuthService.firebaseUser.uid,
           DiaryPage(
             id: pageId,
             title: titleCtrl.text,
             content: contentCtrl.text,
-            date: DateTime(now.year, now.month, now.day),
+            dateTime: now,
           ),
         )
         .then((value) => _isPageCorrectlyAdded.add(true))
@@ -68,14 +68,19 @@ class DiaryViewModel {
   /// Set the [isFavourite] parameter of the diary page identified by the [pageId] into the DB
   Future<void> setFavourite(String pageId, bool isFavourite) {
     return _firestoreService.setFavouriteDiaryNotesIntoDB(
-      _firebaseAuthService.userCredential.user.uid,
+      _firebaseAuthService.firebaseUser.uid,
       DiaryPage(id: pageId, favourite: isFavourite),
     );
   }
 
   /// Get the stream of diary pages from the DB
   Stream<QuerySnapshot> loadPagesStream() {
-    return _firestoreService.getDiaryPagesStreamFromDB(_firebaseAuthService.userCredential.user.uid);
+    try {
+      return _firestoreService.getDiaryPagesStreamFromDB(_firebaseAuthService.firebaseUser.uid);
+    } catch (e) {
+      print("Failed to get the stream of diary pages: $e");
+      return null;
+    }
   }
 
   /// Clear all the text and stream controllers and reset the diary form

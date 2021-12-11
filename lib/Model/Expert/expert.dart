@@ -44,23 +44,24 @@ class Expert extends User {
   @override
   void setFromSignUpForm(BaseUserSignUpForm experSignUpForm) {
     try {
-      name = experSignUpForm.values["name"];
-      surname = experSignUpForm.values["surname"];
-      birthDate = experSignUpForm.values["birthDate"];
-      email = experSignUpForm.values["email"];
-      latitude = experSignUpForm.values["lat"];
-      longitude = experSignUpForm.values["lng"];
-      address = experSignUpForm.values["address"];
-      phoneNumber = experSignUpForm.values["phoneNumber"];
-      profilePhoto = experSignUpForm.values["profilePhoto"];
+      name = experSignUpForm.data["name"];
+      surname = experSignUpForm.data["surname"];
+      birthDate = experSignUpForm.data["birthDate"];
+      email = experSignUpForm.data["email"];
+      latitude = experSignUpForm.data["lat"];
+      longitude = experSignUpForm.data["lng"];
+      address = experSignUpForm.data["address"];
+      phoneNumber = experSignUpForm.data["phoneNumber"];
+      profilePhoto = experSignUpForm.data["profilePhoto"];
     } catch (e) {
       print("Error in setting the expert from the expert signup form: $e");
     }
   }
 
   @override
-  Map<String, Object> getData() {
+  Map<String, Object> get data {
     return {
+      "eid": id,
       "name": name,
       "surname": surname,
       "birthDate": birthDate,

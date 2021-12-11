@@ -29,7 +29,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
   @override
   Widget build(BuildContext context) {
     //detectChangeOrientation();
-    diaryViewModel.checkOpenPage();
+    //diaryViewModel.checkOpenPage();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: //MediaQuery.of(context).orientation == Orientation.landscape

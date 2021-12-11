@@ -1,7 +1,5 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Diary/components/note_data_source.dart';
@@ -22,14 +20,14 @@ class DiaryBody extends StatefulWidget {
 }
 
 class _DiaryBodyState extends State<DiaryBody> {
-  BaseUserViewModel baseUserViewModel;
+  UserViewModel userViewModel;
   AppRouterDelegate routerDelegate;
   final CalendarController _controller = CalendarController();
   String _headerText;
 
   @override
   void initState() {
-    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     _headerText = "header";
     super.initState();
@@ -118,7 +116,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                           0.02),
                       child: FloatingActionButton(
                         onPressed: () {
-                          widget.diaryViewModel.openPage(null);
+                          //widget.diaryViewModel.openPage(null);
                           if (MediaQuery.of(context).orientation != Orientation.landscape) {
                             routerDelegate.pushPage(name: DiaryPageScreen.route);
                           }
@@ -145,7 +143,7 @@ class _DiaryBodyState extends State<DiaryBody> {
     if (details.appointments != null) {
       if (details.appointments.isNotEmpty && details.targetElement == CalendarElement.appointment) {
         final DiaryPage noteDetails = details.appointments[0];
-        widget.diaryViewModel.openPage(noteDetails);
+        //widget.diaryViewModel.openPage(noteDetails);
         if (MediaQuery.of(context).orientation != Orientation.landscape) {
           routerDelegate.pushPage(name: DiaryPageScreen.route, arguments: widget.diaryViewModel);
         }

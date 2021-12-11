@@ -16,7 +16,7 @@ class NoteDataSource extends CalendarDataSource {
       DiaryPage n = DiaryPage();
       n.setFromDocument(doc);
       source.add(n);
-      if (n.date == DateTime(today.year, today.month, today.day)) {
+      if (n.dateTime == DateTime(today.year, today.month, today.day)) {
         diaryViewModel.hasNoteToday = true;
       }
     }

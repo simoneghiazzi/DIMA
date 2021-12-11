@@ -190,13 +190,13 @@ class _MapBodyState extends State<MapBody> {
         expert.setFromDocument(doc);
         _markers.add(
           Marker(
-            markerId: MarkerId(expert.getData()['surname'] + expert.getData()['lat'].toString() + expert.getData()['lng'].toString()),
-            position: LatLng(expert.getData()['lat'], expert.getData()['lng']),
+            markerId: MarkerId(expert.data['surname'].toString() + expert.data['lat'].toString() + expert.data['lng'].toString()),
+            position: LatLng(expert.data['lat'], expert.data['lng']),
             icon: pinLocationIcon,
             onTap: () {
               _customInfoWindowController.addInfoWindow(
                 MapMarker(expert: expert),
-                LatLng(expert.getData()['lat'], expert.getData()['lng']),
+                LatLng(expert.data['lat'], expert.data['lng']),
               );
             },
           ),

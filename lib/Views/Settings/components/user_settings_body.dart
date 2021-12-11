@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -47,9 +49,9 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
               child: Container(
                   decoration: BoxDecoration(color: kPrimaryColor),
                   height: size.height / 12,
-                  child: widget.user.getData()['profilePhoto'] != null
+                  child: widget.user.data['profilePhoto'] != null
                       ? NetworkAvatar(
-                          img: widget.user.getData()['profilePhoto'],
+                          img: widget.user.data['profilePhoto'],
                           radius: 45.0,
                         )
                       : CircleAvatar(
@@ -91,7 +93,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                           SizedBox(
                             height: size.height * 0.05,
                           ),
-                          if (widget.user.getData()['address'] != null) ...[
+                          if (widget.user.data['address'] != null) ...[
                             Row(
                               children: <Widget>[
                                 Icon(
@@ -102,7 +104,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   width: size.width * 0.05,
                                 ),
                                 Flexible(
-                                  child: Text(widget.user.getData()['address'],
+                                  child: Text(widget.user.data['address'],
                                       style: TextStyle(
                                         color: kPrimaryColor,
                                         fontSize: 15,
@@ -114,7 +116,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               height: size.height * 0.04,
                             ),
                           ],
-                          if (widget.user.getData()['phoneNumber'] != null) ...[
+                          if (widget.user.data['phoneNumber'] != null) ...[
                             Row(
                               children: <Widget>[
                                 Icon(
@@ -124,7 +126,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                 SizedBox(
                                   width: size.width * 0.05,
                                 ),
-                                Text(widget.user.getData()['phoneNumber'],
+                                Text(widget.user.data['phoneNumber'],
                                     style: TextStyle(
                                       color: kPrimaryColor,
                                       fontSize: 15,
@@ -265,27 +267,27 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                               SocialIcon(
                                   iconSrc: "assets/icons/facebook.png",
-                                  press: () async {
+                                  press: () {
                                     LoadingDialog.show(context, _keyLoader);
-                                    var id = await authViewModel.logInWithFacebook(link: true);
-                                    LoadingDialog.hide(context, _keyLoader);
-                                    if (id == null) {
-                                      showSnackBar("This social account is already linked with another profile or the email is already registered.");
-                                    } else {
+                                    authViewModel.logInWithFacebook(link: true).then((value) {
+                                      LoadingDialog.hide(context, _keyLoader);
                                       setState(() {});
-                                    }
+                                    }).catchError((onError) {
+                                      LoadingDialog.hide(context, _keyLoader);
+                                      showSnackBar("This social account is already linked with another profile or the email is already registered.");
+                                    });
                                   }),
                               SocialIcon(
                                   iconSrc: "assets/icons/google.png",
-                                  press: () async {
+                                  press: () {
                                     LoadingDialog.show(context, _keyLoader);
-                                    var id = await authViewModel.logInWithGoogle(link: true);
-                                    LoadingDialog.hide(context, _keyLoader);
-                                    if (id == null) {
-                                      showSnackBar("This social account is already linked with another profile or the email is already registered.");
-                                    } else {
+                                    authViewModel.logInWithGoogle(link: true).then((value) {
+                                      LoadingDialog.hide(context, _keyLoader);
                                       setState(() {});
-                                    }
+                                    }).catchError((onError) {
+                                      LoadingDialog.hide(context, _keyLoader);
+                                      showSnackBar("This social account is already linked with another profile or the email is already registered.");
+                                    });
                                   }),
                             ]),
                             SizedBox(

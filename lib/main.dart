@@ -4,13 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
-import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Model/Services/collections.dart';
@@ -45,24 +45,18 @@ Future<void> main() async {
 
   // Services initialization
   setupServices();
-  FirebaseAuthService firebaseAuthService = GetIt.I<FirebaseAuthService>();
-  FirestoreService firestoreService = GetIt.I<FirestoreService>();
+  FirebaseAuthService _firebaseAuthService = GetIt.I<FirebaseAuthService>();
 
-  // Already logged user check
-  var alreadyLoggedUserId = firebaseAuthService.currentUser();
-
-  // If the user is already logged, find the user collection {BaseUser, Expert},
+  // Already logged user check: if the user is already logged
   // fetch the correct user data from the DB and load the relative homePage.
   //
   // If the user is not already logged, load the welcome page.
-  if (alreadyLoggedUserId.isNotEmpty) {
-    var collection = await firestoreService.findUserCollection(alreadyLoggedUserId);
-    var userViewModel = collection.userViewModel;
-    await userViewModel.loadLoggedUser(alreadyLoggedUserId).then((_) => print("User of category ${collection.value} logged"));
+  if (_firebaseAuthService.firebaseUser != null) {
+    UserViewModel userViewModel = UserViewModel();
+    await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection.value} logged"));
     runApp(MyApp(
-      baseUserProvider: Provider(create: (context) => userViewModel as BaseUserViewModel),
-      expertProvider: Provider(create: (context) => userViewModel as ExpertViewModel),
-      homePage: collection.homePageRoute,
+      userProvider: Provider(create: (context) => userViewModel),
+      homePage: userViewModel.loggedUser.collection.homePageRoute,
     ));
   } else {
     runApp(MyApp());
@@ -73,15 +67,14 @@ Future<void> main() async {
 void setupServices() {
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(FirestoreService(FirebaseFirestore.instance));
-  getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService());
+  getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(FirebaseAuth.instance));
 }
 
 class MyApp extends StatefulWidget {
-  final Provider<BaseUserViewModel> baseUserProvider;
-  final Provider<ExpertViewModel> expertProvider;
+  final Provider<UserViewModel> userProvider;
   final String homePage;
 
-  MyApp({Key key, this.baseUserProvider, this.expertProvider, this.homePage}) : super(key: key);
+  MyApp({Key key, this.userProvider, this.homePage}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -95,7 +88,7 @@ class _MyAppState extends State<MyApp> {
     // Add the WelcomePage to the routerDelegate and the homePage only if the user is already logged
     routerDelegate.addAll([
       RouteSettings(name: WelcomeScreen.route),
-      if (widget.homePage != null) RouteSettings(name: widget.homePage),
+      if (widget.homePage != null) ...[RouteSettings(name: widget.homePage)],
     ]);
     super.initState();
   }
@@ -110,8 +103,7 @@ class _MyAppState extends State<MyApp> {
         Provider(create: (context) => DiaryViewModel()),
         Provider(create: (context) => ReportViewModel()),
         Provider(create: (context) => MapViewModel()),
-        widget.baseUserProvider ?? Provider(create: (context) => BaseUserViewModel()),
-        widget.expertProvider ?? Provider(create: (context) => ExpertViewModel()),
+        widget.userProvider ?? Provider(create: (context) => UserViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

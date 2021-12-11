@@ -65,7 +65,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
     if (doc != null) {
       Report report = new Report();
       report.setFromDocument(doc);
-      String date = DateFormat('yyyy-MM-dd kk:mm').format(report.date);
+      String date = DateFormat('yyyy-MM-dd kk:mm').format(report.dateTime);
       return Container(
         child: TextButton(
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[

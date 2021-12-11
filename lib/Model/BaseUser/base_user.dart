@@ -23,18 +23,19 @@ class BaseUser extends User {
   @override
   void setFromSignUpForm(BaseUserSignUpForm baseUserSignUpForm) {
     try {
-      name = baseUserSignUpForm.values["name"];
-      surname = baseUserSignUpForm.values["surname"];
-      birthDate = baseUserSignUpForm.values["birthDate"];
-      email = baseUserSignUpForm.values["email"];
+      name = baseUserSignUpForm.data["name"];
+      surname = baseUserSignUpForm.data["surname"];
+      birthDate = baseUserSignUpForm.data["birthDate"];
+      email = baseUserSignUpForm.data["email"];
     } catch (e) {
       print("Error in setting the base user from the baseUser signup form: $e");
     }
   }
 
   @override
-  Map<String, Object> getData() {
+  Map<String, Object> get data {
     return {
+      "uid": id,
       "name": name,
       "surname": surname,
       "birthDate": birthDate,

@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
@@ -17,43 +15,30 @@ import 'package:sApport/Views/components/rounded_password_field.dart';
 import 'package:provider/provider.dart';
 
 class CredentialBody extends StatefulWidget {
-  final BaseUserSignUpForm infoViewModel;
-  final UserViewModel userViewModel;
-
-  CredentialBody({
-    Key key,
-    @required this.infoViewModel,
-    @required this.userViewModel,
-  }) : super(key: key);
-
   @override
-  _CredentialBodyState createState() => _CredentialBodyState(
-        infoViewModel: this.infoViewModel,
-      );
+  _CredentialBodyState createState() => _CredentialBodyState();
 }
 
 class _CredentialBodyState extends State<CredentialBody> {
   GlobalKey<State> _keyLoader;
-  final BaseUserSignUpForm infoViewModel;
-  AuthViewModel authViewModel;
-  AppRouterDelegate routerDelegate;
-  User user;
-  bool loading = true;
-  StreamSubscription<bool> subscriber;
 
-  _CredentialBodyState({
-    @required this.infoViewModel,
-  });
+  // View Models
+  AuthViewModel authViewModel;
+  UserViewModel userViewModel;
+  AppRouterDelegate routerDelegate;
+
+  // Subscriber
+  StreamSubscription<bool> subscriber;
 
   @override
   void initState() {
     _keyLoader = new GlobalKey<State>();
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    subscriber = subscribeToViewModel();
+    subscriber = subscribeToUserCreatedStream();
     BackButtonInterceptor.add(backButtonInterceptor);
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => authViewModel.getData());
+    WidgetsBinding.instance.addPostFrameCallback((_) => authViewModel.getData());
     super.initState();
   }
 
@@ -95,10 +80,7 @@ class _CredentialBodyState extends State<CredentialBody> {
             StreamBuilder<String>(
                 stream: authViewModel.loginForm.errorRepeatPasswordText,
                 builder: (context, snapshot) {
-                  return RoundedPasswordField(
-                      controller: authViewModel.repeatPswCtrl,
-                      hintText: "Confirm Password",
-                      errorText: snapshot.data);
+                  return RoundedPasswordField(controller: authViewModel.repeatPswCtrl, hintText: "Confirm Password", errorText: snapshot.data);
                 }),
             StreamBuilder(
                 stream: authViewModel.loginForm.isSignUpEnabled,
@@ -108,9 +90,8 @@ class _CredentialBodyState extends State<CredentialBody> {
                     press: () async {
                       FocusScope.of(context).unfocus();
                       LoadingDialog.show(context, _keyLoader);
-                      infoViewModel.email = authViewModel.emailCtrl.text;
-                      user = widget.userViewModel.createUser(infoViewModel);
-                      await authViewModel.signUpUser(user);
+                      userViewModel.loggedUser.email = authViewModel.emailCtrl.text;
+                      await authViewModel.signUpUser(userViewModel.loggedUser);
                     },
                     enabled: snapshot.data ?? false,
                   );
@@ -119,18 +100,14 @@ class _CredentialBodyState extends State<CredentialBody> {
             StreamBuilder<String>(
                 stream: authViewModel.authMessage,
                 builder: (context, snapshot) {
-                  return RichText(
-                      text: TextSpan(
-                          text: snapshot.data,
-                          style: TextStyle(color: Colors.red, fontSize: 15)));
+                  return RichText(text: TextSpan(text: snapshot.data, style: TextStyle(color: Colors.red, fontSize: 15)));
                 }),
             SizedBox(height: size.height * 0.02),
             AlreadyHaveAnAccountCheck(
               login: false,
               press: () {
                 authViewModel.clearControllers();
-                routerDelegate.replaceAllButNumber(
-                    1, [RouteSettings(name: LoginScreen.route)]);
+                routerDelegate.replaceAllButNumber(1, [RouteSettings(name: LoginScreen.route)]);
               },
             ),
             SizedBox(height: size.height * 0.06),
@@ -140,7 +117,7 @@ class _CredentialBodyState extends State<CredentialBody> {
     );
   }
 
-  StreamSubscription<bool> subscribeToViewModel() {
+  StreamSubscription<bool> subscribeToUserCreatedStream() {
     return authViewModel.isUserCreated.listen((isUserCreated) {
       LoadingDialog.hide(context, _keyLoader);
       if (isUserCreated) {
@@ -152,16 +129,8 @@ class _CredentialBodyState extends State<CredentialBody> {
 
   void showSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Text('Please check your email for the verification link.'),
-      action: SnackBarAction(
-        label: 'RESEND EMAIL',
-        onPressed: () {
-          authViewModel.resendEmailVerification(user);
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          showSnackBar();
-        },
-      ),
-      duration: const Duration(seconds: 100),
+      content: const Text("Please check your email for the verification link."),
+      duration: const Duration(seconds: 10),
     ));
   }
 

@@ -5,30 +5,30 @@ import 'package:sApport/Model/db_item.dart';
 class Message extends DbItem {
   String idFrom;
   String idTo;
-  DateTime dateTime;
+  DateTime timestamp;
   String content;
 
-  Message({String id, this.idFrom, this.idTo, this.dateTime, this.content}) : super(id: id);
+  Message({this.idFrom, this.idTo, this.timestamp, this.content});
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
     try {
-      id = doc.id;
       idFrom = doc.get("idFrom");
       idTo = doc.get("idTo");
-      dateTime = doc.get("dateTime");
-      content = doc.get('content');
+      int milli = doc.get("timestamp");
+      timestamp = DateTime.fromMillisecondsSinceEpoch(milli);
+      content = doc.get("content");
     } catch (e) {
       print("Error in setting the message from the document snapshot: $e");
     }
   }
 
   @override
-  Map<String, Object> getData() {
+  Map<String, Object> get data {
     return {
       "idFrom": idFrom,
       "idTo": idTo,
-      "dateTime": dateTime,
+      "timestamp": timestamp.millisecondsSinceEpoch,
       "content": content,
     };
   }

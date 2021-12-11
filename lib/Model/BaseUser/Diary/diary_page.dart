@@ -24,8 +24,9 @@ class DiaryPage extends DbItem {
   }
 
   @override
-  Map<String, Object> getData() {
+  Map<String, Object> get data {
     return {
+      "id": id,
       "title": title,
       "content": content,
       "dateTime": dateTime,

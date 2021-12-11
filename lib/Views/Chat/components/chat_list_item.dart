@@ -74,7 +74,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
                     ),
                   )
                 : NetworkAvatar(
-                    img: userItem.getData()['profilePhoto'],
+                    img: userItem.data['profilePhoto'],
                     radius: 25.0,
                   ),
             SizedBox(

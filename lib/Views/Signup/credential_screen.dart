@@ -17,10 +17,7 @@ class CredentialScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CredentialBody(
-        infoViewModel: infoViewModel,
-        userViewModel: userViewModel,
-      ),
+      body: CredentialBody(),
     );
   }
 }

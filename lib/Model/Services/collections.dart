@@ -1,8 +1,8 @@
-import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
-import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
+import 'package:sApport/Model/user.dart';
+import 'package:sApport/Model/Expert/expert.dart';
+import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
+import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
 
 // DB Collections
 enum Collection {
@@ -58,14 +58,14 @@ extension Utils on Collection {
     }
   }
 
-  /// Returns the [UserViewModel] of the relative user collections
-  UserViewModel get userViewModel {
+  /// Returns the [User] model of the relative user collections
+  User get userModel {
     switch (this) {
       case Collection.BASE_USERS:
-        return BaseUserViewModel();
+        return BaseUser();
         break;
       case Collection.EXPERTS:
-        return ExpertViewModel();
+        return Expert();
         break;
       default:
         return null;

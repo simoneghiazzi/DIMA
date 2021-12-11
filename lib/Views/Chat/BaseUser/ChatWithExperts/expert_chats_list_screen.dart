@@ -26,7 +26,7 @@ class _ExpertChatsListScreenState extends State<ExpertChatsListScreen> {
   @override
   Widget build(BuildContext context) {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
-    detectChangeOrientation();
+    //detectChangeOrientation();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: MediaQuery.of(context).orientation == Orientation.landscape
@@ -34,19 +34,19 @@ class _ExpertChatsListScreenState extends State<ExpertChatsListScreen> {
               controller: SplitViewController(weights: [0.3, 0.7]),
               children: [
                 ExpertChatsListBody(),
-                widget.chatPage == null
-                    ? StreamBuilder(
-                        stream: chatViewModel.isChatOpen,
-                        builder: (context, snapshot) {
-                          if (snapshot.data == true) {
-                            isChatOpen = true;
-                            return ChatPageScreen(
-                              startOrientation: MediaQuery.of(context).orientation == Orientation.landscape,
-                            );
-                          }
-                          return EmptyPagePortrait();
-                        })
-                    : widget.chatPage,
+                // widget.chatPage == null
+                //     ? StreamBuilder(
+                //         stream: chatViewModel.isChatOpen,
+                //         builder: (context, snapshot) {
+                //           if (snapshot.data == true) {
+                //             isChatOpen = true;
+                //             return ChatPageScreen(
+                //               startOrientation: MediaQuery.of(context).orientation == Orientation.landscape,
+                //             );
+                //           }
+                //           return EmptyPagePortrait();
+                //         })
+                //     : widget.chatPage,
               ],
               viewMode: SplitViewMode.Horizontal,
               gripSize: 1.0,
@@ -56,12 +56,12 @@ class _ExpertChatsListScreenState extends State<ExpertChatsListScreen> {
     );
   }
 
-  Future<void> detectChangeOrientation() async {
-    AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    await Future(() async {
-      if ((MediaQuery.of(context).orientation == Orientation.portrait) && isChatOpen) {
-        routerDelegate.pushPage(name: ChatPageScreen.route);
-      }
-    });
-  }
+  // Future<void> detectChangeOrientation() async {
+  //   AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+  //   await Future(() async {
+  //     if ((MediaQuery.of(context).orientation == Orientation.portrait) && isChatOpen) {
+  //       routerDelegate.pushPage(name: ChatPageScreen.route);
+  //     }
+  //   });
+  // }
 }

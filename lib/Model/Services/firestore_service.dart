@@ -37,7 +37,7 @@ class FirestoreService {
     if (user.collection == Collection.BASE_USERS) {
       _incrementBaseUsersCounter(1);
     }
-    return userReference.set(user.getData()).then((value) => print("User added")).catchError((error) => print("Failed to add user: $error"));
+    return userReference.set(user.data).then((value) => print("User added")).catchError((error) => print("Failed to add user: $error"));
   }
 
   /// Delete a user from the firestore DB.
@@ -94,30 +94,24 @@ class FirestoreService {
       HashSet<String> requests = await _getChatIdsSet(user, Request());
 
       // Get the ids less than or equal to the random id
-      var snapshotLess = await _firestore
-          .collection(user.collection.value)
-          .where("uid", isLessThanOrEqualTo: randomId)
-          .orderBy("uid", descending: true)
-          .limit(_limit)
-          .get();
+      var snapshotLess =
+          await _firestore.collection(user.collection.value).where("uid", isLessThanOrEqualTo: randomId).orderBy("uid").limit(_limit).get();
 
       // Get the ids grater than the random id
-      var snapshotGreater = await _firestore
-          .collection(user.collection.value)
-          .where("uid", isGreaterThan: randomId)
-          .orderBy("uid", descending: true)
-          .limit(_limit)
-          .get();
+      var snapshotGreater =
+          await _firestore.collection(user.collection.value).where("uid", isGreaterThan: randomId).orderBy("uid").limit(_limit).get();
 
       // Union of the retrieved ids to the same list
-      snapshotLess.docs.addAll(snapshotGreater.docs);
+      List randomUsers = new List.from(snapshotLess.docs);
+      randomUsers.addAll(snapshotGreater.docs);
 
-      while (snapshotLess.docs.length != 0) {
-        var doc = snapshotLess.docs.removeAt(Random().nextInt(snapshotLess.docs.length));
-        var uid = doc.get("uid");
-
+      while (randomUsers.length != 0) {
+        var doc = randomUsers.removeAt(Random().nextInt(randomUsers.length));
+        if (doc.id == "utils") {
+          continue;
+        }
         // Check if the id is different from the one of the logged user and is not already present in the chat sets
-        if (user.id != uid && !activeIds.contains(uid) && !pendingIds.contains(uid) && !requests.contains(uid)) {
+        if (user.id != doc.id && !activeIds.contains(doc.id) && !pendingIds.contains(doc.id) && !requests.contains(doc.id)) {
           return doc;
         }
       }
@@ -172,12 +166,12 @@ class FirestoreService {
   ///
   /// Then it calls the updateChatInfo method.
   void addMessageIntoDB(Conversation conversation, Message message) {
-    var messagesReference = _firestore
-        .collection(message.collection.value)
+    _firestore
+        .collection(Collection.MESSAGES.value)
         .doc(conversation.pairChatId)
         .collection(conversation.pairChatId)
-        .doc(message.timestamp.millisecondsSinceEpoch.toString());
-    messagesReference.set(message.getData());
+        .doc(message.timestamp.millisecondsSinceEpoch.toString())
+        .set(message.data);
     _updateChatInfo(conversation, message.timestamp.millisecondsSinceEpoch);
   }
 
@@ -360,7 +354,7 @@ class FirestoreService {
         .doc(id)
         .collection("reportsList")
         .doc(report.id)
-        .set(report.getData())
+        .set(report.data)
         .then((value) => print("Report added"))
         .catchError((error) => print("Failed to add the report: $error"));
   }
@@ -368,7 +362,7 @@ class FirestoreService {
   /// It takes the [id] of an user and return the stream of all the
   /// reports of the user oredered in descending by date from the DB
   Stream<QuerySnapshot> getReportsFromDB(String id) {
-    return _firestore.collection(Collection.REPORTS.value).doc(id).collection("reportsList").orderBy("date", descending: true).snapshots();
+    return _firestore.collection(Collection.REPORTS.value).doc(id).collection("reportsList").orderBy("id", descending: true).snapshots();
   }
 
   /**************************************** DIARY ********************************************/
@@ -381,7 +375,7 @@ class FirestoreService {
         .doc(id)
         .collection("diaryPages")
         .doc(diaryPage.id)
-        .set(diaryPage.getData())
+        .set(diaryPage.data)
         .then((value) => print("Diary page added"))
         .catchError((error) => print("Failed to add the diary note: $error"));
   }
@@ -395,9 +389,9 @@ class FirestoreService {
         .collection("diaryPages")
         .doc(diaryPage.id)
         .update({
-          "title": diaryPage.getData()["title"],
-          "content": diaryPage.getData()["content"],
-          "date": diaryPage.getData()["date"],
+          "title": diaryPage.data["title"],
+          "content": diaryPage.data["content"],
+          "date": diaryPage.data["date"],
         })
         .then((value) => print("Diary page updated"))
         .catchError((error) => print("Failed to update the diary note: $error"));
@@ -405,14 +399,13 @@ class FirestoreService {
 
   /// It takes the [id] of an user and the [diaryPage] and set it as favourite or not
   Future<void> setFavouriteDiaryNotesIntoDB(String id, DiaryPage diaryPage) {
-    var data = diaryPage.getData();
     return _firestore
         .collection(diaryPage.collection.value)
         .doc(id)
         .collection("diaryPages")
         .doc(diaryPage.id)
         .update({
-          "favourite": data["favourite"],
+          "favourite": diaryPage.data["favourite"],
         })
         .then((value) => print("Favourite note updated"))
         .catchError((error) => print("Failed to update the favourite note: $error"));
@@ -421,6 +414,6 @@ class FirestoreService {
   /// It takes the [id] of an user and return the stream of
   /// all the diaryPages of the user oredered by date from the DB
   Stream<QuerySnapshot> getDiaryPagesStreamFromDB(String id) {
-    return _firestore.collection(Collection.DIARY.value).doc(id).collection("diaryPages").orderBy("date", descending: true).snapshots();
+    return _firestore.collection(Collection.DIARY.value).doc(id).collection("diaryPages").orderBy("id", descending: true).snapshots();
   }
 }

@@ -1,13 +1,12 @@
+import 'dart:async';
+
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:sApport/Model/Services/collections.dart';
-import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
-import 'package:sApport/ViewModel/Expert/expert_view_model.dart';
+
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
-import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
+
 import 'package:sApport/Views/Login/forgot_password_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:sApport/Views/components/forgot_password.dart';
@@ -19,7 +18,6 @@ import 'package:sApport/Views/components/already_have_an_account_check.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/rounded_input_field.dart';
 import 'package:sApport/Views/components/rounded_password_field.dart';
-import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 class LoginBody extends StatefulWidget {
@@ -29,15 +27,22 @@ class LoginBody extends StatefulWidget {
 
 class _LoginBodyState extends State<LoginBody> {
   GlobalKey<State> _keyLoader;
+
+  // View Models
   AuthViewModel authViewModel;
+  UserViewModel userViewModel;
   AppRouterDelegate routerDelegate;
-  FirestoreService firestoreService = GetIt.I<FirestoreService>();
+
+  // Subscriber
+  StreamSubscription<bool> subscriber;
 
   @override
   void initState() {
     _keyLoader = new GlobalKey<State>();
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    subscriber = subscribeToUserLoggedStream();
     BackButtonInterceptor.add(backButtonInterceptor);
     WidgetsBinding.instance.addPostFrameCallback((_) => authViewModel.getData());
     super.initState();
@@ -91,15 +96,10 @@ class _LoginBodyState extends State<LoginBody> {
                 builder: (context, snapshot) {
                   return RoundedButton(
                     text: "LOGIN",
-                    press: () async {
+                    press: () {
                       FocusScope.of(context).unfocus();
                       LoadingDialog.show(context, _keyLoader);
-                      var id = await authViewModel.logIn();
-                      if (id == null) {
-                        LoadingDialog.hide(context, _keyLoader);
-                      } else {
-                        navigateToHome(id);
-                      }
+                      authViewModel.logIn();
                     },
                     enabled: snapshot.data ?? false,
                   );
@@ -124,18 +124,17 @@ class _LoginBodyState extends State<LoginBody> {
     );
   }
 
-  void navigateToHome(String id) async {
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    Collection collection = await firestoreService.findUserCollection(id);
-    var userViewModel;
-    if (collection == Collection.BASE_USERS) {
-      userViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
-    } else {
-      userViewModel = Provider.of<ExpertViewModel>(context, listen: false);
-    }
-    await userViewModel.loadLoggedUser(id).then((_) => print("User of category ${collection.value} logged"));
-    LoadingDialog.hide(context, _keyLoader);
-    routerDelegate.replace(name: collection.homePageRoute);
+  StreamSubscription<bool> subscribeToUserLoggedStream() {
+    return authViewModel.isUserLogged.listen((isUserLogged) async {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      if (isUserLogged) {
+        await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection.value} logged"));
+        LoadingDialog.hide(context, _keyLoader);
+        routerDelegate.replace(name: userViewModel.loggedUser.collection.homePageRoute);
+      } else {
+        LoadingDialog.hide(context, _keyLoader);
+      }
+    });
   }
 
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
@@ -146,6 +145,7 @@ class _LoginBodyState extends State<LoginBody> {
 
   @override
   void dispose() {
+    subscriber.cancel();
     BackButtonInterceptor.remove(backButtonInterceptor);
     super.dispose();
   }
