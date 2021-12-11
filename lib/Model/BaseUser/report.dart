@@ -1,32 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/db_item.dart';
+import 'package:sApport/Model/Services/collections.dart';
 
 class Report extends DbItem {
   String category;
   String description;
-  DateTime date;
+  DateTime dateTime;
 
-  Report({String id, this.category, this.description, this.date}) : super(id: id);
+  Report({String id, this.category, this.description, this.dateTime}) : super(id: id);
 
+  @override
   void setFromDocument(DocumentSnapshot doc) {
     try {
       id = doc.id;
-    } catch (e) {}
-    try {
-      category = doc.get('category');
-    } catch (e) {}
-    try {
-      description = doc.get('description');
-    } catch (e) {}
-    try {
-      date = doc.get('date').toDate();
-    } catch (e) {}
+      category = doc.get("category");
+      description = doc.get("description");
+      dateTime = doc.get("dateTime").toDate();
+    } catch (e) {
+      print("Error in setting the report from the document snapshot: $e");
+    }
   }
 
-  getData() {
-    return {'id': id, 'category': category, 'description': description, 'date': date};
+  @override
+  Map<String, Object> getData() {
+    return {
+      "category": category,
+      "description": description,
+      "dateTime": dateTime,
+    };
   }
 
+  @override
   Collection get collection => Collection.REPORTS;
 }

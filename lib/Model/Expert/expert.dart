@@ -27,71 +27,40 @@ class Expert extends User {
   void setFromDocument(DocumentSnapshot doc) {
     try {
       id = doc.id;
-    } catch (e) {}
-    try {
       name = doc.get("name");
-    } catch (e) {}
-    try {
       surname = doc.get("surname");
-    } catch (e) {}
-    try {
-      birthDate = doc.get("birthDate");
-    } catch (e) {}
-    try {
+      birthDate = doc.get("birthDate").toDate();
       latitude = doc.get("lat");
-    } catch (e) {}
-    try {
       longitude = doc.get("lng");
-    } catch (e) {}
-    try {
       address = doc.get("address");
-    } catch (e) {}
-    try {
       email = doc.get("email");
-    } catch (e) {}
-    try {
       phoneNumber = doc.get("phoneNumber");
-    } catch (e) {}
-    try {
       profilePhoto = doc.get("profilePhoto");
-    } catch (e) {}
+    } catch (e) {
+      print("Error in setting the expert from the document snapshot: $e");
+    }
   }
 
   @override
   void setFromSignUpForm(BaseUserSignUpForm experSignUpForm) {
     try {
       name = experSignUpForm.values["name"];
-    } catch (e) {}
-    try {
       surname = experSignUpForm.values["surname"];
-    } catch (e) {}
-    try {
       birthDate = experSignUpForm.values["birthDate"];
-    } catch (e) {}
-    try {
       email = experSignUpForm.values["email"];
-    } catch (e) {}
-    try {
       latitude = experSignUpForm.values["lat"];
-    } catch (e) {}
-    try {
       longitude = experSignUpForm.values["lng"];
-    } catch (e) {}
-    try {
       address = experSignUpForm.values["address"];
-    } catch (e) {}
-    try {
       phoneNumber = experSignUpForm.values["phoneNumber"];
-    } catch (e) {}
-    try {
       profilePhoto = experSignUpForm.values["profilePhoto"];
-    } catch (e) {}
+    } catch (e) {
+      print("Error in setting the expert from the expert signup form: $e");
+    }
   }
 
   @override
-  Map getData() {
+  Map<String, Object> getData() {
     return {
-      "eid": id,
       "name": name,
       "surname": surname,
       "birthDate": birthDate,

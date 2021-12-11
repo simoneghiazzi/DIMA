@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/user.dart';
+import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
 
 class BaseUser extends User {
@@ -11,41 +11,30 @@ class BaseUser extends User {
   void setFromDocument(DocumentSnapshot doc) {
     try {
       id = doc.id;
-    } catch (e) {}
-    try {
       name = doc.get("name");
-    } catch (e) {}
-    try {
       surname = doc.get("surname");
-    } catch (e) {}
-    try {
       birthDate = doc.get("birthDate").toDate();
-    } catch (e) {}
-    try {
       email = doc.get("email");
-    } catch (e) {}
+    } catch (e) {
+      print("Error in setting the base user from the document snapshot: $e");
+    }
   }
 
   @override
-  void setFromSignUpForm(BaseUserSignUpForm baseUserInfoForm) {
+  void setFromSignUpForm(BaseUserSignUpForm baseUserSignUpForm) {
     try {
-      name = baseUserInfoForm.values["name"];
-    } catch (e) {}
-    try {
-      surname = baseUserInfoForm.values["surname"];
-    } catch (e) {}
-    try {
-      birthDate = baseUserInfoForm.values["birthDate"];
-    } catch (e) {}
-    try {
-      email = baseUserInfoForm.values["email"];
-    } catch (e) {}
+      name = baseUserSignUpForm.values["name"];
+      surname = baseUserSignUpForm.values["surname"];
+      birthDate = baseUserSignUpForm.values["birthDate"];
+      email = baseUserSignUpForm.values["email"];
+    } catch (e) {
+      print("Error in setting the base user from the baseUser signup form: $e");
+    }
   }
 
   @override
-  Map getData() {
+  Map<String, Object> getData() {
     return {
-      "uid": id,
       "name": name,
       "surname": surname,
       "birthDate": birthDate,

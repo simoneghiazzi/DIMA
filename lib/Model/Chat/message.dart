@@ -2,38 +2,34 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/db_item.dart';
 
-class Message implements DbItem {
+class Message extends DbItem {
   String idFrom;
   String idTo;
-  DateTime timestamp;
+  DateTime dateTime;
   String content;
 
-  Message({this.idFrom, this.idTo, this.timestamp, this.content});
+  Message({String id, this.idFrom, this.idTo, this.dateTime, this.content}) : super(id: id);
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
     try {
-      idFrom = doc.get('idFrom');
-    } catch (e) {}
-    try {
-      idTo = doc.get('idTo');
-    } catch (e) {}
-    try {
-      int milli = doc.get('timestamp');
-      timestamp = DateTime.fromMillisecondsSinceEpoch(milli);
-    } catch (e) {}
-    try {
+      id = doc.id;
+      idFrom = doc.get("idFrom");
+      idTo = doc.get("idTo");
+      dateTime = doc.get("dateTime");
       content = doc.get('content');
-    } catch (e) {}
+    } catch (e) {
+      print("Error in setting the message from the document snapshot: $e");
+    }
   }
 
   @override
-  getData() {
+  Map<String, Object> getData() {
     return {
-      'idFrom': idFrom,
-      'idTo': idTo,
-      'timestamp': timestamp.millisecondsSinceEpoch,
-      'content': content,
+      "idFrom": idFrom,
+      "idTo": idTo,
+      "dateTime": dateTime,
+      "content": content,
     };
   }
 

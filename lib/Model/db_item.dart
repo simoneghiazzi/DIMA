@@ -8,7 +8,7 @@ abstract class DbItem {
   DbItem({this.id});
 
   /// Get the data of the DBItem as a key-value map
-  Map getData();
+  Map<String, Object> getData();
 
   /// Set the fields of the DBItem from the [doc]
   void setFromDocument(DocumentSnapshot doc);

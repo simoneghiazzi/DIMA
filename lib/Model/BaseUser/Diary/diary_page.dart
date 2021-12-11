@@ -2,41 +2,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/db_item.dart';
 import 'package:sApport/Model/Services/collections.dart';
 
-class DiaryPage implements DbItem {
-  String id;
+class DiaryPage extends DbItem {
   String title;
   String content;
-  DateTime date;
+  DateTime dateTime;
   bool favourite;
 
-  DiaryPage({this.id, this.title, this.content, this.date, this.favourite});
+  DiaryPage({String id, this.title, this.content, this.dateTime, this.favourite}) : super(id: id);
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
     try {
       id = doc.id;
-    } catch (e) {}
-    try {
       title = doc.get("title");
-    } catch (e) {}
-    try {
       content = doc.get("content");
-    } catch (e) {}
-    try {
-      date = doc.get("date").toDate();
-    } catch (e) {}
-    try {
+      dateTime = doc.get("dateTime").toDate();
       favourite = doc.get("favourite");
-    } catch (e) {}
+    } catch (e) {
+      print("Error in setting the diary page from the document snapshot: $e");
+    }
   }
 
   @override
-  getData() {
+  Map<String, Object> getData() {
     return {
-      "id": id,
       "title": title,
       "content": content,
-      "date": date,
+      "dateTime": dateTime,
       "favourite": favourite,
     };
   }
