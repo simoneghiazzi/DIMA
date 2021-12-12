@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
+import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Model/Services/notification_service.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
@@ -9,7 +10,8 @@ import 'package:sApport/ViewModel/Forms/auth_form.dart';
 class AuthViewModel {
   // Services
   final FirebaseAuthService _firebaseAuthService = GetIt.I();
-  NotificationService notificationService;
+  final FirestoreService _firestoreService = GetIt.I();
+  final NotificationService _notificationService = NotificationService();
 
   // Login Form
   final LoginForm loginForm = LoginForm();
@@ -171,9 +173,10 @@ class AuthViewModel {
 
   /// Register the notification service for the device of the [loggedUser]
   void setNotification(User loggedUser) {
-    notificationService = NotificationService(loggedUser);
-    notificationService.registerNotification();
-    notificationService.configLocalNotification();
+    _notificationService.configNotification();
+    _notificationService.getDeviceToken().then((token) {
+      _firestoreService.updateUserFieldIntoDB(loggedUser, "pushToken", token);
+    }).catchError((e) => print("Error in getting the device token: $e"));
   }
 
   /// Delete the [loggedUser] account

@@ -1,45 +1,51 @@
 import 'dart:io';
-import 'package:get_it/get_it.dart';
-import 'package:sApport/Model/user.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
-import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
-  User user;
+  // Services
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
 
-  NotificationService(this.user);
-
-  /// Register the token of the specific user phone and listen for new notification to show
-  void registerNotification() {
+  NotificationService() {
+    // Setup of the firebase messaging service
     _firebaseMessaging.requestPermission();
+  }
 
+  /// Returns the default FCM token for this device.
+  Future<String> getDeviceToken() {
+    return _firebaseMessaging.getToken();
+  }
+
+  /// Configuration of the notification for Android and IOS and register the notification listeners.
+  void configNotification() {
+    AndroidInitializationSettings initializationSettingsAndroid = new AndroidInitializationSettings("@mipmap/ic_splash");
+    IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
+    InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    _registerNotificationListeners();
+  }
+
+  /// Register the listeners for new notifications
+  void _registerNotificationListeners() {
+    // Handle notification messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
-        showNotification(message.notification);
+        _showNotification(message.notification);
         FlutterAppBadger.updateBadgeCount(1);
       }
       return;
     });
 
+    // Handle notification open
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
       FlutterAppBadger.removeBadge();
-    });
-
-    _firebaseMessaging.getToken().then((token) async {
-      print("token: $token");
-      await _firestoreService.updateUserFieldIntoDB(user, "pushToken", token);
-    }).catchError((err) {
-      print(err);
     });
   }
 
   /// Show notification on Android and IOS
-  void showNotification(RemoteNotification remoteNotification) async {
+  void _showNotification(RemoteNotification remoteNotification) async {
     AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       Platform.isAndroid ? "com.dfa.flutterchatdemo" : "com.duytq.flutterchatdemo",
       "sApport",
@@ -59,13 +65,5 @@ class NotificationService {
       platformChannelSpecifics,
       payload: null,
     );
-  }
-
-  /// Configuration of local notification for Android and IOS
-  void configLocalNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
-    IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
-    InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    _flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 }
