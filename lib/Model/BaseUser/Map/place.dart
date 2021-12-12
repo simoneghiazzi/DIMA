@@ -1,17 +1,23 @@
-import 'package:sApport/Model/BaseUser/Map/geometry.dart';
-
 class Place {
-  final Geometry geometry;
-  final String name;
-  final String vicinity;
+  final double lat;
+  final double lng;
+  final String placeId;
+  final String address;
 
-  Place({this.geometry, this.name, this.vicinity});
+  Place({this.lat, this.lng, this.placeId, this.address});
 
-  factory Place.fromJson(Map<String, dynamic> parsedJson) {
+  factory Place.fromAutocompleteJson(Map<String, dynamic> parsedJson) {
     return Place(
-      geometry: Geometry.fromJson(parsedJson['geometry']),
-      name: parsedJson['formatted_address'],
-      vicinity: parsedJson['vicinity'],
+      address: parsedJson["description"],
+      placeId: parsedJson["place_id"],
+    );
+  }
+
+  factory Place.fromSearchJson(Map<String, dynamic> parsedJson) {
+    return Place(
+      lat: parsedJson["geometry"]["location"]["lat"],
+      lng: parsedJson["geometry"]["location"]["lng"],
+      address: parsedJson["formatted_address"],
     );
   }
 }
