@@ -33,7 +33,7 @@ class AuthViewModel {
 
   /// Log the user in with email and password.
   ///
-  /// It adds the result of the login process to the [isUserLogged] stream controller.
+  /// If the login process is successful, it adds the value to the [isUserLogged] stream controller.
   ///
   /// In case the login is **not successful**, it adds the error message to the [authMessage] stream controller.
   Future<void> logIn() async {
@@ -84,7 +84,7 @@ class AuthViewModel {
   /// Login a user with Google. If the user is new, it automatically creates a new account.
   /// If [link] is true, it links the Google account credential to the already logged user.
   ///
-  /// It adds the result of the login process to the [isUserLogged] stream controller.
+  /// If the login process is successful, it adds the value to the [isUserLogged] stream controller.
   ///
   /// In case the login is **not successful**, it adds the error message to the [authMessage] stream controller.
   Future<void> logInWithGoogle({bool link = false}) async {
@@ -99,14 +99,13 @@ class AuthViewModel {
         _authMessageCtrl.add("Error in signing in with the Google account. Please try again later.");
         print("Error in signing in with the Google account");
       }
-      _isUserLoggedCtrl.add(false);
     }
   }
 
   /// Login a user with Facebook. If the user is new, it automatically creates a new account.
   /// If [link] is true, it links the Facebook account credential to the already logged user.
   ///
-  /// It adds the result of the login process to the [isUserLogged] stream controller.
+  /// If the login process is successful, it adds the value to the [isUserLogged] stream controller.
   ///
   /// In case the login is **not successful**, it adds the error message to the [authMessage] stream controller.
   Future<void> logInWithFacebook({bool link = false}) async {

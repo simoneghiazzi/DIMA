@@ -22,7 +22,6 @@ class ActiveChatsListBody extends StatefulWidget {
 }
 
 class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   StreamSubscription<bool> subscriberNewRandomUser;
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
@@ -97,7 +96,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
           alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
           child: FloatingActionButton(
             onPressed: () {
-              LoadingDialog.show(context, _keyLoader, text: 'Looking for new random user...');
+              LoadingDialog.show(context, text: "Looking for new random user...");
               chatViewModel.getNewRandomUser();
             },
             materialTapTargetSize: MaterialTapTargetSize.padded,
@@ -131,7 +130,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
 
   StreamSubscription<bool> subscribeToNewRandomUser() {
     return chatViewModel.isNewRandomUser.listen((isNewRandomUser) {
-      Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+      LoadingDialog.hide(context);
       if (isNewRandomUser) {
         initNewRandomChats();
         routerDelegate.pushPage(name: ChatPageScreen.route);

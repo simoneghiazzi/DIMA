@@ -17,13 +17,11 @@ class Header extends StatefulWidget {
 class _HeaderState extends State<Header> {
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
-  StreamSubscription<bool> subscriber;
 
   @override
   void initState() {
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    subscriber = subscribeToViewModel();
     super.initState();
   }
 
@@ -56,14 +54,5 @@ class _HeaderState extends State<Header> {
         ),
       ),
     );
-  }
-
-  StreamSubscription<bool> subscribeToViewModel() {
-    return authViewModel.isUserLogged.listen((isSuccessfulLogin) {
-      if (!isSuccessfulLogin) {
-        subscriber.cancel();
-        routerDelegate.replaceAll(name: WelcomeScreen.route);
-      }
-    });
   }
 }

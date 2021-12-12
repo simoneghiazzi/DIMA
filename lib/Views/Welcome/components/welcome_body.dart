@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
+import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:flutter/material.dart';
@@ -21,10 +22,9 @@ class WelcomeBody extends StatefulWidget {
 }
 
 class _WelcomeBodyState extends State<WelcomeBody> {
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  // View Models
   AuthViewModel authViewModel;
   UserViewModel userViewModel;
-  String id;
   AppRouterDelegate routerDelegate;
 
   // Subscriber
@@ -78,14 +78,14 @@ class _WelcomeBodyState extends State<WelcomeBody> {
               SocialIcon(
                   iconSrc: "assets/icons/facebook.png",
                   press: () {
-                    LoadingDialog.show(context, _keyLoader);
-                    authViewModel.logInWithFacebook();
+                    LoadingDialog.show(context);
+                    authViewModel.logInWithFacebook().catchError((_) => LoadingDialog.hide(context));
                   }),
               SocialIcon(
                   iconSrc: "assets/icons/google.png",
                   press: () {
-                    LoadingDialog.show(context, _keyLoader);
-                    authViewModel.logInWithGoogle();
+                    LoadingDialog.show(context);
+                    authViewModel.logInWithGoogle().catchError((_) => LoadingDialog.hide(context));
                   }),
             ]),
             StreamBuilder<String>(
@@ -124,11 +124,11 @@ class _WelcomeBodyState extends State<WelcomeBody> {
   StreamSubscription<bool> subscribeToUserLoggedStream() {
     return authViewModel.isUserLogged.listen((isUserLogged) async {
       if (isUserLogged) {
-        await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection} logged"));
-        LoadingDialog.hide(context, _keyLoader);
-        routerDelegate.replace(name: BaseUserHomePageScreen.route);
+        await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection.value} logged"));
+        LoadingDialog.hide(context);
+        routerDelegate.replace(name: userViewModel.loggedUser.collection.homePageRoute);
       } else {
-        LoadingDialog.hide(context, _keyLoader);
+        routerDelegate.replaceAll(name: WelcomeScreen.route);
       }
     });
   }

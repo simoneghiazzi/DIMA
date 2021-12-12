@@ -1,5 +1,5 @@
-import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:sApport/constants.dart';
 
 class LoadingDialog {
   Widget widget(BuildContext context, {String text}) {
@@ -14,36 +14,38 @@ class LoadingDialog {
     );
   }
 
-  static Future<void> show(BuildContext context, GlobalKey key,
-      {String text}) async {
+  static Future<void> show(BuildContext context, {String text}) async {
     return showDialog<void>(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
           return WillPopScope(
-              onWillPop: () async => false,
-              child: SimpleDialog(
-                  key: key,
-                  backgroundColor: Colors.white,
-                  children: <Widget>[
-                    Center(
-                      child: Column(children: [
-                        CircularProgressIndicator(),
-                        SizedBox(
-                          height: 20,
-                          width: 20,
-                        ),
-                        Text(
-                          text ?? "Loading....",
-                          style: TextStyle(color: kPrimaryColor),
-                        )
-                      ]),
-                    )
-                  ]));
+            onWillPop: () async => false,
+            child: SimpleDialog(
+              backgroundColor: Colors.white,
+              children: <Widget>[
+                Center(
+                  child: Column(
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(
+                        height: 20,
+                        width: 20,
+                      ),
+                      Text(
+                        text ?? "Loading....",
+                        style: TextStyle(color: kPrimaryColor),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
         });
   }
 
-  static void hide(BuildContext context, GlobalKey key) {
-    Navigator.of(key.currentContext, rootNavigator: true).pop();
+  static void hide(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).pop();
   }
 }

@@ -22,7 +22,6 @@ class ExpertsInfoBody extends StatefulWidget {
 }
 
 class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   UserViewModel userViewModel;
   ExpertSignUpForm expertSignUpForm;
   AppRouterDelegate routerDelegate;
@@ -64,7 +63,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                       ),
                       child: FormBlocListener<ExpertSignUpForm, String, String>(
                         onSubmitting: (context, state) {
-                          LoadingDialog.show(context, _keyLoader);
+                          LoadingDialog.show(context);
                         },
                         onSuccess: (context, state) {
                           addressConfirmationAlert = createAddressConfirmationAlert();
@@ -281,7 +280,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
           ),
           onPressed: () {
             errorAlert.dismiss();
-            LoadingDialog.hide(context, _keyLoader);
+            LoadingDialog.hide(context);
           },
           color: kPrimaryColor,
         )
@@ -331,7 +330,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
           onPressed: () {
             userViewModel.createUser(Collection.EXPERTS, expertSignUpForm);
             addressConfirmationAlert.dismiss();
-            LoadingDialog.hide(context, _keyLoader);
+            LoadingDialog.hide(context);
             routerDelegate.pushPage(name: CredentialScreen.route);
           },
           color: Colors.transparent,
@@ -343,7 +342,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
           ),
           onPressed: () {
             addressConfirmationAlert.dismiss();
-            LoadingDialog.hide(context, _keyLoader);
+            LoadingDialog.hide(context);
           },
           color: Colors.transparent,
         )

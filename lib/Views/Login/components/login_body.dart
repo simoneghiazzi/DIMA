@@ -1,12 +1,7 @@
-import 'dart:async';
-
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-
 import 'package:sApport/Views/Login/forgot_password_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:sApport/Views/components/forgot_password.dart';
@@ -26,23 +21,16 @@ class LoginBody extends StatefulWidget {
 }
 
 class _LoginBodyState extends State<LoginBody> {
-  GlobalKey<State> _keyLoader;
-
   // View Models
   AuthViewModel authViewModel;
   UserViewModel userViewModel;
   AppRouterDelegate routerDelegate;
 
-  // Subscriber
-  StreamSubscription<bool> subscriber;
-
   @override
   void initState() {
-    _keyLoader = new GlobalKey<State>();
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    subscriber = subscribeToUserLoggedStream();
     BackButtonInterceptor.add(backButtonInterceptor);
     WidgetsBinding.instance.addPostFrameCallback((_) => authViewModel.getData());
     super.initState();
@@ -98,8 +86,8 @@ class _LoginBodyState extends State<LoginBody> {
                     text: "LOGIN",
                     press: () {
                       FocusScope.of(context).unfocus();
-                      LoadingDialog.show(context, _keyLoader);
-                      authViewModel.logIn();
+                      LoadingDialog.show(context);
+                      authViewModel.logIn().catchError((_) => LoadingDialog.hide(context));
                     },
                     enabled: snapshot.data ?? false,
                   );
@@ -124,19 +112,6 @@ class _LoginBodyState extends State<LoginBody> {
     );
   }
 
-  StreamSubscription<bool> subscribeToUserLoggedStream() {
-    return authViewModel.isUserLogged.listen((isUserLogged) async {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      if (isUserLogged) {
-        await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection.value} logged"));
-        LoadingDialog.hide(context, _keyLoader);
-        routerDelegate.replace(name: userViewModel.loggedUser.collection.homePageRoute);
-      } else {
-        LoadingDialog.hide(context, _keyLoader);
-      }
-    });
-  }
-
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     authViewModel.clearControllers();
     routerDelegate.pop();
@@ -145,7 +120,6 @@ class _LoginBodyState extends State<LoginBody> {
 
   @override
   void dispose() {
-    subscriber.cancel();
     BackButtonInterceptor.remove(backButtonInterceptor);
     super.dispose();
   }

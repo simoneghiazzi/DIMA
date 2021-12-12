@@ -19,7 +19,6 @@ class NotificationService {
     _firebaseMessaging.requestPermission();
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('onMessage: $message');
       if (message.notification != null) {
         showNotification(message.notification);
         FlutterAppBadger.updateBadgeCount(1);
@@ -28,13 +27,12 @@ class NotificationService {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      print('opened');
       FlutterAppBadger.removeBadge();
     });
 
     _firebaseMessaging.getToken().then((token) async {
-      print('token: $token');
-      await _firestoreService.updateUserFieldIntoDB(user, 'pushToken', token);
+      print("token: $token");
+      await _firestoreService.updateUserFieldIntoDB(user, "pushToken", token);
     }).catchError((err) {
       print(err);
     });
@@ -43,9 +41,9 @@ class NotificationService {
   /// Show notification on Android and IOS
   void showNotification(RemoteNotification remoteNotification) async {
     AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      Platform.isAndroid ? 'com.dfa.flutterchatdemo' : 'com.duytq.flutterchatdemo',
-      'sApport',
-      channelDescription: 'messages notification',
+      Platform.isAndroid ? "com.dfa.flutterchatdemo" : "com.duytq.flutterchatdemo",
+      "sApport",
+      channelDescription: "messages notification",
       playSound: true,
       enableVibration: true,
       importance: Importance.max,
@@ -63,7 +61,7 @@ class NotificationService {
     );
   }
 
-  // Configuration of local notification for Android and IOS
+  /// Configuration of local notification for Android and IOS
   void configLocalNotification() {
     AndroidInitializationSettings initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
     IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();

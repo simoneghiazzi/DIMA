@@ -20,8 +20,6 @@ class CredentialBody extends StatefulWidget {
 }
 
 class _CredentialBodyState extends State<CredentialBody> {
-  GlobalKey<State> _keyLoader;
-
   // View Models
   AuthViewModel authViewModel;
   UserViewModel userViewModel;
@@ -32,7 +30,6 @@ class _CredentialBodyState extends State<CredentialBody> {
 
   @override
   void initState() {
-    _keyLoader = new GlobalKey<State>();
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
@@ -89,7 +86,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                     text: "SIGN UP",
                     press: () async {
                       FocusScope.of(context).unfocus();
-                      LoadingDialog.show(context, _keyLoader);
+                      LoadingDialog.show(context);
                       userViewModel.loggedUser.email = authViewModel.emailCtrl.text;
                       await authViewModel.signUpUser(userViewModel.loggedUser);
                     },
@@ -119,7 +116,7 @@ class _CredentialBodyState extends State<CredentialBody> {
 
   StreamSubscription<bool> subscribeToUserCreatedStream() {
     return authViewModel.isUserCreated.listen((isUserCreated) {
-      LoadingDialog.hide(context, _keyLoader);
+      LoadingDialog.hide(context);
       if (isUserCreated) {
         showSnackBar();
         routerDelegate.pushPage(name: LoginScreen.route);

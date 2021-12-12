@@ -17,7 +17,6 @@ class CreateReportBody extends StatefulWidget {
 }
 
 class _CreateReportBodyState extends State<CreateReportBody> {
-  GlobalKey<State> _keyLoader;
   UserViewModel userViewModel;
   ReportViewModel reportViewModel;
   AppRouterDelegate routerDelegate;
@@ -26,7 +25,6 @@ class _CreateReportBodyState extends State<CreateReportBody> {
 
   @override
   void initState() {
-    _keyLoader = new GlobalKey<State>();
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     errorAlert = createErrorAlert();
@@ -107,11 +105,11 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                             padding: EdgeInsets.only(top: size.height * 0.05, left: 40, right: 40),
                             child: FormBlocListener<ReportViewModel, String, String>(
                               onSuccess: (context, state) {
-                                LoadingDialog.hide(context, _keyLoader);
+                                LoadingDialog.hide(context);
                                 successAlert.show();
                               },
                               onFailure: (context, state) {
-                                LoadingDialog.hide(context, _keyLoader);
+                                LoadingDialog.hide(context);
                                 errorAlert.show();
                               },
                               child: Column(
@@ -153,7 +151,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
-                                      LoadingDialog.show(context, _keyLoader);
+                                      LoadingDialog.show(context);
                                       reportViewModel.submit();
                                     },
                                     style: ButtonStyle(

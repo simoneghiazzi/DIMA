@@ -1,10 +1,10 @@
-import 'dart:collection';
 import 'dart:io';
 import 'dart:convert';
+import 'dart:collection';
 import 'package:http/http.dart';
 import 'package:get_it/get_it.dart';
-import 'package:firebase_auth/firebase_auth.dart' as Firebase;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart' as Firebase;
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
@@ -169,8 +169,8 @@ class FirebaseAuthService {
     if (_firebaseUser != null) {
       _firebaseAuth.currentUser
           .sendEmailVerification()
-          .then((value) => print("Email verification sent"))
-          .catchError((error) => print("Failed to send email verification: $error"));
+          .then((value) => print("Verification email sent"))
+          .catchError((error) => print("Failed to send the verification email: $error"));
     }
   }
 
@@ -185,7 +185,7 @@ class FirebaseAuthService {
     }
   }
 
-  /// Returns a list of sign-in methods that can be used to sign in a given user (identified by its main email address).
+  /// Returns the list of sign-in methods that can be used to sign in a given user (identified by its main email address).
   ///
   /// An empty `List` is returned if the user could not be found.
   Future<List<String>> fetchSignInMethods(String email) async {

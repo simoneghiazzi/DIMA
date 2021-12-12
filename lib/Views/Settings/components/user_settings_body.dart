@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -22,7 +20,6 @@ class UserSettingsBody extends StatefulWidget {
 }
 
 class _UserSettingsBodyState extends State<UserSettingsBody> {
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
   Alert alert;
@@ -268,24 +265,24 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               SocialIcon(
                                   iconSrc: "assets/icons/facebook.png",
                                   press: () {
-                                    LoadingDialog.show(context, _keyLoader);
+                                    LoadingDialog.show(context);
                                     authViewModel.logInWithFacebook(link: true).then((value) {
-                                      LoadingDialog.hide(context, _keyLoader);
+                                      LoadingDialog.hide(context);
                                       setState(() {});
                                     }).catchError((onError) {
-                                      LoadingDialog.hide(context, _keyLoader);
+                                      LoadingDialog.hide(context);
                                       showSnackBar("This social account is already linked with another profile or the email is already registered.");
                                     });
                                   }),
                               SocialIcon(
                                   iconSrc: "assets/icons/google.png",
                                   press: () {
-                                    LoadingDialog.show(context, _keyLoader);
+                                    LoadingDialog.show(context);
                                     authViewModel.logInWithGoogle(link: true).then((value) {
-                                      LoadingDialog.hide(context, _keyLoader);
+                                      LoadingDialog.hide(context);
                                       setState(() {});
                                     }).catchError((onError) {
-                                      LoadingDialog.hide(context, _keyLoader);
+                                      LoadingDialog.hide(context);
                                       showSnackBar("This social account is already linked with another profile or the email is already registered.");
                                     });
                                   }),

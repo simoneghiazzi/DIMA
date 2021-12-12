@@ -1,7 +1,3 @@
-import 'package:sApport/Model/BaseUser/report.dart';
-import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
-import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
-import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
 import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
@@ -16,21 +12,12 @@ import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/Views/Report/create_report_screen.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
-import 'package:sApport/Views/Report/reports_list_screen.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
-
 import 'package:flutter/material.dart';
-
-class InfoArguments {
-  final BaseUserSignUpForm userInfoViewModel;
-  final UserViewModel userViewModel;
-
-  InfoArguments(this.userInfoViewModel, this.userViewModel);
-}
 
 class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<RouteSettings>> {
   final _pages = <Page>[];
@@ -69,9 +56,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = WelcomeScreen();
         break;
       case CredentialScreen.route:
-        child = CredentialScreen(
-            infoViewModel: (routeSettings.arguments as InfoArguments).userInfoViewModel,
-            userViewModel: (routeSettings.arguments as InfoArguments).userViewModel);
+        child = CredentialScreen();
         break;
       case ExpertsSignUpScreen.route:
         child = ExpertsSignUpScreen();
