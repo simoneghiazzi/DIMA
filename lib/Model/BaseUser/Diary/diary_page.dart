@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/db_item.dart';
-import 'package:sApport/Model/Services/collections.dart';
 
 class DiaryPage extends DbItem {
+  static const COLLECTION = "diary";
+
   String title;
   String content;
   DateTime dateTime;
   bool favourite;
 
-  DiaryPage({String id, this.title, this.content, this.dateTime, this.favourite}) : super(id: id);
+  DiaryPage({String id, this.title, this.content, this.dateTime, this.favourite}) : super(COLLECTION, id: id);
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
@@ -33,7 +34,4 @@ class DiaryPage extends DbItem {
       "favourite": favourite,
     };
   }
-
-  @override
-  Collection get collection => Collection.DIARY;
 }

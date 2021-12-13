@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/db_item.dart';
 
 class Message extends DbItem {
+  static const COLLECTION = "messages";
+
   String idFrom;
   String idTo;
   DateTime timestamp;
   String content;
 
-  Message({this.idFrom, this.idTo, this.timestamp, this.content});
+  Message({this.idFrom, this.idTo, this.timestamp, this.content}) : super(COLLECTION);
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
@@ -32,7 +33,4 @@ class Message extends DbItem {
       "content": content,
     };
   }
-
-  @override
-  Collection get collection => Collection.MESSAGES;
 }

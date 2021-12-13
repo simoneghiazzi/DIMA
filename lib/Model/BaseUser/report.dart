@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/db_item.dart';
-import 'package:sApport/Model/Services/collections.dart';
 
 class Report extends DbItem {
+  static const COLLECTION = "reports";
+
   String category;
   String description;
   DateTime dateTime;
 
-  Report({String id, this.category, this.description, this.dateTime}) : super(id: id);
+  Report({String id, this.category, this.description, this.dateTime}) : super(COLLECTION, id: id);
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
@@ -30,7 +31,4 @@ class Report extends DbItem {
       "dateTime": dateTime,
     };
   }
-
-  @override
-  Collection get collection => Collection.REPORTS;
 }

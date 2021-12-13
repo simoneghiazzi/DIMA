@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/user.dart';
-import 'package:sApport/Model/Services/collections.dart';
-import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
+import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
 
 class BaseUser extends User {
+  static const COLLECTION = "users";
+  static const HOMEPAGE_ROUTE = BaseUserHomePageScreen.route;
+
   BaseUser({String id, String name, String surname, DateTime birthDate, String email})
-      : super(id: id, name: name, surname: surname, birthDate: birthDate, email: email);
+      : super(COLLECTION, HOMEPAGE_ROUTE, id: id, name: name, surname: surname, birthDate: birthDate, email: email);
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
@@ -21,18 +23,6 @@ class BaseUser extends User {
   }
 
   @override
-  void setFromSignUpForm(BaseUserSignUpForm baseUserSignUpForm) {
-    try {
-      name = baseUserSignUpForm.data["name"];
-      surname = baseUserSignUpForm.data["surname"];
-      birthDate = baseUserSignUpForm.data["birthDate"];
-      email = baseUserSignUpForm.data["email"];
-    } catch (e) {
-      print("Error in setting the base user from the baseUser signup form: $e");
-    }
-  }
-
-  @override
   Map<String, Object> get data {
     return {
       "uid": id,
@@ -42,7 +32,4 @@ class BaseUser extends User {
       "email": email,
     };
   }
-
-  @override
-  Collection get collection => Collection.BASE_USERS;
 }

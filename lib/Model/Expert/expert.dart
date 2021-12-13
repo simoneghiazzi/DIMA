@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/user.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
+import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
 
 class Expert extends User {
+  static const COLLECTION = "experts";
+  static const HOMEPAGE_ROUTE = ExpertHomePageScreen.route;
+
   String address;
   String phoneNumber;
   String profilePhoto;
@@ -21,7 +24,7 @@ class Expert extends User {
     this.address,
     this.phoneNumber,
     this.profilePhoto,
-  }) : super(id: id, name: name, surname: surname, birthDate: birthDate, email: email);
+  }) : super(COLLECTION, HOMEPAGE_ROUTE, id: id, name: name, surname: surname, birthDate: birthDate, email: email);
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
@@ -42,23 +45,6 @@ class Expert extends User {
   }
 
   @override
-  void setFromSignUpForm(BaseUserSignUpForm experSignUpForm) {
-    try {
-      name = experSignUpForm.data["name"];
-      surname = experSignUpForm.data["surname"];
-      birthDate = experSignUpForm.data["birthDate"];
-      email = experSignUpForm.data["email"];
-      latitude = experSignUpForm.data["lat"];
-      longitude = experSignUpForm.data["lng"];
-      address = experSignUpForm.data["address"];
-      phoneNumber = experSignUpForm.data["phoneNumber"];
-      profilePhoto = experSignUpForm.data["profilePhoto"];
-    } catch (e) {
-      print("Error in setting the expert from the expert signup form: $e");
-    }
-  }
-
-  @override
   Map<String, Object> get data {
     return {
       "eid": id,
@@ -73,7 +59,4 @@ class Expert extends User {
       "profilePhoto": profilePhoto,
     };
   }
-
-  @override
-  Collection get collection => Collection.EXPERTS;
 }
