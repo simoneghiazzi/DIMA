@@ -53,7 +53,6 @@ dependencies:
   form_builder_validators: ^7.0.0-beta.0
   firebase_app_check: ^0.0.2+1
   open_mail_app: ^0.4.1
-  google_fonts: ^2.1.0
   auto_size_text: ^3.0.0
   url_launcher: ^6.0.9
   dio: ^4.0.0
@@ -109,6 +108,9 @@ flutter:
       fonts:
         - asset: fonts/Gabriola.ttf
           style: italic
+    - family: UbuntuCondensed
+      fonts:
+        - asset: fonts/UbuntuCondensed.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

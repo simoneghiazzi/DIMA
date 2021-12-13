@@ -40,35 +40,33 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return SizedBox.expand(
-      child: Column(
+      child: Stack(
+        alignment: Alignment.topCenter,
         children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            width: size.width,
-            color: kPrimaryColor,
-            child: SafeArea(
-              child: Container(
-                  decoration: BoxDecoration(color: kPrimaryColor),
-                  height: size.height / 12,
-                  child: widget.user.data['profilePhoto'] != null
-                      ? NetworkAvatar(
-                          img: widget.user.data['profilePhoto'],
-                          radius: 45.0,
-                        )
-                      : CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.person,
-                            size: 50,
-                            color: kPrimaryColor,
-                          ))),
-            ),
-          ),
           // background image and bottom contents
           SingleChildScrollView(
               child: Column(
             children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(top: 40, bottom: 10),
+                alignment: Alignment.center,
+                width: size.width,
+                color: kPrimaryColor,
+                child: Container(
+                    child: widget.user.data['profilePhoto'] != null
+                        ? NetworkAvatar(
+                            img: widget.user.data['profilePhoto'],
+                            radius: 50.0,
+                          )
+                        : CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.white,
+                            child: Icon(
+                              Icons.person,
+                              size: 70,
+                              color: kPrimaryColor,
+                            ))),
+              ),
               Container(
                 padding: EdgeInsets.only(left: size.width / 10, right: size.width / 10, top: 30),
                 color: Colors.white,

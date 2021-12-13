@@ -178,8 +178,10 @@ class FirebaseAuthService {
   /// Returns the list of sign-in methods that can be used to sign in a given user (identified by its main email address).
   ///
   /// An empty `List` is returned if the user could not be found.
-  Future<List<String>> fetchSignInMethods(String email) async {
-    return await _firebaseAuth.fetchSignInMethodsForEmail(email);
+  Future<List<String>> fetchSignInMethods(String email) {
+    return _firebaseAuth.fetchSignInMethodsForEmail(email).catchError((error) {
+      print("Error in getting the sign in methods: $error");
+    });
   }
 
   /// Delete and signs out the user.

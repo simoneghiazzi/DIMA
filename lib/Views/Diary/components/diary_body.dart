@@ -72,6 +72,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 40.0),
                     child: SfCalendar(
+                      initialSelectedDate: DateTime.now(),
                       controller: _controller,
                       todayHighlightColor: kPrimaryColor,
                       dataSource: NoteDataSource(snapshot.data.docs, widget.diaryViewModel),
@@ -80,7 +81,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                       ),
                       headerHeight: 50,
                       headerDateFormat: " MMM yyyy",
-                      cellBorderColor: kPrimaryColor,
+                      cellBorderColor: kPrimaryDarkColorTrasparent.withOpacity(0.5),
                       showDatePickerButton: true,
                       viewHeaderStyle: ViewHeaderStyle(
                         dayTextStyle: TextStyle(color: kPrimaryColor),
@@ -88,21 +89,17 @@ class _DiaryBodyState extends State<DiaryBody> {
                       ),
                       view: CalendarView.month,
                       monthViewSettings: MonthViewSettings(
-                          appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-                          appointmentDisplayCount: 1,
-                          showAgenda: true,
-                          agendaViewHeight: widget.diaryViewModel.hasNoteToday ? size.height / 10 : size.height / 8,
-                          agendaItemHeight: size.height / 15,
-                          monthCellStyle: MonthCellStyle(
-                            trailingDatesBackgroundColor: kPrimaryLightColor,
-                            leadingDatesBackgroundColor: kPrimaryLightColor,
-                          )),
-                      onViewChanged: (ViewChangedDetails viewChangedDetails) {
-                        if (_controller.view == CalendarView.month) {
-                          _headerText =
-                              DateFormat('MMM yyyy').format(viewChangedDetails.visibleDates[viewChangedDetails.visibleDates.length ~/ 2]).toString();
-                        }
-                      },
+                        appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+                        appointmentDisplayCount: 1,
+                        showAgenda: true,
+                        agendaViewHeight: widget.diaryViewModel.hasNoteToday ? size.height / 10 : size.height / 8,
+                        agendaItemHeight: size.height / 15,
+                        monthCellStyle: MonthCellStyle(
+                          trailingDatesBackgroundColor: kPrimaryLightColor,
+                          leadingDatesBackgroundColor: kPrimaryLightColor,
+                          textStyle: TextStyle(color: kPrimaryColor),
+                        ),
+                      ),
                       onTap: showDetails,
                     ),
                   ),

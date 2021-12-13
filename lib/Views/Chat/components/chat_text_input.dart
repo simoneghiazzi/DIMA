@@ -1,7 +1,6 @@
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class ChatTextInput extends StatefulWidget {
@@ -43,7 +42,7 @@ class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserv
                   listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
                 },
                 textAlignVertical: TextAlignVertical.center,
-                style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
+                style: TextStyle(fontFamily: "UbuntuCondensed"),
                 controller: chatViewModel.contentTextCtrl,
                 decoration: InputDecoration(
                   fillColor: kPrimaryColor,

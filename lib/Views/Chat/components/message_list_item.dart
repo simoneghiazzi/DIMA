@@ -2,7 +2,6 @@ import 'package:sApport/Model/Chat/message.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -34,7 +33,7 @@ class _MessageListItemState extends State<MessageListItem> {
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                     child: Text(
                       widget.messageItem.data['content'],
-                      style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
+                      style: TextStyle(fontFamily: "UbuntuCondensed", color: kPrimaryColor),
                     ),
                   ),
                 ),
@@ -65,7 +64,7 @@ class _MessageListItemState extends State<MessageListItem> {
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                     child: Text(
                       widget.messageItem.data['content'],
-                      style: GoogleFonts.ubuntuCondensed(color: Colors.white),
+                      style: TextStyle(fontFamily: "UbuntuCondensed", color: Colors.white),
                     ),
                   ),
                 ),
