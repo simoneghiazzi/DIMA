@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/ViewModel/Forms/auth_form.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/notification_service.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
@@ -96,7 +95,7 @@ class AuthViewModel {
       var userData = await _firebaseAuthService.signInWithGoogle(link);
       _authMessageCtrl.add("");
       if (!link) {
-        _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, _firebaseAuthService.firebaseUser.uid).then((userSnap) {
+        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.firebaseUser.uid).then((userSnap) {
           // Check if it is a new user. If yes, insert the data into the DB
           if (userSnap.docs.isEmpty) {
             _firestoreService.addUserIntoDB(BaseUser(
@@ -134,7 +133,7 @@ class AuthViewModel {
       var userData = await _firebaseAuthService.signInWithFacebook(link);
       _authMessageCtrl.add("");
       if (!link) {
-        _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, _firebaseAuthService.firebaseUser.uid).then((userSnap) {
+        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.firebaseUser.uid).then((userSnap) {
           // Check if it is a new user. If yes, insert the data into the DB
           if (userSnap.docs.isEmpty) {
             _firestoreService.addUserIntoDB(BaseUser(

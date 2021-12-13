@@ -4,7 +4,6 @@ import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Model/Chat/active_chat.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Model/Chat/request.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
@@ -88,7 +87,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
             ),
             ChatsListConstructor(
               createUserCallback: createUserCallback,
-              peerCollection: Collection.BASE_USERS,
+              peerCollection: BaseUser.COLLECTION,
             ),
           ],
         ),

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Model/Chat/active_chat.dart';
 import 'package:sApport/Model/Chat/expert_chat.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
@@ -45,7 +44,7 @@ class _ExpertHomePageBodyState extends State<ExpertHomePageBody> {
         Header(),
         ChatsListConstructor(
           createUserCallback: createUserCallback,
-          peerCollection: Collection.BASE_USERS,
+          peerCollection: BaseUser.COLLECTION,
         ),
       ],
     ));

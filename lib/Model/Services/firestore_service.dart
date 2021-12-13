@@ -7,12 +7,12 @@ import 'package:sApport/Model/user.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/request.dart';
 import 'package:sApport/Model/Chat/message.dart';
+import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Model/BaseUser/report.dart';
 import 'package:sApport/Model/Chat/active_chat.dart';
 import 'package:sApport/Model/Chat/conversation.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
 
 class FirestoreService {
@@ -31,9 +31,9 @@ class FirestoreService {
   /// It takes the [user] and based on the type it adds him/her to the list of experts or to the list
   /// of base users (in this case it also increments the collection counter).
   Future<void> addUserIntoDB(User user) {
-    var userReference = _firestore.collection(user.collection.value).doc(user.id);
+    var userReference = _firestore.collection(user.collection).doc(user.id);
     // If the user is a base user, increment the base user counter
-    if (user.collection == Collection.BASE_USERS) {
+    if (user is BaseUser) {
       _incrementBaseUsersCounter(1);
     }
     return userReference.set(user.data).then((_) {
@@ -50,9 +50,9 @@ class FirestoreService {
   /// It takes the [user] and based on the type it deletes him/her from the list of experts or from the list
   /// of base users and it decrements the collection counter.
   Future<void> removeUserFromDB(User user) {
-    var userReference = _firestore.collection(user.collection.value).doc(user.id);
+    var userReference = _firestore.collection(user.collection).doc(user.id);
     // If the user is a base user, decrement the base user counter
-    if (user.collection == Collection.BASE_USERS) {
+    if (user is BaseUser) {
       _incrementBaseUsersCounter(-1);
     }
     return userReference.delete().then((value) => print("User deleted")).catchError((error) => print("Failed to delete user: $error"));
@@ -61,7 +61,7 @@ class FirestoreService {
   /// It takes a [user] and updates the specified [field] with the [newValue] into the DB
   Future<void> updateUserFieldIntoDB(User user, String field, newValue) {
     return _firestore
-        .collection(user.collection.value)
+        .collection(user.collection)
         .doc(user.id)
         .update({field: newValue})
         .then((value) => print("User updated"))
@@ -69,14 +69,14 @@ class FirestoreService {
   }
 
   /// Get the list of all the docs in the [collection] from the DB
-  Future<QuerySnapshot> getBaseCollectionFromDB(Collection collection) {
-    return _firestore.collection(collection.value).get();
+  Future<QuerySnapshot> getBaseCollectionFromDB(String collection) {
+    return _firestore.collection(collection).get();
   }
 
   /// It takes the [id] and the [collection] and returns a doc instance with
   /// all the information of the retrieved user
-  Future<QuerySnapshot> getUserByIdFromDB(Collection collection, String id) {
-    return _firestore.collection(collection.value).where(FieldPath.documentId, isEqualTo: id).get();
+  Future<QuerySnapshot> getUserByIdFromDB(String collection, String id) {
+    return _firestore.collection(collection).where(FieldPath.documentId, isEqualTo: id).get();
   }
 
   /// Get random user from the DB. It takes the [user] and the auto-generated [randomId] and it returns a Future BaseUser instance
@@ -98,12 +98,10 @@ class FirestoreService {
       HashSet<String> requests = await _getChatIdsSet(user, Request());
 
       // Get the ids less than or equal to the random id
-      var snapshotLess =
-          await _firestore.collection(user.collection.value).where("uid", isLessThanOrEqualTo: randomId).orderBy("uid").limit(_limit).get();
+      var snapshotLess = await _firestore.collection(user.collection).where("uid", isLessThanOrEqualTo: randomId).orderBy("uid").limit(_limit).get();
 
       // Get the ids grater than the random id
-      var snapshotGreater =
-          await _firestore.collection(user.collection.value).where("uid", isGreaterThan: randomId).orderBy("uid").limit(_limit).get();
+      var snapshotGreater = await _firestore.collection(user.collection).where("uid", isGreaterThan: randomId).orderBy("uid").limit(_limit).get();
 
       // Union of the retrieved ids to the same list
       List randomUsers = new List.from(snapshotLess.docs);
@@ -124,14 +122,16 @@ class FirestoreService {
   }
 
   /// Find the collection of the user [id] inside the base collections of the DB
-  Future<Collection> findUserCollection(String id) async {
-    for (var collection in [Collection.BASE_USERS, Collection.EXPERTS]) {
+  Future<User> findUserType(String id) async {
+    for (var user in [BaseUser(), Expert()]) {
       try {
-        var snap = await _firestore.collection(collection.value).doc(id).get();
+        var snap = await _firestore.collection(user.collection).doc(id).get();
         if (snap.exists) {
-          return collection;
+          return user;
         }
-      } catch (e) {}
+      } catch (e) {
+        print("User not find in collection ${user.collection}");
+      }
     }
     return null;
   }
@@ -147,7 +147,7 @@ class FirestoreService {
 
   /// It takes the [increment] amount and increments the user's counter into the DB
   Future<void> _incrementBaseUsersCounter(int increment) async {
-    var utilsReference = _firestore.collection(Collection.BASE_USERS.value).doc(Collection.UTILS.value);
+    var utilsReference = _firestore.collection(BaseUser.COLLECTION).doc("utils");
     await _firestore
         .runTransaction((transaction) async {
           var utils = await transaction.get(utilsReference);
@@ -161,7 +161,7 @@ class FirestoreService {
 
   /// Get the counter of the intances of base users from the DB
   Future<DocumentSnapshot> _getBaseUsersCounter() {
-    return _firestore.collection(Collection.BASE_USERS.value).doc(Collection.UTILS.value).get();
+    return _firestore.collection(BaseUser.COLLECTION).doc("utils").get();
   }
 
   /***************************************** MESSAGES *****************************************/
@@ -171,7 +171,7 @@ class FirestoreService {
   /// Then it calls the updateChatInfo method.
   void addMessageIntoDB(Conversation conversation, Message message) {
     _firestore
-        .collection(Collection.MESSAGES.value)
+        .collection(Message.COLLECTION)
         .doc(conversation.pairChatId)
         .collection(conversation.pairChatId)
         .doc(message.timestamp.millisecondsSinceEpoch.toString())
@@ -182,12 +182,12 @@ class FirestoreService {
   /// It takes the [pairChatId] that is the composite id of the 2 users and returns
   /// the stream of all the messages between the 2 users oredered by timestamp from the DB.
   Stream<QuerySnapshot> getStreamMessagesFromDB(String pairChatId) {
-    return _firestore.collection(Collection.MESSAGES.value).doc(pairChatId).collection(pairChatId).orderBy("timestamp", descending: true).snapshots();
+    return _firestore.collection(Message.COLLECTION).doc(pairChatId).collection(pairChatId).orderBy("timestamp", descending: true).snapshots();
   }
 
   /// It takes the [pairChatId] and removes the messages between the 2 users from the DB.
   void removeMessagesFromDB(String pairChatId) {
-    var messages = _firestore.collection(Collection.MESSAGES.value).doc(pairChatId).collection(pairChatId).get();
+    var messages = _firestore.collection(Message.COLLECTION).doc(pairChatId).collection(pairChatId).get();
     WriteBatch batch = FirebaseFirestore.instance.batch();
     messages.then((documentSnapshot) {
       documentSnapshot.docs.forEach((doc) {
@@ -203,20 +203,18 @@ class FirestoreService {
   /// into the [conversation] field and updates the chat counters
   void _updateChatInfo(Conversation conversation, int timestamp) async {
     DocumentReference senderUserRef = _firestore
-        .collection(conversation.senderUser.collection.value)
+        .collection(conversation.senderUser.collection)
         .doc(conversation.senderUser.id)
-        .collection(conversation.senderUserChat.chatCollection.value)
+        .collection(conversation.senderUserChat.collection)
         .doc(conversation.peerUser.id);
     DocumentReference peerUserRef = _firestore
-        .collection(conversation.peerUser.collection.value)
+        .collection(conversation.peerUser.collection)
         .doc(conversation.peerUser.id)
-        .collection(conversation.peerUserChat.chatCollection.value)
+        .collection(conversation.peerUserChat.collection)
         .doc(conversation.senderUser.id);
 
     // Increments the counter only if the sender and the peer users are base users and if this is their first message
-    if (conversation.senderUser.collection == Collection.BASE_USERS &&
-        conversation.peerUser.collection == Collection.BASE_USERS &&
-        !(await senderUserRef.get()).exists) {
+    if (conversation.senderUser is BaseUser && conversation.peerUser is BaseUser && !(await senderUserRef.get()).exists) {
       _incrementConversationCounter(conversation, 1);
     }
     WriteBatch batch = FirebaseFirestore.instance.batch();
@@ -230,51 +228,49 @@ class FirestoreService {
   /// Upgrade a [pendingChat] and a [requestChat] between 2 users to an [activeChat] for both the users
   void upgradePendingToActiveChatIntoDB(Conversation conversation) {
     var timestamp = DateTime.now().millisecondsSinceEpoch;
-    if (conversation.senderUserChat.chatCollection == Collection.PENDING_CHATS) {
-      var pendingChatsReference = _firestore
-          .collection(conversation.senderUser.collection.value)
-          .doc(conversation.senderUser.id)
-          .collection(Collection.PENDING_CHATS.value)
-          .doc(conversation.peerUser.id);
-      var senderActiveChatsReference = _firestore
-          .collection(conversation.senderUser.collection.value)
-          .doc(conversation.senderUser.id)
-          .collection(Collection.ACTIVE_CHATS.value)
-          .doc(conversation.peerUser.id);
-      var requestsReference = _firestore
-          .collection(conversation.peerUser.collection.value)
-          .doc(conversation.peerUser.id)
-          .collection(Collection.REQUESTS_CHATS.value)
-          .doc(conversation.senderUser.id);
-      var peerActiveChatsReference = _firestore
-          .collection(conversation.peerUser.collection.value)
-          .doc(conversation.peerUser.id)
-          .collection(Collection.ACTIVE_CHATS.value)
-          .doc(conversation.senderUser.id);
+    var pendingChatsReference = _firestore
+        .collection(conversation.senderUser.collection)
+        .doc(conversation.senderUser.id)
+        .collection(PendingChat.COLLECTION)
+        .doc(conversation.peerUser.id);
+    var senderActiveChatsReference = _firestore
+        .collection(conversation.senderUser.collection)
+        .doc(conversation.senderUser.id)
+        .collection(ActiveChat.COLLECTION)
+        .doc(conversation.peerUser.id);
+    var requestsReference = _firestore
+        .collection(conversation.peerUser.collection)
+        .doc(conversation.peerUser.id)
+        .collection(Request.COLLECTION)
+        .doc(conversation.senderUser.id);
+    var peerActiveChatsReference = _firestore
+        .collection(conversation.peerUser.collection)
+        .doc(conversation.peerUser.id)
+        .collection(ActiveChat.COLLECTION)
+        .doc(conversation.senderUser.id);
 
-      WriteBatch batch = FirebaseFirestore.instance.batch();
-      // Pending chat of the sender user is moved into active chats
-      batch.delete(pendingChatsReference);
-      batch.set(senderActiveChatsReference, {"lastMessage": timestamp});
-      // Request chat of the peer user is moved into active chats
-      batch.delete(requestsReference);
-      batch.set(peerActiveChatsReference, {"lastMessage": timestamp});
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    // Pending chat of the sender user is moved into active chats
+    batch.delete(pendingChatsReference);
+    batch.set(senderActiveChatsReference, {"lastMessage": timestamp});
+    // Request chat of the peer user is moved into active chats
+    batch.delete(requestsReference);
+    batch.set(peerActiveChatsReference, {"lastMessage": timestamp});
 
-      batch.commit().then((value) => print("Chats upgraded")).catchError((error) => print("Failed to upgrade the chats: $error"));
-    }
+    batch.commit().then((value) => print("Chats upgraded")).catchError((error) => print("Failed to upgrade the chats: $error"));
   }
 
   /// Remove the [conversation] between the [peerUser] and the [senderUser]
   void removeChatFromDB(Conversation conversation) {
     var senderUserReference = _firestore
-        .collection(conversation.senderUser.collection.value)
+        .collection(conversation.senderUser.collection)
         .doc(conversation.senderUser.id)
-        .collection(conversation.senderUserChat.chatCollection.value)
+        .collection(conversation.senderUserChat.collection)
         .doc(conversation.peerUser.id);
     var peerUserReference = _firestore
-        .collection(conversation.peerUser.collection.value)
+        .collection(conversation.peerUser.collection)
         .doc(conversation.peerUser.id)
-        .collection(conversation.peerUserChat.chatCollection.value)
+        .collection(conversation.peerUserChat.collection)
         .doc(conversation.senderUser.id);
 
     WriteBatch batch = FirebaseFirestore.instance.batch();
@@ -285,28 +281,22 @@ class FirestoreService {
   }
 
   /// It takes the [user] and returns the list of all the [chat] of the
-  /// user based on the [chatCollection] field of the [chat] ordered by lastMessage.
+  /// user based on the [collection] field of the [chat] ordered by lastMessage.
   Stream<QuerySnapshot> getChatsFromDB(User user, Chat chat) {
     return _firestore
-        .collection(user.collection.value)
+        .collection(user.collection)
         .doc(user.id)
-        .collection(chat.chatCollection.value)
+        .collection(chat.collection)
         .orderBy("lastMessage", descending: true)
         .limit(_limit)
         .snapshots();
   }
 
   /// It takes the [user] and returns the hash set of ids of all the [chat]
-  /// of the user based on the [chatCollection] field of the Chat.
+  /// of the user based on the [collection] field of the Chat.
   Future<HashSet> _getChatIdsSet(User user, Chat chat) async {
     HashSet<String> ids = new HashSet();
-    var snap = await _firestore
-        .collection(user.collection.value)
-        .doc(user.id)
-        .collection(chat.chatCollection.value)
-        .orderBy("lastMessage")
-        .limit(_limit)
-        .get();
+    var snap = await _firestore.collection(user.collection).doc(user.id).collection(chat.collection).orderBy("lastMessage").limit(_limit).get();
     for (var doc in snap.docs) {
       ids.add(doc.id);
     }
@@ -316,16 +306,9 @@ class FirestoreService {
   /// It takes the [conversation] and the [increment] amount and increments the anonymous chat's counter of the users
   /// into the DB within the [transaction]
   void _incrementConversationCounter(Conversation conversation, int increment) {
-    var utilsSenderReference = _firestore
-        .collection(conversation.senderUser.collection.value)
-        .doc(conversation.senderUser.id)
-        .collection(Collection.UTILS.value)
-        .doc(Collection.UTILS.value);
-    var utilsPeerReference = _firestore
-        .collection(conversation.peerUser.collection.value)
-        .doc(conversation.peerUser.id)
-        .collection(Collection.UTILS.value)
-        .doc(Collection.UTILS.value);
+    var utilsSenderReference =
+        _firestore.collection(conversation.senderUser.collection).doc(conversation.senderUser.id).collection("utils").doc("utils");
+    var utilsPeerReference = _firestore.collection(conversation.peerUser.collection).doc(conversation.peerUser.id).collection("utils").doc("utils");
 
     _firestore
         .runTransaction((transaction) async {
@@ -345,7 +328,7 @@ class FirestoreService {
 
   /// It takes the [user] and returns the anonymous chat's counter from the DB
   Future<DocumentSnapshot> _getChatsCounterFromDB(User user) async {
-    return _firestore.collection(Collection.BASE_USERS.value).doc(user.id).collection(Collection.UTILS.value).doc(Collection.UTILS.value).get();
+    return _firestore.collection(BaseUser.COLLECTION).doc(user.id).collection("utils").doc("utils").get();
   }
 
   /***************************************** REPORTS *****************************************/
@@ -354,7 +337,7 @@ class FirestoreService {
   /// adds it into the list of reports of the user into the DB
   Future<void> addReportIntoDB(String id, Report report) async {
     _firestore
-        .collection(report.collection.value)
+        .collection(report.collection)
         .doc(id)
         .collection("reportsList")
         .doc(report.id)
@@ -366,7 +349,7 @@ class FirestoreService {
   /// It takes the [id] of an user and return the stream of all the
   /// reports of the user oredered in descending by date from the DB
   Stream<QuerySnapshot> getReportsFromDB(String id) {
-    return _firestore.collection(Collection.REPORTS.value).doc(id).collection("reportsList").orderBy("id", descending: true).snapshots();
+    return _firestore.collection(Report.COLLECTION).doc(id).collection("reportsList").orderBy("id", descending: true).snapshots();
   }
 
   /**************************************** DIARY ********************************************/
@@ -375,7 +358,7 @@ class FirestoreService {
   /// and adds it into the list of diaryPages of the user into the DB
   Future<void> addDiaryPageIntoDB(String id, DiaryPage diaryPage) {
     return _firestore
-        .collection(diaryPage.collection.value)
+        .collection(diaryPage.collection)
         .doc(id)
         .collection("diaryPages")
         .doc(diaryPage.id)
@@ -388,7 +371,7 @@ class FirestoreService {
   /// and updates the title and content fields into the DB
   Future<void> updateDiaryPageIntoDB(String id, DiaryPage diaryPage) {
     return _firestore
-        .collection(diaryPage.collection.value)
+        .collection(diaryPage.collection)
         .doc(id)
         .collection("diaryPages")
         .doc(diaryPage.id)
@@ -404,7 +387,7 @@ class FirestoreService {
   /// It takes the [id] of an user and the [diaryPage] and set it as favourite or not
   Future<void> setFavouriteDiaryNotesIntoDB(String id, DiaryPage diaryPage) {
     return _firestore
-        .collection(diaryPage.collection.value)
+        .collection(diaryPage.collection)
         .doc(id)
         .collection("diaryPages")
         .doc(diaryPage.id)
@@ -418,6 +401,6 @@ class FirestoreService {
   /// It takes the [id] of an user and return the stream of
   /// all the diaryPages of the user oredered by date from the DB
   Stream<QuerySnapshot> getDiaryPagesStreamFromDB(String id) {
-    return _firestore.collection(Collection.DIARY.value).doc(id).collection("diaryPages").orderBy("id", descending: true).snapshots();
+    return _firestore.collection(DiaryPage.COLLECTION).doc(id).collection("diaryPages").orderBy("id", descending: true).snapshots();
   }
 }

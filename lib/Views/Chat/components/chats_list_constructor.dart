@@ -1,4 +1,3 @@
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/components/chat_list_item.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
@@ -7,13 +6,9 @@ import 'package:provider/provider.dart';
 
 class ChatsListConstructor extends StatefulWidget {
   final Function createUserCallback;
-  final Collection peerCollection;
+  final String peerCollection;
 
-  ChatsListConstructor({
-    Key key,
-    @required this.createUserCallback,
-    @required this.peerCollection,
-  }) : super(key: key);
+  ChatsListConstructor({Key key, @required this.createUserCallback, @required this.peerCollection}) : super(key: key);
 
   @override
   _ChatsListConstructorState createState() => _ChatsListConstructorState();

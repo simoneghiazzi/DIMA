@@ -9,7 +9,6 @@ import 'package:sApport/Model/Chat/active_chat.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Model/Chat/conversation.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 
 class ChatViewModel {
@@ -106,7 +105,7 @@ class ChatViewModel {
     }
   }
 
-  Future<QuerySnapshot> getUser(Collection collection, String id) {
+  Future<QuerySnapshot> getUser(String collection, String id) {
     return _firestoreService.getUserByIdFromDB(collection, id);
   }
 

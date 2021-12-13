@@ -1,4 +1,6 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:sApport/Model/BaseUser/base_user.dart';
+import 'package:sApport/Model/user.dart';
 
 class BaseUserSignUpForm extends FormBloc<String, String> {
   String email;
@@ -24,14 +26,14 @@ class BaseUserSignUpForm extends FormBloc<String, String> {
     FieldBlocValidators.underage,
   ], initialValue: null);
 
-  /// Get the data of the base user signup form as a key-value map
-  Map<String, Object> get data {
-    return {
-      "name": nameText.value,
-      "surname": surnameText.value,
-      "birthDate": birthDate.value,
-      "email": email,
-    };
+  /// Get the user from the data of the signup form.
+  User get user {
+    return BaseUser(
+      name: nameText.value,
+      surname: surnameText.value,
+      birthDate: birthDate.value,
+      email: email,
+    );
   }
 
   @override

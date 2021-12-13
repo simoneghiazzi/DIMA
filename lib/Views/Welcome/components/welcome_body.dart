@@ -5,7 +5,6 @@ import 'package:sApport/constants.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
@@ -133,9 +132,9 @@ class _WelcomeBodyState extends State<WelcomeBody> {
     return authViewModel.isUserLogged.listen((isUserLogged) async {
       if (isUserLogged) {
         // Called on sign in
-        await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection.value} logged"));
+        await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection} logged"));
         LoadingDialog.hide(context);
-        routerDelegate.replaceAllButNumber(1, [RouteSettings(name: userViewModel.loggedUser.collection.homePageRoute)]);
+        routerDelegate.replaceAllButNumber(1, [RouteSettings(name: userViewModel.loggedUser.homePageRoute)]);
       } else {
         // Called on sign out
         routerDelegate.replaceAll(name: WelcomeScreen.route);

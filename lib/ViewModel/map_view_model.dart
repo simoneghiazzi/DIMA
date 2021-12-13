@@ -5,8 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sApport/Model/BaseUser/Map/place.dart';
+import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Model/Services/map_service.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 
 class MapViewModel {
@@ -76,7 +76,7 @@ class MapViewModel {
   /// Return the list of experts.
   Future<QuerySnapshot> loadExperts() async {
     try {
-      return _firestoreService.getBaseCollectionFromDB(Collection.EXPERTS);
+      return _firestoreService.getBaseCollectionFromDB(Expert.COLLECTION);
     } catch (e) {
       print("Failed to get the list of experts: $e");
       return null;

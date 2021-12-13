@@ -1,7 +1,7 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Model/Expert/expert.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
@@ -45,16 +45,8 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
     User senderUser = chatViewModel.conversation.senderUser;
     return Column(
       children: <Widget>[
-        peerUser.collection == Collection.EXPERTS
+        peerUser is BaseUser
             ? TopBarChats(
-                isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
-                networkAvatar: NetworkAvatar(
-                  img: peerUser.data['profilePhoto'],
-                  radius: 20.0,
-                ),
-                text: peerUser.data['name'].toString() + " " + peerUser.data['surname'].toString(),
-              )
-            : TopBarChats(
                 isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
                 circleAvatar: CircleAvatar(
                   backgroundColor: Colors.transparent,
@@ -64,9 +56,17 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
                     color: Colors.white,
                   ),
                 ),
-                text:
-                    peerUser.data['name'].toString() + (senderUser.collection == Collection.EXPERTS ? " " + peerUser.data['surname'].toString() : ""),
-              ), // List of messages
+                text: peerUser.data['name'].toString() + (senderUser is Expert ? " " + peerUser.data['surname'].toString() : ""),
+              )
+            : TopBarChats(
+                isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
+                networkAvatar: NetworkAvatar(
+                  img: peerUser.data['profilePhoto'],
+                  radius: 20.0,
+                ),
+                text: peerUser.data['name'].toString() + " " + peerUser.data['surname'].toString(),
+              ),
+        // List of messages
         MessagesListConstructor(),
         // Input content
         chatViewModel.conversation.senderUserChat.runtimeType == PendingChat ? ChatAcceptDenyInput() : ChatTextInput(),

@@ -1,8 +1,7 @@
-import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
 import 'package:sApport/Views/Signup/components/background.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
@@ -40,7 +39,7 @@ class BaseUserInfoBody extends StatelessWidget {
                   child: FormBlocListener<BaseUserSignUpForm, String, String>(
                     onSubmitting: (context, state) {},
                     onSuccess: (context, state) {
-                      userViewModel.createUser(Collection.BASE_USERS, baseUserSignUpForm);
+                      userViewModel.createUser(baseUserSignUpForm);
                       routerDelegate.pushPage(name: CredentialScreen.route);
                     },
                     onFailure: (context, state) {

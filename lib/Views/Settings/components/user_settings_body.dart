@@ -1,6 +1,5 @@
 import 'dart:async';
-
-import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
@@ -245,7 +244,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               height: size.height * 0.05,
                             ),
                           ],
-                          if (authViewModel.authProvider() == "password" && widget.user.collection == Collection.BASE_USERS) ...[
+                          if (authViewModel.authProvider() == "password" && widget.user is BaseUser) ...[
                             Divider(
                               color: kPrimaryLightColor,
                             ),

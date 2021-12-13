@@ -8,13 +8,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-import 'package:sApport/Model/Services/map_service.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Model/Services/map_service.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
@@ -54,10 +53,10 @@ Future<void> main() async {
   // If the user is not already logged or the email has not been verified, load the welcome page.
   if (_firebaseAuthService.isUserSignedIn() && _firebaseAuthService.isUserEmailVerified()) {
     UserViewModel userViewModel = UserViewModel();
-    await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection.value} logged"));
+    await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection} logged"));
     runApp(MyApp(
       userProvider: Provider(create: (context) => userViewModel),
-      homePage: userViewModel.loggedUser.collection.homePageRoute,
+      homePage: userViewModel.loggedUser.homePageRoute,
     ));
   } else {
     runApp(MyApp());

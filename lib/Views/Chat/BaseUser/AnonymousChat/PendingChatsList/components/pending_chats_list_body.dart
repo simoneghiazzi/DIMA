@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Model/Chat/request.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/components/chats_list_constructor.dart';
@@ -36,7 +35,7 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
           TopBar(text: 'Requests'),
           ChatsListConstructor(
             createUserCallback: createUserCallback,
-            peerCollection: Collection.BASE_USERS,
+            peerCollection: BaseUser.COLLECTION,
           ),
         ],
       ),

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/Forms/expert_signup_form.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -318,18 +318,6 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
       closeIcon: null,
       context: context,
       title: "Found address: " + expertSignUpForm.expertAddress.address,
-      desc: "Your personal informations: \n" +
-          "Name: " +
-          expertSignUpForm.data["name"] +
-          "\n" +
-          "Surname: " +
-          expertSignUpForm.data["surname"] +
-          "\n" +
-          "Date of birth: " +
-          DateFormat('MM-dd-yyyy').format(expertSignUpForm.data["birthDate"]) +
-          "\n" +
-          "Phone number: " +
-          expertSignUpForm.data["phoneNumber"],
       style: AlertStyle(
         animationDuration: Duration(milliseconds: 0),
         isCloseButton: false,
@@ -341,7 +329,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
             style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onPressed: () {
-            userViewModel.createUser(Collection.EXPERTS, expertSignUpForm);
+            userViewModel.createUser(expertSignUpForm);
             addressConfirmationAlert.dismiss();
             routerDelegate.pushPage(name: CredentialScreen.route);
           },

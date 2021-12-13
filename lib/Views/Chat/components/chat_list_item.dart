@@ -1,4 +1,5 @@
-import 'package:sApport/Model/Services/collections.dart';
+import 'package:sApport/Model/BaseUser/base_user.dart';
+import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
@@ -12,7 +13,7 @@ import 'package:shimmer/shimmer.dart';
 class ChatListItem extends StatefulWidget {
   final String userId;
   final Function createUserCallback;
-  final Collection peerCollection;
+  final String peerCollection;
 
   ChatListItem({Key key, @required this.userId, @required this.peerCollection, @required this.createUserCallback}) : super(key: key);
 
@@ -64,7 +65,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            userItem.collection == Collection.BASE_USERS
+            userItem is BaseUser
                 ? CircleAvatar(
                     backgroundColor: Colors.transparent,
                     radius: 25.0,
@@ -82,14 +83,14 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
             ),
             // Profile info
             Flexible(
-              child: userItem.collection == Collection.EXPERTS
+              child: userItem is BaseUser
                   ? Text(
-                      userItem.name + " " + userItem.surname,
+                      userItem.name + (chatViewModel.conversation.senderUser is Expert ? " " + userItem.surname : ""),
                       maxLines: 1,
                       style: TextStyle(color: kPrimaryColor, fontSize: 18),
                     )
                   : Text(
-                      userItem.name + (chatViewModel.conversation.senderUser.collection == Collection.EXPERTS ? " " + userItem.surname : ""),
+                      userItem.name + " " + userItem.surname,
                       maxLines: 1,
                       style: TextStyle(color: kPrimaryColor, fontSize: 18),
                     ),
