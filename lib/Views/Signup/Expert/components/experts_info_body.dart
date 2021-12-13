@@ -1,13 +1,12 @@
 import 'dart:io';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/Forms/expert_signup_form.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Signup/components/background.dart';
-import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
-import 'package:sApport/Views/components/already_have_an_account_check.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +25,6 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
   ExpertSignUpForm expertSignUpForm;
   AppRouterDelegate routerDelegate;
   bool nextEnabled = false;
-  File _image;
   Alert errorAlert;
   Alert addressConfirmationAlert;
 
@@ -66,31 +64,64 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                           LoadingDialog.show(context);
                         },
                         onSuccess: (context, state) {
+                          LoadingDialog.hide(context);
                           addressConfirmationAlert = createAddressConfirmationAlert();
                           addressConfirmationAlert.show();
                         },
                         onFailure: (context, state) {
+                          LoadingDialog.hide(context);
                           errorAlert.show();
                         },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            SizedBox(height: size.height * 0.08),
+                            SizedBox(height: size.height * 0.1),
                             Text(
-                              "Personal information",
-                              style: TextStyle(
-                                color: kPrimaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25,
+                              "sApport",
+                              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
+                            ),
+                            Text(
+                              "Sign up to increase your visibility and seize the opportunity for professional and personal growth.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: kPrimaryDarkColorTrasparent, fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
+                            SizedBox(height: size.height * 0.03),
+                            Divider(),
+                            SizedBox(height: size.height * 0.03),
+                            GestureDetector(
+                              onTap: () {
+                                getImage();
+                              },
+                              child: CircleAvatar(
+                                radius: 70,
+                                backgroundColor: kPrimaryColor,
+                                child: CircleAvatar(
+                                  radius: 67,
+                                  backgroundColor: kPrimaryLightColor,
+                                  child: ClipOval(
+                                      child: (expertSignUpForm.profilePhoto != null)
+                                          ? Image.file(
+                                              File(expertSignUpForm.profilePhoto),
+                                            )
+                                          : Container(
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: AssetImage("assets/icons/logo_circular.png"),
+                                                  scale: 4,
+                                                  opacity: 0.1,
+                                                ),
+                                              ),
+                                              child: Center(
+                                                  child: Icon(
+                                                Icons.add_a_photo,
+                                                size: 40,
+                                                color: kPrimaryColor,
+                                              )))),
+                                ),
                               ),
                             ),
-                            SizedBox(height: size.height * 0.04),
-                            Image.asset(
-                              "assets/icons/logo.png",
-                              height: size.height * 0.15,
-                            ),
-                            SizedBox(height: size.height * 0.04),
+                            SizedBox(height: size.height * 0.03),
                             TextFieldBlocBuilder(
                               textCapitalization: TextCapitalization.sentences,
                               textFieldBloc: expertSignUpForm.nameText,
@@ -212,35 +243,6 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
               ),
             ),
             SizedBox(height: size.height * 0.04),
-            GestureDetector(
-              onTap: () {
-                getImage();
-              },
-              child: CircleAvatar(
-                radius: size.width / 3.9,
-                backgroundColor: kPrimaryColor,
-                child: CircleAvatar(
-                  radius: size.width / 4,
-                  backgroundColor: kPrimaryLightColor,
-                  child: ClipOval(
-                    child: new SizedBox(
-                      width: 180.0,
-                      height: 180.0,
-                      child: (_image != null)
-                          ? Image.file(
-                              _image,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.asset(
-                              "assets/icons/logo_circular.png",
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: size.height * 0.03),
             RoundedButton(
               text: "NEXT",
               press: () {
@@ -249,14 +251,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
               },
               enabled: nextEnabled,
             ),
-            SizedBox(height: size.height * 0.03),
-            AlreadyHaveAnAccountCheck(
-              login: false,
-              press: () {
-                routerDelegate.replace(name: LoginScreen.route);
-              },
-            ),
-            SizedBox(height: size.height * 0.06),
+            SizedBox(height: size.height * 0.1),
           ],
         ),
       )),
@@ -280,7 +275,6 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
           ),
           onPressed: () {
             errorAlert.dismiss();
-            LoadingDialog.hide(context);
           },
           color: kPrimaryColor,
         )
@@ -292,9 +286,28 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
     ImagePicker _picker = ImagePicker();
     var image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      expertSignUpForm.profilePhoto = image.path.toString();
+      _cropImage(image.path);
+    }
+  }
+
+  Future _cropImage(String imagePath) async {
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: imagePath,
+        aspectRatioPresets: [CropAspectRatioPreset.square],
+        cropStyle: CropStyle.circle,
+        androidUiSettings: AndroidUiSettings(
+          toolbarTitle: "Cropper",
+          toolbarColor: kPrimaryColor,
+          toolbarWidgetColor: Colors.white,
+          hideBottomControls: true,
+          lockAspectRatio: true,
+        ),
+        iosUiSettings: IOSUiSettings(
+          title: "Cropper",
+        ));
+    if (croppedFile != null) {
+      expertSignUpForm.profilePhoto = croppedFile.path;
       setState(() {
-        _image = File(image.path);
         nextEnabled = true;
       });
     }
@@ -304,7 +317,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
     return Alert(
       closeIcon: null,
       context: context,
-      title: "Found address: " + expertSignUpForm.infoAddress,
+      title: "Found address: " + expertSignUpForm.expertAddress.address,
       desc: "Your personal informations: \n" +
           "Name: " +
           expertSignUpForm.data["name"] +
@@ -330,7 +343,6 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
           onPressed: () {
             userViewModel.createUser(Collection.EXPERTS, expertSignUpForm);
             addressConfirmationAlert.dismiss();
-            LoadingDialog.hide(context);
             routerDelegate.pushPage(name: CredentialScreen.route);
           },
           color: Colors.transparent,

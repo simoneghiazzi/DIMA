@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:sApport/Model/Services/map_service.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -50,8 +51,8 @@ Future<void> main() async {
   // Already logged user check: if the user is already logged
   // fetch the correct user data from the DB and load the relative homePage.
   //
-  // If the user is not already logged, load the welcome page.
-  if (_firebaseAuthService.firebaseUser != null) {
+  // If the user is not already logged or the email has not been verified, load the welcome page.
+  if (_firebaseAuthService.isUserSignedIn() && _firebaseAuthService.isUserEmailVerified()) {
     UserViewModel userViewModel = UserViewModel();
     await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection.value} logged"));
     runApp(MyApp(
@@ -68,6 +69,7 @@ void setupServices() {
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(FirestoreService(FirebaseFirestore.instance));
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(FirebaseAuth.instance));
+  getIt.registerSingleton<MapService>(MapService());
 }
 
 class MyApp extends StatefulWidget {
@@ -102,7 +104,7 @@ class _MyAppState extends State<MyApp> {
         Provider(create: (context) => ChatViewModel()),
         Provider(create: (context) => DiaryViewModel()),
         Provider(create: (context) => ReportViewModel()),
-        Provider(create: (context) => MapViewModel()),
+        Provider(create: (context) => MapViewModel(), lazy: false),
         widget.userProvider ?? Provider(create: (context) => UserViewModel()),
       ],
       child: MaterialApp(

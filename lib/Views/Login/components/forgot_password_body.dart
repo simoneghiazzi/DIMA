@@ -36,25 +36,16 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              "Reset Password",
-              style: TextStyle(
-                color: kPrimaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
+              "sApport",
+              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
             ),
-            SizedBox(height: size.height * 0.08),
-            Image.asset(
-              "assets/icons/logo.png",
-              height: size.height * 0.15,
-            ),
-            SizedBox(height: size.height * 0.08),
+            SizedBox(height: size.height * 0.02),
             StreamBuilder<String>(
                 stream: authViewModel.loginForm.errorEmailText,
                 builder: (context, snapshot) {
                   return RoundedInputField(
                     hintText: "Your Email",
-                    controller: authViewModel.emailCtrl,
+                    controller: authViewModel.emailTextCtrl,
                     errorText: snapshot.data,
                   );
                 }),
@@ -72,8 +63,8 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                     press: () async {
                       _errorTextController.add(null);
                       FocusScope.of(context).unfocus();
-                      if (await authViewModel.hasPasswordAuthentication(authViewModel.emailCtrl.text)) {
-                        authViewModel.resetPassword(authViewModel.emailCtrl.text);
+                      if (await authViewModel.hasPasswordAuthentication(authViewModel.emailTextCtrl.text)) {
+                        authViewModel.resetPassword(authViewModel.emailTextCtrl.text);
                         showSnackBar();
                         routerDelegate.pop();
                       } else {

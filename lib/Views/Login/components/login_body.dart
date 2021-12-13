@@ -9,7 +9,6 @@ import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Login/components/background.dart';
-import 'package:sApport/Views/components/already_have_an_account_check.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/rounded_input_field.dart';
 import 'package:sApport/Views/components/rounded_password_field.dart';
@@ -42,33 +41,23 @@ class _LoginBodyState extends State<LoginBody> {
     return Background(
       child: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              "Login",
-              style: TextStyle(
-                color: kPrimaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
+              "sApport",
+              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
             ),
-            SizedBox(height: size.height * 0.08),
-            Image.asset(
-              "assets/icons/logo.png",
-              height: size.height * 0.15,
-            ),
-            SizedBox(height: size.height * 0.07),
+            SizedBox(height: size.height * 0.02),
             StreamBuilder<String>(
                 stream: authViewModel.loginForm.errorEmailText,
                 builder: (context, snapshot) {
                   return RoundedInputField(
                     hintText: "Your Email",
-                    controller: authViewModel.emailCtrl,
+                    controller: authViewModel.emailTextCtrl,
                     errorText: snapshot.data,
                   );
                 }),
             RoundedPasswordField(
-              controller: authViewModel.pswCtrl,
+              controller: authViewModel.pswTextCtrl,
             ),
             SizedBox(height: size.height * 0.01),
             ForgotPassword(
@@ -78,7 +67,7 @@ class _LoginBodyState extends State<LoginBody> {
                 routerDelegate.pushPage(name: ForgotPasswordScreen.route);
               },
             ),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.04),
             StreamBuilder(
                 stream: authViewModel.loginForm.isLoginEnabled,
                 builder: (context, snapshot) {
@@ -87,25 +76,62 @@ class _LoginBodyState extends State<LoginBody> {
                     press: () {
                       FocusScope.of(context).unfocus();
                       LoadingDialog.show(context);
-                      authViewModel.logIn().catchError((_) => LoadingDialog.hide(context));
+                      authViewModel.logIn();
                     },
                     enabled: snapshot.data ?? false,
                   );
                 }),
-            SizedBox(height: size.height * 0.01),
+            SizedBox(height: size.height * 0.05),
             StreamBuilder<String>(
-                stream: authViewModel.authMessage,
-                builder: (context, snapshot) {
-                  return RichText(text: TextSpan(text: snapshot.data, style: TextStyle(color: Colors.red, fontSize: 15)));
-                }),
-            SizedBox(height: size.height * 0.02),
-            AlreadyHaveAnAccountCheck(
-              press: () {
+              stream: authViewModel.authMessage,
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data.isNotEmpty) {
+                  return Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(right: 10, left: 10),
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: snapshot.data,
+                            style: TextStyle(color: Colors.red, fontSize: 17, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: size.height * 0.05),
+                    ],
+                  );
+                } else {
+                  return SizedBox(height: size.height * 0.05);
+                }
+              },
+            ),
+            GestureDetector(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account? ",
+                    style: TextStyle(
+                      color: kPrimaryColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    "Sign Up",
+                    style: TextStyle(
+                      color: kPrimaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
+              onTap: () {
                 authViewModel.clearControllers();
                 routerDelegate.replace(name: BaseUsersSignUpScreen.route);
               },
             ),
-            SizedBox(height: size.height * 0.01),
           ],
         ),
       ),

@@ -170,7 +170,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     maxLines: null,
                     textCapitalization: TextCapitalization.sentences,
                     enabled: modifiable,
-                    controller: diaryViewModel.titleCtrl,
+                    controller: diaryViewModel.titleTextCtrl,
                     cursorColor: kPrimaryColor,
                     style: TextStyle(
                       color: kPrimaryColor,
@@ -214,7 +214,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       child: TextField(
                         textCapitalization: TextCapitalization.sentences,
                         enabled: modifiable,
-                        controller: diaryViewModel.contentCtrl,
+                        controller: diaryViewModel.contentTextCtrl,
                         cursorColor: kPrimaryColor,
                         style: TextStyle(color: kPrimaryColor, fontSize: 18),
                         keyboardType: TextInputType.multiline,

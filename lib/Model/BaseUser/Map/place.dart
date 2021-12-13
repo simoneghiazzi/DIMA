@@ -6,18 +6,22 @@ class Place {
 
   Place({this.lat, this.lng, this.placeId, this.address});
 
-  factory Place.fromAutocompleteJson(Map<String, dynamic> parsedJson) {
+  /// Returns a Place intance with the [description] and [placeId] variables setted
+  /// from the [jsonResponse] of the autocomplete Google Map API.
+  factory Place.fromAutocompleteJson(Map<String, dynamic> jsonResponse) {
     return Place(
-      address: parsedJson["description"],
-      placeId: parsedJson["place_id"],
+      address: jsonResponse["description"],
+      placeId: jsonResponse["place_id"],
     );
   }
 
-  factory Place.fromSearchJson(Map<String, dynamic> parsedJson) {
+  /// Returns a Place intance with the [lat], [lng] and [address] variables setted
+  /// from the [jsonResponse] of the search place Google Map API.
+  factory Place.fromSearchJson(Map<String, dynamic> jsonResponse) {
     return Place(
-      lat: parsedJson["geometry"]["location"]["lat"],
-      lng: parsedJson["geometry"]["location"]["lng"],
-      address: parsedJson["formatted_address"],
+      lat: jsonResponse["geometry"]["location"]["lat"],
+      lng: jsonResponse["geometry"]["location"]["lng"],
+      address: jsonResponse["formatted_address"],
     );
   }
 }

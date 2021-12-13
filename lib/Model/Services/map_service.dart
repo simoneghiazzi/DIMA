@@ -17,7 +17,7 @@ class MapService {
     return jsonResults.map((place) => Place.fromAutocompleteJson(place)).toList();
   }
 
-  /// Searches a place based on the [placeId].
+  /// Search a place based on the [placeId].
   ///
   /// It returns a [Place] with the [lat], [lng] and [address] varibles setted from the
   /// Google Map API request.

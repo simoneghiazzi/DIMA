@@ -1,5 +1,6 @@
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
+import 'package:sApport/ViewModel/Forms/report_form.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
@@ -39,7 +40,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
       Column(
         children: [
           TopBar(
-            text: 'New report',
+            text: "New report",
             buttons: [
               InkWell(
                 child: Container(
@@ -67,10 +68,9 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                   ),
                 ),
                 onTap: () {
-                  // routerDelegate.pushPage(
-                  //   name: ReportsListScreen.route,
-                  //   arguments: ReportArguments(null, reportViewModel),
-                  // );
+                  routerDelegate.pushPage(
+                    name: ReportsListScreen.route,
+                  );
                 },
               )
             ],
@@ -78,10 +78,10 @@ class _CreateReportBodyState extends State<CreateReportBody> {
           SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: BlocProvider(
-              create: (context) => ReportViewModel(),
+              create: (context) => ReportForm(),
               child: Builder(
                 builder: (context) {
-                  reportViewModel = BlocProvider.of<ReportViewModel>(context);
+                  ReportForm reportForm = BlocProvider.of<ReportForm>(context);
                   return Theme(
                     data: Theme.of(context).copyWith(
                       primaryColor: kPrimaryColor,
@@ -103,7 +103,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                         ),
                         Padding(
                             padding: EdgeInsets.only(top: size.height * 0.05, left: 40, right: 40),
-                            child: FormBlocListener<ReportViewModel, String, String>(
+                            child: FormBlocListener<ReportForm, String, String>(
                               onSuccess: (context, state) {
                                 LoadingDialog.hide(context);
                                 successAlert.show();
@@ -116,7 +116,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
                                   DropdownFieldBlocBuilder<String>(
-                                    selectFieldBloc: reportViewModel.reportCategory,
+                                    selectFieldBloc: reportForm.reportCategory,
                                     decoration: InputDecoration(
                                       filled: true,
                                       fillColor: kPrimaryLightColor.withAlpha(100),
@@ -134,7 +134,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                   ),
                                   TextFieldBlocBuilder(
                                     textCapitalization: TextCapitalization.sentences,
-                                    textFieldBloc: reportViewModel.reportText,
+                                    textFieldBloc: reportForm.reportText,
                                     decoration: InputDecoration(
                                       filled: true,
                                       fillColor: kPrimaryLightColor.withAlpha(100),
@@ -152,7 +152,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                   ElevatedButton(
                                     onPressed: () {
                                       LoadingDialog.show(context);
-                                      reportViewModel.submit();
+                                      reportForm.submit();
                                     },
                                     style: ButtonStyle(
                                         fixedSize: MaterialStateProperty.all<Size>(Size(size.width / 2, size.height / 20)),
@@ -193,7 +193,6 @@ class _CreateReportBodyState extends State<CreateReportBody> {
             style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onPressed: () {
-            reportViewModel.clearControllers();
             //routerDelegate.pushPage(name: ReportsListScreen.route, arguments: reportViewModel);
             successAlert.dismiss();
           },

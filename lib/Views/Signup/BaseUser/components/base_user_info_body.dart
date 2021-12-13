@@ -5,7 +5,6 @@ import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
 import 'package:sApport/Views/Signup/components/background.dart';
-import 'package:sApport/Views/components/already_have_an_account_check.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
@@ -48,24 +47,19 @@ class BaseUserInfoBody extends StatelessWidget {
                       // Add what to do
                     },
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        SizedBox(height: size.height * 0.09),
                         Text(
-                          "Personal information",
+                          "sApport",
+                          style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
+                        ),
+                        Text(
+                          "Sign up to share your personal story with other anonymous users or to find a suitable expert for you.",
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: kPrimaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25,
-                          ),
+                          style: TextStyle(color: kPrimaryDarkColorTrasparent, fontWeight: FontWeight.bold, fontSize: 15),
                         ),
-                        SizedBox(height: size.height * 0.08),
-                        Image.asset(
-                          "assets/icons/logo.png",
-                          height: size.height * 0.15,
-                        ),
-                        SizedBox(height: size.height * 0.05),
+                        SizedBox(height: size.height * 0.03),
+                        Divider(),
+                        SizedBox(height: size.height * 0.03),
                         TextFieldBlocBuilder(
                           textCapitalization: TextCapitalization.sentences,
                           textFieldBloc: baseUserSignUpForm.nameText,
@@ -110,7 +104,7 @@ class BaseUserInfoBody extends StatelessWidget {
                                 color: kPrimaryColor,
                               )),
                         ),
-                        SizedBox(height: size.height * 0.02),
+                        SizedBox(height: size.height * 0.04),
                         RoundedButton(
                           press: () {
                             FocusScope.of(context).unfocus();
@@ -118,14 +112,6 @@ class BaseUserInfoBody extends StatelessWidget {
                           },
                           text: "NEXT",
                         ),
-                        SizedBox(height: size.height * 0.05),
-                        AlreadyHaveAnAccountCheck(
-                          login: false,
-                          press: () {
-                            routerDelegate.replace(name: LoginScreen.route);
-                          },
-                        ),
-                        SizedBox(height: size.height * 0.05),
                       ],
                     ),
                   ));

@@ -37,7 +37,7 @@ class _DiaryBodyState extends State<DiaryBody> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: widget.diaryViewModel.loadPagesStream(),
+      stream: widget.diaryViewModel.loadDiaryPages(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Stack(

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/BaseUser/report.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
-import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/constants.dart';
@@ -12,21 +11,19 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class ReportsListBody extends StatefulWidget {
-  final ReportViewModel reportViewModel;
-
-  ReportsListBody({Key key, @required this.reportViewModel}) : super(key: key);
-
   @override
   _ReportsListBodyState createState() => _ReportsListBodyState();
 }
 
 class _ReportsListBodyState extends State<ReportsListBody> {
+  ReportViewModel reportViewModel;
   AppRouterDelegate routerDelegate;
   Alert alert;
   bool isLoading = false;
 
   @override
   void initState() {
+    reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     super.initState();
   }
@@ -40,7 +37,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
         ),
         Flexible(
           child: StreamBuilder(
-            stream: widget.reportViewModel.loadReports(),
+            stream: reportViewModel.loadReports(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.active) {
                 return ListView.builder(
@@ -120,6 +117,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
       return SizedBox.shrink();
     }
   }
+
   Alert createAlert(String title, String description) {
     return Alert(
         context: context,

@@ -44,7 +44,7 @@ class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserv
                 },
                 textAlignVertical: TextAlignVertical.center,
                 style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
-                controller: chatViewModel.textController,
+                controller: chatViewModel.contentTextCtrl,
                 decoration: InputDecoration(
                   fillColor: kPrimaryColor,
                   border: InputBorder.none,
@@ -52,7 +52,7 @@ class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserv
                   suffixIcon: IconButton(
                     icon: Icon(Icons.send),
                     onPressed: () {
-                      if (chatViewModel.textController.text.trim() != '') {
+                      if (chatViewModel.contentTextCtrl.text.trim() != '') {
                         chatViewModel.sendMessage();
                       }
                     },

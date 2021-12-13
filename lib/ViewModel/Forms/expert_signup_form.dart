@@ -1,14 +1,14 @@
+import 'dart:io';
+import 'package:get_it/get_it.dart';
 import 'package:sApport/Model/BaseUser/Map/place.dart';
-import 'package:sApport/Model/BaseUser/Map/place_search.dart';
+import 'package:sApport/Model/Services/map_service.dart';
 import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
-import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 
 class ExpertSignUpForm extends BaseUserSignUpForm {
   // Services
-  final MapViewModel mapViewModel = MapViewModel();
+  final MapService mapService = GetIt.I();
 
-  String infoAddress;
   Place expertAddress;
   String profilePhoto;
 
@@ -49,9 +49,9 @@ class ExpertSignUpForm extends BaseUserSignUpForm {
       "name": nameText.value,
       "surname": surnameText.value,
       "birthDate": birthDate.value,
-      "lat": expertAddress.geometry.location.lat,
-      "lng": expertAddress.geometry.location.lng,
-      "address": infoAddress,
+      "lat": expertAddress.lat,
+      "lng": expertAddress.lng,
+      "address": expertAddress.address,
       "email": email,
       "phoneNumber": phoneNumber.value,
       "profilePhoto": profilePhoto,
@@ -60,11 +60,9 @@ class ExpertSignUpForm extends BaseUserSignUpForm {
 
   @override
   void onSubmitting() async {
-    List<PlaceSearch> address =
-        await mapViewModel.searchPlaceSubscription("${countryText.value} ${cityText.value} ${streetText.value} ${houseNumber.value}");
-    if (address.isNotEmpty) {
-      infoAddress = address.first.description;
-      expertAddress = await mapViewModel.getExpertLocation(address.first.placeId);
+    List<Place> places = await mapService.autocomplete("${countryText.value} ${cityText.value} ${streetText.value} ${houseNumber.value}");
+    if (places.isNotEmpty) {
+      expertAddress = await mapService.searchPlace(places.first.placeId);
       emitSuccess(canSubmitAgain: true);
     } else {
       emitFailure();

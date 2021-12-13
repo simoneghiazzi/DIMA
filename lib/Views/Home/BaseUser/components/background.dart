@@ -16,6 +16,7 @@ class Background extends StatelessWidget {
           Positioned(
             child: Image.asset(
               "assets/images/main_top.png",
+              width: size.width * 0.35,
             ),
           ),
           Center(
@@ -37,6 +38,7 @@ class Background extends StatelessWidget {
               opacity: 0.5,
               child: Image.asset(
                 "assets/images/home_bottom.png",
+                width: size.width * 0.4,
               ),
             ),
           ),

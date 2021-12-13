@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Diary/diary_screen.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
+import 'package:sApport/Views/Report/reports_list_screen.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
@@ -71,13 +72,11 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
       case BaseUsersSignUpScreen.route:
         child = BaseUsersSignUpScreen();
         break;
-      // case ReportsListScreen.route:
-      //   child = ReportsListScreen();
-      //   break;
+      case ReportsListScreen.route:
+        child = ReportsListScreen();
+        break;
       case ReportDetailsScreen.route:
-        child = ReportDetailsScreen(
-          report: routeSettings.arguments,
-        );
+        child = ReportDetailsScreen(report: routeSettings.arguments);
         break;
       case CreateReportScreen.route:
         child = CreateReportScreen();
@@ -98,14 +97,10 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = UserSettingsScreen(user: routeSettings.arguments);
         break;
       case ExpertHomePageScreen.route:
-        child = ExpertHomePageScreen(
-          pageIndex: routeSettings.arguments,
-        );
+        child = ExpertHomePageScreen(pageIndex: routeSettings.arguments);
         break;
       case BaseUserHomePageScreen.route:
-        child = BaseUserHomePageScreen(
-          pageIndex: routeSettings.arguments,
-        );
+        child = BaseUserHomePageScreen(pageIndex: routeSettings.arguments);
         break;
       case ChatPageScreen.route:
         child = ChatPageScreen();
@@ -123,9 +118,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = DiaryScreen();
         break;
       case DiaryPageScreen.route:
-        child = DiaryPageScreen(
-          diaryPage: routeSettings.arguments,
-        );
+        child = DiaryPageScreen(diaryPage: routeSettings.arguments);
         break;
     }
     return MaterialPage(

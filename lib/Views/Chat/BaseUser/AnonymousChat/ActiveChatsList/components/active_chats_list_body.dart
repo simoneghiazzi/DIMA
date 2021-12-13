@@ -129,7 +129,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   }
 
   StreamSubscription<bool> subscribeToNewRandomUser() {
-    return chatViewModel.isNewRandomUser.listen((isNewRandomUser) {
+    return chatViewModel.newRandomUser.listen((isNewRandomUser) {
       LoadingDialog.hide(context);
       if (isNewRandomUser) {
         initNewRandomChats();
