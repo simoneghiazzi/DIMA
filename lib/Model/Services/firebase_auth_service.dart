@@ -56,6 +56,12 @@ class FirebaseAuthService {
   /// - **account-exists-with-different-credential**:
   ///   - Thrown if there already exists an account with the email address
   ///    asserted by the credential.
+  /// - **email-already-in-use**:
+  ///   - Thrown if the email corresponding to the credential already exists
+  ///    among your users.
+  /// - **credential-already-in-use**:
+  ///   - Thrown if the account corresponding to the credential already exists
+  ///    among your users, or is already linked to a Firebase User.
   Future<Map> signInWithGoogle(bool link) async {
     GoogleSignIn googleSignIn = GoogleSignIn(
       scopes: [
@@ -111,6 +117,12 @@ class FirebaseAuthService {
   /// - **account-exists-with-different-credential**:
   ///   - Thrown if there already exists an account with the email address
   ///    asserted by the credential.
+  /// - **email-already-in-use**:
+  ///   - Thrown if the email corresponding to the credential already exists
+  ///    among your users.
+  /// - **credential-already-in-use**:
+  ///   - Thrown if the account corresponding to the credential already exists
+  ///    among your users, or is already linked to a Firebase User.
   Future<Map> signInWithFacebook(bool link) async {
     LoginResult result = await FacebookAuth.instance.login(permissions: ["email", "public_profile", "user_birthday"]);
     AccessToken accessToken = result.accessToken;

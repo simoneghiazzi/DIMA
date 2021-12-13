@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -20,6 +22,7 @@ class UserSettingsBody extends StatefulWidget {
 }
 
 class _UserSettingsBodyState extends State<UserSettingsBody> {
+  StreamSubscription<String> subscriber;
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
   Alert alert;
@@ -28,6 +31,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
   void initState() {
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    subscriber = subscribeToAuthMessage();
     alert = createAlert();
     super.initState();
   }
@@ -267,11 +271,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   press: () {
                                     LoadingDialog.show(context);
                                     authViewModel.logInWithFacebook(link: true).then((value) {
-                                      LoadingDialog.hide(context);
                                       setState(() {});
-                                    }).catchError((onError) {
-                                      LoadingDialog.hide(context);
-                                      showSnackBar("This social account is already linked with another profile or the email is already registered.");
                                     });
                                   }),
                               SocialIcon(
@@ -279,11 +279,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   press: () {
                                     LoadingDialog.show(context);
                                     authViewModel.logInWithGoogle(link: true).then((value) {
-                                      LoadingDialog.hide(context);
                                       setState(() {});
-                                    }).catchError((onError) {
-                                      LoadingDialog.hide(context);
-                                      showSnackBar("This social account is already linked with another profile or the email is already registered.");
                                     });
                                   }),
                             ]),
@@ -404,7 +400,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
           obscureText: true,
           decoration: InputDecoration(
             icon: Icon(Icons.lock, color: kPrimaryColor),
-            labelText: 'Password',
+            labelText: "Password",
           ),
         ),
         buttons: [
@@ -420,5 +416,23 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
             color: Colors.transparent,
           )
         ]);
+  }
+
+  StreamSubscription<String> subscribeToAuthMessage() {
+    return authViewModel.authMessage.listen((message) {
+      if (message != null) {
+        if (message.isNotEmpty) {
+          showSnackBar(message);
+        } else {
+          LoadingDialog.hide(context);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    subscriber.cancel();
+    super.dispose();
   }
 }

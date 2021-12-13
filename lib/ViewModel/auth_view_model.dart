@@ -94,6 +94,7 @@ class AuthViewModel {
   Future<void> logInWithGoogle({bool link = false}) async {
     try {
       var userData = await _firebaseAuthService.signInWithGoogle(link);
+      _authMessageCtrl.add("");
       if (!link) {
         _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, _firebaseAuthService.firebaseUser.uid).then((userSnap) {
           // Check if it is a new user. If yes, insert the data into the DB
@@ -105,13 +106,14 @@ class AuthViewModel {
                 birthDate: userData["birthDate"],
                 email: userData["email"]));
           }
-          _authMessageCtrl.add("");
           _isUserLoggedCtrl.add(true);
         });
       }
     } catch (error) {
       if (error.code == "account-exists-with-different-credential") {
         _authMessageCtrl.add("An account already exists with the same email address but different sign-in credentials.");
+      } else if (error.code == "email-already-in-use" || error.code == "credential-already-in-use") {
+        _authMessageCtrl.add("This social account is already linked with another profile or the email is already registered.");
       } else {
         _authMessageCtrl.add("Error in signing in with the Google account. Please try again later.");
         print("Error in signing in with the Google account");
@@ -130,6 +132,7 @@ class AuthViewModel {
   Future<void> logInWithFacebook({bool link = false}) async {
     try {
       var userData = await _firebaseAuthService.signInWithFacebook(link);
+      _authMessageCtrl.add("");
       if (!link) {
         _firestoreService.getUserByIdFromDB(Collection.BASE_USERS, _firebaseAuthService.firebaseUser.uid).then((userSnap) {
           // Check if it is a new user. If yes, insert the data into the DB
@@ -141,13 +144,14 @@ class AuthViewModel {
                 birthDate: userData["birthDate"],
                 email: userData["email"]));
           }
-          _authMessageCtrl.add("");
           _isUserLoggedCtrl.add(true);
         });
       }
     } catch (error) {
       if (error.code == "account-exists-with-different-credential") {
         _authMessageCtrl.add("An account already exists with the same email address but different sign-in credentials.");
+      } else if (error.code == "email-already-in-use" || error.code == "credential-already-in-use") {
+        _authMessageCtrl.add("This social account is already linked with another profile or the email is already registered.");
       } else {
         _authMessageCtrl.add("Error in signing in with the Facebook account. Please try again later.");
         print("Error in signing in with the Facebook account");
