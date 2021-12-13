@@ -1,36 +1,38 @@
 import 'dart:async';
+import 'package:get_it/get_it.dart';
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sApport/Model/BaseUser/Map/place.dart';
-import 'package:sApport/Model/BaseUser/Map/place_search.dart';
+import 'package:sApport/Model/Services/map_service.dart';
 import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
-import 'package:get_it/get_it.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:sApport/Model/BaseUser/Map/place_service.dart';
 
 class MapViewModel {
-  FirestoreService _firestoreService = GetIt.I<FirestoreService>();
+  /// Services
+  final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
+  final MapService mapService = GetIt.I<MapService>();
 
-  var _placesSearch = StreamController<List<PlaceSearch>>.broadcast();
-  final placesSearch = PlaceService();
+  // Text Controllers
+  final TextEditingController searchTextCtrl = TextEditingController();
 
-  var _selectedLocation = StreamController<Place>.broadcast();
+  // Stream Controllers
+  var _autocompletedPlacesCtrl = StreamController<List<Place>>.broadcast();
+  var _selectedPlaceCtrl = StreamController<Place>.broadcast();
 
-  var _searchedPlaceString = StreamController<String>.broadcast();
-
-  var positionPermission = PermissionStatus.denied;
-
-  Place searchedPlace;
+  PermissionStatus positionPermission;
 
   MapViewModel() {
-    Permission.location.status.then((status) => positionPermission = status);
+    // Set the position permission status on the location of the device
+    Permission.location.status.then((status) {
+      positionPermission = status;
+    }).catchError((e) => print("Error in getting the position permission status: $e"));
   }
 
-  Future<Position> uploadPosition() {
-    return Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
-  }
-
+  /// Request the user for access to the location [Permission].
+  ///
+  /// It returns `true` if the permission is granted, `false` otherwise.
   Future<bool> askPermission() async {
     positionPermission = await Permission.location.request();
     if (positionPermission.isGranted) {
@@ -39,34 +41,58 @@ class MapViewModel {
     return false;
   }
 
-  void searchPlaces(String searchTerm) async {
-    placesSearch.getAutocomplete(searchTerm).then((places) {
-      _placesSearch.add(places);
+  /// Autocomplete the input of the user with the most probable places.
+  ///
+  /// It adds the list of [Place] to the [autocompletedPlaces] stream.
+  Future<void> autocompleteSearchedPlace() async {
+    return mapService.autocomplete(searchTextCtrl.text).then((places) {
+      _autocompletedPlacesCtrl.add(places);
     });
   }
 
-  Future<List<PlaceSearch>> searchPlaceSubscription(String searchTerm) async {
-    return await placesSearch.getAutocomplete(searchTerm);
+  /// Returns the first most probable place based on the input of the user.
+  Future<Place> firstSimilarPlace(String input) async {
+    return (await mapService.autocomplete(input))[0];
   }
 
-  void setSelectedLocation(String place) async {
-    placesSearch.getPlace(place).then((location) {
-      _selectedLocation.add(location);
-      searchedPlace = location;
-      _searchedPlaceString.add(place);
+  /// Search a place based on the [placeId].
+  ///
+  /// It adds the [Place] to the [selectedPlace] stream.
+  Future<void> searchPlace(String placeId) async {
+    _autocompletedPlacesCtrl.add(null);
+    return mapService.searchPlace(placeId).then((place) {
+      searchTextCtrl.text = place.address;
+      _selectedPlaceCtrl.add(place);
     });
   }
 
-  Future<Place> getExpertLocation(String place) async {
-    return await placesSearch.getPlace(place);
+  /// Returns the current position of the user device.
+  Future<Position> loadCurrentPosition() {
+    return mapService.getCurrentPosition().catchError((e) {
+      print("Error in getting the current position: $e");
+    });
   }
 
-  /// Return the list of experts
-  Future<QuerySnapshot> getMarkers() async {
-    return _firestoreService.getBaseCollectionFromDB(Collection.EXPERTS);
+  /// Return the list of experts.
+  Future<QuerySnapshot> loadExperts() async {
+    try {
+      return _firestoreService.getBaseCollectionFromDB(Collection.EXPERTS);
+    } catch (e) {
+      print("Failed to get the list of experts: $e");
+      return null;
+    }
   }
 
-  Stream<List<PlaceSearch>> get places => _placesSearch.stream;
-  Stream<Place> get location => _selectedLocation.stream;
-  Stream<String> get searched => _searchedPlaceString.stream;
+  /// Clear all the text and stream controllers.
+  void clearControllers() {
+    searchTextCtrl.clear();
+    _selectedPlaceCtrl.add(null);
+    _autocompletedPlacesCtrl.add(null);
+  }
+
+  /// Stream of the selected palce controller
+  Stream<Place> get selectedPlace => _selectedPlaceCtrl.stream;
+
+  /// Stream of the autocompleted places controller
+  Stream<List<Place>> get autocompletedPlaces => _autocompletedPlacesCtrl.stream;
 }

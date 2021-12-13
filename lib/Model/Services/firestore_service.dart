@@ -29,24 +29,28 @@ class FirestoreService {
   /// Add a user into the firestore DB.
   ///
   /// It takes the [user] and based on the type it adds him/her to the list of experts or to the list
-  /// of users and it increments the collection counter.
+  /// of base users (in this case it also increments the collection counter).
   Future<void> addUserIntoDB(User user) {
     var userReference = _firestore.collection(user.collection.value).doc(user.id);
-
     // If the user is a base user, increment the base user counter
     if (user.collection == Collection.BASE_USERS) {
       _incrementBaseUsersCounter(1);
     }
-    return userReference.set(user.data).then((value) => print("User added")).catchError((error) => print("Failed to add user: $error"));
+    return userReference.set(user.data).then((_) {
+      // If the user has a profile photo, update it into the FirebaseStorage
+      if (user.data["profilePhoto"] != null) {
+        uploadProfilePhoto(user, File(user.data["profilePhoto"]));
+      }
+      print("User added");
+    }).catchError((error) => print("Failed to add user: $error"));
   }
 
   /// Delete a user from the firestore DB.
   ///
   /// It takes the [user] and based on the type it deletes him/her from the list of experts or from the list
-  /// of users and it decrements the collection counter.
+  /// of base users and it decrements the collection counter.
   Future<void> removeUserFromDB(User user) {
     var userReference = _firestore.collection(user.collection.value).doc(user.id);
-
     // If the user is a base user, decrement the base user counter
     if (user.collection == Collection.BASE_USERS) {
       _incrementBaseUsersCounter(-1);
@@ -132,7 +136,7 @@ class FirestoreService {
     return null;
   }
 
-  /// Upload the [profilePhoto] of the [user] into FirebaseStorage and add the url into the user doc in the DB
+  /// Upload the [profilePhoto] of the [user] into the FirebaseStorage and add the url into the user doc in the DB
   void uploadProfilePhoto(User user, File profilePhoto) {
     var firebaseStorageRef = FirebaseStorage.instance.ref().child(user.id + "/profilePhoto");
     UploadTask uploadTask = firebaseStorageRef.putFile(profilePhoto);

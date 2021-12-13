@@ -16,18 +16,18 @@ class DiaryViewModel {
   final DiaryForm diaryForm = DiaryForm();
 
   // Text Controllers
-  final TextEditingController titleCtrl = TextEditingController();
-  final TextEditingController contentCtrl = TextEditingController();
+  final TextEditingController titleTextCtrl = TextEditingController();
+  final TextEditingController contentTextCtrl = TextEditingController();
 
   // Stream Controllers
-  var _isPageCorrectlyAdded = StreamController<bool>.broadcast();
+  var _isPageAddedCtrl = StreamController<bool>.broadcast();
 
   var hasNoteToday = false;
 
   DiaryViewModel() {
     // Register the listeners for the input text field
-    titleCtrl.addListener(() => diaryForm.title.add(titleCtrl.text));
-    contentCtrl.addListener(() => diaryForm.content.add(contentCtrl.text));
+    titleTextCtrl.addListener(() => diaryForm.title.add(titleTextCtrl.text));
+    contentTextCtrl.addListener(() => diaryForm.content.add(contentTextCtrl.text));
   }
 
   /// Add a new diary page into the DB
@@ -38,14 +38,14 @@ class DiaryViewModel {
           _firebaseAuthService.firebaseUser.uid,
           DiaryPage(
             id: now.millisecondsSinceEpoch.toString(),
-            title: titleCtrl.text,
-            content: contentCtrl.text,
+            title: titleTextCtrl.text,
+            content: contentTextCtrl.text,
             dateTime: now,
             favourite: false,
           ),
         )
-        .then((value) => _isPageCorrectlyAdded.add(true))
-        .catchError((error) => _isPageCorrectlyAdded.add(false));
+        .then((value) => _isPageAddedCtrl.add(true))
+        .catchError((error) => _isPageAddedCtrl.add(false));
   }
 
   /// Update the already existing diary page identified by the [pageId] into the DB
@@ -56,13 +56,13 @@ class DiaryViewModel {
           _firebaseAuthService.firebaseUser.uid,
           DiaryPage(
             id: pageId,
-            title: titleCtrl.text,
-            content: contentCtrl.text,
+            title: titleTextCtrl.text,
+            content: contentTextCtrl.text,
             dateTime: now,
           ),
         )
-        .then((value) => _isPageCorrectlyAdded.add(true))
-        .catchError((error) => _isPageCorrectlyAdded.add(false));
+        .then((value) => _isPageAddedCtrl.add(true))
+        .catchError((error) => _isPageAddedCtrl.add(false));
   }
 
   /// Set the [isFavourite] parameter of the diary page identified by the [pageId] into the DB
@@ -74,7 +74,7 @@ class DiaryViewModel {
   }
 
   /// Get the stream of diary pages from the DB
-  Stream<QuerySnapshot> loadPagesStream() {
+  Stream<QuerySnapshot> loadDiaryPages() {
     try {
       return _firestoreService.getDiaryPagesStreamFromDB(_firebaseAuthService.firebaseUser.uid);
     } catch (e) {
@@ -85,17 +85,17 @@ class DiaryViewModel {
 
   /// Clear all the text and stream controllers and reset the diary form
   void clearControllers() {
-    titleCtrl.clear();
-    contentCtrl.clear();
+    titleTextCtrl.clear();
+    contentTextCtrl.clear();
     diaryForm.resetControllers();
   }
 
   /// Set the text controllers data
   void setTextContent(String title, String content) {
-    titleCtrl.text = title;
-    contentCtrl.text = content;
+    titleTextCtrl.text = title;
+    contentTextCtrl.text = content;
   }
 
   /// Stream of the succesfully addition of the diary page
-  Stream<bool> get isPageAdded => _isPageCorrectlyAdded.stream;
+  Stream<bool> get isPageAdded => _isPageAddedCtrl.stream;
 }
