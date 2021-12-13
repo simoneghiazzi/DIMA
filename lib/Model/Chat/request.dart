@@ -1,9 +1,8 @@
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 
 class Request extends Chat {
-  Request()
-      : super(
-            targetCollection: Collection.BASE_USERS,
-            chatCollection: Collection.REQUESTS_CHATS);
+  static const COLLECTION = "anonymousRequestChats";
+
+  /// New request of chat sent by the user.
+  Request() : super(collection: COLLECTION);
 }

@@ -1,9 +1,8 @@
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 
 class ExpertChat extends Chat {
-  ExpertChat()
-      : super(
-            targetCollection: Collection.EXPERTS,
-            chatCollection: Collection.EXPERT_CHATS);
+  static const COLLECTION = "expertChats";
+
+  /// Chat of the base user with an expert.
+  ExpertChat() : super(collection: COLLECTION);
 }

@@ -1,8 +1,6 @@
-import 'package:sApport/Model/Services/collections.dart';
-
 abstract class Chat {
-  Collection targetCollection;
-  Collection chatCollection;
+  // Name of the chat collection saved into the DB
+  final String collection;
 
-  Chat({this.targetCollection, this.chatCollection});
+  Chat({this.collection});
 }
