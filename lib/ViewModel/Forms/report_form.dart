@@ -1,13 +1,13 @@
 import 'package:get_it/get_it.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:sApport/Model/BaseUser/report.dart';
+import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
-import 'package:sApport/Model/Services/firebase_auth_service.dart';
 
 class ReportForm extends FormBloc<String, String> {
   // Services
   final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
-  final FirebaseAuthService _firebaseAuthService = GetIt.I<FirebaseAuthService>();
+  final UserService _userService = GetIt.I<UserService>();
 
   ReportForm() {
     // Add the field blocs to the create report form
@@ -37,7 +37,7 @@ class ReportForm extends FormBloc<String, String> {
       description: reportText.value,
       dateTime: now,
     );
-    _firestoreService.addReportIntoDB(_firebaseAuthService.firebaseUser.uid, report).then((value) {
+    _firestoreService.addReportIntoDB(_userService.loggedUser.id, report).then((value) {
       reportCategory.clear();
       reportText.clear();
       emitSuccess(canSubmitAgain: true);

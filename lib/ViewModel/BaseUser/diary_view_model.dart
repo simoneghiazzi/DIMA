@@ -3,14 +3,14 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/ViewModel/Forms/diary_form.dart';
+import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
-import 'package:sApport/Model/Services/firebase_auth_service.dart';
 
 class DiaryViewModel {
   // Services
   final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
-  final FirebaseAuthService _firebaseAuthService = GetIt.I<FirebaseAuthService>();
+  final UserService _userService = GetIt.I<UserService>();
 
   // Diary Form
   final DiaryForm diaryForm = DiaryForm();
@@ -35,7 +35,7 @@ class DiaryViewModel {
     var now = DateTime.now();
     return _firestoreService
         .addDiaryPageIntoDB(
-          _firebaseAuthService.firebaseUser.uid,
+          _userService.loggedUser.id,
           DiaryPage(
             id: now.millisecondsSinceEpoch.toString(),
             title: titleTextCtrl.text,
@@ -53,7 +53,7 @@ class DiaryViewModel {
     var now = DateTime.now();
     return _firestoreService
         .updateDiaryPageIntoDB(
-          _firebaseAuthService.firebaseUser.uid,
+          _userService.loggedUser.id,
           DiaryPage(
             id: pageId,
             title: titleTextCtrl.text,
@@ -68,7 +68,7 @@ class DiaryViewModel {
   /// Set the [isFavourite] parameter of the diary page identified by the [pageId] into the DB
   Future<void> setFavourite(String pageId, bool isFavourite) {
     return _firestoreService.setFavouriteDiaryNotesIntoDB(
-      _firebaseAuthService.firebaseUser.uid,
+      _userService.loggedUser.id,
       DiaryPage(id: pageId, favourite: isFavourite),
     );
   }
@@ -76,7 +76,7 @@ class DiaryViewModel {
   /// Get the stream of diary pages from the DB
   Stream<QuerySnapshot> loadDiaryPages() {
     try {
-      return _firestoreService.getDiaryPagesStreamFromDB(_firebaseAuthService.firebaseUser.uid);
+      return _firestoreService.getDiaryPagesStreamFromDB(_userService.loggedUser.id);
     } catch (e) {
       print("Failed to get the stream of diary pages: $e");
       return null;

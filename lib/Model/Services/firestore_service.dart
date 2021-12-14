@@ -3,14 +3,14 @@ import 'dart:math';
 import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:sApport/Model/random_id.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/request.dart';
 import 'package:sApport/Model/Chat/message.dart';
 import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Model/BaseUser/report.dart';
-import 'package:sApport/Model/Chat/active_chat.dart';
-import 'package:sApport/Model/Chat/conversation.dart';
+import 'package:sApport/Model/Chat/anonymous_chat.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
@@ -93,7 +93,7 @@ class FirestoreService {
     // Check if there is at least 1 user that is not already present in the user chats
     if (baseUserCounter - 1 > chatsCounter) {
       // Get the hash set of the active, pending and request chats
-      HashSet<String> activeIds = await _getChatIdsSet(user, ActiveChat());
+      HashSet<String> activeIds = await _getChatIdsSet(user, AnonymousChat());
       HashSet<String> pendingIds = await _getChatIdsSet(user, PendingChat());
       HashSet<String> requests = await _getChatIdsSet(user, Request());
 
@@ -166,17 +166,18 @@ class FirestoreService {
 
   /***************************************** MESSAGES *****************************************/
 
-  /// It takes the [conversation] between the 2 users and the [message] and adds it into the messages collection of the DB.
+  /// It takes the [chat] between the 2 users and the [message] and adds it into the messages collection of the DB.
   ///
-  /// Then it calls the updateChatInfo method.
-  void addMessageIntoDB(Conversation conversation, Message message) {
+  /// Then it calls [_updateChatInfo].
+  void addMessageIntoDB(User senderUser, Chat chat, Message message) {
+    String pairChatId = Utils.pairChatId(senderUser.id, chat.peerUser.id);
     _firestore
         .collection(Message.COLLECTION)
-        .doc(conversation.pairChatId)
-        .collection(conversation.pairChatId)
+        .doc(pairChatId)
+        .collection(pairChatId)
         .doc(message.timestamp.millisecondsSinceEpoch.toString())
         .set(message.data);
-    _updateChatInfo(conversation, message.timestamp.millisecondsSinceEpoch);
+    _updateChatInfo(senderUser, chat, message.timestamp.millisecondsSinceEpoch);
   }
 
   /// It takes the [pairChatId] that is the composite id of the 2 users and returns
@@ -197,25 +198,18 @@ class FirestoreService {
     });
   }
 
-  /// It updatesthe field of the lastMessage of the sender and peer Users.
+  /// It updates the field of the lastMessage of the [senderUser] and peerUsers
+  /// specified in the [chat].
   ///
-  /// If the chat is new, it adds it to the list of chats of the 2 users in the collection specified
-  /// into the [conversation] field and updates the chat counters
-  void _updateChatInfo(Conversation conversation, int timestamp) async {
-    DocumentReference senderUserRef = _firestore
-        .collection(conversation.senderUser.collection)
-        .doc(conversation.senderUser.id)
-        .collection(conversation.senderUserChat.collection)
-        .doc(conversation.peerUser.id);
-    DocumentReference peerUserRef = _firestore
-        .collection(conversation.peerUser.collection)
-        .doc(conversation.peerUser.id)
-        .collection(conversation.peerUserChat.collection)
-        .doc(conversation.senderUser.id);
+  /// If the [chat] is a [Request], adds it to the list of chats of the 2 users
+  /// in the correct collection and updates the counters.
+  void _updateChatInfo(User senderUser, Chat chat, int timestamp) async {
+    var senderUserRef = _firestore.collection(senderUser.collection).doc(senderUser.id).collection(chat.collection).doc(chat.peerUser.id);
+    var peerUserRef = _firestore.collection(chat.peerUser.collection).doc(chat.peerUser.id).collection(chat.peerCollection).doc(senderUser.id);
 
-    // Increments the counter only if the sender and the peer users are base users and if this is their first message
-    if (conversation.senderUser is BaseUser && conversation.peerUser is BaseUser && !(await senderUserRef.get()).exists) {
-      _incrementConversationCounter(conversation, 1);
+    // If the chat is a Request it means that it is new and so call increment conversation counter
+    if (chat is Request) {
+      _incrementConversationCounter(senderUser, chat, 1);
     }
     WriteBatch batch = FirebaseFirestore.instance.batch();
     batch.set(senderUserRef, {"lastMessage": timestamp});
@@ -225,68 +219,47 @@ class FirestoreService {
 
   /***************************************** CHATS *****************************************/
 
-  /// Upgrade a [pendingChat] and a [requestChat] between 2 users to an [activeChat] for both the users
-  void upgradePendingToActiveChatIntoDB(Conversation conversation) {
+  /// Upgrade the [PendingChat] of the [senderUser] and the [Request] of the
+  /// [peerUser] to an [AnonymousChat] for both the users.
+  void upgradePendingToActiveChatIntoDB(User senderUser, User peerUser) {
     var timestamp = DateTime.now().millisecondsSinceEpoch;
-    var pendingChatsReference = _firestore
-        .collection(conversation.senderUser.collection)
-        .doc(conversation.senderUser.id)
-        .collection(PendingChat.COLLECTION)
-        .doc(conversation.peerUser.id);
-    var senderActiveChatsReference = _firestore
-        .collection(conversation.senderUser.collection)
-        .doc(conversation.senderUser.id)
-        .collection(ActiveChat.COLLECTION)
-        .doc(conversation.peerUser.id);
-    var requestsReference = _firestore
-        .collection(conversation.peerUser.collection)
-        .doc(conversation.peerUser.id)
-        .collection(Request.COLLECTION)
-        .doc(conversation.senderUser.id);
-    var peerActiveChatsReference = _firestore
-        .collection(conversation.peerUser.collection)
-        .doc(conversation.peerUser.id)
-        .collection(ActiveChat.COLLECTION)
-        .doc(conversation.senderUser.id);
+    var pendingChatsReference = _firestore.collection(senderUser.collection).doc(senderUser.id).collection(PendingChat.COLLECTION).doc(peerUser.id);
+    var senderAnonymousChatsReference =
+        _firestore.collection(senderUser.collection).doc(senderUser.id).collection(AnonymousChat.COLLECTION).doc(peerUser.id);
+    var requestsReference = _firestore.collection(peerUser.collection).doc(peerUser.id).collection(Request.COLLECTION).doc(senderUser.id);
+    var peerAnonymousChatsReference =
+        _firestore.collection(peerUser.collection).doc(peerUser.id).collection(AnonymousChat.COLLECTION).doc(senderUser.id);
 
     WriteBatch batch = FirebaseFirestore.instance.batch();
     // Pending chat of the sender user is moved into active chats
     batch.delete(pendingChatsReference);
-    batch.set(senderActiveChatsReference, {"lastMessage": timestamp});
+    batch.set(senderAnonymousChatsReference, {"lastMessage": timestamp});
     // Request chat of the peer user is moved into active chats
     batch.delete(requestsReference);
-    batch.set(peerActiveChatsReference, {"lastMessage": timestamp});
+    batch.set(peerAnonymousChatsReference, {"lastMessage": timestamp});
 
     batch.commit().then((value) => print("Chats upgraded")).catchError((error) => print("Failed to upgrade the chats: $error"));
   }
 
-  /// Remove the [conversation] between the [peerUser] and the [senderUser]
-  void removeChatFromDB(Conversation conversation) {
-    var senderUserReference = _firestore
-        .collection(conversation.senderUser.collection)
-        .doc(conversation.senderUser.id)
-        .collection(conversation.senderUserChat.collection)
-        .doc(conversation.peerUser.id);
-    var peerUserReference = _firestore
-        .collection(conversation.peerUser.collection)
-        .doc(conversation.peerUser.id)
-        .collection(conversation.peerUserChat.collection)
-        .doc(conversation.senderUser.id);
+  /// Remove the [chat] between the [senderUser] and the [peerUser] specified in the [chat].
+  void removeChatFromDB(User senderUser, Chat chat) {
+    var senderUserReference = _firestore.collection(senderUser.collection).doc(senderUser.id).collection(chat.collection).doc(chat.peerUser.id);
+    var peerUserReference = _firestore.collection(chat.peerUser.collection).doc(chat.peerUser.id).collection(chat.peerCollection).doc(senderUser.id);
 
     WriteBatch batch = FirebaseFirestore.instance.batch();
     batch.delete(senderUserReference);
     batch.delete(peerUserReference);
     batch.commit().then((value) => print("Chat removed")).catchError((error) => print("Failed to remove the chat: $error"));
-    _incrementConversationCounter(conversation, -1);
+    _incrementConversationCounter(senderUser, chat, -1);
   }
 
-  /// It takes the [user] and returns the list of all the [chat] of the
-  /// user based on the [collection] field of the [chat] ordered by lastMessage.
-  Stream<QuerySnapshot> getChatsFromDB(User user, Chat chat) {
+  /// It takes the [user] and returns the list of all the chat of the
+  /// user based on the [chatCollection] ordered by lastMessage.
+  Stream<QuerySnapshot> getChatsFromDB(User user, String chatCollection) {
     return _firestore
         .collection(user.collection)
         .doc(user.id)
-        .collection(chat.collection)
+        .collection(chatCollection)
         .orderBy("lastMessage", descending: true)
         .limit(_limit)
         .snapshots();
@@ -303,12 +276,11 @@ class FirestoreService {
     return ids;
   }
 
-  /// It takes the [conversation] and the [increment] amount and increments the anonymous chat's counter of the users
-  /// into the DB within the [transaction]
-  void _incrementConversationCounter(Conversation conversation, int increment) {
-    var utilsSenderReference =
-        _firestore.collection(conversation.senderUser.collection).doc(conversation.senderUser.id).collection("utils").doc("utils");
-    var utilsPeerReference = _firestore.collection(conversation.peerUser.collection).doc(conversation.peerUser.id).collection("utils").doc("utils");
+  /// It takes the [chat] and the [increment] amount and increments the anonymous chat's counter
+  /// of the [senderUser] and of the [peerUser] specified in the [chat] within a transaction.
+  void _incrementConversationCounter(User senderUser, Chat chat, int increment) {
+    var utilsSenderReference = _firestore.collection(senderUser.collection).doc(senderUser.id).collection("utils").doc("utils");
+    var utilsPeerReference = _firestore.collection(chat.peerUser.collection).doc(chat.peerUser.id).collection("utils").doc("utils");
 
     _firestore
         .runTransaction((transaction) async {

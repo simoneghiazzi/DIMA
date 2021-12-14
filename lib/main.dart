@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -46,18 +47,15 @@ Future<void> main() async {
   // Services initialization
   setupServices();
   FirebaseAuthService _firebaseAuthService = GetIt.I<FirebaseAuthService>();
+  UserService _userService = GetIt.I<UserService>();
 
   // Already logged user check: if the user is already logged
   // fetch the correct user data from the DB and load the relative homePage.
   //
   // If the user is not already logged or the email has not been verified, load the welcome page.
   if (_firebaseAuthService.isUserSignedIn() && _firebaseAuthService.isUserEmailVerified()) {
-    UserViewModel userViewModel = UserViewModel();
-    await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection} logged"));
-    runApp(MyApp(
-      userProvider: Provider(create: (context) => userViewModel),
-      homePage: userViewModel.loggedUser.homePageRoute,
-    ));
+    await _userService.loadLoggedUserFromDB().then((_) => print("User of category ${_userService.loggedUser.collection} logged"));
+    runApp(MyApp(homePage: _userService.loggedUser.homePageRoute));
   } else {
     runApp(MyApp());
   }
@@ -68,14 +66,14 @@ void setupServices() {
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(FirestoreService(FirebaseFirestore.instance));
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(FirebaseAuth.instance));
+  getIt.registerSingleton<UserService>(UserService());
   getIt.registerSingleton<MapService>(MapService());
 }
 
 class MyApp extends StatefulWidget {
-  final Provider<UserViewModel> userProvider;
   final String homePage;
 
-  MyApp({Key key, this.userProvider, this.homePage}) : super(key: key);
+  MyApp({Key key, this.homePage}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -103,8 +101,8 @@ class _MyAppState extends State<MyApp> {
         Provider(create: (context) => ChatViewModel()),
         Provider(create: (context) => DiaryViewModel()),
         Provider(create: (context) => ReportViewModel()),
+        Provider(create: (context) => UserViewModel()),
         Provider(create: (context) => MapViewModel(), lazy: false),
-        widget.userProvider ?? Provider(create: (context) => UserViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

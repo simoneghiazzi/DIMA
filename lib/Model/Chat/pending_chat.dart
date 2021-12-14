@@ -1,8 +1,13 @@
 import 'package:sApport/Model/Chat/chat.dart';
+import 'package:sApport/Model/Chat/request.dart';
+import 'package:sApport/Model/BaseUser/base_user.dart';
 
 class PendingChat extends Chat {
   static const COLLECTION = "anonymousPendingChats";
+  static const PEER_COLLECTION = Request.COLLECTION;
 
-  /// New chat received by the user that needs to be confirmed or denied.
-  PendingChat() : super(collection: COLLECTION);
+  /// New request of chat received from another base user awaiting confirmation or rejection.
+  ///
+  /// The peer collection of an [PendingChat] is the expert [Request].
+  PendingChat({BaseUser peerUser}) : super(COLLECTION, PEER_COLLECTION, peerUser: peerUser);
 }

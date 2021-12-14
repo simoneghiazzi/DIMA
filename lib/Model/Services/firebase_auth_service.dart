@@ -12,7 +12,7 @@ class FirebaseAuthService {
   // Instance of the firebase user returned by the FirebaseAuth SDK
   User firebaseUser;
 
-  /// Service used by the view models to interact with the Firebase Auth service
+  /// Service used by the view models to interact with the Firebase Auth service.
   FirebaseAuthService(this._firebaseAuth);
 
   /// Attempts to sign in a user with the given [email] and [password].
