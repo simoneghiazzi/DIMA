@@ -11,5 +11,5 @@ class AnonymousChat extends Chat {
   /// Anonymous chat of the base user with another base user.
   ///
   /// The peer collection of an [AnonymousChat] is another [AnonymousChat].
-  AnonymousChat({BaseUser peerUser}) : super(COLLECTION, PEER_COLLECTION, peerUser: peerUser);
+  AnonymousChat(BaseUser peerUser) : super(COLLECTION, PEER_COLLECTION, peerUser);
 }

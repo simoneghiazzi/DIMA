@@ -8,12 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TopBarChats extends StatelessWidget {
+  final Function back;
   final String text;
   final CircleAvatar circleAvatar;
   final NetworkAvatar networkAvatar;
   final bool isPortrait;
 
-  TopBarChats({Key key, @required this.text, this.circleAvatar, this.networkAvatar, this.isPortrait = false}) : super(key: key);
+  TopBarChats({Key key, @required this.text, this.back, this.circleAvatar, this.networkAvatar, this.isPortrait = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +43,7 @@ class TopBarChats extends StatelessWidget {
                             ),
                             onPressed: () async {
                               FocusScope.of(context).unfocus();
+                              back();
                               routerDelegate.pop();
                             },
                           ),

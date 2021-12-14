@@ -93,9 +93,9 @@ class FirestoreService {
     // Check if there is at least 1 user that is not already present in the user chats
     if (baseUserCounter - 1 > chatsCounter) {
       // Get the hash set of the active, pending and request chats
-      HashSet<String> activeIds = await _getChatIdsSet(user, AnonymousChat());
-      HashSet<String> pendingIds = await _getChatIdsSet(user, PendingChat());
-      HashSet<String> requests = await _getChatIdsSet(user, Request());
+      HashSet<String> activeIds = await _getChatIdsSet(user, AnonymousChat.COLLECTION);
+      HashSet<String> pendingIds = await _getChatIdsSet(user, PendingChat.COLLECTION);
+      HashSet<String> requests = await _getChatIdsSet(user, Request.COLLECTION);
 
       // Get the ids less than or equal to the random id
       var snapshotLess = await _firestore.collection(user.collection).where("uid", isLessThanOrEqualTo: randomId).orderBy("uid").limit(_limit).get();
@@ -265,11 +265,11 @@ class FirestoreService {
         .snapshots();
   }
 
-  /// It takes the [user] and returns the hash set of ids of all the [chat]
-  /// of the user based on the [collection] field of the Chat.
-  Future<HashSet> _getChatIdsSet(User user, Chat chat) async {
+  /// It takes the [user] and returns the hash set of ids of all the chat
+  /// of the user based on the [chatCollection].
+  Future<HashSet> _getChatIdsSet(User user, String chatCollection) async {
     HashSet<String> ids = new HashSet();
-    var snap = await _firestore.collection(user.collection).doc(user.id).collection(chat.collection).orderBy("lastMessage").limit(_limit).get();
+    var snap = await _firestore.collection(user.collection).doc(user.id).collection(chatCollection).orderBy("lastMessage").limit(_limit).get();
     for (var doc in snap.docs) {
       ids.add(doc.id);
     }

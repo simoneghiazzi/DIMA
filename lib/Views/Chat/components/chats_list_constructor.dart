@@ -14,12 +14,14 @@ class ChatsListConstructor extends StatefulWidget {
 }
 
 class _ChatsListConstructorState extends State<ChatsListConstructor> {
+  var stream;
   ChatViewModel chatViewModel;
   bool loading = true;
 
   @override
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    stream = chatViewModel.loadChats();
     super.initState();
   }
 
@@ -27,7 +29,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
   Widget build(BuildContext context) {
     return Flexible(
       child: StreamBuilder(
-        stream: chatViewModel.loadChats(),
+        stream: stream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
             return ListView.custom(

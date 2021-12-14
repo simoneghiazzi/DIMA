@@ -93,23 +93,23 @@ class ChatViewModel {
 
   /// Set the [chat] as an [AnonymousChat].
   void setAnonymousChat({BaseUser baseUser}) {
-    _chat = AnonymousChat(peerUser: baseUser);
+    _chat = AnonymousChat(baseUser ?? BaseUser());
   }
 
   /// Set the [chat] as a [PendingChat].
   void setPendingChat({BaseUser baseUser}) {
-    _chat = PendingChat(peerUser: baseUser);
+    _chat = PendingChat(baseUser ?? BaseUser());
   }
 
   /// Set the [chat] as an [ExpertChat].
   void setExpertChat({Expert expert}) {
-    _chat = ExpertChat(peerUser: expert);
+    _chat = ExpertChat(expert ?? Expert());
   }
 
   /// Accept a new pending chat request.
   void acceptPendingChat() {
     _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser, _chat.peerUser);
-    _chat = AnonymousChat(peerUser: _chat.peerUser);
+    _chat = AnonymousChat(_chat.peerUser);
   }
 
   /// Return the stream of pending chats.
@@ -129,7 +129,7 @@ class ChatViewModel {
         // Create the random user and update the chat
         var randomUser = BaseUser();
         randomUser.setFromDocument(doc);
-        _chat = Request(peerUser: randomUser);
+        _chat = Request(randomUser);
         // Add the "true" value to the new random user stream controller
         _newRandomUserCtrl.add(true);
       } else {
@@ -151,7 +151,7 @@ class ChatViewModel {
 
   /// Set the [chat] as an [ActiveChat].
   void setActiveChat({BaseUser baseUser}) {
-    _chat = ActiveChat(peerUser: baseUser);
+    _chat = ActiveChat(baseUser ?? BaseUser());
   }
 
   /// Get the [chat] instance.

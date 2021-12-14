@@ -1,6 +1,7 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
+import 'package:sApport/Model/Chat/request.dart';
 import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -49,6 +50,7 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
       children: <Widget>[
         chatViewModel.chat.peerUser is BaseUser
             ? TopBarChats(
+                back: backFromChat,
                 isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
                 circleAvatar: CircleAvatar(
                   backgroundColor: Colors.transparent,
@@ -77,8 +79,15 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
     );
   }
 
-  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+  void backFromChat() {
+    if (chatViewModel.chat is Request) {
+      chatViewModel.setAnonymousChat();
+    }
     chatViewModel.resetChattingWith();
+  }
+
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    backFromChat();
     routerDelegate.pop();
     return true;
   }
