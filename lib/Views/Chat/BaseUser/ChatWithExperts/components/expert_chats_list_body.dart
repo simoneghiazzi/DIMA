@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/Chat/active_chat.dart';
+import 'package:sApport/Model/Chat/anonymous_chat.dart';
 import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -24,7 +24,7 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    initExpertChats();
+    chatViewModel.setExpertChat();
     super.initState();
   }
 
@@ -66,10 +66,5 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
     Expert user = Expert();
     user.setFromDocument(doc);
     return user;
-  }
-
-  void initExpertChats() {
-    chatViewModel.conversation.senderUserChat = ExpertChat();
-    chatViewModel.conversation.peerUserChat = ActiveChat();
   }
 }

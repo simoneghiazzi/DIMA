@@ -27,7 +27,6 @@ class _BaseUserGridState extends State<BaseUserGrid> {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    chatViewModel.conversation.senderUser = userViewModel.loggedUser;
     super.initState();
   }
 

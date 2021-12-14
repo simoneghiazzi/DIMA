@@ -22,7 +22,7 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    initPendingChats();
+    chatViewModel.setPendingChat();
     super.initState();
   }
 
@@ -32,7 +32,7 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          TopBar(text: 'Requests'),
+          TopBar(text: "Requests"),
           ChatsListConstructor(
             createUserCallback: createUserCallback,
             peerCollection: BaseUser.COLLECTION,
@@ -46,10 +46,5 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
     BaseUser user = BaseUser();
     user.setFromDocument(doc);
     return user;
-  }
-
-  void initPendingChats() {
-    chatViewModel.conversation.senderUserChat = PendingChat();
-    chatViewModel.conversation.peerUserChat = Request();
   }
 }

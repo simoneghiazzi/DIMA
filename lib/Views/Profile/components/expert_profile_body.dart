@@ -1,4 +1,3 @@
-import 'package:sApport/Model/Chat/active_chat.dart';
 import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -29,7 +28,6 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    initExpertChats();
     super.initState();
   }
 
@@ -232,7 +230,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                             ),
                           ),
                           onTap: () {
-                            chatViewModel.chatWithUser(widget.expert);
+                            chatViewModel.setExpertChat(expert: widget.expert);
                             routerDelegate.replaceAllButNumber(
                                 2, [RouteSettings(name: ExpertChatsListScreen.route), RouteSettings(name: ChatPageScreen.route)]);
                           },
@@ -266,11 +264,6 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
         );
       },
     );
-  }
-
-  void initExpertChats() {
-    chatViewModel.conversation.senderUserChat = ExpertChat();
-    chatViewModel.conversation.peerUserChat = ActiveChat();
   }
 
   void openMaps() async {

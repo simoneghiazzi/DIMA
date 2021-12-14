@@ -1,5 +1,6 @@
 import 'package:sApport/Model/Chat/message.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -16,12 +17,21 @@ class MessageListItem extends StatefulWidget {
 }
 
 class _MessageListItemState extends State<MessageListItem> {
+  ChatViewModel chatViewModel;
+  UserViewModel userViewModel;
+
+  @override
+  void initState() {
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     if (widget.messageItem != null) {
-      if (widget.messageItem.data['idFrom'] == chatViewModel.conversation.senderUser.id) {
+      if (widget.messageItem.data['idFrom'] == userViewModel.loggedUser.id) {
         // Right (my message)
         return Row(
           children: [

@@ -5,6 +5,7 @@ import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
 import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
@@ -25,12 +26,14 @@ class ChatPageBody extends StatefulWidget {
 }
 
 class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver {
+  UserViewModel userViewModel;
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     chatViewModel.updateChattingWith();
@@ -41,11 +44,10 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
   @override
   Widget build(BuildContext context) {
     //detectChangeOrientation();
-    User peerUser = chatViewModel.conversation.peerUser;
-    User senderUser = chatViewModel.conversation.senderUser;
+
     return Column(
       children: <Widget>[
-        peerUser is BaseUser
+        chatViewModel.chat.peerUser is BaseUser
             ? TopBarChats(
                 isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
                 circleAvatar: CircleAvatar(
@@ -56,20 +58,21 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
                     color: Colors.white,
                   ),
                 ),
-                text: peerUser.data['name'].toString() + (senderUser is Expert ? " " + peerUser.data['surname'].toString() : ""),
+                text: chatViewModel.chat.peerUser.data['name'].toString() +
+                    (userViewModel.loggedUser is Expert ? " " + chatViewModel.chat.peerUser.data['surname'].toString() : ""),
               )
             : TopBarChats(
                 isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
                 networkAvatar: NetworkAvatar(
-                  img: peerUser.data['profilePhoto'],
+                  img: chatViewModel.chat.peerUser.data['profilePhoto'],
                   radius: 20.0,
                 ),
-                text: peerUser.data['name'].toString() + " " + peerUser.data['surname'].toString(),
+                text: chatViewModel.chat.peerUser.data['name'].toString() + " " + chatViewModel.chat.peerUser.data['surname'].toString(),
               ),
         // List of messages
         MessagesListConstructor(),
         // Input content
-        chatViewModel.conversation.senderUserChat.runtimeType == PendingChat ? ChatAcceptDenyInput() : ChatTextInput(),
+        chatViewModel.chat is PendingChat ? ChatAcceptDenyInput() : ChatTextInput(),
       ],
     );
   }

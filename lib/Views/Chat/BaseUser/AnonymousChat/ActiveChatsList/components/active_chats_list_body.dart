@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
-import 'package:sApport/Model/Chat/active_chat.dart';
+import 'package:sApport/Model/Chat/anonymous_chat.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Model/Chat/request.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -29,7 +29,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    initActiveChats();
+    chatViewModel.setAnonymousChat();
     subscriberNewRandomUser = subscribeToNewRandomUser();
     super.initState();
   }
@@ -117,21 +117,10 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
     return user;
   }
 
-  void initActiveChats() {
-    chatViewModel.conversation.senderUserChat = ActiveChat();
-    chatViewModel.conversation.peerUserChat = ActiveChat();
-  }
-
-  void initNewRandomChats() {
-    chatViewModel.conversation.senderUserChat = Request();
-    chatViewModel.conversation.peerUserChat = PendingChat();
-  }
-
   StreamSubscription<bool> subscribeToNewRandomUser() {
     return chatViewModel.newRandomUser.listen((isNewRandomUser) {
       LoadingDialog.hide(context);
       if (isNewRandomUser) {
-        initNewRandomChats();
         routerDelegate.pushPage(name: ChatPageScreen.route);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

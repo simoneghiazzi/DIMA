@@ -2,11 +2,14 @@ import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/Chat/request.dart';
 import 'package:sApport/Model/user.dart';
-import 'package:sApport/Model/random_id.dart';
+import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Model/Chat/chat.dart';
+import 'package:sApport/Model/Chat/request.dart';
 import 'package:sApport/Model/Chat/message.dart';
+import 'package:sApport/Model/Expert/expert.dart';
+import 'package:sApport/Model/Chat/active_chat.dart';
+import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Model/Chat/anonymous_chat.dart';
@@ -24,13 +27,13 @@ class ChatViewModel {
   // Stream Controllers
   var _newRandomUserCtrl = StreamController<bool>.broadcast();
 
-  Chat chat;
+  Chat _chat;
 
   /// Update the ChattingWith field of the [senderUser] inside the DB.
   ///
   /// It is used in order to show or not the notification on new messages.
   Future<void> updateChattingWith() {
-    return _firestoreService.updateUserFieldIntoDB(_userService.loggedUser, "chattingWith", chat.peerUser.id);
+    return _firestoreService.updateUserFieldIntoDB(_userService.loggedUser, "chattingWith", _chat.peerUser.id);
   }
 
   /// Reset the ChattingWith field of the [senderUser] inside the DB.
@@ -44,10 +47,10 @@ class ChatViewModel {
   void sendMessage() {
     _firestoreService.addMessageIntoDB(
       _userService.loggedUser,
-      chat,
+      _chat,
       Message(
         idFrom: _userService.loggedUser.id,
-        idTo: chat.peerUser.id,
+        idTo: _chat.peerUser.id,
         timestamp: DateTime.now(),
         content: contentTextCtrl.text,
       ),
@@ -58,11 +61,55 @@ class ChatViewModel {
   /// Get the stream of messages between the 2 users.
   Stream<QuerySnapshot> loadMessages() {
     try {
-      return _firestoreService.getStreamMessagesFromDB(Utils.pairChatId(_userService.loggedUser.id, chat.peerUser.id));
+      return _firestoreService.getStreamMessagesFromDB(Utils.pairChatId(_userService.loggedUser.id, _chat.peerUser.id));
     } catch (e) {
       print("Failed to get the stream of messages: $e");
       return null;
     }
+  }
+
+  /// Load the chat list of the [senderUser] based on the [_chat].
+  Stream<QuerySnapshot> loadChats() {
+    try {
+      return _firestoreService.getChatsFromDB(_userService.loggedUser, _chat.collection);
+    } catch (e) {
+      print("Failed to get the stream of ${_chat.collection} chats: $e");
+      return null;
+    }
+  }
+
+  /// Return the doc of the peer user with all the info based on the [id]
+  /// and the [collection].
+  Future<QuerySnapshot> getPeerUserDoc(String collection, String id) {
+    return _firestoreService.getUserByIdFromDB(collection, id);
+  }
+
+  /// Set the [user] as the peerUser of the [chat].
+  void chatWithUser(User user) {
+    _chat.peerUser = user;
+  }
+
+  /***************************************** CHAT METHODS FOR BASE USERS *****************************************/
+
+  /// Set the [chat] as an [AnonymousChat].
+  void setAnonymousChat({BaseUser baseUser}) {
+    _chat = AnonymousChat(peerUser: baseUser);
+  }
+
+  /// Set the [chat] as a [PendingChat].
+  void setPendingChat({BaseUser baseUser}) {
+    _chat = PendingChat(peerUser: baseUser);
+  }
+
+  /// Set the [chat] as an [ExpertChat].
+  void setExpertChat({Expert expert}) {
+    _chat = ExpertChat(peerUser: expert);
+  }
+
+  /// Accept a new pending chat request.
+  void acceptPendingChat() {
+    _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser, _chat.peerUser);
+    _chat = AnonymousChat(peerUser: _chat.peerUser);
   }
 
   /// Return the stream of pending chats.
@@ -82,7 +129,7 @@ class ChatViewModel {
         // Create the random user and update the chat
         var randomUser = BaseUser();
         randomUser.setFromDocument(doc);
-        chat = Request(peerUser: randomUser);
+        _chat = Request(peerUser: randomUser);
         // Add the "true" value to the new random user stream controller
         _newRandomUserCtrl.add(true);
       } else {
@@ -92,33 +139,23 @@ class ChatViewModel {
     });
   }
 
-  /// Load the chat list of the [senderUser] based on the [chat].
-  Stream<QuerySnapshot> loadChats() {
-    try {
-      return _firestoreService.getChatsFromDB(_userService.loggedUser, chat.collection);
-    } catch (e) {
-      print("Failed to get the stream of ${chat.collection} chats: $e");
-      return null;
-    }
-  }
-
-  Future<QuerySnapshot> getUser(String collection, String id) {
-    return _firestoreService.getUserByIdFromDB(collection, id);
-  }
-
-  /// Accept a new pending chat request.
-  void acceptPendingChat() {
-    _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser, chat.peerUser);
-    chat = AnonymousChat(peerUser: chat.peerUser);
-  }
-
   /// Deny a pending chat.
   ///
   /// It deletes the chat between the 2 users and all the messages.
   void denyPendingChat() {
-    _firestoreService.removeChatFromDB(_userService.loggedUser, chat);
-    _firestoreService.removeMessagesFromDB(Utils.pairChatId(_userService.loggedUser.id, chat.peerUser.id));
+    _firestoreService.removeChatFromDB(_userService.loggedUser, _chat);
+    _firestoreService.removeMessagesFromDB(Utils.pairChatId(_userService.loggedUser.id, _chat.peerUser.id));
   }
+
+  /***************************************** CHAT METHODS FOR BASE EXPERTS *****************************************/
+
+  /// Set the [chat] as an [ActiveChat].
+  void setActiveChat({BaseUser baseUser}) {
+    _chat = ActiveChat(peerUser: baseUser);
+  }
+
+  /// Get the [chat] instance.
+  Chat get chat => _chat;
 
   /// Stream of the new random user controller.
   Stream<bool> get newRandomUser => _newRandomUserCtrl.stream;

@@ -63,7 +63,7 @@ class TopBarChats extends StatelessWidget {
                         ),
                         onTap: () {
                           if (networkAvatar != null) {
-                            routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: chatViewModel.conversation.peerUser as Expert);
+                            routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: chatViewModel.chat.peerUser as Expert);
                           }
                         },
                       ),

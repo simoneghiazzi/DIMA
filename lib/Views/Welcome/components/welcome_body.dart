@@ -132,7 +132,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
     return authViewModel.isUserLogged.listen((isUserLogged) async {
       if (isUserLogged) {
         // Called on sign in
-        await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser.collection} logged"));
+        await userViewModel.loadUser().then((_) => print("User of category ${userViewModel.loggedUser.collection} logged"));
         LoadingDialog.hide(context);
         routerDelegate.replaceAllButNumber(1, [RouteSettings(name: userViewModel.loggedUser.homePageRoute)]);
       } else {

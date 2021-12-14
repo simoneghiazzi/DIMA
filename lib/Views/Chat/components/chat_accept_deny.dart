@@ -1,4 +1,4 @@
-import 'package:sApport/Model/Chat/active_chat.dart';
+import 'package:sApport/Model/Chat/anonymous_chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
@@ -57,8 +57,6 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
                 ),
                 onTap: () async {
                   chatViewModel.acceptPendingChat();
-                  chatViewModel.conversation.senderUserChat = ActiveChat();
-                  chatViewModel.conversation.peerUserChat = ActiveChat();
                   routerDelegate.replaceAllButNumber(2, [
                     RouteSettings(name: ActiveChatsListScreen.route),
                     RouteSettings(name: ChatPageScreen.route),
@@ -96,7 +94,7 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
                   ),
                 ),
                 onTap: () async {
-                  chatViewModel.deleteChat();
+                  chatViewModel.denyPendingChat();
                   routerDelegate.replaceAllButNumber(2, [
                     RouteSettings(name: ActiveChatsListScreen.route),
                   ]);

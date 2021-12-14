@@ -3,6 +3,7 @@ import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
 import 'package:sApport/constants.dart';
@@ -22,6 +23,7 @@ class ChatListItem extends StatefulWidget {
 }
 
 class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClientMixin {
+  UserViewModel userViewModel;
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
   Size size;
@@ -30,18 +32,19 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
 
   @override
   void initState() {
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     size = MediaQuery.of(context).size;
     super.build(context);
     if (userItem == null) {
       return FutureBuilder(
-          future: chatViewModel.getUser(widget.peerCollection, widget.userId),
+          future: chatViewModel.getPeerUserDoc(widget.peerCollection, widget.userId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {
@@ -85,7 +88,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
             Flexible(
               child: userItem is BaseUser
                   ? Text(
-                      userItem.name + (chatViewModel.conversation.senderUser is Expert ? " " + userItem.surname : ""),
+                      userItem.name + (userViewModel.loggedUser is Expert ? " " + userItem.surname : ""),
                       maxLines: 1,
                       style: TextStyle(color: kPrimaryColor, fontSize: 18),
                     )
