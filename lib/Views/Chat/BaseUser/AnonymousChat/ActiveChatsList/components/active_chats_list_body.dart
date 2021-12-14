@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
+import 'package:sApport/Model/Chat/active_chat.dart';
+import 'package:sApport/Model/Chat/anonymous_chat.dart';
+import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
@@ -28,7 +31,6 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    chatViewModel.setAnonymousChat();
     _hasPendingChatStream = chatViewModel.hasPendingChats();
     subscriberNewRandomUser = subscribeToNewRandomUser();
     super.initState();
@@ -85,7 +87,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
                 }
               },
             ),
-            ChatsListConstructor(createUserCallback: createUserCallback),
+            ChatsListConstructor(createChatCallback: (String id) => AnonymousChat.fromId(id)),
           ],
         ),
         Align(
@@ -106,12 +108,6 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
         ),
       ],
     );
-  }
-
-  BaseUser createUserCallback(DocumentSnapshot doc) {
-    BaseUser user = BaseUser();
-    user.setFromDocument(doc);
-    return user;
   }
 
   StreamSubscription<bool> subscribeToNewRandomUser() {

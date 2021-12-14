@@ -28,30 +28,33 @@ class _ActiveChatsListScreenState extends State<ActiveChatsListScreen> {
     //detectChangeOrientation();
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: MediaQuery.of(context).orientation == Orientation.landscape
-          ? SplitView(
-              controller: SplitViewController(weights: [0.3, 0.7]),
-              children: [
-                ActiveChatsListBody(),
-                // widget.chatPage == null
-                //     ? StreamBuilder(
-                //         stream: chatViewModel.isChatOpen,
-                //         builder: (context, snapshot) {
-                //           if (snapshot.data == true) {
-                //             isChatOpen = true;
-                //             return ChatPageScreen(
-                //               startOrientation: MediaQuery.of(context).orientation == Orientation.landscape,
-                //             );
-                //           }
-                //           return EmptyPagePortrait();
-                //         })
-                //     : widget.chatPage,
-              ],
-              viewMode: SplitViewMode.Horizontal,
-              gripSize: 1.0,
-              gripColor: kPrimaryColor,
-            )
-          : ActiveChatsListBody(),
+      body: 
+      // MediaQuery.of(context).orientation == Orientation.landscape
+      //     ? 
+      //     SplitView(
+      //         controller: SplitViewController(weights: [0.3, 0.7]),
+      //         children: [
+      //           ActiveChatsListBody(),
+      //           widget.chatPage == null
+      //               ? StreamBuilder(
+      //                   stream: chatViewModel.isChatOpen,
+      //                   builder: (context, snapshot) {
+      //                     if (snapshot.data == true) {
+      //                       isChatOpen = true;
+      //                       return ChatPageScreen(
+      //                         startOrientation: MediaQuery.of(context).orientation == Orientation.landscape,
+      //                       );
+      //                     }
+      //                     return EmptyPagePortrait();
+      //                   })
+      //               : widget.chatPage,
+      //         ],
+      //         viewMode: SplitViewMode.Horizontal,
+      //         gripSize: 1.0,
+      //         gripColor: kPrimaryColor,
+      //       )
+      //     : 
+          ActiveChatsListBody(),
     );
   }
 

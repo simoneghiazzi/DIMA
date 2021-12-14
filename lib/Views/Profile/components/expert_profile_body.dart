@@ -230,7 +230,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                             ),
                           ),
                           onTap: () {
-                            chatViewModel.setExpertChat(expert: widget.expert);
+                            chatViewModel.setCurrentChat(ExpertChat(peerUser: widget.expert));
                             routerDelegate.replaceAllButNumber(
                                 2, [RouteSettings(name: ExpertChatsListScreen.route), RouteSettings(name: ChatPageScreen.route)]);
                           },

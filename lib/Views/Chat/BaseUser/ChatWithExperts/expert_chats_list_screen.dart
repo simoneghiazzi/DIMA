@@ -29,30 +29,32 @@ class _ExpertChatsListScreenState extends State<ExpertChatsListScreen> {
     //detectChangeOrientation();
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: MediaQuery.of(context).orientation == Orientation.landscape
-          ? SplitView(
-              controller: SplitViewController(weights: [0.3, 0.7]),
-              children: [
-                ExpertChatsListBody(),
-                // widget.chatPage == null
-                //     ? StreamBuilder(
-                //         stream: chatViewModel.isChatOpen,
-                //         builder: (context, snapshot) {
-                //           if (snapshot.data == true) {
-                //             isChatOpen = true;
-                //             return ChatPageScreen(
-                //               startOrientation: MediaQuery.of(context).orientation == Orientation.landscape,
-                //             );
-                //           }
-                //           return EmptyPagePortrait();
-                //         })
-                //     : widget.chatPage,
-              ],
-              viewMode: SplitViewMode.Horizontal,
-              gripSize: 1.0,
-              gripColor: kPrimaryColor,
-            )
-          : ExpertChatsListBody(),
+      body: 
+      // MediaQuery.of(context).orientation == Orientation.landscape
+      //     ? SplitView(
+      //         controller: SplitViewController(weights: [0.3, 0.7]),
+      //         children: [
+      //           ExpertChatsListBody(),
+      //           widget.chatPage == null
+      //               ? StreamBuilder(
+      //                   stream: chatViewModel.isChatOpen,
+      //                   builder: (context, snapshot) {
+      //                     if (snapshot.data == true) {
+      //                       isChatOpen = true;
+      //                       return ChatPageScreen(
+      //                         startOrientation: MediaQuery.of(context).orientation == Orientation.landscape,
+      //                       );
+      //                     }
+      //                     return EmptyPagePortrait();
+      //                   })
+      //               : widget.chatPage,
+      //         ],
+      //         viewMode: SplitViewMode.Horizontal,
+      //         gripSize: 1.0,
+      //         gripColor: kPrimaryColor,
+      //       )
+      //     : 
+          ExpertChatsListBody(),
     );
   }
 

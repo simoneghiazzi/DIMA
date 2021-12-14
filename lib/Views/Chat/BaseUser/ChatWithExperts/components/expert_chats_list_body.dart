@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/Chat/anonymous_chat.dart';
+import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -24,10 +25,6 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    if (chatViewModel.chat is! ExpertChat) {
-      chatViewModel.setExpertChat();
-    }
-
     super.initState();
   }
 
@@ -39,8 +36,8 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            TopBar(text: 'Experts'),
-            ChatsListConstructor(createUserCallback: createUserCallback),
+            TopBar(text: "Experts"),
+            ChatsListConstructor(createChatCallback: (String id) => ExpertChat.fromId(id)),
           ],
         ),
         Align(
@@ -60,11 +57,5 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
         ),
       ],
     ));
-  }
-
-  Expert createUserCallback(DocumentSnapshot doc) {
-    Expert user = Expert();
-    user.setFromDocument(doc);
-    return user;
   }
 }

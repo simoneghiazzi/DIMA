@@ -48,9 +48,9 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
 
     return Column(
       children: <Widget>[
-        chatViewModel.chat.peerUser is BaseUser
+        chatViewModel.currentChat.peerUser is BaseUser
             ? TopBarChats(
-                back: backFromChat,
+                back: chatViewModel.resetChattingWith,
                 isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
                 circleAvatar: CircleAvatar(
                   backgroundColor: Colors.transparent,
@@ -60,34 +60,28 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
                     color: Colors.white,
                   ),
                 ),
-                text: chatViewModel.chat.peerUser.data["name"].toString() +
-                    (userViewModel.loggedUser is Expert ? " " + chatViewModel.chat.peerUser.data["surname"].toString() : ""),
+                text: chatViewModel.currentChat.peerUser.data["name"].toString() +
+                    (userViewModel.loggedUser is Expert ? " " + chatViewModel.currentChat.peerUser.data["surname"].toString() : ""),
               )
             : TopBarChats(
                 isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
                 networkAvatar: NetworkAvatar(
-                  img: chatViewModel.chat.peerUser.data["profilePhoto"],
+                  img: chatViewModel.currentChat.peerUser.data["profilePhoto"],
                   radius: 20.0,
                 ),
-                text: chatViewModel.chat.peerUser.data["name"].toString() + " " + chatViewModel.chat.peerUser.data["surname"].toString(),
+                text:
+                    chatViewModel.currentChat.peerUser.data["name"].toString() + " " + chatViewModel.currentChat.peerUser.data["surname"].toString(),
               ),
         // List of messages
         MessagesListConstructor(),
         // Input content
-        chatViewModel.chat is PendingChat ? ChatAcceptDenyInput() : ChatTextInput(),
+        chatViewModel.currentChat is PendingChat ? ChatAcceptDenyInput() : ChatTextInput(),
       ],
     );
   }
 
-  void backFromChat() {
-    if (chatViewModel.chat is Request) {
-      chatViewModel.setAnonymousChat();
-    }
-    chatViewModel.resetChattingWith();
-  }
-
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    backFromChat();
+    chatViewModel.resetChattingWith();
     routerDelegate.pop();
     return true;
   }

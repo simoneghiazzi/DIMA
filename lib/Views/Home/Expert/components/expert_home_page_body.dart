@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
+import 'package:sApport/Model/Chat/active_chat.dart';
+import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
@@ -30,7 +32,6 @@ class _ExpertHomePageBodyState extends State<ExpertHomePageBody> {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     authViewModel.setNotification(userViewModel.loggedUser);
-    chatViewModel.setActiveChat();
     super.initState();
   }
 
@@ -41,14 +42,8 @@ class _ExpertHomePageBodyState extends State<ExpertHomePageBody> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Header(),
-        ChatsListConstructor(createUserCallback: createUserCallback),
+        ChatsListConstructor(createChatCallback: (String id) => ActiveChat.fromId(id)),
       ],
     ));
-  }
-
-  BaseUser createUserCallback(DocumentSnapshot doc) {
-    BaseUser user = BaseUser();
-    user.setFromDocument(doc);
-    return user;
   }
 }

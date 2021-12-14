@@ -1,4 +1,5 @@
 import 'package:sApport/Model/BaseUser/base_user.dart';
+import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -12,10 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ChatListItem extends StatefulWidget {
-  final String userId;
-  final Function createUserCallback;
+  final Chat chatItem;
 
-  ChatListItem({Key key, @required this.userId, @required this.createUserCallback}) : super(key: key);
+  ChatListItem({Key key, @required this.chatItem}) : super(key: key);
 
   @override
   _ChatListItemState createState() => _ChatListItemState();
@@ -28,15 +28,16 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
   Size size;
 
   var _getPeerUserDocFuture;
-
-  User userItem;
+  Chat _chatItem;
+  var _isLoaded = false;
 
   @override
   void initState() {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    _getPeerUserDocFuture = chatViewModel.getPeerUserDoc(chatViewModel.chat.peerUser.collection, widget.userId);
+    _chatItem = widget.chatItem;
+    _getPeerUserDocFuture = chatViewModel.getPeerUserDoc(widget.chatItem.peerUser.collection, widget.chatItem.peerUser.id);
     super.initState();
   }
 
@@ -44,13 +45,14 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     super.build(context);
-    if (userItem == null) {
+    if (!_isLoaded) {
       return FutureBuilder(
           future: _getPeerUserDocFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {
-                userItem = widget.createUserCallback(snapshot.data.docs[0]);
+                _isLoaded = true;
+                widget.chatItem.peerUser.setFromDocument(snapshot.data.docs[0]);
                 return listItem();
               } else {
                 return Container();
@@ -70,7 +72,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            userItem is BaseUser
+            _chatItem.peerUser is BaseUser
                 ? CircleAvatar(
                     backgroundColor: Colors.transparent,
                     radius: 25.0,
@@ -80,7 +82,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
                     ),
                   )
                 : NetworkAvatar(
-                    img: userItem.data['profilePhoto'],
+                    img: _chatItem.peerUser.data['profilePhoto'],
                     radius: 25.0,
                   ),
             SizedBox(
@@ -88,14 +90,14 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
             ),
             // Profile info
             Flexible(
-              child: userItem is BaseUser
+              child: _chatItem.peerUser is BaseUser
                   ? Text(
-                      userItem.name + (userViewModel.loggedUser is Expert ? " " + userItem.surname : ""),
+                      _chatItem.peerUser.name + (userViewModel.loggedUser is Expert ? " " + _chatItem.peerUser.surname : ""),
                       maxLines: 1,
                       style: TextStyle(color: kPrimaryColor, fontSize: 18),
                     )
                   : Text(
-                      userItem.name + " " + userItem.surname,
+                      _chatItem.peerUser.name + " " + _chatItem.peerUser.surname,
                       maxLines: 1,
                       style: TextStyle(color: kPrimaryColor, fontSize: 18),
                     ),
@@ -103,7 +105,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
           ],
         ),
         onPressed: () {
-          chatViewModel.chatWithUser(userItem);
+          chatViewModel.setCurrentChat(_chatItem);
           routerDelegate.pushPage(name: ChatPageScreen.route);
         },
         style: ButtonStyle(
