@@ -37,10 +37,7 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TopBar(text: 'Experts'),
-            ChatsListConstructor(
-              createUserCallback: createUserCallback,
-              peerCollection: Expert.COLLECTION,
-            ),
+            ChatsListConstructor(createUserCallback: createUserCallback),
           ],
         ),
         Align(

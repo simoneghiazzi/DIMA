@@ -6,9 +6,8 @@ import 'package:provider/provider.dart';
 
 class ChatsListConstructor extends StatefulWidget {
   final Function createUserCallback;
-  final String peerCollection;
 
-  ChatsListConstructor({Key key, @required this.createUserCallback, @required this.peerCollection}) : super(key: key);
+  ChatsListConstructor({Key key, @required this.createUserCallback}) : super(key: key);
 
   @override
   _ChatsListConstructorState createState() => _ChatsListConstructorState();
@@ -37,8 +36,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
               childrenDelegate: SliverChildBuilderDelegate(
                 (context, index) {
                   var userId = snapshot.data.docs[index].id;
-                  return ChatListItem(
-                      userId: userId, peerCollection: widget.peerCollection, createUserCallback: widget.createUserCallback, key: ValueKey(userId));
+                  return ChatListItem(userId: userId, createUserCallback: widget.createUserCallback, key: ValueKey(userId));
                 },
                 childCount: snapshot.data.docs.length,
                 findChildIndexCallback: (Key key) {

@@ -94,7 +94,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = ForgotPasswordScreen();
         break;
       case UserSettingsScreen.route:
-        child = UserSettingsScreen(user: routeSettings.arguments);
+        child = UserSettingsScreen();
         break;
       case ExpertHomePageScreen.route:
         child = ExpertHomePageScreen(pageIndex: routeSettings.arguments);

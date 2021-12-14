@@ -14,9 +14,8 @@ import 'package:shimmer/shimmer.dart';
 class ChatListItem extends StatefulWidget {
   final String userId;
   final Function createUserCallback;
-  final String peerCollection;
 
-  ChatListItem({Key key, @required this.userId, @required this.peerCollection, @required this.createUserCallback}) : super(key: key);
+  ChatListItem({Key key, @required this.userId, @required this.createUserCallback}) : super(key: key);
 
   @override
   _ChatListItemState createState() => _ChatListItemState();
@@ -44,7 +43,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
     super.build(context);
     if (userItem == null) {
       return FutureBuilder(
-          future: chatViewModel.getPeerUserDoc(widget.peerCollection, widget.userId),
+          future: chatViewModel.getPeerUserDoc(chatViewModel.chat.peerCollection, widget.userId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {

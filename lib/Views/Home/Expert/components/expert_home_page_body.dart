@@ -39,10 +39,7 @@ class _ExpertHomePageBodyState extends State<ExpertHomePageBody> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Header(),
-        ChatsListConstructor(
-          createUserCallback: createUserCallback,
-          peerCollection: BaseUser.COLLECTION,
-        ),
+        ChatsListConstructor(createUserCallback: createUserCallback),
       ],
     ));
   }

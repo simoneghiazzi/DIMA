@@ -1,7 +1,6 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
-import 'package:sApport/Model/Chat/pending_chat.dart';
-import 'package:sApport/Model/Chat/request.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/components/chats_list_constructor.dart';
@@ -23,6 +22,7 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     chatViewModel.setPendingChat();
+    BackButtonInterceptor.add(backButtonInterceptor);
     super.initState();
   }
 
@@ -33,18 +33,27 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TopBar(text: "Requests"),
-          ChatsListConstructor(
-            createUserCallback: createUserCallback,
-            peerCollection: BaseUser.COLLECTION,
-          ),
+          ChatsListConstructor(createUserCallback: createUserCallback),
         ],
       ),
     );
+  }
+
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    chatViewModel.resetChattingWith();
+    routerDelegate.pop();
+    return true;
   }
 
   BaseUser createUserCallback(DocumentSnapshot doc) {
     BaseUser user = BaseUser();
     user.setFromDocument(doc);
     return user;
+  }
+
+  @override
+  void dispose() {
+    BackButtonInterceptor.remove(backButtonInterceptor);
+    super.dispose();
   }
 }
