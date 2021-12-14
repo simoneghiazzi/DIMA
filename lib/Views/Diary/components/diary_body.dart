@@ -22,6 +22,8 @@ class _DiaryBodyState extends State<DiaryBody> {
   UserViewModel userViewModel;
   AppRouterDelegate routerDelegate;
   final CalendarController _controller = CalendarController();
+
+  var _loadDiaryPagesStream;
   String _headerText;
 
   @override
@@ -29,6 +31,7 @@ class _DiaryBodyState extends State<DiaryBody> {
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    _loadDiaryPagesStream = diaryViewModel.loadDiaryPages();
     _headerText = "header";
     super.initState();
   }
@@ -37,7 +40,7 @@ class _DiaryBodyState extends State<DiaryBody> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: diaryViewModel.loadDiaryPages(),
+      stream: _loadDiaryPagesStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Stack(

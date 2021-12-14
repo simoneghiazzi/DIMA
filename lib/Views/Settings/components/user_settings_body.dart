@@ -23,12 +23,15 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
   StreamSubscription<String> subscriber;
   Alert alert;
 
+  var _hasPasswordAuthenticationFuture;
+
   @override
   void initState() {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     subscriber = subscribeToAuthMessage();
+    _hasPasswordAuthenticationFuture = authViewModel.hasPasswordAuthentication(userViewModel.loggedUser.email);
     alert = createAlert();
     super.initState();
   }
@@ -156,7 +159,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                             ),
                           ],
                           FutureBuilder(
-                              future: authViewModel.hasPasswordAuthentication(userViewModel.loggedUser.email),
+                              future: _hasPasswordAuthenticationFuture,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   return Column(children: [

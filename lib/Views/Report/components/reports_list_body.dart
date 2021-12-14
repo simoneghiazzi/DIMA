@@ -21,10 +21,13 @@ class _ReportsListBodyState extends State<ReportsListBody> {
   Alert alert;
   bool isLoading = false;
 
+  var _loadReportsStream;
+
   @override
   void initState() {
     reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    _loadReportsStream = reportViewModel.loadReports();
     super.initState();
   }
 
@@ -37,7 +40,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
         ),
         Flexible(
           child: StreamBuilder(
-            stream: reportViewModel.loadReports(),
+            stream: _loadReportsStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.active) {
                 return ListView.builder(

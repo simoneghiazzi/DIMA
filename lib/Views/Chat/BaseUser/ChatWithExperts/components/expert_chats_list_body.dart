@@ -24,7 +24,10 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    chatViewModel.setExpertChat();
+    if (chatViewModel.chat is! ExpertChat) {
+      chatViewModel.setExpertChat();
+    }
+
     super.initState();
   }
 

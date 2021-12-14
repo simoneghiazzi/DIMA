@@ -22,11 +22,14 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
 
+  var _hasPendingChatStream;
+
   @override
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     chatViewModel.setAnonymousChat();
+    _hasPendingChatStream = chatViewModel.hasPendingChats();
     subscriberNewRandomUser = subscribeToNewRandomUser();
     super.initState();
   }
@@ -40,7 +43,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             StreamBuilder(
-              stream: chatViewModel.hasPendingChats(),
+              stream: _hasPendingChatStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.active && snapshot.data.docs.isNotEmpty) {
                   return TopBar(

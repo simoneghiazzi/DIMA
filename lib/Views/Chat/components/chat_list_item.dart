@@ -27,6 +27,8 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
   AppRouterDelegate routerDelegate;
   Size size;
 
+  var _getPeerUserDocFuture;
+
   User userItem;
 
   @override
@@ -34,6 +36,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    _getPeerUserDocFuture = chatViewModel.getPeerUserDoc(chatViewModel.chat.peerUser.collection, widget.userId);
     super.initState();
   }
 
@@ -43,7 +46,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
     super.build(context);
     if (userItem == null) {
       return FutureBuilder(
-          future: chatViewModel.getPeerUserDoc(chatViewModel.chat.peerUser.collection, widget.userId),
+          future: _getPeerUserDocFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {

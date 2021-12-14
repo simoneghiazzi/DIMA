@@ -13,9 +13,12 @@ class MessagesListConstructor extends StatefulWidget {
 class _MessagesListConstructorState extends State<MessagesListConstructor> {
   ChatViewModel chatViewModel;
 
+  var _loadMessagesStream;
+
   @override
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    _loadMessagesStream = chatViewModel.loadMessages();
     super.initState();
   }
 
@@ -23,7 +26,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
   Widget build(BuildContext context) {
     return Flexible(
         child: StreamBuilder(
-      stream: chatViewModel.loadMessages(),
+      stream: _loadMessagesStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return ListView.custom(

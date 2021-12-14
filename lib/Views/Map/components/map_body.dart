@@ -36,6 +36,8 @@ class _MapBodyState extends State<MapBody> {
   //For placing custom markers on the map
   BitmapDescriptor pinLocationIcon;
 
+  var _loadCurrentPositionFuture;
+
   @override
   void initState() {
     mapViewModel = Provider.of<MapViewModel>(context, listen: false);
@@ -57,7 +59,9 @@ class _MapBodyState extends State<MapBody> {
     if (!mapViewModel.positionPermission.isGranted) {
       mapViewModel.askPermission().then((permission) {
         if (permission) {
-          setState(() {});
+          setState(() {
+            _loadCurrentPositionFuture = mapViewModel.loadCurrentPosition();
+          });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(mapViewModel.positionPermission.isPermanentlyDenied
@@ -67,6 +71,8 @@ class _MapBodyState extends State<MapBody> {
           ));
         }
       });
+    } else {
+      _loadCurrentPositionFuture = mapViewModel.loadCurrentPosition();
     }
 
     super.initState();
@@ -79,7 +85,7 @@ class _MapBodyState extends State<MapBody> {
       if (mapViewModel.positionPermission.isGranted) ...[
         Center(
           child: FutureBuilder<Position>(
-              future: mapViewModel.loadCurrentPosition(),
+              future: _loadCurrentPositionFuture,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return buildMap(lat: snapshot.data.latitude, lng: snapshot.data.longitude);

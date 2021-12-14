@@ -60,16 +60,16 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
                     color: Colors.white,
                   ),
                 ),
-                text: chatViewModel.chat.peerUser.data['name'].toString() +
-                    (userViewModel.loggedUser is Expert ? " " + chatViewModel.chat.peerUser.data['surname'].toString() : ""),
+                text: chatViewModel.chat.peerUser.data["name"].toString() +
+                    (userViewModel.loggedUser is Expert ? " " + chatViewModel.chat.peerUser.data["surname"].toString() : ""),
               )
             : TopBarChats(
                 isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
                 networkAvatar: NetworkAvatar(
-                  img: chatViewModel.chat.peerUser.data['profilePhoto'],
+                  img: chatViewModel.chat.peerUser.data["profilePhoto"],
                   radius: 20.0,
                 ),
-                text: chatViewModel.chat.peerUser.data['name'].toString() + " " + chatViewModel.chat.peerUser.data['surname'].toString(),
+                text: chatViewModel.chat.peerUser.data["name"].toString() + " " + chatViewModel.chat.peerUser.data["surname"].toString(),
               ),
         // List of messages
         MessagesListConstructor(),

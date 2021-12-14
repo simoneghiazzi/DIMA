@@ -43,7 +43,9 @@ class TopBarChats extends StatelessWidget {
                             ),
                             onPressed: () async {
                               FocusScope.of(context).unfocus();
-                              back();
+                              if (back != null) {
+                                back();
+                              }
                               routerDelegate.pop();
                             },
                           ),
