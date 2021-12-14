@@ -1,12 +1,8 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/BaseUser/base_user.dart';
-import 'package:sApport/Model/Chat/active_chat.dart';
 import 'package:sApport/Model/Chat/anonymous_chat.dart';
-import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/BaseUser/PendingChatsList/pending_chats_list_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Chat/components/chats_list_constructor.dart';
 import 'package:sApport/Views/components/top_bar.dart';
@@ -15,12 +11,12 @@ import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ActiveChatsListBody extends StatefulWidget {
+class AnonymousChatsListBody extends StatefulWidget {
   @override
-  _ActiveChatsListBodyState createState() => _ActiveChatsListBodyState();
+  _AnonymousChatsListBodyState createState() => _AnonymousChatsListBodyState();
 }
 
-class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
+class _AnonymousChatsListBodyState extends State<AnonymousChatsListBody> {
   StreamSubscription<bool> subscriberNewRandomUser;
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;

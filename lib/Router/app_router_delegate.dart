@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Diary/diary_screen.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
-import 'package:sApport/Views/Report/reports_list_screen.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
+import 'package:sApport/Views/Report/reports_list_screen.dart';
 import 'package:sApport/Views/Report/create_report_screen.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/Views/Login/forgot_password_screen.dart';
@@ -17,8 +17,8 @@ import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
 import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/BaseUser/PendingChatsList/pending_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/anonymous_chats_list_screen.dart';
 
 class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<RouteSettings>> {
   // Stack of pages
@@ -111,8 +111,8 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
       case PendingChatsListScreen.route:
         child = PendingChatsListScreen();
         break;
-      case ActiveChatsListScreen.route:
-        child = ActiveChatsListScreen();
+      case AnonymousChatsListScreen.route:
+        child = AnonymousChatsListScreen();
         break;
       case DiaryScreen.route:
         child = DiaryScreen();

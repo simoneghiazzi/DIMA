@@ -1,5 +1,5 @@
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/components/pending_chats_list_body.dart';
 import 'package:flutter/material.dart';
+import 'package:sApport/Views/Chat/BaseUser/PendingChatsList/components/pending_chats_list_body.dart';
 
 class PendingChatsListScreen extends StatelessWidget {
   static const route = '/pendingChatsListScreen';
