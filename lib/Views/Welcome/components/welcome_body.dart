@@ -86,7 +86,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                     authViewModel.logInWithGoogle();
                   }),
             ]),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.05),
             StreamBuilder<String>(
               stream: authViewModel.authMessage,
               builder: (context, snapshot) {
@@ -104,7 +104,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                           ),
                         ),
                       ),
-                      SizedBox(height: size.height * 0.03),
+                      SizedBox(height: size.height * 0.05),
                     ],
                   );
                 } else {

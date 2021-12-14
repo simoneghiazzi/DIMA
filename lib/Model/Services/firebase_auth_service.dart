@@ -101,6 +101,8 @@ class FirebaseAuthService {
           "email": googleUser.email,
           "birthDate": DateTime.parse("${birthDate["year"]}-${birthDate["month"]}-${birthDate["day"]}"),
         };
+      } else {
+        throw (FirebaseAuthException(code: "account-exists-with-different-credential"));
       }
     }
     return {};
