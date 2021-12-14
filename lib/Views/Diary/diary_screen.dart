@@ -12,6 +12,8 @@ import 'package:sApport/Views/components/empty_page_portrait.dart';
 class DiaryScreen extends StatefulWidget {
   static const route = '/diaryScreen';
 
+  const DiaryScreen({Key key}) : super(key: key);
+
   @override
   State<DiaryScreen> createState() => _DiaryScreenState();
 }
@@ -56,10 +58,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
           //     gripSize: 1.0,
           //     gripColor: kPrimaryColor,
           //   )
-          //: 
-          DiaryBody(
-              diaryViewModel: diaryViewModel,
-            ),
+          //:
+          DiaryBody(),
     );
   }
 
@@ -74,4 +74,5 @@ class _DiaryScreenState extends State<DiaryScreen> {
   //     }
   //   });
   // }
+
 }

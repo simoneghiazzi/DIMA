@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ExpertHomePageBody extends StatefulWidget {
+  const ExpertHomePageBody({Key key}) : super(key: key);
+
   @override
   _ExpertHomePageBodyState createState() => _ExpertHomePageBodyState();
 }

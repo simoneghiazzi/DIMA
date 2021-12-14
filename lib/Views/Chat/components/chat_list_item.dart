@@ -43,7 +43,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
     super.build(context);
     if (userItem == null) {
       return FutureBuilder(
-          future: chatViewModel.getPeerUserDoc(chatViewModel.chat.peerCollection, widget.userId),
+          future: chatViewModel.getPeerUserDoc(chatViewModel.chat.peerUser.collection, widget.userId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {

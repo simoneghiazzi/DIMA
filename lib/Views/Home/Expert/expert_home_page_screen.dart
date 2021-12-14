@@ -24,7 +24,7 @@ class _ExpertHomePageScreenState extends State<ExpertHomePageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages = [
+    final List<Widget> _pages = const [
       ExpertHomePageBody(),
       //Calendar(),
       UserSettingsScreen()

@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
-import 'package:sApport/Model/Chat/anonymous_chat.dart';
-import 'package:sApport/Model/Chat/pending_chat.dart';
-import 'package:sApport/Model/Chat/request.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
@@ -47,7 +44,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.active && snapshot.data.docs.isNotEmpty) {
                   return TopBar(
-                    text: 'Anonymous',
+                    text: "Anonymous",
                     buttons: [
                       InkWell(
                         child: Container(
@@ -81,7 +78,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
                     ],
                   );
                 } else {
-                  return TopBar(text: 'Anonymous');
+                  return TopBar(text: "Anonymous");
                 }
               },
             ),

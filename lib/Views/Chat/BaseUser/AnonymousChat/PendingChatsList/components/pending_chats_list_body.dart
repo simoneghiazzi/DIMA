@@ -32,7 +32,7 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          TopBar(text: "Requests"),
+          TopBar(back: backButtonInterceptor, text: "Requests"),
           ChatsListConstructor(createUserCallback: createUserCallback),
         ],
       ),
@@ -40,7 +40,7 @@ class _PendingChatsListBodyState extends State<PendingChatsListBody> {
   }
 
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    chatViewModel.resetChattingWith();
+    chatViewModel.setAnonymousChat();
     routerDelegate.pop();
     return true;
   }

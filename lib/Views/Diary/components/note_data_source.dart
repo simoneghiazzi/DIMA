@@ -25,13 +25,13 @@ class NoteDataSource extends CalendarDataSource {
 
   @override
   DateTime getStartTime(int index) {
-    DateTime date = appointments[index].date;
+    DateTime date = appointments[index].dateTime;
     return DateTime(date.year, date.month, date.day);
   }
 
   @override
   DateTime getEndTime(int index) {
-    DateTime date = appointments[index].date;
+    DateTime date = appointments[index].dateTime;
     return DateTime(date.year, date.month, date.day);
   }
 

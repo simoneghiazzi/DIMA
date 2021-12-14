@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:sApport/Model/BaseUser/base_user.dart';
-import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
