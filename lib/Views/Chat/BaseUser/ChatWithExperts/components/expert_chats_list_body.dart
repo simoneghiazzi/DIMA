@@ -35,7 +35,7 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            TopBar(text: "Experts"),
+            TopBar(back: chatViewModel.resetCurrentChat, text: "Experts"),
             ChatsListConstructor(createChatCallback: (String id) => ExpertChat.fromId(id)),
           ],
         ),

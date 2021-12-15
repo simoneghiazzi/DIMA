@@ -5,6 +5,7 @@ import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/PendingChatsList/components/pending_chats_list_body.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_page_body.dart';
 import 'package:sApport/Views/components/empty_landscape_body.dart';
+import 'package:sApport/Views/components/vertical_split_view.dart';
 import 'package:sApport/constants.dart';
 import 'package:split_view/split_view.dart';
 
@@ -32,15 +33,18 @@ class _PendingChatsListScreenState extends State<PendingChatsListScreen> {
       resizeToAvoidBottomInset: false,
       body: MediaQuery.of(context).orientation == Orientation.portrait
           ? PendingChatsListBody()
-          : SplitView(
-              controller: SplitViewController(weights: [0.35, 0.65]),
-              children: [
-                PendingChatsListBody(),
-                chatViewModel.currentChat == null ? EmptyLandscapeBody() : ChatPageBody(),
-              ],
-              viewMode: SplitViewMode.Horizontal,
-              gripSize: 0.3,
-              gripColor: kPrimaryGreyColor,
+          : VerticalSplitView(
+              left: PendingChatsListBody(),
+              right: Consumer<ChatViewModel>(
+                builder: (context, chatViewModel, child) {
+                  if (chatViewModel.currentChat != null) {
+                    return ChatPageBody(key: ValueKey(chatViewModel.currentChat.peerUser.id));
+                  } else {
+                    return EmptyLandscapeBody();
+                  }
+                },
+              ),
+              ratio: 0.35,
             ),
     );
   }

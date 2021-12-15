@@ -106,7 +106,9 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
         ),
         onPressed: () {
           chatViewModel.setCurrentChat(_chatItem);
-          routerDelegate.pushPage(name: ChatPageScreen.route);
+          if (MediaQuery.of(context).orientation == Orientation.portrait) {
+            routerDelegate.pushPage(name: ChatPageScreen.route);
+          }
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(kPrimaryLightColor),

@@ -6,15 +6,13 @@ import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/request.dart';
 import 'package:sApport/Model/Chat/message.dart';
-import 'package:sApport/Model/Chat/active_chat.dart';
-import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Model/Chat/anonymous_chat.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 
-class ChatViewModel {
+class ChatViewModel extends ChangeNotifier {
   // Services
   final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
   final UserService _userService = GetIt.I<UserService>();
@@ -127,6 +125,7 @@ class ChatViewModel {
   void setCurrentChat(Chat chat) {
     _currentChat = chat;
     print("Current chat setted");
+    notifyListeners();
   }
 
   /// Reset the [_currentChat].

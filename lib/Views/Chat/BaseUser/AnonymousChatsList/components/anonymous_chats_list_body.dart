@@ -47,6 +47,7 @@ class _AnonymousChatsListBodyState extends State<AnonymousChatsListBody> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.active && snapshot.data.docs.isNotEmpty) {
                   return TopBar(
+                    back: chatViewModel.resetCurrentChat,
                     text: "Anonymous",
                     buttons: [
                       InkWell(
@@ -81,7 +82,7 @@ class _AnonymousChatsListBodyState extends State<AnonymousChatsListBody> {
                     ],
                   );
                 } else {
-                  return TopBar(text: "Anonymous");
+                  return TopBar(back: chatViewModel.resetCurrentChat, text: "Anonymous");
                 }
               },
             ),

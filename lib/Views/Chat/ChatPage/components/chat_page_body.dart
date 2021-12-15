@@ -14,8 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatPageBody extends StatefulWidget {
-  // //To check which is the orientation when the page is first opened
-  // bool startOrientation;
+  const ChatPageBody({Key key}) : super(key: key);
 
   @override
   _ChatPageBodyState createState() => _ChatPageBodyState();
