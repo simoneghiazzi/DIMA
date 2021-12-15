@@ -45,7 +45,7 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
       children: <Widget>[
         chatViewModel.currentChat.peerUser is BaseUser
             ? TopBarChats(
-                back: chatViewModel.resetChattingWith,
+                back: resetChat,
                 isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
                 circleAvatar: CircleAvatar(
                   backgroundColor: Colors.transparent,
@@ -75,9 +75,13 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
     );
   }
 
-  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+  void resetChat() {
     chatViewModel.resetChattingWith();
     chatViewModel.resetCurrentChat();
+  }
+
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    resetChat();
     routerDelegate.pop();
     return true;
   }
