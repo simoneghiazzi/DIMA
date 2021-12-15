@@ -1,3 +1,4 @@
+import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -112,6 +113,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                           0.02),
                       child: FloatingActionButton(
                         onPressed: () {
+                          diaryViewModel.setCurrentDiaryPage(DiaryPage());
                           if (MediaQuery.of(context).orientation == Orientation.portrait) {
                             routerDelegate.pushPage(name: DiaryPageScreen.route);
                           }

@@ -133,7 +133,7 @@ class _CredentialBodyState extends State<CredentialBody> {
               ),
               onTap: () {
                 authViewModel.clearControllers();
-                routerDelegate.replaceAllButNumber(1, [RouteSettings(name: LoginScreen.route)]);
+                routerDelegate.replaceAllButNumber(1, routeSettingsList: [RouteSettings(name: LoginScreen.route)]);
               },
             ),
           ],

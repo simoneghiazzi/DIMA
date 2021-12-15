@@ -165,14 +165,16 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
     notifyListeners();
   }
 
-  /// Replace the navigator stack pages from [start] to the top with the pages specified by the [list] of RouteSettings.
-  void replaceAllButNumber(int start, List<RouteSettings> list) {
+  /// Replace the navigator stack pages from [start] to the top with the pages specified by the [routeSettingsList] of RouteSettings.
+  void replaceAllButNumber(int start, {List<RouteSettings> routeSettingsList = const []}) {
     if (_pages.isNotEmpty) {
       _pages.removeRange(start, _pages.length);
     }
-    list.forEach((item) {
-      _pages.add(_createPage(RouteSettings(name: item.name, arguments: item.arguments)));
-    });
+    if (routeSettingsList.isNotEmpty) {
+      routeSettingsList.forEach((item) {
+        _pages.add(_createPage(RouteSettings(name: item.name, arguments: item.arguments)));
+      });
+    }
     notifyListeners();
   }
 

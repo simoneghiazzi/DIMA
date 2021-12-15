@@ -113,7 +113,9 @@ class _AnonymousChatsListBodyState extends State<AnonymousChatsListBody> {
     return chatViewModel.newRandomUser.listen((isNewRandomUser) {
       LoadingDialog.hide(context);
       if (isNewRandomUser) {
-        routerDelegate.pushPage(name: ChatPageScreen.route);
+        if (MediaQuery.of(context).orientation == Orientation.portrait) {
+          routerDelegate.pushPage(name: ChatPageScreen.route);
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: const Text('No match found.'),

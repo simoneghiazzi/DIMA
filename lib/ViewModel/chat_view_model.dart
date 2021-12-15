@@ -119,6 +119,7 @@ class ChatViewModel extends ChangeNotifier {
   void denyPendingChat() {
     _firestoreService.removeChatFromDB(_userService.loggedUser, _currentChat);
     _firestoreService.removeMessagesFromDB(Utils.pairChatId(_userService.loggedUser.id, _currentChat.peerUser.id));
+    resetCurrentChat();
   }
 
   /// Set the [chat] as the [_currentChat].
@@ -132,6 +133,7 @@ class ChatViewModel extends ChangeNotifier {
   void resetCurrentChat() {
     _currentChat = null;
     print("Current chat resetted");
+    notifyListeners();
   }
 
   /// Get the [_currentChat] instance.

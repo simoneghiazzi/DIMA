@@ -56,10 +56,13 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
                 ),
                 onTap: () async {
                   chatViewModel.acceptPendingChat();
-                  routerDelegate.replaceAllButNumber(2, [
-                    RouteSettings(name: AnonymousChatsListScreen.route),
-                    RouteSettings(name: ChatPageScreen.route),
-                  ]);
+                  if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                    routerDelegate.replaceAllButNumber(3, routeSettingsList: [
+                      RouteSettings(name: ChatPageScreen.route),
+                    ]);
+                  } else {
+                    routerDelegate.replaceAllButNumber(3);
+                  }
                 },
               ),
               SizedBox(
@@ -94,9 +97,7 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
                 ),
                 onTap: () async {
                   chatViewModel.denyPendingChat();
-                  routerDelegate.replaceAllButNumber(2, [
-                    RouteSettings(name: AnonymousChatsListScreen.route),
-                  ]);
+                  routerDelegate.replaceAllButNumber(3);
                 },
               )
             ],
