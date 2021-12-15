@@ -98,9 +98,9 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
         ChangeNotifierProvider<ReportViewModel>(create: (_) => ReportViewModel()),
+        ChangeNotifierProvider<ChatViewModel>(create: (_) => ChatViewModel()),
+        ChangeNotifierProvider<DiaryViewModel>(create: (_) => DiaryViewModel()),
         Provider(create: (context) => AuthViewModel()),
-        Provider(create: (context) => ChatViewModel()),
-        Provider(create: (context) => DiaryViewModel()),
         Provider(create: (context) => UserViewModel()),
         Provider(create: (context) => MapViewModel(), lazy: false),
       ],

@@ -36,6 +36,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
 
   @override
   Widget build(BuildContext context) {
+    _ratio = widget.ratio;
     return LayoutBuilder(builder: (context, BoxConstraints constraints) {
       assert(_ratio <= 1);
       assert(_ratio >= 0);
