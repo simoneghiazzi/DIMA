@@ -127,7 +127,11 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                         color: kPrimaryColor,
                                       ),
                                     ),
-                                    itemBuilder: (context, value) => value,
+                                    itemBuilder: (context, value) => FieldItem(
+                                        child: Text(
+                                      value,
+                                      style: TextStyle(color: kPrimaryColor),
+                                    )),
                                   ),
                                   SizedBox(
                                     height: size.height * 0.01,
