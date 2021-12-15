@@ -311,7 +311,7 @@ class FirestoreService {
     _firestore
         .collection(report.collection)
         .doc(id)
-        .collection("reportsList")
+        .collection("reportList")
         .doc(report.id)
         .set(report.data)
         .then((value) => print("Report added"))
@@ -321,7 +321,7 @@ class FirestoreService {
   /// It takes the [id] of an user and return the stream of all the
   /// reports of the user oredered in descending by date from the DB
   Stream<QuerySnapshot> getReportsFromDB(String id) {
-    return _firestore.collection(Report.COLLECTION).doc(id).collection("reportsList").orderBy("id", descending: true).snapshots();
+    return _firestore.collection(Report.COLLECTION).doc(id).collection("reportList").orderBy("id", descending: true).snapshots();
   }
 
   /**************************************** DIARY ********************************************/

@@ -36,46 +36,45 @@ class _CreateReportBodyState extends State<CreateReportBody> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Stack(children: [
-      Column(
-        children: [
-          TopBar(
-            text: "New report",
-            buttons: [
-              InkWell(
-                child: Container(
-                  padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    //color: kPrimaryLightColor,
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.list_rounded,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        "List",
-                        style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
+    return Column(
+      children: [
+        TopBar(
+          text: "New report",
+          buttons: [
+            InkWell(
+              child: Container(
+                padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                height: 40,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                onTap: () {
-                  routerDelegate.pushPage(
-                    name: ReportsListScreen.route,
-                  );
-                },
-              )
-            ],
-          ),
-          SingleChildScrollView(
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.list_rounded,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                    SizedBox(
+                      width: 2,
+                    ),
+                    Text(
+                      "List",
+                      style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              onTap: () {
+                routerDelegate.pushPage(
+                  name: ReportsListScreen.route,
+                );
+              },
+            )
+          ],
+        ),
+        Expanded(
+          child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: BlocProvider(
               create: (context) => ReportForm(),
@@ -92,7 +91,6 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                       ),
                     ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         SizedBox(
                           height: size.height * 0.1,
@@ -104,6 +102,9 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                         Padding(
                             padding: EdgeInsets.only(top: size.height * 0.05, left: 40, right: 40),
                             child: FormBlocListener<ReportForm, String, String>(
+                              onSubmitting: (context, state) {
+                                LoadingDialog.show(context);
+                              },
                               onSuccess: (context, state) {
                                 LoadingDialog.hide(context);
                                 successAlert.show();
@@ -155,7 +156,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
-                                      LoadingDialog.show(context);
+                                      FocusScope.of(context).unfocus();
                                       reportForm.submit();
                                     },
                                     style: ButtonStyle(
@@ -175,9 +176,9 @@ class _CreateReportBodyState extends State<CreateReportBody> {
               ),
             ),
           ),
-        ],
-      ),
-    ]);
+        ),
+      ],
+    );
   }
 
   Alert createSuccessAlert() {
@@ -197,7 +198,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
             style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onPressed: () {
-            //routerDelegate.pushPage(name: ReportsListScreen.route, arguments: reportViewModel);
+            routerDelegate.pushPage(name: ReportsListScreen.route);
             successAlert.dismiss();
           },
           color: Colors.transparent,
