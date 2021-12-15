@@ -1,11 +1,12 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/BaseUser/report.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 
-class ReportViewModel {
+class ReportViewModel extends ChangeNotifier {
   // Services
   final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
   final UserService _userService = GetIt.I<UserService>();
@@ -26,6 +27,7 @@ class ReportViewModel {
   void setCurrentReport(Report report) {
     _currentReport = report;
     print("Current report setted");
+    notifyListeners();
   }
 
   /// Reset the [_currentReport].

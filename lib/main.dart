@@ -97,10 +97,10 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
+        ChangeNotifierProvider<ReportViewModel>(create: (_) => ReportViewModel()),
         Provider(create: (context) => AuthViewModel()),
         Provider(create: (context) => ChatViewModel()),
         Provider(create: (context) => DiaryViewModel()),
-        Provider(create: (context) => ReportViewModel()),
         Provider(create: (context) => UserViewModel()),
         Provider(create: (context) => MapViewModel(), lazy: false),
       ],

@@ -36,7 +36,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        TopBar(text: "Old reports"),
+        TopBar(back: reportViewModel.resetCurrentReport, text: "Old reports"),
         Flexible(
           child: StreamBuilder(
             stream: _loadReportsStream,
@@ -97,13 +97,9 @@ class _ReportsListBodyState extends State<ReportsListBody> {
           ]),
           onPressed: () {
             reportViewModel.setCurrentReport(report);
-            routerDelegate.pushPage(name: ReportDetailsScreen.route);
-            // if (MediaQuery.of(context).orientation != Orientation.landscape) {
-            //   routerDelegate.pushPage(
-            //     name: ReportDetailsScreen.route,
-            //     arguments: ReportDetailsArguments(widget.reportViewModel.openedReport, widget.reportViewModel),
-            //   );
-            // }
+            if (MediaQuery.of(context).orientation == Orientation.portrait) {
+              routerDelegate.pushPage(name: ReportDetailsScreen.route);
+            }
           },
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(kPrimaryLightColor),

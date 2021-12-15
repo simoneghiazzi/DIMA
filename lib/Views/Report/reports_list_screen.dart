@@ -4,11 +4,10 @@ import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Views/Report/components/report_details_body.dart';
 import 'package:sApport/Views/Report/components/reports_list_body.dart';
 import 'package:flutter/material.dart';
-import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/Views/components/empty_landscape_body.dart';
+import 'package:sApport/Views/components/vertical_split_view.dart';
+import 'package:sApport/constants.dart';
 import 'package:split_view/split_view.dart';
-
-import '../../constants.dart';
 
 class ReportsListScreen extends StatefulWidget {
   static const route = '/reportListScreen';
@@ -36,15 +35,18 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
       resizeToAvoidBottomInset: false,
       body: MediaQuery.of(context).orientation == Orientation.portrait
           ? ReportsListBody()
-          : SplitView(
-              controller: SplitViewController(weights: [0.35, 0.65]),
-              children: [
-                ReportsListBody(),
-                reportViewModel.currentReport == null ? EmptyLandscapeBody() : ReportDetailsBody(),
-              ],
-              viewMode: SplitViewMode.Horizontal,
-              gripSize: 0.3,
-              gripColor: kPrimaryGreyColor,
+          : VerticalSplitView(
+              left: ReportsListBody(),
+              right: Consumer<ReportViewModel>(
+                builder: (context, reportViewModel, child) {
+                  if (reportViewModel.currentReport != null) {
+                    return ReportDetailsBody(key: ValueKey(reportViewModel.currentReport.id));
+                  } else {
+                    return EmptyLandscapeBody();
+                  }
+                },
+              ),
+              ratio: 0.35,
             ),
     );
   }
