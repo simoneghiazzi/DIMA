@@ -39,10 +39,13 @@ class TopBar extends StatelessWidget {
                               Icons.arrow_back_ios_new_rounded,
                               color: Colors.white,
                             ),
-                            onPressed: back ??
-                                () {
-                                  routerDelegate.pop();
-                                },
+                            onPressed: () {
+                              FocusScope.of(context).unfocus();
+                              if (back != null) {
+                                back();
+                              }
+                              routerDelegate.pop();
+                            },
                           ),
                     AutoSizeText(
                       text,

@@ -13,9 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class DiaryPageBody extends StatefulWidget {
-  final DiaryPage diaryPage;
-
-  DiaryPageBody({Key key, @required this.diaryPage}) : super(key: key);
+  const DiaryPageBody({Key key}) : super(key: key);
 
   @override
   _DiaryPageBodyState createState() => _DiaryPageBodyState();
@@ -33,6 +31,8 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   String title;
   DateFormat formatter = DateFormat('dd MMM yyyy');
 
+  DiaryPage _diaryPageItem;
+
   @override
   void initState() {
     DateTime now = DateTime.now();
@@ -48,14 +48,13 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
 
   @override
   Widget build(BuildContext context) {
-    //detectChangeOrientation();
-    if (widget.diaryPage == null) {
+    if (_diaryPageItem == null) {
       modifiable = true;
       DateTime now = DateTime.now();
       title = formatter.format(now);
     } else {
-      diaryViewModel.setTextContent(widget.diaryPage.title, widget.diaryPage.content);
-      title = formatter.format(widget.diaryPage.dateTime);
+      diaryViewModel.setTextContent(_diaryPageItem.title, _diaryPageItem.content);
+      title = formatter.format(_diaryPageItem.dateTime);
     }
     Size size = MediaQuery.of(context).size;
     return Stack(
@@ -66,12 +65,9 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
             TopBar(
               text: title,
               isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
-              back: () {
-                diaryViewModel.clearControllers();
-                routerDelegate.pop();
-              },
+              back: diaryViewModel.clearControllers,
               buttons: [
-                if (widget.diaryPage != null && !modifiable && widget.diaryPage.dateTime == today)
+                if (_diaryPageItem != null && !modifiable && _diaryPageItem.dateTime == today)
                   InkWell(
                       child: InkResponse(
                     onTap: () {
@@ -88,12 +84,12 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white),
                     ),
                   )),
-                if (widget.diaryPage != null && !modifiable)
+                if (_diaryPageItem != null && !modifiable)
                   InkWell(
                     child: InkResponse(
                       onTap: () {
-                        widget.diaryPage.favourite = !widget.diaryPage.favourite;
-                        diaryViewModel.setFavourite(widget.diaryPage.id, widget.diaryPage.favourite);
+                        _diaryPageItem.favourite = !_diaryPageItem.favourite;
+                        diaryViewModel.setFavourite(_diaryPageItem.id, _diaryPageItem.favourite);
                         setState(() {});
                       },
                       child: Container(
@@ -101,7 +97,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
                         ),
-                        child: widget.diaryPage.favourite
+                        child: _diaryPageItem.favourite
                             ? Icon(CupertinoIcons.heart_fill, color: Colors.white)
                             : Icon(CupertinoIcons.heart, color: Colors.white),
                       ),
@@ -112,11 +108,11 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     child: StreamBuilder(
                         stream: diaryViewModel.diaryForm.isButtonEnabled,
                         builder: (context, snapshot) {
-                          if (snapshot.data ?? false || widget.diaryPage != null) {
+                          if (snapshot.data ?? false || _diaryPageItem != null) {
                             return InkResponse(
                               onTap: () {
-                                if (widget.diaryPage != null) {
-                                  diaryViewModel.updatePage(widget.diaryPage.id);
+                                if (_diaryPageItem != null) {
+                                  diaryViewModel.updatePage(_diaryPageItem.id);
                                 } else {
                                   diaryViewModel.submitPage();
                                 }

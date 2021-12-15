@@ -76,7 +76,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = ReportsListScreen();
         break;
       case ReportDetailsScreen.route:
-        child = ReportDetailsScreen(report: routeSettings.arguments);
+        child = ReportDetailsScreen();
         break;
       case CreateReportScreen.route:
         child = CreateReportScreen();
@@ -118,7 +118,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = DiaryScreen();
         break;
       case DiaryPageScreen.route:
-        child = DiaryPageScreen(diaryPage: routeSettings.arguments);
+        child = DiaryPageScreen();
         break;
     }
     return MaterialPage(
