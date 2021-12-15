@@ -1,15 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/BaseUser/base_user.dart';
 import 'package:sApport/Model/Chat/active_chat.dart';
-import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
+import 'package:sApport/Views/Chat/ChatPage/components/chat_page_body.dart';
 import 'package:sApport/Views/Chat/components/chats_list_constructor.dart';
 import 'package:sApport/Views/Home/components/header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/Views/components/empty_landscape_body.dart';
+import 'package:sApport/Views/components/vertical_split_view.dart';
 
 class ExpertHomePageBody extends StatefulWidget {
   const ExpertHomePageBody({Key key}) : super(key: key);
@@ -42,7 +42,21 @@ class _ExpertHomePageBodyState extends State<ExpertHomePageBody> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Header(),
-        ChatsListConstructor(createChatCallback: (String id) => ActiveChat.fromId(id)),
+        MediaQuery.of(context).orientation == Orientation.portrait
+            ? ChatsListConstructor(createChatCallback: (String id) => ActiveChat.fromId(id))
+            : VerticalSplitView(
+                left: ChatsListConstructor(createChatCallback: (String id) => ActiveChat.fromId(id)),
+                right: Consumer<ChatViewModel>(
+                  builder: (context, chatViewModel, child) {
+                    if (chatViewModel.currentChat != null) {
+                      return ChatPageBody(key: ValueKey(chatViewModel.currentChat.peerUser.id));
+                    } else {
+                      return EmptyLandscapeBody();
+                    }
+                  },
+                ),
+                ratio: 0.35,
+              ),
       ],
     ));
   }

@@ -231,8 +231,14 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                           ),
                           onTap: () {
                             chatViewModel.setCurrentChat(ExpertChat(peerUser: widget.expert));
-                            routerDelegate.replaceAllButNumber(
-                                2, [RouteSettings(name: ExpertChatsListScreen.route), RouteSettings(name: ChatPageScreen.route)]);
+                            if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                              routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                                RouteSettings(name: ExpertChatsListScreen.route),
+                                RouteSettings(name: ChatPageScreen.route),
+                              ]);
+                            } else {
+                              routerDelegate.replaceAllButNumber(2, routeSettingsList: [RouteSettings(name: ExpertChatsListScreen.route)]);
+                            }
                           },
                         ),
                       ),
