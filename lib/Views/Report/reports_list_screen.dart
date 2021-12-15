@@ -4,7 +4,7 @@ import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Views/Report/components/reports_list_body.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
-import 'package:sApport/Views/components/empty_portrait_body.dart';
+import 'package:sApport/Views/components/empty_landscape_body.dart';
 import 'package:split_view/split_view.dart';
 
 import '../../constants.dart';

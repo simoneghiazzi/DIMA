@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/components/anonymous_chats_list_body.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_page_body.dart';
-import 'package:sApport/Views/components/empty_portrait_body.dart';
+import 'package:sApport/Views/components/empty_landscape_body.dart';
 import 'package:sApport/constants.dart';
 import 'package:split_view/split_view.dart';
 
@@ -39,7 +39,7 @@ class _AnonymousChatsListScreenState extends State<AnonymousChatsListScreen> {
                 controller: SplitViewController(weights: [0.35, 0.65]),
                 children: [
                   AnonymousChatsListBody(),
-                  chatViewModel.currentChat == null ? EmptyPortraitBody() : ChatPageBody(),
+                  chatViewModel.currentChat == null ? EmptyLandscapeBody() : ChatPageBody(),
                 ],
                 viewMode: SplitViewMode.Horizontal,
                 gripSize: 0.3,

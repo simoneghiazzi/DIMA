@@ -7,7 +7,7 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Diary/components/diary_body.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:sApport/Views/components/empty_portrait_body.dart';
+import 'package:sApport/Views/components/empty_landscape_body.dart';
 
 class DiaryScreen extends StatefulWidget {
   static const route = '/diaryScreen';
