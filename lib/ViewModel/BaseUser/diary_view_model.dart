@@ -24,6 +24,8 @@ class DiaryViewModel {
 
   var hasNoteToday = false;
 
+  DiaryPage _currentDiaryPage;
+
   DiaryViewModel() {
     // Register the listeners for the input text field
     titleTextCtrl.addListener(() => diaryForm.title.add(titleTextCtrl.text));
@@ -95,6 +97,21 @@ class DiaryViewModel {
     titleTextCtrl.text = title;
     contentTextCtrl.text = content;
   }
+
+  /// Set the [diaryPage] as the [_currentDiaryPage].
+  void setCurrentDiaryPage(DiaryPage diaryPage) {
+    _currentDiaryPage = diaryPage;
+    print("Current diary page setted");
+  }
+
+  /// Reset the [_currentDiaryPage].
+  void resetCurrentDiaryPage() {
+    _currentDiaryPage = null;
+    print("Current diary page resetted");
+  }
+
+  /// Get the [_currentDiaryPage] instance.
+  DiaryPage get currentDiaryPage => _currentDiaryPage;
 
   /// Stream of the succesfully addition of the diary page
   Stream<bool> get isPageAdded => _isPageAddedCtrl.stream;
