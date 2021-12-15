@@ -82,11 +82,6 @@ class ChatViewModel {
     return _firestoreService.getUserByIdFromDB(collection, id);
   }
 
-  /// Set the [user] as the peerUser of the [currentChat].
-  void setCurrentChat(Chat chat) {
-    _currentChat = chat;
-  }
-
   /// Accept a new pending chat request.
   void acceptPendingChat() {
     _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser, _currentChat.peerUser);
@@ -128,9 +123,16 @@ class ChatViewModel {
     _firestoreService.removeMessagesFromDB(Utils.pairChatId(_userService.loggedUser.id, _currentChat.peerUser.id));
   }
 
+  /// Set the [chat] as the [_currentChat].
+  void setCurrentChat(Chat chat) {
+    _currentChat = chat;
+    print("Current chat setted");
+  }
+
   /// Reset the [_currentChat].
   void resetCurrentChat() {
     _currentChat = null;
+    print("Current chat resetted");
   }
 
   /// Get the [_currentChat] instance.
