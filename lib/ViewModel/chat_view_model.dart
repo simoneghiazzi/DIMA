@@ -128,6 +128,11 @@ class ChatViewModel {
     _firestoreService.removeMessagesFromDB(Utils.pairChatId(_userService.loggedUser.id, _currentChat.peerUser.id));
   }
 
+  /// Reset the [_currentChat].
+  void resetCurrentChat() {
+    _currentChat = null;
+  }
+
   /// Get the [_currentChat] instance.
   Chat get currentChat => _currentChat;
 

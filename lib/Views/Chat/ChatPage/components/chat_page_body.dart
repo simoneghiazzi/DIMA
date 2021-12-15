@@ -77,6 +77,7 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
 
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     chatViewModel.resetChattingWith();
+    chatViewModel.resetCurrentChat();
     routerDelegate.pop();
     return true;
   }

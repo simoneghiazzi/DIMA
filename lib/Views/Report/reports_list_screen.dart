@@ -4,7 +4,7 @@ import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Views/Report/components/reports_list_body.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
-import 'package:sApport/Views/components/empty_page_portrait.dart';
+import 'package:sApport/Views/components/empty_portrait_body.dart';
 import 'package:split_view/split_view.dart';
 
 import '../../constants.dart';
@@ -49,8 +49,8 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
           //               })
           //         ],
           //         viewMode: SplitViewMode.Horizontal,
-          //         gripSize: 1.0,
-          //         gripColor: kPrimaryColor,
+          // gripSize: 0.3,
+          // gripColor: kPrimaryGreyColor,
           //       )
           //     :
           ReportsListBody(),

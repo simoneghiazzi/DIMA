@@ -142,6 +142,11 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
     popRoute();
   }
 
+  /// Get the top-most route of the navigator stack.
+  String getLastRoute() {
+    return _pages.last.name;
+  }
+
   /// Replace the top-most page of the navigator stack with the page specified by the [name] of the route.
   void replace({@required String name, dynamic arguments}) {
     if (_pages.isNotEmpty) {

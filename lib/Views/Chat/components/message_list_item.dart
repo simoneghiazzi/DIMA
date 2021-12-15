@@ -55,7 +55,7 @@ class _MessageListItemState extends State<MessageListItem> {
                   padding: EdgeInsets.only(right: 8, bottom: 5),
                   child: Text(
                     Date.DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.messageItem.data['timestamp'])),
-                    style: TextStyle(color: greyColor, fontSize: 10.0, fontStyle: FontStyle.italic),
+                    style: TextStyle(color: kPrimaryGreyColor, fontSize: 10.0, fontStyle: FontStyle.italic),
                   ),
                 )
               ]),
@@ -86,7 +86,7 @@ class _MessageListItemState extends State<MessageListItem> {
                   padding: EdgeInsets.only(right: 8, bottom: 5),
                   child: Text(
                     Date.DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.messageItem.data['timestamp'])),
-                    style: TextStyle(color: greyColor, fontSize: 10.0, fontStyle: FontStyle.italic),
+                    style: TextStyle(color: kPrimaryGreyColor, fontSize: 10.0, fontStyle: FontStyle.italic),
                   ),
                 )
               ]),

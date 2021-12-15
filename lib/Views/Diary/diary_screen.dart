@@ -7,7 +7,7 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Diary/components/diary_body.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:sApport/Views/components/empty_page_portrait.dart';
+import 'package:sApport/Views/components/empty_portrait_body.dart';
 
 class DiaryScreen extends StatefulWidget {
   static const route = '/diaryScreen';
@@ -55,8 +55,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
           //           })
           //     ],
           //     viewMode: SplitViewMode.Horizontal,
-          //     gripSize: 1.0,
-          //     gripColor: kPrimaryColor,
+                // gripSize: 0.3,
+                // gripColor: kPrimaryGreyColor,
           //   )
           //:
           DiaryBody(),

@@ -30,8 +30,7 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Stack(
+    return Stack(
       children: <Widget>[
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,6 +55,6 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
           ),
         ),
       ],
-    ));
+    );
   }
 }

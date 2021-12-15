@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AnonymousChatsListBody extends StatefulWidget {
+  const AnonymousChatsListBody({Key key}) : super(key: key);
+
   @override
   _AnonymousChatsListBodyState createState() => _AnonymousChatsListBodyState();
 }

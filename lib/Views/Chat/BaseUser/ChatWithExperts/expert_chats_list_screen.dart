@@ -4,10 +4,10 @@ import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/components/expert_chats_list_body.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:sApport/Views/components/empty_page_portrait.dart';
+import 'package:sApport/Views/Chat/ChatPage/components/chat_page_body.dart';
+import 'package:sApport/Views/components/empty_portrait_body.dart';
+import 'package:sApport/constants.dart';
 import 'package:split_view/split_view.dart';
-
-import '../../../../constants.dart';
 
 class ExpertChatsListScreen extends StatefulWidget {
   static const route = '/expertChatsListScreen';
@@ -21,49 +21,30 @@ class ExpertChatsListScreen extends StatefulWidget {
 
 class _ExpertChatsListScreenState extends State<ExpertChatsListScreen> {
   ChatViewModel chatViewModel;
-  bool isChatOpen = false;
+  AppRouterDelegate routerDelegate;
+
+  @override
+  void initState() {
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
-    //detectChangeOrientation();
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: 
-      // MediaQuery.of(context).orientation == Orientation.landscape
-      //     ? SplitView(
-      //         controller: SplitViewController(weights: [0.3, 0.7]),
-      //         children: [
-      //           ExpertChatsListBody(),
-      //           widget.chatPage == null
-      //               ? StreamBuilder(
-      //                   stream: chatViewModel.isChatOpen,
-      //                   builder: (context, snapshot) {
-      //                     if (snapshot.data == true) {
-      //                       isChatOpen = true;
-      //                       return ChatPageScreen(
-      //                         startOrientation: MediaQuery.of(context).orientation == Orientation.landscape,
-      //                       );
-      //                     }
-      //                     return EmptyPagePortrait();
-      //                   })
-      //               : widget.chatPage,
-      //         ],
-      //         viewMode: SplitViewMode.Horizontal,
-      //         gripSize: 1.0,
-      //         gripColor: kPrimaryColor,
-      //       )
-      //     : 
-          ExpertChatsListBody(),
-    );
+        resizeToAvoidBottomInset: false,
+        body: MediaQuery.of(context).orientation == Orientation.portrait
+            ? ExpertChatsListBody()
+            : SplitView(
+                controller: SplitViewController(weights: [0.35, 0.65]),
+                children: [
+                  ExpertChatsListBody(),
+                  chatViewModel.currentChat == null ? EmptyPortraitBody() : ChatPageBody(),
+                ],
+                viewMode: SplitViewMode.Horizontal,
+                gripSize: 0.3,
+                gripColor: kPrimaryGreyColor,
+              ));
   }
-
-  // Future<void> detectChangeOrientation() async {
-  //   AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-  //   await Future(() async {
-  //     if ((MediaQuery.of(context).orientation == Orientation.portrait) && isChatOpen) {
-  //       routerDelegate.pushPage(name: ChatPageScreen.route);
-  //     }
-  //   });
-  // }
 }
