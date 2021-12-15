@@ -40,6 +40,14 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     _diaryPageItem = diaryViewModel.currentDiaryPage;
+    if (_diaryPageItem == null) {
+      modifiable = true;
+      DateTime now = DateTime.now();
+      title = formatter.format(now);
+    } else {
+      diaryViewModel.setTextContent(_diaryPageItem.title, _diaryPageItem.content);
+      title = formatter.format(_diaryPageItem.dateTime);
+    }
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
     subscription = subscribeToSuccessViewModel();
@@ -49,14 +57,6 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
 
   @override
   Widget build(BuildContext context) {
-    if (_diaryPageItem == null) {
-      modifiable = true;
-      DateTime now = DateTime.now();
-      title = formatter.format(now);
-    } else {
-      diaryViewModel.setTextContent(_diaryPageItem.title, _diaryPageItem.content);
-      title = formatter.format(_diaryPageItem.dateTime);
-    }
     Size size = MediaQuery.of(context).size;
     return Stack(
       children: <Widget>[
@@ -65,10 +65,9 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
           children: [
             TopBar(
               text: title,
-              isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
               back: resetDiaryPage,
               buttons: [
-                if (_diaryPageItem != null && !modifiable && _diaryPageItem.dateTime == today)
+                if (_diaryPageItem != null && !modifiable && isPageOfToday())
                   InkWell(
                       child: InkResponse(
                     onTap: () {
@@ -289,6 +288,13 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
         )
       ],
     );
+  }
+
+  bool isPageOfToday() {
+    if (_diaryPageItem.dateTime.day == today.day && _diaryPageItem.dateTime.month == today.month && _diaryPageItem.dateTime.year == today.year) {
+      return true;
+    }
+    return false;
   }
 
   void resetDiaryPage() {

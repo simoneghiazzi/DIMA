@@ -1,4 +1,3 @@
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -113,11 +112,9 @@ class _DiaryBodyState extends State<DiaryBody> {
                           0.02),
                       child: FloatingActionButton(
                         onPressed: () {
-                          routerDelegate.pushPage(name: DiaryPageScreen.route);
-                          //widget.diaryViewModel.openPage(null);
-                          // if (MediaQuery.of(context).orientation != Orientation.landscape) {
-                          //   routerDelegate.pushPage(name: DiaryPageScreen.route);
-                          // }
+                          if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                            routerDelegate.pushPage(name: DiaryPageScreen.route);
+                          }
                         },
                         materialTapTargetSize: MaterialTapTargetSize.padded,
                         backgroundColor: kPrimaryColor,
@@ -141,10 +138,9 @@ class _DiaryBodyState extends State<DiaryBody> {
     if (details.appointments != null) {
       if (details.appointments.isNotEmpty && details.targetElement == CalendarElement.appointment) {
         diaryViewModel.setCurrentDiaryPage(details.appointments[0]);
-        routerDelegate.pushPage(name: DiaryPageScreen.route);
-        // if (MediaQuery.of(context).orientation != Orientation.landscape) {
-        //   routerDelegate.pushPage(name: DiaryPageScreen.route);
-        // }
+        if (MediaQuery.of(context).orientation == Orientation.portrait) {
+          routerDelegate.pushPage(name: DiaryPageScreen.route);
+        }
       }
     }
   }

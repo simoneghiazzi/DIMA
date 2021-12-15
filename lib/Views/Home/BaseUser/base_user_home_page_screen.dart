@@ -38,9 +38,9 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = const [
-      BaseUserHomePageBody(),
-      DiaryScreen(),
-      UserSettingsScreen(),
+      const BaseUserHomePageBody(),
+      const DiaryScreen(),
+      const UserSettingsScreen(),
     ];
     return Scaffold(
       resizeToAvoidBottomInset: false,

@@ -1,14 +1,10 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Views/Diary/components/diary_page_body.dart';
-import 'package:split_view/split_view.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/components/vertical_split_view.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Diary/components/diary_body.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:sApport/Views/components/empty_landscape_body.dart';
 
 class DiaryScreen extends StatefulWidget {
   static const route = '/diaryScreen';
@@ -34,17 +30,17 @@ class _DiaryScreenState extends State<DiaryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: MediaQuery.of(context).orientation == Orientation.portrait || diaryViewModel.currentDiaryPage == null
+      body: MediaQuery.of(context).orientation == Orientation.portrait
           ? DiaryBody()
-          : SplitView(
-              controller: SplitViewController(weights: [0.35, 0.65]),
-              children: [
-                DiaryBody(),
-                DiaryPageBody(),
-              ],
-              viewMode: SplitViewMode.Horizontal,
-              gripSize: 0.3,
-              gripColor: kPrimaryGreyColor,
+          : Consumer<DiaryViewModel>(
+              builder: (context, diaryViewModel, child) {
+                var _ratio = diaryViewModel.currentDiaryPage != null ? 0.35 : 1.0;
+                return VerticalSplitView(
+                  left: DiaryBody(),
+                  right: diaryViewModel.currentDiaryPage != null ? DiaryPageBody(key: ValueKey(diaryViewModel.currentDiaryPage.id)) : Container(),
+                  ratio: _ratio,
+                );
+              },
             ),
     );
   }

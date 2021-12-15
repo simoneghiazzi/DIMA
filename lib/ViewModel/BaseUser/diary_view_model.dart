@@ -7,7 +7,7 @@ import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 
-class DiaryViewModel {
+class DiaryViewModel with ChangeNotifier {
   // Services
   final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
   final UserService _userService = GetIt.I<UserService>();
@@ -102,12 +102,14 @@ class DiaryViewModel {
   void setCurrentDiaryPage(DiaryPage diaryPage) {
     _currentDiaryPage = diaryPage;
     print("Current diary page setted");
+    notifyListeners();
   }
 
   /// Reset the [_currentDiaryPage].
   void resetCurrentDiaryPage() {
     _currentDiaryPage = null;
     print("Current diary page resetted");
+    notifyListeners();
   }
 
   /// Get the [_currentDiaryPage] instance.

@@ -6,17 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class NoteDataSource extends CalendarDataSource {
-  DiaryViewModel diaryViewModel;
-
   NoteDataSource(List<DocumentSnapshot> docs, DiaryViewModel diaryViewModel) {
-    this.diaryViewModel = diaryViewModel;
     var today = DateTime.now();
     List<DiaryPage> source = List.from([]);
     for (DocumentSnapshot doc in docs) {
       DiaryPage n = DiaryPage();
       n.setFromDocument(doc);
       source.add(n);
-      if (n.dateTime == DateTime(today.year, today.month, today.day)) {
+      if (n.dateTime.day == today.day && n.dateTime.month == today.month && n.dateTime.year == today.year) {
         diaryViewModel.hasNoteToday = true;
       }
     }
