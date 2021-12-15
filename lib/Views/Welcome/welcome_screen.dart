@@ -5,6 +5,8 @@ import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Views/Diary/diary_page_screen.dart';
+import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/Views/Welcome/components/welcome_body.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -53,12 +55,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
     if (_first && WidgetsBinding.instance.window.viewInsets.bottom == 0.0 && !_keyboardPreviouslyOpened) {
       // ** The MediaQuery.orientation value is the one before the rotation
       // since the didChangeMetrics is called before the value in the MediaQuery is updated **
-      if (routerDelegate.getLastRoute() == ChatPageScreen.route) {
+      String lastRoute = routerDelegate.getLastRoute();
+      if (lastRoute == ChatPageScreen.route || lastRoute == ReportDetailsScreen.route || lastRoute == DiaryPageScreen.route) {
         routerDelegate.pop();
-      } else if (MediaQuery.of(context).orientation == Orientation.landscape && chatViewModel.currentChat != null) {
-        routerDelegate.pushPage(name: ChatPageScreen.route);
+      } else if (MediaQuery.of(context).orientation == Orientation.landscape) {
+        if (chatViewModel.currentChat != null) {
+          routerDelegate.pushPage(name: ChatPageScreen.route);
+        } else if (reportViewModel.currentReport != null) {
+          routerDelegate.pushPage(name: ReportDetailsScreen.route);
+        } else if (diaryViewModel.currentDiaryPage != null) {
+          routerDelegate.pushPage(name: DiaryPageScreen.route);
+        }
+        _first = false;
       }
-      _first = false;
     }
   }
 
