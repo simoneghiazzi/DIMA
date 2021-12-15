@@ -9,7 +9,6 @@ import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
 
 class DiaryBody extends StatefulWidget {
   const DiaryBody({Key key}) : super(key: key);
@@ -24,7 +23,6 @@ class _DiaryBodyState extends State<DiaryBody> {
   final CalendarController _controller = CalendarController();
 
   var _loadDiaryPagesStream;
-  String _headerText;
 
   @override
   void initState() {
@@ -32,7 +30,6 @@ class _DiaryBodyState extends State<DiaryBody> {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     _loadDiaryPagesStream = diaryViewModel.loadDiaryPages();
-    _headerText = "header";
     super.initState();
   }
 
@@ -116,10 +113,11 @@ class _DiaryBodyState extends State<DiaryBody> {
                           0.02),
                       child: FloatingActionButton(
                         onPressed: () {
+                          routerDelegate.pushPage(name: DiaryPageScreen.route);
                           //widget.diaryViewModel.openPage(null);
-                          if (MediaQuery.of(context).orientation != Orientation.landscape) {
-                            routerDelegate.pushPage(name: DiaryPageScreen.route);
-                          }
+                          // if (MediaQuery.of(context).orientation != Orientation.landscape) {
+                          //   routerDelegate.pushPage(name: DiaryPageScreen.route);
+                          // }
                         },
                         materialTapTargetSize: MaterialTapTargetSize.padded,
                         backgroundColor: kPrimaryColor,
@@ -142,11 +140,11 @@ class _DiaryBodyState extends State<DiaryBody> {
   void showDetails(CalendarTapDetails details) {
     if (details.appointments != null) {
       if (details.appointments.isNotEmpty && details.targetElement == CalendarElement.appointment) {
-        final DiaryPage noteDetails = details.appointments[0];
-        //widget.diaryViewModel.openPage(noteDetails);
-        if (MediaQuery.of(context).orientation != Orientation.landscape) {
-          routerDelegate.pushPage(name: DiaryPageScreen.route, arguments: noteDetails);
-        }
+        diaryViewModel.setCurrentDiaryPage(details.appointments[0]);
+        routerDelegate.pushPage(name: DiaryPageScreen.route);
+        // if (MediaQuery.of(context).orientation != Orientation.landscape) {
+        //   routerDelegate.pushPage(name: DiaryPageScreen.route);
+        // }
       }
     }
   }

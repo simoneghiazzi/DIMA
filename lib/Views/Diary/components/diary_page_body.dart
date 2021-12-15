@@ -39,6 +39,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     today = DateTime(now.year, now.month, now.day);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    _diaryPageItem = diaryViewModel.currentDiaryPage;
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
     subscription = subscribeToSuccessViewModel();
@@ -65,7 +66,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
             TopBar(
               text: title,
               isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
-              back: diaryViewModel.clearControllers,
+              back: resetDiaryPage,
               buttons: [
                 if (_diaryPageItem != null && !modifiable && _diaryPageItem.dateTime == today)
                   InkWell(
@@ -117,7 +118,6 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                                   diaryViewModel.submitPage();
                                 }
                                 setState(() {
-                                  //note = diaryViewModel.submittedNote;
                                   modifiable = false;
                                 });
                               },
@@ -291,51 +291,21 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     );
   }
 
-  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    routerDelegate.pop();
+  void resetDiaryPage() {
+    diaryViewModel.resetCurrentDiaryPage();
     diaryViewModel.clearControllers();
-    return true;
   }
 
-  // Future<void> detectChangeOrientation() async {
-  //   if (widget.startOrientation != (MediaQuery.of(context).orientation == Orientation.landscape)) {
-  //     widget.startOrientation = true;
-  //     await Future(() async {
-  //       routerDelegate.pop();
-  //     });
-  //   }
-  // }
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    resetDiaryPage();
+    routerDelegate.pop();
+    return true;
+  }
 
   @override
   void dispose() {
     BackButtonInterceptor.remove(backButtonInterceptor);
     subscription.cancel();
     super.dispose();
-  }
-}
-
-class EntryHeaderImage extends StatelessWidget {
-  final String heroTag;
-  final ImageProvider imageProvider;
-
-  const EntryHeaderImage({
-    Key key,
-    this.heroTag,
-    this.imageProvider,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Hero(
-      tag: imageProvider,
-      child: Container(
-        height: 340.0,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: Colors.grey,
-          image: DecorationImage(colorFilter: ColorFilter.mode(Color(0xFF3C4858), BlendMode.lighten), image: imageProvider, fit: BoxFit.cover),
-        ),
-      ),
-    );
   }
 }
