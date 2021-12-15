@@ -32,18 +32,19 @@ class _AnonymousChatsListScreenState extends State<AnonymousChatsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: MediaQuery.of(context).orientation == Orientation.portrait
-            ? AnonymousChatsListBody()
-            : SplitView(
-                controller: SplitViewController(weights: [0.35, 0.65]),
-                children: [
-                  AnonymousChatsListBody(),
-                  chatViewModel.currentChat == null ? EmptyLandscapeBody() : ChatPageBody(),
-                ],
-                viewMode: SplitViewMode.Horizontal,
-                gripSize: 0.3,
-                gripColor: kPrimaryGreyColor,
-              ));
+      resizeToAvoidBottomInset: false,
+      body: MediaQuery.of(context).orientation == Orientation.portrait
+          ? AnonymousChatsListBody()
+          : SplitView(
+              controller: SplitViewController(weights: [0.35, 0.65]),
+              children: [
+                AnonymousChatsListBody(),
+                chatViewModel.currentChat == null ? EmptyLandscapeBody() : ChatPageBody(),
+              ],
+              viewMode: SplitViewMode.Horizontal,
+              gripSize: 0.3,
+              gripColor: kPrimaryGreyColor,
+            ),
+    );
   }
 }

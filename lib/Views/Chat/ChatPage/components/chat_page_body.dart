@@ -39,8 +39,6 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
 
   @override
   Widget build(BuildContext context) {
-    //detectChangeOrientation();
-
     return Column(
       children: <Widget>[
         chatViewModel.currentChat.peerUser is BaseUser
@@ -85,32 +83,6 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
     routerDelegate.pop();
     return true;
   }
-
-  // Future<void> detectChangeOrientation() async {
-  //   AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-  //   if (widget.startOrientation != (MediaQuery.of(context).orientation == Orientation.landscape)) {
-  //     widget.startOrientation = true;
-  //     await Future(() async {
-  //       if (chatViewModel.conversation.peerUser is Expert) {
-  //         routerDelegate.replaceAllButNumber(2, [
-  //           RouteSettings(
-  //               name: ExpertChatsListScreen.route,
-  //               arguments: ChatPageScreen(
-  //                 startOrientation: true,
-  //               ))
-  //         ]);
-  //       } else {
-  //         routerDelegate.replaceAllButNumber(2, [
-  //           RouteSettings(
-  //               name: ActiveChatsListScreen.route,
-  //               arguments: ChatPageScreen(
-  //                 startOrientation: true,
-  //               ))
-  //         ]);
-  //       }
-  //     });
-  //   }
-  // }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {

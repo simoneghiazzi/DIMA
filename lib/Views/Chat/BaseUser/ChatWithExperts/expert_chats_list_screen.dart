@@ -33,18 +33,19 @@ class _ExpertChatsListScreenState extends State<ExpertChatsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: MediaQuery.of(context).orientation == Orientation.portrait
-            ? ExpertChatsListBody()
-            : SplitView(
-                controller: SplitViewController(weights: [0.35, 0.65]),
-                children: [
-                  ExpertChatsListBody(),
-                  chatViewModel.currentChat == null ? EmptyLandscapeBody() : ChatPageBody(),
-                ],
-                viewMode: SplitViewMode.Horizontal,
-                gripSize: 0.3,
-                gripColor: kPrimaryGreyColor,
-              ));
+      resizeToAvoidBottomInset: false,
+      body: MediaQuery.of(context).orientation == Orientation.portrait
+          ? ExpertChatsListBody()
+          : SplitView(
+              controller: SplitViewController(weights: [0.35, 0.65]),
+              children: [
+                ExpertChatsListBody(),
+                chatViewModel.currentChat == null ? EmptyLandscapeBody() : ChatPageBody(),
+              ],
+              viewMode: SplitViewMode.Horizontal,
+              gripSize: 0.3,
+              gripColor: kPrimaryGreyColor,
+            ),
+    );
   }
 }
