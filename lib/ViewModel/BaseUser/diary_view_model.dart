@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/ViewModel/Forms/diary_form.dart';
 import 'package:sApport/Model/Services/user_service.dart';
-import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
+import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 
 class DiaryViewModel with ChangeNotifier {
@@ -35,43 +35,43 @@ class DiaryViewModel with ChangeNotifier {
   /// Add a new diary page into the DB
   Future<void> submitPage() {
     var now = DateTime.now();
+    _currentDiaryPage = DiaryPage(
+      id: now.millisecondsSinceEpoch.toString(),
+      title: titleTextCtrl.text,
+      content: contentTextCtrl.text,
+      dateTime: now,
+      favourite: false,
+    );
     return _firestoreService
         .addDiaryPageIntoDB(
           _userService.loggedUser.id,
-          DiaryPage(
-            id: now.millisecondsSinceEpoch.toString(),
-            title: titleTextCtrl.text,
-            content: contentTextCtrl.text,
-            dateTime: now,
-            favourite: false,
-          ),
+          _currentDiaryPage,
         )
         .then((value) => _isPageAddedCtrl.add(true))
         .catchError((error) => _isPageAddedCtrl.add(false));
   }
 
-  /// Update the already existing diary page identified by the [pageId] into the DB
-  Future<void> updatePage(String pageId) {
+  /// Update the already existing [_currentDiaryPage] into the DB
+  Future<void> updatePage() {
     var now = DateTime.now();
+    _currentDiaryPage.title = titleTextCtrl.text;
+    _currentDiaryPage.content = contentTextCtrl.text;
+    _currentDiaryPage.dateTime = now;
     return _firestoreService
         .updateDiaryPageIntoDB(
           _userService.loggedUser.id,
-          DiaryPage(
-            id: pageId,
-            title: titleTextCtrl.text,
-            content: contentTextCtrl.text,
-            dateTime: now,
-          ),
+          _currentDiaryPage,
         )
         .then((value) => _isPageAddedCtrl.add(true))
         .catchError((error) => _isPageAddedCtrl.add(false));
   }
 
-  /// Set the [isFavourite] parameter of the diary page identified by the [pageId] into the DB
-  Future<void> setFavourite(String pageId, bool isFavourite) {
+  /// Set the [isFavourite] parameter of the [_currentDiaryPage] into the DB.
+  Future<void> setFavourite(bool isFavourite) {
+    _currentDiaryPage.favourite = isFavourite;
     return _firestoreService.setFavouriteDiaryNotesIntoDB(
       _userService.loggedUser.id,
-      DiaryPage(id: pageId, favourite: isFavourite),
+      _currentDiaryPage,
     );
   }
 

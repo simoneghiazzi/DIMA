@@ -5,9 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/request.dart';
-import 'package:sApport/Model/Chat/message.dart';
+import 'package:sApport/Model/DBItems/message.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
-import 'package:sApport/Model/BaseUser/base_user.dart';
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/Chat/anonymous_chat.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
@@ -101,8 +101,7 @@ class ChatViewModel extends ChangeNotifier {
     return _firestoreService.getRandomUserFromDB(_userService.loggedUser, Utils.randomId()).then((doc) {
       if (doc != null) {
         // Create the random user and update the chat
-        var randomUser = BaseUser();
-        randomUser.setFromDocument(doc);
+        var randomUser = BaseUser.fromDocument(doc);
         setCurrentChat(Request(peerUser: randomUser));
         // Add the "true" value to the new random user stream controller
         _newRandomUserCtrl.add(true);

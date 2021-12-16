@@ -1,4 +1,4 @@
-import 'package:sApport/Model/Chat/message.dart';
+import 'package:sApport/Model/DBItems/message.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/components/date_item.dart';
 import 'package:sApport/Views/Chat/components/message_list_item.dart';
@@ -34,8 +34,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
             padding: EdgeInsets.all(10.0),
             childrenDelegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                Message messageItem = Message();
-                messageItem.setFromDocument(snapshot.data.docs[index]);
+                Message messageItem = Message.fromDocument(snapshot.data.docs[index]);
                 if (index == snapshot.data.docs.length - 1) {
                   return Column(
                     children: [

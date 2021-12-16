@@ -1,8 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/Chat/anonymous_chat.dart';
-import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/expert_chat.dart';
-import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/components/chats_list_constructor.dart';

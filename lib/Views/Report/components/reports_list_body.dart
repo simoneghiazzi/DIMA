@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/BaseUser/report.dart';
+import 'package:sApport/Model/DBItems/BaseUser/report.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
@@ -62,8 +62,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
     // This size provide us total height and width of our screen
     Size size = MediaQuery.of(context).size;
     if (doc != null) {
-      Report report = new Report();
-      report.setFromDocument(doc);
+      Report report = Report.fromDocument(doc);
       String date = DateFormat('yyyy-MM-dd kk:mm').format(report.dateTime);
       return Container(
         child: TextButton(

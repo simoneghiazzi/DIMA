@@ -3,17 +3,17 @@ import 'dart:math';
 import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/utils.dart';
-import 'package:sApport/Model/user.dart';
+import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/request.dart';
-import 'package:sApport/Model/Chat/message.dart';
-import 'package:sApport/Model/Expert/expert.dart';
-import 'package:sApport/Model/BaseUser/report.dart';
+import 'package:sApport/Model/DBItems/message.dart';
+import 'package:sApport/Model/DBItems/BaseUser/report.dart';
 import 'package:sApport/Model/Chat/anonymous_chat.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
-import 'package:sApport/Model/BaseUser/base_user.dart';
-import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
+import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
 
 class FirestoreService {
   // Firestore instance
@@ -350,7 +350,7 @@ class FirestoreService {
         .update({
           "title": diaryPage.data["title"],
           "content": diaryPage.data["content"],
-          "date": diaryPage.data["date"],
+          "dateTime": diaryPage.data["dateTime"],
         })
         .then((value) => print("Diary page updated"))
         .catchError((error) => print("Failed to update the diary note: $error"));

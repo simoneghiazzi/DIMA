@@ -21,7 +21,7 @@ class TopBar extends StatelessWidget {
       child: SafeArea(
         child: Container(
           decoration: BoxDecoration(color: kPrimaryColor),
-          height: size.height / 12,
+          height: size.height / 10,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

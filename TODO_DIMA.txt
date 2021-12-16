@@ -3,10 +3,8 @@ TODO DIMA
 - Pallino rosso nuovi messaggi su chat
 - Immagine notifica più grande
 
-- Aggiornamento chat experts (+/-)
-
 - Delete account (maybe)
-- Grafica (layout tablet/smartphone + DARIOOOO + POPUP FANNO ABB SCHIFO)
+- Grafica (POPUP FANNO ABB SCHIFO)
 - Testing porcoooo
 
 - (Appuntamenti con esperti) 

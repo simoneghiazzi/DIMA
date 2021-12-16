@@ -1,7 +1,7 @@
 import 'dart:convert' as converter;
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
-import 'package:sApport/Model/BaseUser/Map/place.dart';
+import 'package:sApport/Model/Map/place.dart';
 
 class MapService {
   static const _APIkey = "AIzaSyAarrZBb6KLQ3VbSdhHWnbzqcer0vlOacs";

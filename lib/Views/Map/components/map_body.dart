@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:custom_info_window/custom_info_window.dart';
-import 'package:sApport/Model/BaseUser/Map/place.dart';
-import 'package:sApport/Model/Expert/expert.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
+import 'package:sApport/Model/Map/place.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Map/components/map_marker.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
@@ -181,8 +181,7 @@ class _MapBodyState extends State<MapBody> {
   void getMarkers() {
     mapViewModel.loadExperts().then((snapshot) {
       for (var doc in snapshot.docs) {
-        Expert expert = Expert();
-        expert.setFromDocument(doc);
+        Expert expert = Expert.fromDocument(doc);
         _markers.add(
           Marker(
             markerId: MarkerId(expert.data["surname"].toString() + expert.data["lat"].toString() + expert.data["lng"].toString()),

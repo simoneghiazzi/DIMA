@@ -1,10 +1,10 @@
 import 'package:get_it/get_it.dart';
-import 'package:sApport/Model/BaseUser/Map/place.dart';
-import 'package:sApport/Model/Expert/expert.dart';
-import 'package:sApport/Model/Services/map_service.dart';
-import 'package:sApport/Model/user.dart';
-import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
+import 'package:sApport/Model/Map/place.dart';
+import 'package:sApport/Model/DBItems/user.dart';
+import 'package:sApport/Model/Services/map_service.dart';
+import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
 
 class ExpertSignUpForm extends BaseUserSignUpForm {
   // Services

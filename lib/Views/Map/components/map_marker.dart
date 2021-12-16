@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/Model/Expert/expert.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/Views/components/network_avatar.dart';

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/user.dart';
-import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
+import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
 
 class Expert extends User {
@@ -26,6 +25,27 @@ class Expert extends User {
     this.profilePhoto,
   }) : super(COLLECTION, HOMEPAGE_ROUTE, id: id, name: name, surname: surname, birthDate: birthDate, email: email);
 
+  /// Create an instance of the [Expert] form the [doc] fields retrieved from the FireBase DB.
+  factory Expert.fromDocument(DocumentSnapshot doc) {
+    try {
+      return Expert(
+        id: doc.id,
+        name: doc.get("name"),
+        surname: doc.get("surname"),
+        birthDate: doc.get("birthDate").toDate(),
+        latitude: doc.get("lat"),
+        longitude: doc.get("lng"),
+        address: doc.get("address"),
+        email: doc.get("email"),
+        phoneNumber: doc.get("phoneNumber"),
+        profilePhoto: doc.get("profilePhoto"),
+      );
+    } catch (e) {
+      print("Error in creating the expert from the document snapshot: $e");
+      return null;
+    }
+  }
+
   @override
   void setFromDocument(DocumentSnapshot doc) {
     try {
@@ -40,7 +60,7 @@ class Expert extends User {
       phoneNumber = doc.get("phoneNumber");
       profilePhoto = doc.get("profilePhoto");
     } catch (e) {
-      print("Error in setting the expert from the document snapshot: $e");
+      print("Error in setting the message from the document snapshot: $e");
     }
   }
 

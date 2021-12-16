@@ -1,4 +1,4 @@
-import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
+import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';

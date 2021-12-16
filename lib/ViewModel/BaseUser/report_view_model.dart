@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/BaseUser/report.dart';
+import 'package:sApport/Model/DBItems/BaseUser/report.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 

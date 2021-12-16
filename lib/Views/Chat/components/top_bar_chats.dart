@@ -1,4 +1,4 @@
-import 'package:sApport/Model/Expert/expert.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
@@ -12,9 +12,8 @@ class TopBarChats extends StatelessWidget {
   final String text;
   final CircleAvatar circleAvatar;
   final NetworkAvatar networkAvatar;
-  final bool isPortrait;
 
-  TopBarChats({Key key, @required this.text, this.back, this.circleAvatar, this.networkAvatar, this.isPortrait = false}) : super(key: key);
+  TopBarChats({Key key, @required this.text, this.back, this.circleAvatar, this.networkAvatar}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +24,7 @@ class TopBarChats extends StatelessWidget {
       color: kPrimaryColor,
       child: SafeArea(
         child: Container(
-          height: size.height / 12,
+          height: size.height / 10,
           decoration: BoxDecoration(color: kPrimaryColor),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -34,21 +33,21 @@ class TopBarChats extends StatelessWidget {
                 padding: EdgeInsets.only(right: 20),
                 child: Row(
                   children: <Widget>[
-                    isPortrait
-                        ? Container()
-                        : IconButton(
-                            icon: Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              color: Colors.white,
-                            ),
-                            onPressed: () async {
-                              FocusScope.of(context).unfocus();
-                              if (back != null) {
-                                back();
-                              }
-                              routerDelegate.pop();
-                            },
-                          ),
+                    if (MediaQuery.of(context).orientation == Orientation.portrait) ...[
+                      IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: Colors.white,
+                        ),
+                        onPressed: () async {
+                          FocusScope.of(context).unfocus();
+                          if (back != null) {
+                            back();
+                          }
+                          routerDelegate.pop();
+                        },
+                      ),
+                    ],
                     SizedBox(
                       width: size.width * 0.01,
                     ),

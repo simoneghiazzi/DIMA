@@ -1,6 +1,5 @@
 import 'package:sApport/Model/Chat/chat.dart';
-import 'package:sApport/Model/BaseUser/base_user.dart';
-import 'package:sApport/Model/user.dart';
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 
 /// Anonymous chat of the base user with another base user.
 ///

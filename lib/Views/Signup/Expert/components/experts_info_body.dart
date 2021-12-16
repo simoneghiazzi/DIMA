@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:sApport/Model/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/Forms/expert_signup_form.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';

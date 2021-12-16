@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:intl/intl.dart';
-import 'package:sApport/Model/BaseUser/Diary/diary_page.dart';
+import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/Views/components/top_bar.dart';
@@ -40,7 +40,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     _diaryPageItem = diaryViewModel.currentDiaryPage;
-    if (_diaryPageItem == null) {
+    if (_diaryPageItem.id == null) {
       modifiable = true;
       DateTime now = DateTime.now();
       title = formatter.format(now);
@@ -67,7 +67,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
               text: title,
               back: resetDiaryPage,
               buttons: [
-                if (_diaryPageItem != null && !modifiable && isPageOfToday())
+                if (_diaryPageItem.id != null && !modifiable && isPageOfToday())
                   InkWell(
                       child: InkResponse(
                     onTap: () {
@@ -84,12 +84,12 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white),
                     ),
                   )),
-                if (_diaryPageItem != null && !modifiable)
+                if (_diaryPageItem.id != null && !modifiable)
                   InkWell(
                     child: InkResponse(
                       onTap: () {
                         _diaryPageItem.favourite = !_diaryPageItem.favourite;
-                        diaryViewModel.setFavourite(_diaryPageItem.id, _diaryPageItem.favourite);
+                        diaryViewModel.setFavourite(_diaryPageItem.favourite);
                         setState(() {});
                       },
                       child: Container(
@@ -111,8 +111,8 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                           if (snapshot.data ?? false || _diaryPageItem != null) {
                             return InkResponse(
                               onTap: () {
-                                if (_diaryPageItem != null) {
-                                  diaryViewModel.updatePage(_diaryPageItem.id);
+                                if (_diaryPageItem.id != null) {
+                                  diaryViewModel.updatePage();
                                 } else {
                                   diaryViewModel.submitPage();
                                 }
