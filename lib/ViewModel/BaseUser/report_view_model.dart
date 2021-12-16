@@ -1,78 +1,41 @@
 import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/random_id.dart';
-import 'package:sApport/Model/BaseUser/report.dart';
-import 'package:sApport/Model/Services/firestore_service.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sApport/Model/DBItems/BaseUser/report.dart';
+import 'package:sApport/Model/Services/user_service.dart';
+import 'package:sApport/Model/Services/firestore_service.dart';
 
-class ReportViewModel extends FormBloc<String, String> {
-  FirestoreService _firestoreService = GetIt.I<FirestoreService>();
-  final String loggedId;
-  Report openedReport;
-  var _isReportOpenController = StreamController<bool>.broadcast();
-  var _infoReportOpenController = StreamController<Report>.broadcast();
+class ReportViewModel extends ChangeNotifier {
+  // Services
+  final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
+  final UserService _userService = GetIt.I<UserService>();
 
-  final reportCategory = SelectFieldBloc(items: [
-    'Psychological violence',
-    'Physical violence',
-    'Threats',
-    'Harassment'
-  ], validators: [
-    FieldBlocValidators.required,
-  ]);
+  Report _currentReport;
 
-  final reportText = TextFieldBloc(validators: [
-    FieldBlocValidators.required,
-  ]);
-
-  ReportViewModel({@required this.loggedId}) {
-    addFieldBlocs(fieldBlocs: [reportCategory, reportText]);
-  }
-
-  @override
-  void onSubmitting() async {
-    _firestoreService
-        .addReportIntoDB(
-          loggedId,
-          Report(
-            id: RandomId.generate(idLength: 20),
-            category: reportCategory.value,
-            description: reportText.value,
-            date: DateTime.now(),
-          ),
-        )
-        .then((value) => emitSuccess(canSubmitAgain: true))
-        .catchError((error) => emitFailure());
-  }
-
-  void clearControllers() {
-    reportCategory.clear();
-    reportText.clear();
-  }
-
-  void openReport(Report report) {
-    openedReport = report;
-    _isReportOpenController.add(true);
-    _infoReportOpenController.add(report);
-  }
-
-  void checkOpenReport() {
-    if (openedReport != null) _isReportOpenController.add(true);
-  }
-
-  // Get all the reports of a user from the DB
+  /// Get the stream of reports.
   Stream<QuerySnapshot> loadReports() {
     try {
-      return _firestoreService.getReportsFromDB(loggedId);
+      return _firestoreService.getReportsFromDB(_userService.loggedUser.id);
     } catch (e) {
-      print(e);
+      print("Failed to get the stream of reports: $e");
       return null;
     }
   }
 
-  Stream<bool> get isReportOpen => _isReportOpenController.stream;
-  Stream<Report> get infoReportOpen => _infoReportOpenController.stream;
+  /// Set the [report] as the [_currentReport].
+  void setCurrentReport(Report report) {
+    _currentReport = report;
+    print("Current report setted");
+    notifyListeners();
+  }
+
+  /// Reset the [_currentReport].
+  void resetCurrentReport() {
+    _currentReport = null;
+    print("Current report resetted");
+  }
+
+  /// Get the [_currentReport] instance.
+  Report get currentReport => _currentReport;
 }

@@ -1,7 +1,9 @@
-import 'package:sApport/Model/Services/collections.dart';
-import 'package:sApport/Model/user.dart';
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
+import 'package:sApport/Model/Chat/chat.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
 import 'package:sApport/constants.dart';
@@ -10,41 +12,46 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ChatListItem extends StatefulWidget {
-  final String userId;
-  final Function createUserCallback;
-  final Collection peerCollection;
+  final Chat chatItem;
 
-  ChatListItem({Key key, @required this.userId, @required this.peerCollection, @required this.createUserCallback}) : super(key: key);
+  ChatListItem({Key key, @required this.chatItem}) : super(key: key);
 
   @override
   _ChatListItemState createState() => _ChatListItemState();
 }
 
 class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClientMixin {
+  UserViewModel userViewModel;
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
   Size size;
 
-  User userItem;
+  var _getPeerUserDocFuture;
+  Chat _chatItem;
+  var _isLoaded = false;
 
   @override
   void initState() {
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    _chatItem = widget.chatItem;
+    _getPeerUserDocFuture = chatViewModel.getPeerUserDoc(widget.chatItem.peerUser.collection, widget.chatItem.peerUser.id);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     size = MediaQuery.of(context).size;
     super.build(context);
-    if (userItem == null) {
+    if (!_isLoaded) {
       return FutureBuilder(
-          future: chatViewModel.getUser(widget.peerCollection, widget.userId),
+          future: _getPeerUserDocFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData) {
-                userItem = widget.createUserCallback(snapshot.data.docs[0]);
+                _isLoaded = true;
+                widget.chatItem.peerUser.setFromDocument(snapshot.data.docs[0]);
                 return listItem();
               } else {
                 return Container();
@@ -64,7 +71,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            userItem.collection == Collection.BASE_USERS
+            _chatItem.peerUser is BaseUser
                 ? CircleAvatar(
                     backgroundColor: Colors.transparent,
                     radius: 25.0,
@@ -74,7 +81,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
                     ),
                   )
                 : NetworkAvatar(
-                    img: userItem.getData()['profilePhoto'],
+                    img: _chatItem.peerUser.data['profilePhoto'],
                     radius: 25.0,
                   ),
             SizedBox(
@@ -82,14 +89,14 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
             ),
             // Profile info
             Flexible(
-              child: userItem.collection == Collection.EXPERTS
+              child: _chatItem.peerUser is BaseUser
                   ? Text(
-                      userItem.name + " " + userItem.surname,
+                      _chatItem.peerUser.name + (userViewModel.loggedUser is Expert ? " " + _chatItem.peerUser.surname : ""),
                       maxLines: 1,
                       style: TextStyle(color: kPrimaryColor, fontSize: 18),
                     )
                   : Text(
-                      userItem.name + (chatViewModel.conversation.senderUser.collection == Collection.EXPERTS ? " " + userItem.surname : ""),
+                      _chatItem.peerUser.name + " " + _chatItem.peerUser.surname,
                       maxLines: 1,
                       style: TextStyle(color: kPrimaryColor, fontSize: 18),
                     ),
@@ -97,8 +104,10 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
           ],
         ),
         onPressed: () {
-          chatViewModel.chatWithUser(userItem);
-          routerDelegate.pushPage(name: ChatPageScreen.route);
+          chatViewModel.setCurrentChat(_chatItem);
+          if (MediaQuery.of(context).orientation == Orientation.portrait) {
+            routerDelegate.pushPage(name: ChatPageScreen.route);
+          }
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(kPrimaryLightColor),

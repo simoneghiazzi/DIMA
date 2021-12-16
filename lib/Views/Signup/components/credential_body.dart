@@ -1,59 +1,40 @@
 import 'dart:async';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:sApport/Model/user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_info_view_model.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
-import 'package:sApport/Views/Signup/components/background.dart';
-import 'package:sApport/Views/components/already_have_an_account_check.dart';
+import 'package:sApport/Views/Login/components/background.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/rounded_input_field.dart';
 import 'package:sApport/Views/components/rounded_password_field.dart';
 import 'package:provider/provider.dart';
 
 class CredentialBody extends StatefulWidget {
-  final BaseUserInfoViewModel infoViewModel;
-  final UserViewModel userViewModel;
-
-  CredentialBody({
-    Key key,
-    @required this.infoViewModel,
-    @required this.userViewModel,
-  }) : super(key: key);
-
   @override
-  _CredentialBodyState createState() => _CredentialBodyState(
-        infoViewModel: this.infoViewModel,
-      );
+  _CredentialBodyState createState() => _CredentialBodyState();
 }
 
 class _CredentialBodyState extends State<CredentialBody> {
-  GlobalKey<State> _keyLoader;
-  final BaseUserInfoViewModel infoViewModel;
+  // View Models
   AuthViewModel authViewModel;
+  UserViewModel userViewModel;
   AppRouterDelegate routerDelegate;
-  User user;
-  bool loading = true;
-  StreamSubscription<bool> subscriber;
 
-  _CredentialBodyState({
-    @required this.infoViewModel,
-  });
+  // Subscriber
+  StreamSubscription<bool> subscriber;
 
   @override
   void initState() {
-    _keyLoader = new GlobalKey<State>();
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    subscriber = subscribeToViewModel();
+    subscriber = subscribeToUserCreatedStream();
     BackButtonInterceptor.add(backButtonInterceptor);
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => authViewModel.getData());
+    WidgetsBinding.instance.addPostFrameCallback((_) => authViewModel.getData());
     super.initState();
   }
 
@@ -65,84 +46,105 @@ class _CredentialBodyState extends State<CredentialBody> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: size.height * 0.08),
             Text(
-              "Email and password",
-              style: TextStyle(
-                color: kPrimaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
+              "sApport",
+              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
             ),
-            SizedBox(height: size.height * 0.08),
-            Image.asset(
-              "assets/icons/logo.png",
-              height: size.height * 0.15,
-            ),
-            SizedBox(height: size.height * 0.06),
+            SizedBox(height: size.height * 0.02),
             StreamBuilder<String>(
                 stream: authViewModel.loginForm.errorEmailText,
                 builder: (context, snapshot) {
                   return RoundedInputField(
                     hintText: "Your Email",
-                    controller: authViewModel.emailCtrl,
+                    controller: authViewModel.emailTextCtrl,
                     errorText: snapshot.data,
                   );
                 }),
             RoundedPasswordField(
-              controller: authViewModel.pswCtrl,
+              controller: authViewModel.pswTextCtrl,
             ),
             StreamBuilder<String>(
-                stream: authViewModel.loginForm.errorRepeatPasswordText,
-                builder: (context, snapshot) {
-                  return RoundedPasswordField(
-                      controller: authViewModel.repeatPswCtrl,
-                      hintText: "Confirm Password",
-                      errorText: snapshot.data);
-                }),
-            StreamBuilder(
-                stream: authViewModel.loginForm.isSignUpEnabled,
-                builder: (context, snapshot) {
-                  return RoundedButton(
-                    text: "SIGN UP",
-                    press: () async {
-                      FocusScope.of(context).unfocus();
-                      LoadingDialog.show(context, _keyLoader);
-                      infoViewModel.email = authViewModel.emailCtrl.text;
-                      user = widget.userViewModel.createUser(infoViewModel);
-                      await authViewModel.signUpUser(user);
-                    },
-                    enabled: snapshot.data ?? false,
-                  );
-                }),
-            SizedBox(height: size.height * 0.01),
-            StreamBuilder<String>(
-                stream: authViewModel.authMessage,
-                builder: (context, snapshot) {
-                  return RichText(
-                      text: TextSpan(
-                          text: snapshot.data,
-                          style: TextStyle(color: Colors.red, fontSize: 15)));
-                }),
-            SizedBox(height: size.height * 0.02),
-            AlreadyHaveAnAccountCheck(
-              login: false,
-              press: () {
-                authViewModel.clearControllers();
-                routerDelegate.replaceAllButNumber(
-                    1, [RouteSettings(name: LoginScreen.route)]);
+              stream: authViewModel.loginForm.errorRepeatPasswordText,
+              builder: (context, snapshot) {
+                return RoundedPasswordField(controller: authViewModel.repeatPswTextCtrl, hintText: "Confirm Password", errorText: snapshot.data);
               },
             ),
-            SizedBox(height: size.height * 0.06),
+            SizedBox(height: size.height * 0.04),
+            StreamBuilder(
+              stream: authViewModel.loginForm.isSignUpEnabled,
+              builder: (context, snapshot) {
+                return RoundedButton(
+                  text: "SIGN UP",
+                  press: () async {
+                    FocusScope.of(context).unfocus();
+                    LoadingDialog.show(context);
+                    userViewModel.loggedUser.email = authViewModel.emailTextCtrl.text;
+                    authViewModel.signUpUser(userViewModel.loggedUser);
+                  },
+                  enabled: snapshot.data ?? false,
+                );
+              },
+            ),
+            SizedBox(height: size.height * 0.05),
+            StreamBuilder<String>(
+              stream: authViewModel.authMessage,
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data.isNotEmpty) {
+                  return Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(right: 10, left: 10),
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: snapshot.data,
+                            style: TextStyle(color: Colors.red, fontSize: 17, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: size.height * 0.05),
+                    ],
+                  );
+                } else {
+                  return SizedBox(height: size.height * 0.05);
+                }
+              },
+            ),
+            GestureDetector(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Already have an account? ",
+                    style: TextStyle(
+                      color: kPrimaryColor,
+                      fontSize: 15,
+                    ),
+                  ),
+                  Text(
+                    "Sign In",
+                    style: TextStyle(
+                      color: kPrimaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
+              onTap: () {
+                authViewModel.clearControllers();
+                routerDelegate.replaceAllButNumber(1, routeSettingsList: [RouteSettings(name: LoginScreen.route)]);
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
-  StreamSubscription<bool> subscribeToViewModel() {
+  StreamSubscription<bool> subscribeToUserCreatedStream() {
     return authViewModel.isUserCreated.listen((isUserCreated) {
-      LoadingDialog.hide(context, _keyLoader);
+      LoadingDialog.hide(context);
       if (isUserCreated) {
         showSnackBar();
         routerDelegate.pushPage(name: LoginScreen.route);
@@ -152,16 +154,8 @@ class _CredentialBodyState extends State<CredentialBody> {
 
   void showSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Text('Please check your email for the verification link.'),
-      action: SnackBarAction(
-        label: 'RESEND EMAIL',
-        onPressed: () {
-          authViewModel.resendEmailVerification(user);
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          showSnackBar();
-        },
-      ),
-      duration: const Duration(seconds: 100),
+      content: const Text("Please check your email for the verification link."),
+      duration: const Duration(seconds: 10),
     ));
   }
 

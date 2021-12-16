@@ -1,9 +1,9 @@
-import 'package:sApport/Model/Chat/message.dart';
+import 'package:intl/intl.dart' as Date;
+import 'package:sApport/Model/DBItems/message.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MessageListItem extends StatefulWidget {
@@ -17,24 +17,36 @@ class MessageListItem extends StatefulWidget {
 }
 
 class _MessageListItemState extends State<MessageListItem> {
+  ChatViewModel chatViewModel;
+  UserViewModel userViewModel;
+
+  double _containerWidth;
+
+  @override
+  void initState() {
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     Size size = MediaQuery.of(context).size;
+    _containerWidth = calcTextSize(widget.messageItem.data['content'], TextStyle(fontFamily: "UbuntuCondensed")).width + size.width / 5;
     if (widget.messageItem != null) {
-      if (widget.messageItem.getData()['idFrom'] == chatViewModel.conversation.senderUser.id) {
+      if (widget.messageItem.data['idFrom'] == userViewModel.loggedUser.id) {
         // Right (my message)
         return Row(
           children: [
             Container(
-              width: size.width / 3,
+              width: _containerWidth < size.width / 1.5 ? _containerWidth : size.width / 1.5,
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Flexible(
                   child: Container(
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                     child: Text(
-                      widget.messageItem.getData()['content'],
-                      style: GoogleFonts.ubuntuCondensed(color: kPrimaryColor),
+                      widget.messageItem.data['content'],
+                      style: TextStyle(fontFamily: "UbuntuCondensed", color: kPrimaryColor),
                     ),
                   ),
                 ),
@@ -42,8 +54,8 @@ class _MessageListItemState extends State<MessageListItem> {
                 Container(
                   padding: EdgeInsets.only(right: 8, bottom: 5),
                   child: Text(
-                    DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.messageItem.getData()['timestamp'])),
-                    style: TextStyle(color: greyColor, fontSize: 10.0, fontStyle: FontStyle.italic),
+                    Date.DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.messageItem.data['timestamp'])),
+                    style: TextStyle(color: kPrimaryGreyColor, fontSize: 10.0, fontStyle: FontStyle.italic),
                   ),
                 )
               ]),
@@ -58,14 +70,14 @@ class _MessageListItemState extends State<MessageListItem> {
         return Row(
           children: [
             Container(
-              width: size.width / 3,
+              width: _containerWidth < size.width / 1.5 ? _containerWidth : size.width / 1.5,
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Flexible(
                   child: Container(
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                     child: Text(
-                      widget.messageItem.getData()['content'],
-                      style: GoogleFonts.ubuntuCondensed(color: Colors.white),
+                      widget.messageItem.data['content'],
+                      style: TextStyle(fontFamily: "UbuntuCondensed", color: Colors.white),
                     ),
                   ),
                 ),
@@ -73,8 +85,8 @@ class _MessageListItemState extends State<MessageListItem> {
                 Container(
                   padding: EdgeInsets.only(right: 8, bottom: 5),
                   child: Text(
-                    DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.messageItem.getData()['timestamp'])),
-                    style: TextStyle(color: greyColor, fontSize: 10.0, fontStyle: FontStyle.italic),
+                    Date.DateFormat('kk:mm').format(DateTime.fromMillisecondsSinceEpoch(widget.messageItem.data['timestamp'])),
+                    style: TextStyle(color: kPrimaryGreyColor, fontSize: 10.0, fontStyle: FontStyle.italic),
                   ),
                 )
               ]),
@@ -88,5 +100,14 @@ class _MessageListItemState extends State<MessageListItem> {
     } else {
       return SizedBox.shrink();
     }
+  }
+
+  Size calcTextSize(String text, TextStyle style) {
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textScaleFactor: WidgetsBinding.instance.window.textScaleFactor,
+      textDirection: TextDirection.ltr,
+    )..layout();
+    return textPainter.size;
   }
 }

@@ -1,11 +1,8 @@
 import 'dart:async';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:custom_info_window/custom_info_window.dart';
-import 'package:sApport/Model/BaseUser/Map/geometry.dart';
-import 'package:sApport/Model/BaseUser/Map/location.dart';
-import 'package:sApport/Model/BaseUser/Map/place.dart';
-import 'package:sApport/Model/BaseUser/Map/place_search.dart';
-import 'package:sApport/Model/Expert/expert.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
+import 'package:sApport/Model/Map/place.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Map/components/map_marker.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
@@ -25,14 +22,11 @@ class MapBody extends StatefulWidget {
 class _MapBodyState extends State<MapBody> {
   GoogleMapController mapController;
   MapViewModel mapViewModel;
-  Position userLocation;
   StreamSubscription<Place> subscriber;
   AppRouterDelegate routerDelegate;
   var isPositionSearched = false;
 
   Set<Marker> _markers = Set<Marker>();
-
-  TextEditingController textController = TextEditingController();
 
   CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
 
@@ -42,6 +36,8 @@ class _MapBodyState extends State<MapBody> {
   //For placing custom markers on the map
   BitmapDescriptor pinLocationIcon;
 
+  var _loadCurrentPositionFuture;
+
   @override
   void initState() {
     mapViewModel = Provider.of<MapViewModel>(context, listen: false);
@@ -49,34 +45,34 @@ class _MapBodyState extends State<MapBody> {
 
     subscriber = subscribeToViewModel();
     // For setting the map style
-    rootBundle.loadString('assets/map_style.txt').then((string) {
+    rootBundle.loadString("assets/map_style.txt").then((string) {
       _mapStyle = string;
     });
 
     // Icon used for custom markers
-    BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 1, size: Size(2, 2)), 'assets/icons/pin.png').then((onValue) {
+    BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 1, size: Size(2, 2)), "assets/icons/pin.png").then((onValue) {
       pinLocationIcon = onValue;
     });
 
     getMarkers();
 
-    textController.addListener(() {
-      mapViewModel.searchPlaces(textController.text);
-    });
-
     if (!mapViewModel.positionPermission.isGranted) {
       mapViewModel.askPermission().then((permission) {
         if (permission) {
-          setState(() {});
+          setState(() {
+            _loadCurrentPositionFuture = mapViewModel.loadCurrentPosition();
+          });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(mapViewModel.positionPermission.isPermanentlyDenied
-                ? 'You cannot access your current position. Enable the location permission in the device settings.'
-                : 'You cannot access your current position.'),
+                ? "You cannot access your current position. Enable the location permission in the device settings."
+                : "You cannot access your current position."),
             duration: const Duration(seconds: 5),
           ));
         }
       });
+    } else {
+      _loadCurrentPositionFuture = mapViewModel.loadCurrentPosition();
     }
 
     super.initState();
@@ -89,7 +85,7 @@ class _MapBodyState extends State<MapBody> {
       if (mapViewModel.positionPermission.isGranted) ...[
         Center(
           child: FutureBuilder<Position>(
-              future: mapViewModel.uploadPosition(),
+              future: _loadCurrentPositionFuture,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return buildMap(lat: snapshot.data.latitude, lng: snapshot.data.longitude);
@@ -103,9 +99,9 @@ class _MapBodyState extends State<MapBody> {
           alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
           child: FloatingActionButton(
             onPressed: () async {
-              textController.clear();
-              var pos = await mapViewModel.uploadPosition();
-              _goToPlace(Place(geometry: Geometry(location: Location(lat: pos.latitude, lng: pos.longitude))));
+              mapViewModel.clearControllers();
+              var pos = await mapViewModel.loadCurrentPosition();
+              _goToPlace(LatLng(pos.latitude, pos.longitude));
             },
             materialTapTargetSize: MaterialTapTargetSize.padded,
             backgroundColor: kPrimaryColor,
@@ -120,8 +116,8 @@ class _MapBodyState extends State<MapBody> {
         buildMap(),
       ],
       buildSearchBar(),
-      StreamBuilder<List<PlaceSearch>>(
-          stream: mapViewModel.places,
+      StreamBuilder(
+          stream: mapViewModel.autocompletedPlaces,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var height = snapshot.data.length * 62.0;
@@ -154,13 +150,12 @@ class _MapBodyState extends State<MapBody> {
                         return ListTile(
                             contentPadding: EdgeInsets.only(top: 2, bottom: 2, left: 15, right: 5),
                             title: Text(
-                              snapshot.data[index].description,
+                              snapshot.data[index].address,
                               style: TextStyle(color: kPrimaryColor),
                             ),
                             onTap: () {
                               isPositionSearched = true;
-                              mapViewModel.setSelectedLocation(snapshot.data[index].placeId);
-                              textController.text = snapshot.data[index].description;
+                              mapViewModel.searchPlace(snapshot.data[index].placeId);
                               FocusManager.instance.primaryFocus?.unfocus();
                             });
                       }),
@@ -184,19 +179,18 @@ class _MapBodyState extends State<MapBody> {
   }
 
   void getMarkers() {
-    mapViewModel.getMarkers().then((snapshot) {
+    mapViewModel.loadExperts().then((snapshot) {
       for (var doc in snapshot.docs) {
-        Expert expert = Expert();
-        expert.setFromDocument(doc);
+        Expert expert = Expert.fromDocument(doc);
         _markers.add(
           Marker(
-            markerId: MarkerId(expert.getData()['surname'] + expert.getData()['lat'].toString() + expert.getData()['lng'].toString()),
-            position: LatLng(expert.getData()['lat'], expert.getData()['lng']),
+            markerId: MarkerId(expert.data["surname"].toString() + expert.data["lat"].toString() + expert.data["lng"].toString()),
+            position: LatLng(expert.data["lat"], expert.data["lng"]),
             icon: pinLocationIcon,
             onTap: () {
               _customInfoWindowController.addInfoWindow(
                 MapMarker(expert: expert),
-                LatLng(expert.getData()['lat'], expert.getData()['lng']),
+                LatLng(expert.data["lat"], expert.data["lng"]),
               );
             },
           ),
@@ -207,22 +201,21 @@ class _MapBodyState extends State<MapBody> {
   }
 
   StreamSubscription<Place> subscribeToViewModel() {
-    return mapViewModel.location.listen((place) {
+    return mapViewModel.selectedPlace.listen((place) {
       if (place != null) {
-        _goToPlace(place);
+        _goToPlace(LatLng(place.lat, place.lng));
       } else {
         print("Error, search again");
       }
     });
   }
 
-  Future<void> _goToPlace(Place place) async {
+  Future<void> _goToPlace(LatLng latLng) async {
     mapController.animateCamera(
       CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(place.geometry.location.lat, place.geometry.location.lng), zoom: 15),
+        CameraPosition(target: latLng, zoom: 15),
       ),
     );
-    mapViewModel.searchPlaces("");
   }
 
   Widget buildMap({lat = 45.478195, lng = 9.2256787}) {
@@ -257,8 +250,8 @@ class _MapBodyState extends State<MapBody> {
   }
 
   Widget buildSearchBar() {
-    return StreamBuilder<List<PlaceSearch>>(
-        stream: mapViewModel.places,
+    return StreamBuilder(
+        stream: mapViewModel.autocompletedPlaces,
         builder: (context, snapshot) {
           return Positioned(
             top: 50,
@@ -303,17 +296,17 @@ class _MapBodyState extends State<MapBody> {
                     cursorColor: kPrimaryColor,
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.go,
-                    controller: textController,
+                    controller: mapViewModel.searchTextCtrl,
                     decoration: InputDecoration(
                         fillColor: kPrimaryColor,
                         border: InputBorder.none,
                         hintText: "Search place",
                         suffixIcon: IconButton(
-                          icon: (textController.text.trim() != '') ? Icon(Icons.cancel) : Icon(Icons.search_rounded),
+                          icon: (mapViewModel.searchTextCtrl.text.trim() != "") ? Icon(Icons.cancel) : Icon(Icons.search_rounded),
                           color: kPrimaryColor,
                           onPressed: () {
-                            if (textController.text.trim() != '') {
-                              textController.clear();
+                            if (mapViewModel.searchTextCtrl.text.trim() != "") {
+                              mapViewModel.clearControllers();
                               FocusScopeNode currentFocus = FocusScope.of(context);
                               if (!currentFocus.hasPrimaryFocus) {
                                 currentFocus.unfocus();
@@ -321,13 +314,15 @@ class _MapBodyState extends State<MapBody> {
                             }
                           },
                         )),
+                    onChanged: (value) => mapViewModel.autocompleteSearchedPlace(),
                     onTap: () {
                       _customInfoWindowController.hideInfoWindow();
                       if (isPositionSearched) {
-                        textController.clear();
+                        mapViewModel.searchTextCtrl.clear();
                         isPositionSearched = false;
                       }
                     },
+                    onSubmitted: (value) async => mapViewModel.searchPlace((await mapViewModel.firstSimilarPlace(value)).placeId),
                   ),
                 ),
               ]),
@@ -339,7 +334,6 @@ class _MapBodyState extends State<MapBody> {
   @override
   void dispose() {
     subscriber.cancel();
-    textController.dispose();
     _customInfoWindowController.dispose();
     super.dispose();
   }

@@ -1,6 +1,5 @@
-import 'package:sApport/Model/Chat/active_chat.dart';
 import 'package:sApport/Model/Chat/expert_chat.dart';
-import 'package:sApport/Model/Expert/expert.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
@@ -29,7 +28,6 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    initExpertChats();
     super.initState();
   }
 
@@ -232,9 +230,15 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                             ),
                           ),
                           onTap: () {
-                            chatViewModel.chatWithUser(widget.expert);
-                            routerDelegate.replaceAllButNumber(
-                                2, [RouteSettings(name: ExpertChatsListScreen.route), RouteSettings(name: ChatPageScreen.route)]);
+                            chatViewModel.setCurrentChat(ExpertChat(peerUser: widget.expert));
+                            if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                              routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                                RouteSettings(name: ExpertChatsListScreen.route),
+                                RouteSettings(name: ChatPageScreen.route),
+                              ]);
+                            } else {
+                              routerDelegate.replaceAllButNumber(2, routeSettingsList: [RouteSettings(name: ExpertChatsListScreen.route)]);
+                            }
                           },
                         ),
                       ),
@@ -268,14 +272,9 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
     );
   }
 
-  void initExpertChats() {
-    chatViewModel.conversation.senderUserChat = ExpertChat();
-    chatViewModel.conversation.peerUserChat = ActiveChat();
-  }
-
   void openMaps() async {
-    var lat = widget.expert.latLng.latitude;
-    var lng = widget.expert.latLng.longitude;
+    var lat = widget.expert.latitude;
+    var lng = widget.expert.longitude;
     var uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
     if (await canLaunch(uri.toString())) {
       await launch(uri.toString());

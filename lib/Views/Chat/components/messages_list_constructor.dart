@@ -1,4 +1,4 @@
-import 'package:sApport/Model/Chat/message.dart';
+import 'package:sApport/Model/DBItems/message.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/components/date_item.dart';
 import 'package:sApport/Views/Chat/components/message_list_item.dart';
@@ -13,9 +13,12 @@ class MessagesListConstructor extends StatefulWidget {
 class _MessagesListConstructorState extends State<MessagesListConstructor> {
   ChatViewModel chatViewModel;
 
+  var _loadMessagesStream;
+
   @override
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    _loadMessagesStream = chatViewModel.loadMessages();
     super.initState();
   }
 
@@ -23,7 +26,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
   Widget build(BuildContext context) {
     return Flexible(
         child: StreamBuilder(
-      stream: chatViewModel.loadMessages(),
+      stream: _loadMessagesStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return ListView.custom(
@@ -31,8 +34,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
             padding: EdgeInsets.all(10.0),
             childrenDelegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                Message messageItem = Message();
-                messageItem.setFromDocument(snapshot.data.docs[index]);
+                Message messageItem = Message.fromDocument(snapshot.data.docs[index]);
                 if (index == snapshot.data.docs.length - 1) {
                   return Column(
                     children: [

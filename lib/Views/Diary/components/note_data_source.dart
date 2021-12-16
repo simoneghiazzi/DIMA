@@ -1,23 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/BaseUser/Diary/note.dart';
+import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class NoteDataSource extends CalendarDataSource {
-  DiaryViewModel diaryViewModel;
-
   NoteDataSource(List<DocumentSnapshot> docs, DiaryViewModel diaryViewModel) {
-    this.diaryViewModel = diaryViewModel;
     var today = DateTime.now();
-    List<Note> source = List.from([]);
+    List<DiaryPage> source = List.from([]);
     for (DocumentSnapshot doc in docs) {
-      Note n = Note();
-      n.setFromDocument(doc);
+      DiaryPage n = DiaryPage.fromDocument(doc);
       source.add(n);
-      if (n.date == DateTime(today.year, today.month, today.day)) {
+      if (n.dateTime.day == today.day && n.dateTime.month == today.month && n.dateTime.year == today.year) {
         diaryViewModel.hasNoteToday = true;
+      } else {
+        diaryViewModel.hasNoteToday = false;
       }
     }
     appointments = source;
@@ -25,13 +23,13 @@ class NoteDataSource extends CalendarDataSource {
 
   @override
   DateTime getStartTime(int index) {
-    DateTime date = appointments[index].date;
+    DateTime date = appointments[index].dateTime;
     return DateTime(date.year, date.month, date.day);
   }
 
   @override
   DateTime getEndTime(int index) {
-    DateTime date = appointments[index].date;
+    DateTime date = appointments[index].dateTime;
     return DateTime(date.year, date.month, date.day);
   }
 

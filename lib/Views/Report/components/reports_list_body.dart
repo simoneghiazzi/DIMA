@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/BaseUser/report.dart';
+import 'package:sApport/Model/DBItems/BaseUser/report.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
@@ -12,22 +12,23 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class ReportsListBody extends StatefulWidget {
-  final ReportViewModel reportViewModel;
-
-  ReportsListBody({Key key, @required this.reportViewModel}) : super(key: key);
-
   @override
   _ReportsListBodyState createState() => _ReportsListBodyState();
 }
 
 class _ReportsListBodyState extends State<ReportsListBody> {
+  ReportViewModel reportViewModel;
   AppRouterDelegate routerDelegate;
   Alert alert;
   bool isLoading = false;
 
+  var _loadReportsStream;
+
   @override
   void initState() {
+    reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    _loadReportsStream = reportViewModel.loadReports();
     super.initState();
   }
 
@@ -35,12 +36,10 @@ class _ReportsListBodyState extends State<ReportsListBody> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        TopBar(
-          text: 'Old reports',
-        ),
+        TopBar(back: reportViewModel.resetCurrentReport, text: "Old reports"),
         Flexible(
           child: StreamBuilder(
-            stream: widget.reportViewModel.loadReports(),
+            stream: _loadReportsStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.active) {
                 return ListView.builder(
@@ -63,9 +62,8 @@ class _ReportsListBodyState extends State<ReportsListBody> {
     // This size provide us total height and width of our screen
     Size size = MediaQuery.of(context).size;
     if (doc != null) {
-      Report report = new Report();
-      report.setFromDocument(doc);
-      String date = DateFormat('yyyy-MM-dd kk:mm').format(report.date);
+      Report report = Report.fromDocument(doc);
+      String date = DateFormat('yyyy-MM-dd kk:mm').format(report.dateTime);
       return Container(
         child: TextButton(
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
@@ -97,12 +95,9 @@ class _ReportsListBodyState extends State<ReportsListBody> {
             )
           ]),
           onPressed: () {
-            widget.reportViewModel.openReport(report);
-            if (MediaQuery.of(context).orientation != Orientation.landscape) {
-              routerDelegate.pushPage(
-                name: ReportDetailsScreen.route,
-                arguments: ReportDetailsArguments(widget.reportViewModel.openedReport, widget.reportViewModel),
-              );
+            reportViewModel.setCurrentReport(report);
+            if (MediaQuery.of(context).orientation == Orientation.portrait) {
+              routerDelegate.pushPage(name: ReportDetailsScreen.route);
             }
           },
           style: ButtonStyle(
@@ -120,6 +115,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
       return SizedBox.shrink();
     }
   }
+
   Alert createAlert(String title, String description) {
     return Alert(
         context: context,

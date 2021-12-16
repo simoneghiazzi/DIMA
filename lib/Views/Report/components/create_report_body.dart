@@ -1,6 +1,7 @@
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
+import 'package:sApport/ViewModel/Forms/report_form.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/Report/reports_list_screen.dart';
@@ -17,8 +18,7 @@ class CreateReportBody extends StatefulWidget {
 }
 
 class _CreateReportBodyState extends State<CreateReportBody> {
-  GlobalKey<State> _keyLoader;
-  BaseUserViewModel baseUserViewModel;
+  UserViewModel userViewModel;
   ReportViewModel reportViewModel;
   AppRouterDelegate routerDelegate;
   Alert errorAlert;
@@ -26,8 +26,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
 
   @override
   void initState() {
-    _keyLoader = new GlobalKey<State>();
-    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
@@ -37,53 +36,51 @@ class _CreateReportBodyState extends State<CreateReportBody> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Stack(children: [
-      Column(
-        children: [
-          TopBar(
-            text: 'New report',
-            buttons: [
-              InkWell(
-                child: Container(
-                  padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    //color: kPrimaryLightColor,
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.list_rounded,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        "List",
-                        style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
+    return Column(
+      children: [
+        TopBar(
+          text: "New report",
+          buttons: [
+            InkWell(
+              child: Container(
+                padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                height: 40,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                onTap: () {
-                  routerDelegate.pushPage(
-                    name: ReportsListScreen.route,
-                    arguments: ReportArguments(null, reportViewModel),
-                  );
-                },
-              )
-            ],
-          ),
-          SingleChildScrollView(
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.list_rounded,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                    SizedBox(
+                      width: 2,
+                    ),
+                    Text(
+                      "List",
+                      style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              onTap: () {
+                routerDelegate.pushPage(
+                  name: ReportsListScreen.route,
+                );
+              },
+            )
+          ],
+        ),
+        Expanded(
+          child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: BlocProvider(
-              create: (context) => ReportViewModel(loggedId: baseUserViewModel.id),
+              create: (context) => ReportForm(),
               child: Builder(
                 builder: (context) {
-                  reportViewModel = BlocProvider.of<ReportViewModel>(context);
+                  ReportForm reportForm = BlocProvider.of<ReportForm>(context);
                   return Theme(
                     data: Theme.of(context).copyWith(
                       primaryColor: kPrimaryColor,
@@ -94,7 +91,6 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                       ),
                     ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         SizedBox(
                           height: size.height * 0.1,
@@ -105,20 +101,23 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                         ),
                         Padding(
                             padding: EdgeInsets.only(top: size.height * 0.05, left: 40, right: 40),
-                            child: FormBlocListener<ReportViewModel, String, String>(
+                            child: FormBlocListener<ReportForm, String, String>(
+                              onSubmitting: (context, state) {
+                                LoadingDialog.show(context);
+                              },
                               onSuccess: (context, state) {
-                                LoadingDialog.hide(context, _keyLoader);
+                                LoadingDialog.hide(context);
                                 successAlert.show();
                               },
                               onFailure: (context, state) {
-                                LoadingDialog.hide(context, _keyLoader);
+                                LoadingDialog.hide(context);
                                 errorAlert.show();
                               },
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
                                   DropdownFieldBlocBuilder<String>(
-                                    selectFieldBloc: reportViewModel.reportCategory,
+                                    selectFieldBloc: reportForm.reportCategory,
                                     decoration: InputDecoration(
                                       filled: true,
                                       fillColor: kPrimaryLightColor.withAlpha(100),
@@ -129,14 +128,18 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                         color: kPrimaryColor,
                                       ),
                                     ),
-                                    itemBuilder: (context, value) => value,
+                                    itemBuilder: (context, value) => FieldItem(
+                                        child: Text(
+                                      value,
+                                      style: TextStyle(color: kPrimaryColor),
+                                    )),
                                   ),
                                   SizedBox(
                                     height: size.height * 0.01,
                                   ),
                                   TextFieldBlocBuilder(
                                     textCapitalization: TextCapitalization.sentences,
-                                    textFieldBloc: reportViewModel.reportText,
+                                    textFieldBloc: reportForm.reportText,
                                     decoration: InputDecoration(
                                       filled: true,
                                       fillColor: kPrimaryLightColor.withAlpha(100),
@@ -153,8 +156,8 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
-                                      LoadingDialog.show(context, _keyLoader);
-                                      reportViewModel.submit();
+                                      FocusScope.of(context).unfocus();
+                                      reportForm.submit();
                                     },
                                     style: ButtonStyle(
                                         fixedSize: MaterialStateProperty.all<Size>(Size(size.width / 2, size.height / 20)),
@@ -173,9 +176,9 @@ class _CreateReportBodyState extends State<CreateReportBody> {
               ),
             ),
           ),
-        ],
-      ),
-    ]);
+        ),
+      ],
+    );
   }
 
   Alert createSuccessAlert() {
@@ -195,8 +198,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
             style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onPressed: () {
-            reportViewModel.clearControllers();
-            routerDelegate.pushPage(name: ReportsListScreen.route, arguments: reportViewModel);
+            routerDelegate.pushPage(name: ReportsListScreen.route);
             successAlert.dismiss();
           },
           color: Colors.transparent,

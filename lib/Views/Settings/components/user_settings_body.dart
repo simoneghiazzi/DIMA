@@ -1,7 +1,8 @@
-import 'package:sApport/Model/Services/collections.dart';
-import 'package:sApport/Model/user.dart';
+import 'dart:async';
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Welcome/components/social_icon.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
@@ -11,24 +12,26 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class UserSettingsBody extends StatefulWidget {
-  final User user;
-
-  UserSettingsBody({Key key, @required this.user}) : super(key: key);
-
   @override
   _UserSettingsBodyState createState() => _UserSettingsBodyState();
 }
 
 class _UserSettingsBodyState extends State<UserSettingsBody> {
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  UserViewModel userViewModel;
   AuthViewModel authViewModel;
   AppRouterDelegate routerDelegate;
+  StreamSubscription<String> subscriber;
   Alert alert;
+
+  var _hasPasswordAuthenticationFuture;
 
   @override
   void initState() {
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    subscriber = subscribeToAuthMessage();
+    _hasPasswordAuthenticationFuture = authViewModel.hasPasswordAuthentication(userViewModel.loggedUser.email);
     alert = createAlert();
     super.initState();
   }
@@ -37,35 +40,33 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return SizedBox.expand(
-      child: Column(
+      child: Stack(
+        alignment: Alignment.topCenter,
         children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            width: size.width,
-            color: kPrimaryColor,
-            child: SafeArea(
-              child: Container(
-                  decoration: BoxDecoration(color: kPrimaryColor),
-                  height: size.height / 12,
-                  child: widget.user.getData()['profilePhoto'] != null
-                      ? NetworkAvatar(
-                          img: widget.user.getData()['profilePhoto'],
-                          radius: 45.0,
-                        )
-                      : CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.person,
-                            size: 50,
-                            color: kPrimaryColor,
-                          ))),
-            ),
-          ),
           // background image and bottom contents
           SingleChildScrollView(
               child: Column(
             children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(top: 40, bottom: 10),
+                alignment: Alignment.center,
+                width: size.width,
+                color: kPrimaryColor,
+                child: Container(
+                    child: userViewModel.loggedUser.data["profilePhoto"] != null
+                        ? NetworkAvatar(
+                            img: userViewModel.loggedUser.data["profilePhoto"],
+                            radius: 50.0,
+                          )
+                        : CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.white,
+                            child: Icon(
+                              Icons.person,
+                              size: 70,
+                              color: kPrimaryColor,
+                            ))),
+              ),
               Container(
                 padding: EdgeInsets.only(left: size.width / 10, right: size.width / 10, top: 30),
                 color: Colors.white,
@@ -81,7 +82,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                                 Flexible(
                                     child: Text(
-                                  widget.user.name.toUpperCase() + " " + widget.user.surname.toUpperCase(),
+                                  userViewModel.loggedUser.name.toUpperCase() + " " + userViewModel.loggedUser.surname.toUpperCase(),
                                   style: TextStyle(color: kPrimaryColor, fontSize: 22, fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.center,
                                 ))
@@ -91,7 +92,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                           SizedBox(
                             height: size.height * 0.05,
                           ),
-                          if (widget.user.getData()['address'] != null) ...[
+                          if (userViewModel.loggedUser.data["address"] != null) ...[
                             Row(
                               children: <Widget>[
                                 Icon(
@@ -102,7 +103,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   width: size.width * 0.05,
                                 ),
                                 Flexible(
-                                  child: Text(widget.user.getData()['address'],
+                                  child: Text(userViewModel.loggedUser.data["address"],
                                       style: TextStyle(
                                         color: kPrimaryColor,
                                         fontSize: 15,
@@ -114,7 +115,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               height: size.height * 0.04,
                             ),
                           ],
-                          if (widget.user.getData()['phoneNumber'] != null) ...[
+                          if (userViewModel.loggedUser.data["phoneNumber"] != null) ...[
                             Row(
                               children: <Widget>[
                                 Icon(
@@ -124,7 +125,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                 SizedBox(
                                   width: size.width * 0.05,
                                 ),
-                                Text(widget.user.getData()['phoneNumber'],
+                                Text(userViewModel.loggedUser.data["phoneNumber"],
                                     style: TextStyle(
                                       color: kPrimaryColor,
                                       fontSize: 15,
@@ -135,7 +136,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               height: size.height * 0.04,
                             ),
                           ],
-                          if (widget.user.email != null) ...[
+                          if (userViewModel.loggedUser.email != null) ...[
                             Row(
                               children: [
                                 Icon(
@@ -146,7 +147,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   width: size.width * 0.05,
                                 ),
                                 Flexible(
-                                    child: Text(widget.user.email,
+                                    child: Text(userViewModel.loggedUser.email,
                                         style: TextStyle(
                                           color: kPrimaryColor,
                                           fontSize: 15,
@@ -158,7 +159,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                             ),
                           ],
                           FutureBuilder(
-                              future: authViewModel.hasPasswordAuthentication(widget.user.email),
+                              future: _hasPasswordAuthenticationFuture,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   return Column(children: [
@@ -182,7 +183,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                               ),
                                             ),
                                             onTap: () {
-                                              authViewModel.resetPassword(widget.user.email);
+                                              authViewModel.resetPassword(userViewModel.loggedUser.email);
                                               showSnackBar("Please check your email for the password reset link.");
                                               authViewModel.logOut();
                                             },
@@ -244,7 +245,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               height: size.height * 0.05,
                             ),
                           ],
-                          if (authViewModel.authProvider() == "password" && widget.user.collection == Collection.BASE_USERS) ...[
+                          if (authViewModel.authProvider() == "password" && userViewModel.loggedUser is BaseUser) ...[
                             Divider(
                               color: kPrimaryLightColor,
                             ),
@@ -265,27 +266,19 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                               SocialIcon(
                                   iconSrc: "assets/icons/facebook.png",
-                                  press: () async {
-                                    LoadingDialog.show(context, _keyLoader);
-                                    var id = await authViewModel.logInWithFacebook(link: true);
-                                    LoadingDialog.hide(context, _keyLoader);
-                                    if (id == null) {
-                                      showSnackBar("This social account is already linked with another profile or the email is already registered.");
-                                    } else {
+                                  press: () {
+                                    LoadingDialog.show(context);
+                                    authViewModel.logInWithFacebook(link: true).then((value) {
                                       setState(() {});
-                                    }
+                                    });
                                   }),
                               SocialIcon(
                                   iconSrc: "assets/icons/google.png",
-                                  press: () async {
-                                    LoadingDialog.show(context, _keyLoader);
-                                    var id = await authViewModel.logInWithGoogle(link: true);
-                                    LoadingDialog.hide(context, _keyLoader);
-                                    if (id == null) {
-                                      showSnackBar("This social account is already linked with another profile or the email is already registered.");
-                                    } else {
+                                  press: () {
+                                    LoadingDialog.show(context);
+                                    authViewModel.logInWithGoogle(link: true).then((value) {
                                       setState(() {});
-                                    }
+                                    });
                                   }),
                             ]),
                             SizedBox(
@@ -405,7 +398,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
           obscureText: true,
           decoration: InputDecoration(
             icon: Icon(Icons.lock, color: kPrimaryColor),
-            labelText: 'Password',
+            labelText: "Password",
           ),
         ),
         buttons: [
@@ -421,5 +414,23 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
             color: Colors.transparent,
           )
         ]);
+  }
+
+  StreamSubscription<String> subscribeToAuthMessage() {
+    return authViewModel.authMessage.listen((message) {
+      if (message != null) {
+        if (message.isNotEmpty) {
+          showSnackBar(message);
+        } else {
+          LoadingDialog.hide(context);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    subscriber.cancel();
+    super.dispose();
   }
 }

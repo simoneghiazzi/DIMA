@@ -1,19 +1,19 @@
-import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
-import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
-import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
-import 'package:flutter/material.dart';
-import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/Views/Welcome/components/background.dart';
-import 'package:sApport/constants.dart';
-import 'package:provider/provider.dart';
-import 'or_divider.dart';
-import 'social_icon.dart';
+import 'package:sApport/Views/Welcome/components/or_divider.dart';
+import 'package:sApport/Views/Welcome/components/social_icon.dart';
+import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
+import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
 
 class WelcomeBody extends StatefulWidget {
   @override
@@ -21,16 +21,20 @@ class WelcomeBody extends StatefulWidget {
 }
 
 class _WelcomeBodyState extends State<WelcomeBody> {
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  // View Models
   AuthViewModel authViewModel;
-  BaseUserViewModel baseUserViewModel;
-  String id;
+  UserViewModel userViewModel;
   AppRouterDelegate routerDelegate;
+
+  // Subscriber
+  StreamSubscription<bool> subscriber;
 
   @override
   void initState() {
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    subscriber = subscribeToUserLoggedStream();
     super.initState();
   }
 
@@ -40,18 +44,15 @@ class _WelcomeBodyState extends State<WelcomeBody> {
     Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(
-        padding: EdgeInsets.only(top: 40),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Text(
               "sApport",
-              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 50, fontFamily: 'Gabriola'),
+              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
             ),
-            SizedBox(height: size.height * 0.03),
             Image.asset(
               "assets/icons/logo.png",
-              height: size.height * 0.15,
+              height: size.height * 0.12,
             ),
             SizedBox(height: size.height * 0.05),
             RoundedButton(
@@ -60,61 +61,62 @@ class _WelcomeBodyState extends State<WelcomeBody> {
               },
               text: "LOGIN",
             ),
+            SizedBox(height: size.height * 0.02),
             RoundedButton(
               press: () {
                 routerDelegate.pushPage(name: BaseUsersSignUpScreen.route);
               },
               text: "SIGNUP",
               color: kPrimaryLightColor,
-              textColor: Colors.black,
+              textColor: kPrimaryColor,
             ),
+            SizedBox(height: size.height * 0.02),
             OrDivider(),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               SocialIcon(
                   iconSrc: "assets/icons/facebook.png",
-                  press: () async {
-                    LoadingDialog.show(context, _keyLoader);
-                    id = await authViewModel.logInWithFacebook();
-                    if (id.isEmpty) {
-                      LoadingDialog.hide(context, _keyLoader);
-                    } else {
-                      navigateToHome();
-                    }
+                  press: () {
+                    LoadingDialog.show(context);
+                    authViewModel.logInWithFacebook();
                   }),
               SocialIcon(
                   iconSrc: "assets/icons/google.png",
-                  press: () async {
-                    LoadingDialog.show(context, _keyLoader);
-                    id = await authViewModel.logInWithGoogle();
-                    if (id.isEmpty) {
-                      LoadingDialog.hide(context, _keyLoader);
-                    } else {
-                      navigateToHome();
-                    }
+                  press: () {
+                    LoadingDialog.show(context);
+                    authViewModel.logInWithGoogle();
                   }),
             ]),
+            SizedBox(height: size.height * 0.05),
             StreamBuilder<String>(
-                stream: authViewModel.authMessage,
-                builder: (context, snapshot) {
-                  return Container(
-                    padding: EdgeInsets.all(20.0),
-                    child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        text: snapshot.data,
-                        style: TextStyle(color: Colors.red, fontSize: 15),
+              stream: authViewModel.authMessage,
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data.isNotEmpty) {
+                  LoadingDialog.hide(context);
+                  return Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(right: 10, left: 10),
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: snapshot.data,
+                            style: TextStyle(color: Colors.red, fontSize: 17, fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ),
-                    ),
+                      SizedBox(height: size.height * 0.05),
+                    ],
                   );
-                }),
+                } else {
+                  return SizedBox(height: size.height * 0.04);
+                }
+              },
+            ),
             GestureDetector(
               child: Text(
-                "Are you a psychologist? Join us",
-                style: TextStyle(
-                  color: kPrimaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
+                "Are you a registered psychologist?\nJoin us",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 17),
               ),
               onTap: () {
                 routerDelegate.pushPage(name: ExpertsSignUpScreen.route);
@@ -126,12 +128,23 @@ class _WelcomeBodyState extends State<WelcomeBody> {
     );
   }
 
-  void navigateToHome() async {
-    Provider<UserViewModel>.value(value: BaseUserViewModel());
-    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
-    baseUserViewModel.id = id;
-    await baseUserViewModel.loadLoggedUser();
-    LoadingDialog.hide(context, _keyLoader);
-    routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
+  StreamSubscription<bool> subscribeToUserLoggedStream() {
+    return authViewModel.isUserLogged.listen((isUserLogged) async {
+      if (isUserLogged) {
+        // Called on sign in
+        await userViewModel.loadUser().then((_) => print("User of category ${userViewModel.loggedUser.collection} logged"));
+        LoadingDialog.hide(context);
+        routerDelegate.replaceAllButNumber(1, routeSettingsList: [RouteSettings(name: userViewModel.loggedUser.homePageRoute)]);
+      } else {
+        // Called on sign out
+        routerDelegate.replaceAll(name: WelcomeScreen.route);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    subscriber.cancel();
+    super.dispose();
   }
 }

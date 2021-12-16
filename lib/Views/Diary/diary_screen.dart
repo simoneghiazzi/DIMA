@@ -1,18 +1,15 @@
-import 'dart:async';
-
-import 'package:provider/provider.dart';
-import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:sApport/Views/Diary/components/diary_body.dart';
 import 'package:flutter/material.dart';
-import 'package:sApport/Views/Diary/diary_page_screen.dart';
-import 'package:sApport/Views/components/empty_page_portrait.dart';
-import 'package:split_view/split_view.dart';
-
-import '../../constants.dart';
+import 'package:provider/provider.dart';
+import 'package:sApport/Views/Diary/components/diary_page_body.dart';
+import 'package:sApport/Views/components/vertical_split_view.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/Views/Diary/components/diary_body.dart';
+import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 
 class DiaryScreen extends StatefulWidget {
   static const route = '/diaryScreen';
+
+  const DiaryScreen({Key key}) : super(key: key);
 
   @override
   State<DiaryScreen> createState() => _DiaryScreenState();
@@ -20,59 +17,31 @@ class DiaryScreen extends StatefulWidget {
 
 class _DiaryScreenState extends State<DiaryScreen> {
   DiaryViewModel diaryViewModel;
-  bool isPageOpen = false;
+  AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    detectChangeOrientation();
-    diaryViewModel.checkOpenPage();
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: MediaQuery.of(context).orientation == Orientation.landscape
-          ? SplitView(
-              controller: SplitViewController(weights: [0.6, 0.4]),
-              children: [
-                DiaryBody(
-                  diaryViewModel: diaryViewModel,
-                ),
-                StreamBuilder(
-                    stream: diaryViewModel.isPageOpen,
-                    builder: (context, snapshot) {
-                      if (snapshot.data == true) {
-                        isPageOpen = true;
-                        return DiaryPageScreen(
-                          diaryViewModel: diaryViewModel,
-                          startOrientation: true,
-                        );
-                      }
-                      return EmptyPagePortrait();
-                    })
-              ],
-              viewMode: SplitViewMode.Horizontal,
-              gripSize: 1.0,
-              gripColor: kPrimaryColor,
-            )
-          : DiaryBody(
-              diaryViewModel: diaryViewModel,
+      body: MediaQuery.of(context).orientation == Orientation.portrait
+          ? DiaryBody()
+          : Consumer<DiaryViewModel>(
+              builder: (context, diaryViewModel, child) {
+                var _ratio = diaryViewModel.currentDiaryPage != null ? 0.35 : 1.0;
+                return VerticalSplitView(
+                  left: DiaryBody(),
+                  right: diaryViewModel.currentDiaryPage != null ? DiaryPageBody(key: ValueKey(diaryViewModel.currentDiaryPage.id)) : Container(),
+                  ratio: _ratio,
+                );
+              },
             ),
     );
-  }
-
-  Future<void> detectChangeOrientation() async {
-    AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    await Future(() async {
-      if ((MediaQuery.of(context).orientation == Orientation.portrait) && isPageOpen) {
-        routerDelegate.pushPage(
-          name: DiaryPageScreen.route,
-          arguments: diaryViewModel,
-        );
-      }
-    });
   }
 }

@@ -1,8 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/Chat/active_chat.dart';
 import 'package:sApport/Model/Chat/expert_chat.dart';
-import 'package:sApport/Model/Expert/expert.dart';
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/components/chats_list_constructor.dart';
@@ -25,23 +21,18 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    initExpertChats();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Stack(
+    return Stack(
       children: <Widget>[
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            TopBar(text: 'Experts'),
-            ChatsListConstructor(
-              createUserCallback: createUserCallback,
-              peerCollection: Collection.EXPERTS,
-            ),
+            TopBar(back: chatViewModel.resetCurrentChat, text: "Experts"),
+            ChatsListConstructor(createChatCallback: (String id) => ExpertChat.fromId(id)),
           ],
         ),
         Align(
@@ -60,17 +51,6 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
           ),
         ),
       ],
-    ));
-  }
-
-  Expert createUserCallback(DocumentSnapshot doc) {
-    Expert user = Expert();
-    user.setFromDocument(doc);
-    return user;
-  }
-
-  void initExpertChats() {
-    chatViewModel.conversation.senderUserChat = ExpertChat();
-    chatViewModel.conversation.peerUserChat = ActiveChat();
+    );
   }
 }

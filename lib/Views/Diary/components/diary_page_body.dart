@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:intl/intl.dart';
-import 'package:sApport/Model/BaseUser/Diary/note.dart';
+import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/constants.dart';
@@ -14,18 +13,15 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class DiaryPageBody extends StatefulWidget {
-  bool startOrientation;
-  final DiaryViewModel diaryViewModel;
-
-  DiaryPageBody({Key key, @required this.diaryViewModel, this.startOrientation = false}) : super(key: key);
+  const DiaryPageBody({Key key}) : super(key: key);
 
   @override
   _DiaryPageBodyState createState() => _DiaryPageBodyState();
 }
 
 class _DiaryPageBodyState extends State<DiaryPageBody> {
+  DiaryViewModel diaryViewModel;
   DateTime today;
-  BaseUserViewModel baseUserViewModel;
   AppRouterDelegate routerDelegate;
   Alert errorAlert;
   Alert successAlert;
@@ -35,12 +31,23 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   String title;
   DateFormat formatter = DateFormat('dd MMM yyyy');
 
+  DiaryPage _diaryPageItem;
+
   @override
   void initState() {
     DateTime now = DateTime.now();
     today = DateTime(now.year, now.month, now.day);
-    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    _diaryPageItem = diaryViewModel.currentDiaryPage;
+    if (_diaryPageItem.id == null) {
+      modifiable = true;
+      DateTime now = DateTime.now();
+      title = formatter.format(now);
+    } else {
+      diaryViewModel.setTextContent(_diaryPageItem.title, _diaryPageItem.content);
+      title = formatter.format(_diaryPageItem.dateTime);
+    }
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
     subscription = subscribeToSuccessViewModel();
@@ -50,16 +57,6 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
 
   @override
   Widget build(BuildContext context) {
-    Note note = widget.diaryViewModel.openedNote;
-    detectChangeOrientation();
-    if (note == null) {
-      modifiable = true;
-      DateTime now = DateTime.now();
-      title = formatter.format(now);
-    } else {
-      widget.diaryViewModel.setTextContent(note.title, note.content);
-      title = formatter.format(note.date);
-    }
     Size size = MediaQuery.of(context).size;
     return Stack(
       children: <Widget>[
@@ -68,13 +65,9 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
           children: [
             TopBar(
               text: title,
-              isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
-              back: () {
-                widget.diaryViewModel.clearControllers();
-                routerDelegate.pop();
-              },
+              back: resetDiaryPage,
               buttons: [
-                if (note != null && !modifiable && note.date == today)
+                if (_diaryPageItem.id != null && !modifiable && isPageOfToday())
                   InkWell(
                       child: InkResponse(
                     onTap: () {
@@ -91,12 +84,12 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white),
                     ),
                   )),
-                if (note != null && !modifiable)
+                if (_diaryPageItem.id != null && !modifiable)
                   InkWell(
                     child: InkResponse(
                       onTap: () {
-                        note.favourite = !note.favourite;
-                        widget.diaryViewModel.setFavourite(note.id, note.favourite);
+                        _diaryPageItem.favourite = !_diaryPageItem.favourite;
+                        diaryViewModel.setFavourite(_diaryPageItem.favourite);
                         setState(() {});
                       },
                       child: Container(
@@ -104,26 +97,26 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
                         ),
-                        child:
-                            note.favourite ? Icon(CupertinoIcons.heart_fill, color: Colors.white) : Icon(CupertinoIcons.heart, color: Colors.white),
+                        child: _diaryPageItem.favourite
+                            ? Icon(CupertinoIcons.heart_fill, color: Colors.white)
+                            : Icon(CupertinoIcons.heart, color: Colors.white),
                       ),
                     ),
                   ),
                 if (modifiable)
                   InkWell(
                     child: StreamBuilder(
-                        stream: widget.diaryViewModel.diaryForm.isButtonEnabled,
+                        stream: diaryViewModel.diaryForm.isButtonEnabled,
                         builder: (context, snapshot) {
-                          if (snapshot.data ?? false || note != null) {
+                          if (snapshot.data ?? false || _diaryPageItem != null) {
                             return InkResponse(
                               onTap: () {
-                                if (note != null) {
-                                  widget.diaryViewModel.submitPage(pageId: note.id, isFavourite: note.favourite);
+                                if (_diaryPageItem.id != null) {
+                                  diaryViewModel.updatePage();
                                 } else {
-                                  widget.diaryViewModel.submitPage();
+                                  diaryViewModel.submitPage();
                                 }
                                 setState(() {
-                                  note = widget.diaryViewModel.submittedNote;
                                   modifiable = false;
                                 });
                               },
@@ -172,7 +165,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     maxLines: null,
                     textCapitalization: TextCapitalization.sentences,
                     enabled: modifiable,
-                    controller: widget.diaryViewModel.titleCtrl,
+                    controller: diaryViewModel.titleTextCtrl,
                     cursorColor: kPrimaryColor,
                     style: TextStyle(
                       color: kPrimaryColor,
@@ -216,7 +209,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       child: TextField(
                         textCapitalization: TextCapitalization.sentences,
                         enabled: modifiable,
-                        controller: widget.diaryViewModel.contentCtrl,
+                        controller: diaryViewModel.contentTextCtrl,
                         cursorColor: kPrimaryColor,
                         style: TextStyle(color: kPrimaryColor, fontSize: 18),
                         keyboardType: TextInputType.multiline,
@@ -238,7 +231,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   }
 
   StreamSubscription<bool> subscribeToSuccessViewModel() {
-    return widget.diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
+    return diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
       if (isSuccessfulAdd) {
         successAlert.show();
       } else {
@@ -297,19 +290,22 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     );
   }
 
-  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    routerDelegate.pop();
-    widget.diaryViewModel.clearControllers();
-    return true;
+  bool isPageOfToday() {
+    if (_diaryPageItem.dateTime.day == today.day && _diaryPageItem.dateTime.month == today.month && _diaryPageItem.dateTime.year == today.year) {
+      return true;
+    }
+    return false;
   }
 
-  Future<void> detectChangeOrientation() async {
-    if (widget.startOrientation != (MediaQuery.of(context).orientation == Orientation.landscape)) {
-      widget.startOrientation = true;
-      await Future(() async {
-        routerDelegate.pop();
-      });
-    }
+  void resetDiaryPage() {
+    diaryViewModel.resetCurrentDiaryPage();
+    diaryViewModel.clearControllers();
+  }
+
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    resetDiaryPage();
+    routerDelegate.pop();
+    return true;
   }
 
   @override
@@ -317,31 +313,5 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     BackButtonInterceptor.remove(backButtonInterceptor);
     subscription.cancel();
     super.dispose();
-  }
-}
-
-class EntryHeaderImage extends StatelessWidget {
-  final String heroTag;
-  final ImageProvider imageProvider;
-
-  const EntryHeaderImage({
-    Key key,
-    this.heroTag,
-    this.imageProvider,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Hero(
-      tag: imageProvider,
-      child: Container(
-        height: 340.0,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: Colors.grey,
-          image: DecorationImage(colorFilter: ColorFilter.mode(Color(0xFF3C4858), BlendMode.lighten), image: imageProvider, fit: BoxFit.cover),
-        ),
-      ),
-    );
   }
 }

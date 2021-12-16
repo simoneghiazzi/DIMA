@@ -1,8 +1,8 @@
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
+import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/anonymous_chats_list_screen.dart';
 import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Report/create_report_screen.dart';
@@ -16,19 +16,17 @@ class BaseUserGrid extends StatefulWidget {
 }
 
 class _BaseUserGridState extends State<BaseUserGrid> {
-  BaseUserViewModel baseUserViewModel;
+  UserViewModel userViewModel;
   ChatViewModel chatViewModel;
   DiaryViewModel diaryViewModel;
   AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
-    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    diaryViewModel.loggedId = baseUserViewModel.loggedUser.id;
-    chatViewModel.conversation.senderUser = baseUserViewModel.loggedUser;
     super.initState();
   }
 
@@ -53,7 +51,7 @@ class _BaseUserGridState extends State<BaseUserGrid> {
                   imagePath: "assets/icons/anonymous.png",
                   text: "Anonymous\nchats",
                   press: () {
-                    routerDelegate.pushPage(name: ActiveChatsListScreen.route);
+                    routerDelegate.pushPage(name: AnonymousChatsListScreen.route);
                   },
                 ),
               ]),

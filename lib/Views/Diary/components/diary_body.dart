@@ -1,7 +1,7 @@
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Diary/components/note_data_source.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Home/components/header.dart';
@@ -9,27 +9,27 @@ import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:sApport/Model/BaseUser/Diary/note.dart';
 
 class DiaryBody extends StatefulWidget {
-  final DiaryViewModel diaryViewModel;
-
-  const DiaryBody({Key key, @required this.diaryViewModel}) : super(key: key);
+  const DiaryBody({Key key}) : super(key: key);
 
   _DiaryBodyState createState() => _DiaryBodyState();
 }
 
 class _DiaryBodyState extends State<DiaryBody> {
-  BaseUserViewModel baseUserViewModel;
+  DiaryViewModel diaryViewModel;
+  UserViewModel userViewModel;
   AppRouterDelegate routerDelegate;
   final CalendarController _controller = CalendarController();
-  String _headerText;
+
+  var _loadDiaryPagesStream;
 
   @override
   void initState() {
-    baseUserViewModel = Provider.of<BaseUserViewModel>(context, listen: false);
+    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    _headerText = "header";
+    _loadDiaryPagesStream = diaryViewModel.loadDiaryPages();
     super.initState();
   }
 
@@ -37,7 +37,7 @@ class _DiaryBodyState extends State<DiaryBody> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return StreamBuilder(
-      stream: widget.diaryViewModel.loadPagesStream(),
+      stream: _loadDiaryPagesStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Stack(
@@ -72,15 +72,16 @@ class _DiaryBodyState extends State<DiaryBody> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 40.0),
                     child: SfCalendar(
+                      initialSelectedDate: DateTime.now(),
                       controller: _controller,
                       todayHighlightColor: kPrimaryColor,
-                      dataSource: NoteDataSource(snapshot.data.docs, widget.diaryViewModel),
+                      dataSource: NoteDataSource(snapshot.data.docs, diaryViewModel),
                       headerStyle: CalendarHeaderStyle(
                         textStyle: TextStyle(color: kPrimaryColor, fontSize: 25, fontWeight: FontWeight.bold),
                       ),
                       headerHeight: 50,
                       headerDateFormat: " MMM yyyy",
-                      cellBorderColor: kPrimaryColor,
+                      cellBorderColor: kPrimaryDarkColorTrasparent.withOpacity(0.5),
                       showDatePickerButton: true,
                       viewHeaderStyle: ViewHeaderStyle(
                         dayTextStyle: TextStyle(color: kPrimaryColor),
@@ -88,27 +89,23 @@ class _DiaryBodyState extends State<DiaryBody> {
                       ),
                       view: CalendarView.month,
                       monthViewSettings: MonthViewSettings(
-                          appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-                          appointmentDisplayCount: 1,
-                          showAgenda: true,
-                          agendaViewHeight: widget.diaryViewModel.hasNoteToday ? size.height / 10 : size.height / 8,
-                          agendaItemHeight: size.height / 15,
-                          monthCellStyle: MonthCellStyle(
-                            trailingDatesBackgroundColor: kPrimaryLightColor,
-                            leadingDatesBackgroundColor: kPrimaryLightColor,
-                          )),
-                      onViewChanged: (ViewChangedDetails viewChangedDetails) {
-                        if (_controller.view == CalendarView.month) {
-                          _headerText =
-                              DateFormat('MMM yyyy').format(viewChangedDetails.visibleDates[viewChangedDetails.visibleDates.length ~/ 2]).toString();
-                        }
-                      },
+                        appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+                        appointmentDisplayCount: 1,
+                        showAgenda: true,
+                        agendaViewHeight: diaryViewModel.hasNoteToday ? size.height / 10 : size.height / 8,
+                        agendaItemHeight: size.height / 15,
+                        monthCellStyle: MonthCellStyle(
+                          trailingDatesBackgroundColor: kPrimaryLightColor,
+                          leadingDatesBackgroundColor: kPrimaryLightColor,
+                          textStyle: TextStyle(color: kPrimaryColor),
+                        ),
+                      ),
                       onTap: showDetails,
                     ),
                   ),
                 ),
               ),
-              !widget.diaryViewModel.hasNoteToday
+              !diaryViewModel.hasNoteToday
                   ? Align(
                       alignment: Alignment.lerp(
                           Alignment.lerp(Alignment.lerp(Alignment.bottomRight, Alignment.topRight, 0.005), Alignment.center, 0.05),
@@ -116,8 +113,8 @@ class _DiaryBodyState extends State<DiaryBody> {
                           0.02),
                       child: FloatingActionButton(
                         onPressed: () {
-                          widget.diaryViewModel.openPage(null);
-                          if (MediaQuery.of(context).orientation != Orientation.landscape) {
+                          diaryViewModel.setCurrentDiaryPage(DiaryPage());
+                          if (MediaQuery.of(context).orientation == Orientation.portrait) {
                             routerDelegate.pushPage(name: DiaryPageScreen.route);
                           }
                         },
@@ -142,10 +139,9 @@ class _DiaryBodyState extends State<DiaryBody> {
   void showDetails(CalendarTapDetails details) {
     if (details.appointments != null) {
       if (details.appointments.isNotEmpty && details.targetElement == CalendarElement.appointment) {
-        final Note noteDetails = details.appointments[0];
-        widget.diaryViewModel.openPage(noteDetails);
-        if (MediaQuery.of(context).orientation != Orientation.landscape) {
-          routerDelegate.pushPage(name: DiaryPageScreen.route, arguments: widget.diaryViewModel);
+        diaryViewModel.setCurrentDiaryPage(details.appointments[0]);
+        if (MediaQuery.of(context).orientation == Orientation.portrait) {
+          routerDelegate.pushPage(name: DiaryPageScreen.route);
         }
       }
     }

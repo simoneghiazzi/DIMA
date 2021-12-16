@@ -1,10 +1,8 @@
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_info_view_model.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_view_model.dart';
-import 'package:sApport/Views/Login/login_screen.dart';
+import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
 import 'package:sApport/Views/Signup/components/background.dart';
-import 'package:sApport/Views/components/already_have_an_account_check.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
@@ -14,21 +12,20 @@ import 'package:provider/provider.dart';
 class BaseUserInfoBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    AppRouterDelegate routerDelegate =
-        Provider.of<AppRouterDelegate>(context, listen: false);
+    UserViewModel userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     Size size = MediaQuery.of(context).size;
+
     return Background(
         child: SingleChildScrollView(
             child: Padding(
       padding: EdgeInsets.only(left: 40, right: 40),
       child: Column(children: <Widget>[
         BlocProvider(
-          create: (context) => BaseUserInfoViewModel(),
+          create: (context) => BaseUserSignUpForm(),
           child: Builder(
             builder: (context) {
-              final infoViewModel = BlocProvider.of<BaseUserInfoViewModel>(
-                  context,
-                  listen: false);
+              final baseUserSignUpForm = BlocProvider.of<BaseUserSignUpForm>(context, listen: false);
               return Theme(
                   data: Theme.of(context).copyWith(
                     primaryColor: kPrimaryColor,
@@ -38,47 +35,36 @@ class BaseUserInfoBody extends StatelessWidget {
                       ),
                     ),
                   ),
-                  child:
-                      FormBlocListener<BaseUserInfoViewModel, String, String>(
+                  child: FormBlocListener<BaseUserSignUpForm, String, String>(
                     onSubmitting: (context, state) {},
                     onSuccess: (context, state) {
-                      routerDelegate.pushPage(
-                          name: CredentialScreen.route,
-                          arguments: InfoArguments(
-                            infoViewModel,
-                            Provider.of<BaseUserViewModel>(context,
-                                listen: false),
-                          ));
+                      userViewModel.createUser(baseUserSignUpForm);
+                      routerDelegate.pushPage(name: CredentialScreen.route);
                     },
                     onFailure: (context, state) {
-                      //Add what to do
+                      // Add what to do
                     },
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        SizedBox(height: size.height * 0.09),
                         Text(
-                          "Personal information",
+                          "sApport",
+                          style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
+                        ),
+                        Text(
+                          "Sign up to share your personal story with other anonymous users or to find a suitable expert for you.",
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: kPrimaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25,
-                          ),
+                          style: TextStyle(color: kPrimaryDarkColorTrasparent, fontWeight: FontWeight.bold, fontSize: 15),
                         ),
-                        SizedBox(height: size.height * 0.08),
-                        Image.asset(
-                          "assets/icons/logo.png",
-                          height: size.height * 0.15,
-                        ),
-                        SizedBox(height: size.height * 0.05),
+                        SizedBox(height: size.height * 0.03),
+                        Divider(),
+                        SizedBox(height: size.height * 0.03),
                         TextFieldBlocBuilder(
                           textCapitalization: TextCapitalization.sentences,
-                          textFieldBloc: infoViewModel.nameText,
+                          textFieldBloc: baseUserSignUpForm.nameText,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: kPrimaryLightColor.withAlpha(100),
-                            labelText: 'First name',
+                            labelText: "First name",
                             labelStyle: TextStyle(color: kPrimaryColor),
                             prefixIcon: Icon(
                               Icons.text_fields,
@@ -88,11 +74,11 @@ class BaseUserInfoBody extends StatelessWidget {
                         ),
                         TextFieldBlocBuilder(
                           textCapitalization: TextCapitalization.sentences,
-                          textFieldBloc: infoViewModel.surnameText,
+                          textFieldBloc: baseUserSignUpForm.surnameText,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: kPrimaryLightColor.withAlpha(100),
-                            labelText: 'Last name',
+                            labelText: "Last name",
                             labelStyle: TextStyle(color: kPrimaryColor),
                             prefixIcon: Icon(
                               Icons.text_fields,
@@ -101,7 +87,7 @@ class BaseUserInfoBody extends StatelessWidget {
                           ),
                         ),
                         DateTimeFieldBlocBuilder(
-                          dateTimeFieldBloc: infoViewModel.birthDateTime,
+                          dateTimeFieldBloc: baseUserSignUpForm.birthDate,
                           format: DateFormat.yMEd(),
                           initialDate: DateTime.now(),
                           firstDate: DateTime(1920),
@@ -109,29 +95,21 @@ class BaseUserInfoBody extends StatelessWidget {
                           decoration: InputDecoration(
                               filled: true,
                               fillColor: kPrimaryLightColor.withAlpha(100),
-                              labelText: 'Birth date',
+                              labelText: "Birth date",
                               labelStyle: TextStyle(color: kPrimaryColor),
                               prefixIcon: Icon(
                                 Icons.date_range,
                                 color: kPrimaryColor,
                               )),
                         ),
-                        SizedBox(height: size.height * 0.02),
+                        SizedBox(height: size.height * 0.04),
                         RoundedButton(
                           press: () {
                             FocusScope.of(context).unfocus();
-                            infoViewModel.submit();
+                            baseUserSignUpForm.submit();
                           },
                           text: "NEXT",
                         ),
-                        SizedBox(height: size.height * 0.05),
-                        AlreadyHaveAnAccountCheck(
-                          login: false,
-                          press: () {
-                            routerDelegate.replace(name: LoginScreen.route);
-                          },
-                        ),
-                        SizedBox(height: size.height * 0.05),
                       ],
                     ),
                   ));

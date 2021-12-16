@@ -21,7 +21,7 @@ class TopBar extends StatelessWidget {
       child: SafeArea(
         child: Container(
           decoration: BoxDecoration(color: kPrimaryColor),
-          height: size.height / 12,
+          height: size.height / 10,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -39,10 +39,13 @@ class TopBar extends StatelessWidget {
                               Icons.arrow_back_ios_new_rounded,
                               color: Colors.white,
                             ),
-                            onPressed: back ??
-                                () {
-                                  routerDelegate.pop();
-                                },
+                            onPressed: () {
+                              FocusScope.of(context).unfocus();
+                              if (back != null) {
+                                back();
+                              }
+                              routerDelegate.pop();
+                            },
                           ),
                     AutoSizeText(
                       text,

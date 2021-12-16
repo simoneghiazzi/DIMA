@@ -1,52 +1,27 @@
-import 'package:sApport/Model/BaseUser/report.dart';
-import 'package:sApport/ViewModel/BaseUser/base_user_info_view_model.dart';
-import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
-import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/ActiveChatsList/active_chats_list_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChat/PendingChatsList/pending_chats_list_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
-import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
-import 'package:sApport/Views/Diary/diary_page_screen.dart';
-import 'package:sApport/Views/Diary/diary_screen.dart';
-import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
-import 'package:sApport/Views/Login/forgot_password_screen.dart';
-import 'package:sApport/Views/Login/login_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
-import 'package:sApport/Views/Profile/expert_profile_screen.dart';
+import 'package:sApport/Views/Diary/diary_screen.dart';
+import 'package:sApport/Views/Login/login_screen.dart';
+import 'package:sApport/Views/Welcome/welcome_screen.dart';
+import 'package:sApport/Views/Diary/diary_page_screen.dart';
+import 'package:sApport/Views/Signup/credential_screen.dart';
+import 'package:sApport/Views/Report/reports_list_screen.dart';
 import 'package:sApport/Views/Report/create_report_screen.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
-import 'package:sApport/Views/Report/reports_list_screen.dart';
+import 'package:sApport/Views/Login/forgot_password_screen.dart';
+import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
-import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
+import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
 import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
-import 'package:sApport/Views/Signup/credential_screen.dart';
-import 'package:sApport/Views/Welcome/welcome_screen.dart';
-
-import 'package:flutter/material.dart';
-
-class InfoArguments {
-  final BaseUserInfoViewModel userInfoViewModel;
-  final UserViewModel userViewModel;
-
-  InfoArguments(this.userInfoViewModel, this.userViewModel);
-}
-
-class ReportArguments {
-  final Widget reportPage;
-  final ReportViewModel reportViewModel;
-
-  ReportArguments(this.reportPage, this.reportViewModel);
-}
-
-class ReportDetailsArguments {
-  final Report report;
-  final ReportViewModel reportViewModel;
-
-  ReportDetailsArguments(this.report, this.reportViewModel);
-}
+import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
+import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
+import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/BaseUser/PendingChatsList/pending_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/anonymous_chats_list_screen.dart';
 
 class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<RouteSettings>> {
+  // Stack of pages
   final _pages = <Page>[];
   @override
   final navigatorKey = GlobalKey<NavigatorState>();
@@ -60,8 +35,11 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
     );
   }
 
+  /// Checks if the router can handle the pop: if yes, it calls [popRoute]
   bool _onPopPage(Route route, dynamic result) {
-    if (!route.didPop(result)) return false;
+    if (!route.didPop(result)) {
+      return false;
+    }
     popRoute();
     return true;
   }
@@ -76,6 +54,9 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
     return Future.value(false);
   }
 
+  /// Returns the material page based on the [routeSettings.name].
+  ///
+  /// If [routeSettings.arguments] are present, it passes them to the material page.
   MaterialPage _createPage(RouteSettings routeSettings) {
     Widget child;
     switch (routeSettings.name) {
@@ -83,9 +64,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = WelcomeScreen();
         break;
       case CredentialScreen.route:
-        child = CredentialScreen(
-            infoViewModel: (routeSettings.arguments as InfoArguments).userInfoViewModel,
-            userViewModel: (routeSettings.arguments as InfoArguments).userViewModel);
+        child = CredentialScreen();
         break;
       case ExpertsSignUpScreen.route:
         child = ExpertsSignUpScreen();
@@ -94,15 +73,10 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = BaseUsersSignUpScreen();
         break;
       case ReportsListScreen.route:
-        child = ReportsListScreen(
-          reportPage: (routeSettings.arguments as ReportArguments).reportPage,
-          reportViewModel: (routeSettings.arguments as ReportArguments).reportViewModel,
-        );
+        child = ReportsListScreen();
         break;
       case ReportDetailsScreen.route:
-        child = ReportDetailsScreen(
-          reportViewModel: (routeSettings.arguments as ReportDetailsArguments).reportViewModel,
-        );
+        child = ReportDetailsScreen();
         break;
       case CreateReportScreen.route:
         child = CreateReportScreen();
@@ -120,41 +94,31 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = ForgotPasswordScreen();
         break;
       case UserSettingsScreen.route:
-        child = UserSettingsScreen(user: routeSettings.arguments);
+        child = UserSettingsScreen();
         break;
       case ExpertHomePageScreen.route:
-        child = ExpertHomePageScreen(
-          pageIndex: routeSettings.arguments,
-        );
+        child = ExpertHomePageScreen(pageIndex: routeSettings.arguments);
         break;
       case BaseUserHomePageScreen.route:
-        child = BaseUserHomePageScreen(
-          pageIndex: routeSettings.arguments,
-        );
+        child = BaseUserHomePageScreen(pageIndex: routeSettings.arguments);
         break;
       case ChatPageScreen.route:
         child = ChatPageScreen();
         break;
       case ExpertChatsListScreen.route:
-        child = ExpertChatsListScreen(
-          chatPage: routeSettings.arguments,
-        );
+        child = ExpertChatsListScreen();
         break;
       case PendingChatsListScreen.route:
         child = PendingChatsListScreen();
         break;
-      case ActiveChatsListScreen.route:
-        child = ActiveChatsListScreen(
-          chatPage: routeSettings.arguments,
-        );
+      case AnonymousChatsListScreen.route:
+        child = AnonymousChatsListScreen();
         break;
       case DiaryScreen.route:
         child = DiaryScreen();
         break;
       case DiaryPageScreen.route:
-        child = DiaryPageScreen(
-          diaryViewModel: routeSettings.arguments,
-        );
+        child = DiaryPageScreen();
         break;
     }
     return MaterialPage(
@@ -165,6 +129,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
     );
   }
 
+  /// Push the page specified by the [name] of the route on top of the navigator stack.
   void pushPage({@required String name, dynamic arguments}) {
     if (_pages.isEmpty || _pages.last.name != name) {
       _pages.add(_createPage(RouteSettings(name: name, arguments: arguments)));
@@ -172,10 +137,17 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
     }
   }
 
+  /// Pop the top-most page off the navigator stack.
   void pop() {
     popRoute();
   }
 
+  /// Get the top-most route of the navigator stack.
+  String getLastRoute() {
+    return _pages.last.name;
+  }
+
+  /// Replace the top-most page of the navigator stack with the page specified by the [name] of the route.
   void replace({@required String name, dynamic arguments}) {
     if (_pages.isNotEmpty) {
       _pages.removeLast();
@@ -184,6 +156,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
     notifyListeners();
   }
 
+  /// Replace all the navigator stack with the page specified by the [name] of the route.
   void replaceAll({@required String name, dynamic arguments}) {
     if (_pages.isNotEmpty) {
       _pages.clear();
@@ -192,16 +165,20 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
     notifyListeners();
   }
 
-  void replaceAllButNumber(int start, List<RouteSettings> list) {
+  /// Replace the navigator stack pages from [start] to the top with the pages specified by the [routeSettingsList] of RouteSettings.
+  void replaceAllButNumber(int start, {List<RouteSettings> routeSettingsList = const []}) {
     if (_pages.isNotEmpty) {
       _pages.removeRange(start, _pages.length);
     }
-    list.forEach((item) {
-      _pages.add(_createPage(RouteSettings(name: item.name, arguments: item.arguments)));
-    });
+    if (routeSettingsList.isNotEmpty) {
+      routeSettingsList.forEach((item) {
+        _pages.add(_createPage(RouteSettings(name: item.name, arguments: item.arguments)));
+      });
+    }
     notifyListeners();
   }
 
+  /// Replace all the navigator stack with the pages specified by the [list] of RouteSettings.
   void addAll(List<RouteSettings> list) {
     _pages.clear();
     list.forEach((item) {

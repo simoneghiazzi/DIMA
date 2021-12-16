@@ -1,6 +1,6 @@
-import 'package:sApport/Model/Expert/expert.dart';
 import 'package:flutter/material.dart';
 import 'components/expert_profile_body.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 
 class ExpertProfileScreen extends StatelessWidget {
   static const route = '/expertProfileScreen';

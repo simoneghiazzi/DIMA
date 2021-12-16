@@ -1,4 +1,3 @@
-import 'package:sApport/Model/Services/collections.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/components/chat_list_item.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
@@ -6,14 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatsListConstructor extends StatefulWidget {
-  final Function createUserCallback;
-  final Collection peerCollection;
+  final Function createChatCallback;
 
-  ChatsListConstructor({
-    Key key,
-    @required this.createUserCallback,
-    @required this.peerCollection,
-  }) : super(key: key);
+  ChatsListConstructor({Key key, @required this.createChatCallback}) : super(key: key);
 
   @override
   _ChatsListConstructorState createState() => _ChatsListConstructorState();
@@ -23,9 +17,12 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
   ChatViewModel chatViewModel;
   bool loading = true;
 
+  var _loadChatsStream;
+
   @override
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    _loadChatsStream = chatViewModel.loadChats(widget.createChatCallback(""));
     super.initState();
   }
 
@@ -33,7 +30,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
   Widget build(BuildContext context) {
     return Flexible(
       child: StreamBuilder(
-        stream: chatViewModel.loadChats(),
+        stream: _loadChatsStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
             return ListView.custom(
@@ -41,9 +38,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
               padding: EdgeInsets.all(10.0),
               childrenDelegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  var userId = snapshot.data.docs[index].id;
-                  return ChatListItem(
-                      userId: userId, peerCollection: widget.peerCollection, createUserCallback: widget.createUserCallback, key: ValueKey(userId));
+                  return ChatListItem(chatItem: widget.createChatCallback(snapshot.data.docs[index].id), key: ValueKey(snapshot.data.docs[index].id));
                 },
                 childCount: snapshot.data.docs.length,
                 findChildIndexCallback: (Key key) {

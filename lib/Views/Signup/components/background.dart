@@ -22,7 +22,7 @@ class Background extends StatelessWidget {
             left: 0,
             child: Image.asset(
               "assets/images/signup_top.png",
-              width: size.width * 0.3,
+              width: size.width * 0.35,
             ),
           ),
           Positioned(
@@ -30,7 +30,7 @@ class Background extends StatelessWidget {
             right: 0,
             child: Image.asset(
               "assets/images/login_bottom.png",
-              width: size.width * 0.2,
+              width: size.width * 0.3,
             ),
           ),
           child,
