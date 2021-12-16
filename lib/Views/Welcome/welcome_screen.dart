@@ -25,8 +25,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
   ReportViewModel reportViewModel;
   DiaryViewModel diaryViewModel;
 
-  bool _first;
-  bool _keyboardPreviouslyOpened;
+  bool _first = true;
+  var _width;
 
   @override
   void initState() {
@@ -34,41 +34,47 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+    _width = WidgetsBinding.instance.window.physicalSize.width;
     WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _first = true;
-    _keyboardPreviouslyOpened = MediaQuery.of(context).viewInsets.bottom != 0;
     return Scaffold(
       body: WelcomeBody(),
     );
   }
 
-  // Handle the orientation changes of the device
-  // This method is called BEFORE build, so the _previosKeyboardState contains the value of the state of the
-  // keyboard before the rebuild
-  @override
-  void didChangeMetrics() {
-    if (_first && WidgetsBinding.instance.window.viewInsets.bottom == 0.0 && !_keyboardPreviouslyOpened) {
-      // ** The MediaQuery.orientation value is the one before the rotation
-      // since the didChangeMetrics is called before the value in the MediaQuery is updated **
-      String lastRoute = routerDelegate.getLastRoute();
-      if (lastRoute == ChatPageScreen.route || lastRoute == ReportDetailsScreen.route || lastRoute == DiaryPageScreen.route) {
-        routerDelegate.pop();
-      } else if (MediaQuery.of(context).orientation == Orientation.landscape) {
-        if (chatViewModel.currentChat != null) {
-          routerDelegate.pushPage(name: ChatPageScreen.route);
-        } else if (reportViewModel.currentReport != null) {
-          routerDelegate.pushPage(name: ReportDetailsScreen.route);
-        } else if (diaryViewModel.currentDiaryPage != null) {
-          routerDelegate.pushPage(name: DiaryPageScreen.route);
-        }
-        _first = false;
+  /// Handle the orientation changes of the device.
+  ///
+  /// The _previosKeyboardState contains the value of the state of the keyboard before the rebuild
+  void handleOrientationChanges() {
+    print("handleOrientationChanges");
+    String lastRoute = routerDelegate.getLastRoute();
+    if (lastRoute == ChatPageScreen.route || lastRoute == ReportDetailsScreen.route || lastRoute == DiaryPageScreen.route) {
+      routerDelegate.pop();
+    } else if (MediaQuery.of(context).orientation == Orientation.landscape) {
+      if (chatViewModel.currentChat != null) {
+        routerDelegate.pushPage(name: ChatPageScreen.route);
+      } else if (reportViewModel.currentReport != null) {
+        routerDelegate.pushPage(name: ReportDetailsScreen.route);
+      } else if (diaryViewModel.currentDiaryPage != null) {
+        routerDelegate.pushPage(name: DiaryPageScreen.route);
       }
     }
+  }
+
+  @override
+  void didChangeMetrics() {
+    if (_width != WidgetsBinding.instance.window.physicalSize.width) {
+      if (_first) {
+        handleOrientationChanges();
+      }
+      _width = WidgetsBinding.instance.window.physicalSize.width;
+      _first = true;
+    }
+    super.didChangeMetrics();
   }
 
   @override

@@ -134,7 +134,11 @@ class _WelcomeBodyState extends State<WelcomeBody> {
         // Called on sign in
         await userViewModel.loadUser().then((_) => print("User of category ${userViewModel.loggedUser.collection} logged"));
         LoadingDialog.hide(context);
-        routerDelegate.replaceAllButNumber(1, routeSettingsList: [RouteSettings(name: userViewModel.loggedUser.homePageRoute)]);
+        if (userViewModel.loggedUser != null) {
+          routerDelegate.replaceAllButNumber(1, routeSettingsList: [RouteSettings(name: userViewModel.loggedUser.homePageRoute)]);
+        } else {
+          print("Error in logging the user in");
+        }
       } else {
         // Called on sign out
         routerDelegate.replaceAll(name: WelcomeScreen.route);

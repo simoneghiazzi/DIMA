@@ -31,7 +31,6 @@ class _AnonymousChatsListScreenState extends State<AnonymousChatsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: MediaQuery.of(context).orientation == Orientation.portrait
           ? AnonymousChatsListBody()
           : VerticalSplitView(

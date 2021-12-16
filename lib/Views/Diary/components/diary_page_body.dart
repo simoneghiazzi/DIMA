@@ -35,29 +35,32 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
 
   @override
   void initState() {
-    DateTime now = DateTime.now();
-    today = DateTime(now.year, now.month, now.day);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    DateTime now = DateTime.now();
+    today = DateTime(now.year, now.month, now.day);
     _diaryPageItem = diaryViewModel.currentDiaryPage;
-    if (_diaryPageItem.id == null) {
-      modifiable = true;
-      DateTime now = DateTime.now();
-      title = formatter.format(now);
-    } else {
-      diaryViewModel.setTextContent(_diaryPageItem.title, _diaryPageItem.content);
-      title = formatter.format(_diaryPageItem.dateTime);
-    }
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
     subscription = subscribeToSuccessViewModel();
     BackButtonInterceptor.add(backButtonInterceptor);
+
+    if (_diaryPageItem.id == null) {
+      modifiable = true;
+      title = formatter.format(today);
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        diaryViewModel.setTextContent(_diaryPageItem.title, _diaryPageItem.content);
+      });
+      title = formatter.format(_diaryPageItem.dateTime);
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     return Stack(
       children: <Widget>[
         Column(
