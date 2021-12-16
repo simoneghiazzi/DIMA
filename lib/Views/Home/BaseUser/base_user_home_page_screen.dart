@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/Views/Diary/diary_screen.dart';
@@ -21,12 +22,14 @@ class BaseUserHomePageScreen extends StatefulWidget {
 class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
   UserViewModel userViewModel;
   AuthViewModel authViewModel;
+  DiaryViewModel diaryViewModel;
   int _currentIndex;
 
   @override
   void initState() {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
 
     // Register the notification service
     authViewModel.setNotification(userViewModel.loggedUser);
@@ -65,6 +68,9 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
   }
 
   void _onBottomNavTapped(int index) {
+    if (diaryViewModel.currentDiaryPage != null) {
+      diaryViewModel.resetCurrentDiaryPage();
+    }
     setState(() {
       FocusScope.of(context).unfocus();
       _currentIndex = index;

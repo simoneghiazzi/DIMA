@@ -9,7 +9,7 @@ class VerticalSplitView extends StatefulWidget {
   final Color dividerColor;
 
   const VerticalSplitView(
-      {Key key, @required this.left, @required this.right, this.ratio = 0.5, this.resizable = false, this.dividerWidth, this.dividerColor})
+      {Key key, @required this.left, @required this.right, this.ratio = 0.5, this.resizable = false, this.dividerWidth = 0, this.dividerColor})
       : assert(left != null),
         assert(right != null),
         assert(ratio >= 0),
@@ -21,7 +21,6 @@ class VerticalSplitView extends StatefulWidget {
 }
 
 class _VerticalSplitViewState extends State<VerticalSplitView> {
-
   //from 0-1
   double _ratio;
   double _maxWidth;

@@ -27,6 +27,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Check the device type and disable the landscape orientation if it is not a tablet
+
+  /*************************** RIGA DA DECOMMENTARE IN DEPLOY ***************************/
   if (!Device.get().isTablet) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   }
