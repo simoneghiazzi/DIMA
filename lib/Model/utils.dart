@@ -21,4 +21,10 @@ class Utils {
       return "$peerId-$senderId";
     }
   }
+
+  /// Returns true if the [dateTime] is today, false otherwise.
+  static bool isToday(DateTime dateTime) {
+    var today = DateTime.now();
+    return (dateTime.day == today.day && dateTime.month == today.month && dateTime.year == today.year);
+  }
 }

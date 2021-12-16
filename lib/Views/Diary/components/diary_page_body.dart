@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:intl/intl.dart';
 import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
+import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/Views/components/top_bar.dart';
@@ -21,7 +22,6 @@ class DiaryPageBody extends StatefulWidget {
 
 class _DiaryPageBodyState extends State<DiaryPageBody> {
   DiaryViewModel diaryViewModel;
-  DateTime today;
   AppRouterDelegate routerDelegate;
   Alert errorAlert;
   Alert successAlert;
@@ -37,8 +37,6 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   void initState() {
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    DateTime now = DateTime.now();
-    today = DateTime(now.year, now.month, now.day);
     _diaryPageItem = diaryViewModel.currentDiaryPage;
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
@@ -47,7 +45,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
 
     if (_diaryPageItem.id == null) {
       modifiable = true;
-      title = formatter.format(today);
+      title = formatter.format(DateTime.now());
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         diaryViewModel.setTextContent(_diaryPageItem.title, _diaryPageItem.content);
@@ -70,7 +68,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
               text: title,
               back: resetDiaryPage,
               buttons: [
-                if (_diaryPageItem.id != null && !modifiable && isPageOfToday())
+                if (_diaryPageItem.id != null && !modifiable && Utils.isToday(_diaryPageItem.dateTime))
                   InkWell(
                       child: InkResponse(
                     onTap: () {
@@ -291,13 +289,6 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
         )
       ],
     );
-  }
-
-  bool isPageOfToday() {
-    if (_diaryPageItem.dateTime.day == today.day && _diaryPageItem.dateTime.month == today.month && _diaryPageItem.dateTime.year == today.year) {
-      return true;
-    }
-    return false;
   }
 
   void resetDiaryPage() {
