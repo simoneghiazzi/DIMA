@@ -1,3 +1,4 @@
+import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -11,8 +12,12 @@ class DashCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Padding(
-      padding: EdgeInsets.only(right: 12, top: 15, bottom: 15),
+    return Container(
+      padding: Device.get().isTablet
+          ? (MediaQuery.of(context).orientation == Orientation.landscape)
+              ? EdgeInsets.only(right: 25, left: 25, top: 20, bottom: 20)
+              : EdgeInsets.only(right: 20, left: 20, top: 15, bottom: 15)
+          : EdgeInsets.only(right: 5, left: 5, top: 15, bottom: 15),
       child: InkWell(
         customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         splashColor: kPrimaryColor.withAlpha(100),

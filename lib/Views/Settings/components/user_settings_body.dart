@@ -10,6 +10,7 @@ import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:sizer/sizer.dart';
 
 class UserSettingsBody extends StatefulWidget {
   @override
@@ -75,17 +76,17 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                     children: <Widget>[
                       Center(
                           child: Container(
+                              constraints: BoxConstraints(maxWidth: 500, minHeight: size.height / 25),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
                                 color: kPrimaryLightColor,
                               ),
-                              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                                Flexible(
-                                    child: Text(
+                              child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                                Text(
                                   userViewModel.loggedUser.name.toUpperCase() + " " + userViewModel.loggedUser.surname.toUpperCase(),
-                                  style: TextStyle(color: kPrimaryColor, fontSize: 22, fontWeight: FontWeight.bold),
+                                  style: TextStyle(color: kPrimaryColor, fontSize: 14.sp, fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.center,
-                                ))
+                                )
                               ]))),
                       Column(
                         children: <Widget>[
@@ -150,7 +151,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                     child: Text(userViewModel.loggedUser.email,
                                         style: TextStyle(
                                           color: kPrimaryColor,
-                                          fontSize: 15,
+                                          fontSize: 12.sp,
                                         ))),
                               ],
                             ),
@@ -179,7 +180,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                               style: TextStyle(
                                                 color: kPrimaryColor,
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 15,
+                                                fontSize: 12.sp,
                                               ),
                                             ),
                                             onTap: () {
@@ -257,7 +258,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               style: TextStyle(
                                 color: kPrimaryColor,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 17,
+                                fontSize: 12.sp,
                               ),
                             ),
                             SizedBox(
@@ -297,6 +298,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                       Center(
                         child: InkWell(
                           child: Container(
+                            constraints: BoxConstraints(maxWidth: 300),
                             padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
                             height: size.height * 0.05,
                             width: size.width * 0.5,
@@ -333,6 +335,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                       Center(
                         child: InkWell(
                           child: Container(
+                            constraints: BoxConstraints(maxWidth: 300),
                             padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
                             height: size.height * 0.05,
                             width: size.width * 0.5,

@@ -28,7 +28,10 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
             children: <Widget>[
               InkWell(
                 child: Container(
-                  width: size.width * 0.3,
+                  constraints: BoxConstraints(
+                    maxWidth: size.width * 0.25,
+                    minHeight: size.height / 20,
+                  ),
                   padding: EdgeInsets.only(top: 2, bottom: 2),
                   height: 30,
                   decoration: BoxDecoration(
@@ -69,7 +72,10 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
               ),
               InkWell(
                 child: Container(
-                  width: size.width * 0.3,
+                  constraints: BoxConstraints(
+                    maxWidth: size.width * 0.25,
+                    minHeight: size.height / 20,
+                  ),
                   padding: EdgeInsets.only(top: 2, bottom: 2),
                   height: 30,
                   decoration: BoxDecoration(

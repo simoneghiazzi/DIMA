@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:sApport/Model/Chat/anonymous_chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
@@ -56,13 +57,12 @@ class _AnonymousChatsListBodyState extends State<AnonymousChatsListBody> {
                           height: 30,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
-                            color: kPrimaryLightColor,
                           ),
                           child: Row(
                             children: <Widget>[
                               Icon(
                                 Icons.notification_add,
-                                color: Colors.red,
+                                color: kPrimaryGoldenColor,
                                 size: 20,
                               ),
                               SizedBox(
@@ -70,7 +70,7 @@ class _AnonymousChatsListBodyState extends State<AnonymousChatsListBody> {
                               ),
                               Text(
                                 "Requests",
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: kPrimaryColor),
+                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                             ],
                           ),

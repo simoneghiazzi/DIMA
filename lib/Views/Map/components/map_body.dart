@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
@@ -168,8 +169,12 @@ class _MapBodyState extends State<MapBody> {
       CustomInfoWindow(
         controller: _customInfoWindowController,
         height: size.height * 0.15,
-        width: size.width * 0.65,
-        offset: size.height * 0.04,
+        width: Device.get().isTablet
+            ? (MediaQuery.of(context).orientation == Orientation.portrait)
+                ? size.width * 0.5
+                : size.width * 0.35
+            : size.width * 0.65,
+        offset: (MediaQuery.of(context).orientation == Orientation.portrait) ? 10 : 30,
       ),
     ]);
   }

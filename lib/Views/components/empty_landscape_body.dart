@@ -19,7 +19,7 @@ class EmptyLandscapeBody extends StatelessWidget {
             child: Center(
               child: Image.asset(
                 "assets/icons/logo.png",
-                height: size.height / 10,
+                scale: 7,
               ),
             ),
           ),

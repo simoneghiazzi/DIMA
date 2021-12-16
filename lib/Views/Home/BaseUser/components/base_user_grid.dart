@@ -34,10 +34,13 @@ class _BaseUserGridState extends State<BaseUserGrid> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-          padding: EdgeInsets.only(left: 12),
+          constraints: (MediaQuery.of(context).orientation == Orientation.landscape) ? BoxConstraints(maxWidth: 800) : BoxConstraints(maxWidth: 700),
+          padding: EdgeInsets.only(left: 5, right: 5),
           child: Table(
-            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-            defaultColumnWidth: FlexColumnWidth(15.0),
+            // columnWidths: {
+            //   0: FractionColumnWidth(0.45),
+            //   1: FractionColumnWidth(0.45), //fixed to 100 width
+            // },
             children: [
               TableRow(children: <Widget>[
                 DashCard(

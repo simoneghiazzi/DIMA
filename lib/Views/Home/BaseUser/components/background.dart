@@ -16,17 +16,16 @@ class Background extends StatelessWidget {
           Positioned(
             child: Image.asset(
               "assets/images/main_top.png",
-              width: size.width * 0.35,
+              scale: 2,
             ),
           ),
           Center(
             child: Opacity(
               opacity: 0.2,
               child: Container(
-                padding: EdgeInsets.only(top: 10),
                 child: Image.asset(
                   "assets/icons/logo.png",
-                  width: size.height * 0.06,
+                  scale: 11,
                 ),
               ),
             ),
@@ -38,7 +37,7 @@ class Background extends StatelessWidget {
               opacity: 0.5,
               child: Image.asset(
                 "assets/images/home_bottom.png",
-                width: size.width * 0.4,
+                scale: 2,
               ),
             ),
           ),

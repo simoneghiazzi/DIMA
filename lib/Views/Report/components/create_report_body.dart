@@ -2,6 +2,7 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/ViewModel/Forms/report_form.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
+import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/Report/reports_list_screen.dart';
@@ -76,103 +77,104 @@ class _CreateReportBodyState extends State<CreateReportBody> {
         Expanded(
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
-            child: BlocProvider(
-              create: (context) => ReportForm(),
-              child: Builder(
-                builder: (context) {
-                  ReportForm reportForm = BlocProvider.of<ReportForm>(context);
-                  return Theme(
-                    data: Theme.of(context).copyWith(
-                      primaryColor: kPrimaryColor,
-                      inputDecorationTheme: InputDecorationTheme(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
+            child: Container(
+              constraints: BoxConstraints(maxWidth: 500),
+              child: BlocProvider(
+                create: (context) => ReportForm(),
+                child: Builder(
+                  builder: (context) {
+                    ReportForm reportForm = BlocProvider.of<ReportForm>(context);
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        primaryColor: kPrimaryColor,
+                        inputDecorationTheme: InputDecorationTheme(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
                         ),
                       ),
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(
-                          height: size.height * 0.1,
-                        ),
-                        Image.asset(
-                          "assets/icons/safety.png",
-                          height: size.height * 0.15,
-                        ),
-                        Padding(
-                            padding: EdgeInsets.only(top: size.height * 0.05, left: 40, right: 40),
-                            child: FormBlocListener<ReportForm, String, String>(
-                              onSubmitting: (context, state) {
-                                LoadingDialog.show(context);
-                              },
-                              onSuccess: (context, state) {
-                                LoadingDialog.hide(context);
-                                successAlert.show();
-                              },
-                              onFailure: (context, state) {
-                                LoadingDialog.hide(context);
-                                errorAlert.show();
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  DropdownFieldBlocBuilder<String>(
-                                    selectFieldBloc: reportForm.reportCategory,
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: kPrimaryLightColor.withAlpha(100),
-                                      labelText: 'Report category',
-                                      labelStyle: TextStyle(color: kPrimaryColor),
-                                      prefixIcon: Icon(
-                                        Icons.security,
-                                        color: kPrimaryColor,
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: size.height * 0.1,
+                          ),
+                          Image.asset(
+                            "assets/icons/safety.png",
+                            height: size.height * 0.15,
+                          ),
+                          Padding(
+                              padding: EdgeInsets.only(top: size.height * 0.05, left: 40, right: 40),
+                              child: FormBlocListener<ReportForm, String, String>(
+                                onSubmitting: (context, state) {
+                                  LoadingDialog.show(context);
+                                },
+                                onSuccess: (context, state) {
+                                  LoadingDialog.hide(context);
+                                  successAlert.show();
+                                },
+                                onFailure: (context, state) {
+                                  LoadingDialog.hide(context);
+                                  errorAlert.show();
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    DropdownFieldBlocBuilder<String>(
+                                      emptyItemLabel: 'Report category:',
+                                      textStyle: TextStyle(fontWeight: FontWeight.bold),
+                                      selectFieldBloc: reportForm.reportCategory,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: kPrimaryLightColor.withAlpha(100),
+                                        labelText: 'Report category',
+                                        labelStyle: TextStyle(color: kPrimaryColor),
+                                        prefixIcon: Icon(
+                                          Icons.security,
+                                          color: kPrimaryColor,
+                                        ),
+                                      ),
+                                      itemBuilder: (context, value) => FieldItem(
+                                          child: Text(
+                                        value,
+                                        style: TextStyle(color: kPrimaryColor),
+                                      )),
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 0.01,
+                                    ),
+                                    TextFieldBlocBuilder(
+                                      textCapitalization: TextCapitalization.sentences,
+                                      textFieldBloc: reportForm.reportText,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: kPrimaryLightColor.withAlpha(100),
+                                        labelText: 'Report description',
+                                        labelStyle: TextStyle(color: kPrimaryColor),
+                                        prefixIcon: Icon(
+                                          Icons.text_fields,
+                                          color: kPrimaryColor,
+                                        ),
                                       ),
                                     ),
-                                    itemBuilder: (context, value) => FieldItem(
-                                        child: Text(
-                                      value,
-                                      style: TextStyle(color: kPrimaryColor),
-                                    )),
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 0.01,
-                                  ),
-                                  TextFieldBlocBuilder(
-                                    textCapitalization: TextCapitalization.sentences,
-                                    textFieldBloc: reportForm.reportText,
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: kPrimaryLightColor.withAlpha(100),
-                                      labelText: 'Report description',
-                                      labelStyle: TextStyle(color: kPrimaryColor),
-                                      prefixIcon: Icon(
-                                        Icons.text_fields,
-                                        color: kPrimaryColor,
-                                      ),
+                                    SizedBox(
+                                      height: size.height * 0.06,
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 0.06,
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      FocusScope.of(context).unfocus();
-                                      reportForm.submit();
-                                    },
-                                    style: ButtonStyle(
-                                        fixedSize: MaterialStateProperty.all<Size>(Size(size.width / 2, size.height / 20)),
-                                        backgroundColor: MaterialStateProperty.all<Color>(kPrimaryColor),
-                                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(borderRadius: BorderRadius.circular(29)))),
-                                    child: Text('SUBMIT'),
-                                  )
-                                ],
-                              ),
-                            )),
-                      ],
-                    ),
-                  );
-                },
+                                    RoundedButton(
+                                      text: "SUBMIT",
+                                      press: () {
+                                        FocusScope.of(context).unfocus();
+                                        reportForm.submit();
+                                      },
+                                      enabled: true,
+                                    ),
+                                  ],
+                                ),
+                              )),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),

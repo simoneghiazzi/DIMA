@@ -22,7 +22,7 @@ class _BaseUserHomePageBodyState extends State<BaseUserHomePageBody> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Header(),
-          Flexible(
+          Expanded(
             child: Background(
               child: Column(
                 children: [Spacer(), BaseUserGrid(), Spacer()],

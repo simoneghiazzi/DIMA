@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:open_mail_app/open_mail_app.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:sizer/sizer.dart';
 
 class ExpertProfileBody extends StatefulWidget {
   final Expert expert;
@@ -108,7 +109,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                               ),
                               GestureDetector(
                                 child: Text(widget.expert.phoneNumber,
-                                    style: TextStyle(color: kPrimaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
+                                    style: TextStyle(color: kPrimaryColor, fontSize: 22, fontWeight: FontWeight.bold)),
                                 onTap: () {
                                   launch('tel://' + widget.expert.phoneNumber);
                                 },
