@@ -18,9 +18,12 @@ class UserService {
   Future<void> loadLoggedUserFromDB() async {
     assert(_firebaseAuthService.firebaseUser != null);
     loggedUser = await _firestoreService.findUserType(_firebaseAuthService.firebaseUser.uid);
-    return _firestoreService
-        .getUserByIdFromDB(loggedUser.collection, _firebaseAuthService.firebaseUser.uid)
-        .then((value) => loggedUser.setFromDocument(value.docs[0]));
+    if (loggedUser != null) {
+      return _firestoreService
+          .getUserByIdFromDB(loggedUser.collection, _firebaseAuthService.firebaseUser.uid)
+          .then((value) => loggedUser.setFromDocument(value.docs[0]))
+          .catchError((error) => print("Error in getting the user from DB: $error"));
+    }
   }
 
   /// Create a new user from the [baseUserSignUpForm].

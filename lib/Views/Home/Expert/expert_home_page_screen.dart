@@ -1,4 +1,4 @@
-import 'package:sApport/Views/Home/Expert/components/expert_home_page_body.dart';
+import 'package:sApport/Views/Chat/Expert/ActiveChatsList/active_chats_list_screen.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class _ExpertHomePageScreenState extends State<ExpertHomePageScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = const [
-      ExpertHomePageBody(),
+      ActiveChatsListScreen(),
       //Calendar(),
       UserSettingsScreen()
     ];

@@ -4,20 +4,21 @@ import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/components/anonymous_chats_list_body.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_page_body.dart';
+import 'package:sApport/Views/Chat/Expert/ActiveChatsList/components/active_chats_list_body.dart';
 import 'package:sApport/Views/components/empty_landscape_body.dart';
 import 'package:sApport/Views/components/vertical_split_view.dart';
 import 'package:sApport/constants.dart';
 
-class AnonymousChatsListScreen extends StatefulWidget {
+class ActiveChatsListScreen extends StatefulWidget {
   static const route = '/activeChatsListScreen';
 
-  const AnonymousChatsListScreen({Key key}) : super(key: key);
+  const ActiveChatsListScreen({Key key}) : super(key: key);
 
   @override
-  State<AnonymousChatsListScreen> createState() => _AnonymousChatsListScreenState();
+  State<ActiveChatsListScreen> createState() => _ActiveChatsListScreenState();
 }
 
-class _AnonymousChatsListScreenState extends State<AnonymousChatsListScreen> {
+class _ActiveChatsListScreenState extends State<ActiveChatsListScreen> {
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
 
@@ -31,10 +32,11 @@ class _AnonymousChatsListScreenState extends State<AnonymousChatsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: MediaQuery.of(context).orientation == Orientation.portrait
-          ? AnonymousChatsListBody()
+          ? ActiveChatsListBody()
           : VerticalSplitView(
-              left: AnonymousChatsListBody(),
+              left: ActiveChatsListBody(),
               right: Consumer<ChatViewModel>(
                 builder: (context, chatViewModel, child) {
                   if (chatViewModel.currentChat != null) {

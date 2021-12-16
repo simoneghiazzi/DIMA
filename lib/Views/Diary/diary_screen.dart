@@ -5,6 +5,7 @@ import 'package:sApport/Views/components/vertical_split_view.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Diary/components/diary_body.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/constants.dart';
 
 class DiaryScreen extends StatefulWidget {
   static const route = '/diaryScreen';
@@ -34,11 +35,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
           ? DiaryBody()
           : Consumer<DiaryViewModel>(
               builder: (context, diaryViewModel, child) {
-                var _ratio = diaryViewModel.currentDiaryPage != null ? 0.35 : 1.0;
+                var _ratio = diaryViewModel.currentDiaryPage != null ? 0.50 : 1.0;
                 return VerticalSplitView(
                   left: DiaryBody(),
                   right: diaryViewModel.currentDiaryPage != null ? DiaryPageBody(key: ValueKey(diaryViewModel.currentDiaryPage.id)) : Container(),
                   ratio: _ratio,
+                  dividerWidth: 2.0,
+                  dividerColor: kPrimaryColor,
                 );
               },
             ),

@@ -62,13 +62,11 @@ dependencies:
   geocoding: ^2.0.1
   get_it: ^7.2.0
   change_app_package_name: ^1.0.0
-  split_view: ^3.1.0
   flutter_device_type: ^0.4.0
   custom_info_window: ^1.0.1
   permission_handler: ^8.3.0
   shimmer: ^2.0.0
   image_cropper: ^1.4.1
-  url_launcher_web: ^2.0.5
   test: ^1.17.12
   fake_cloud_firestore: ^1.2.0
   analyzer: ^2.8.0
