@@ -3,23 +3,19 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Chat/ChatPage/components/chat_page_body.dart';
 import 'package:sApport/Views/Chat/components/chats_list_constructor.dart';
 import 'package:sApport/Views/Home/components/header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/Views/components/empty_landscape_body.dart';
-import 'package:sApport/Views/components/vertical_split_view.dart';
 
-class ExpertHomePageBody extends StatefulWidget {
-  const ExpertHomePageBody({Key key}) : super(key: key);
+class ActiveChatsListBody extends StatefulWidget {
+  const ActiveChatsListBody({Key key}) : super(key: key);
 
   @override
-  _ExpertHomePageBodyState createState() => _ExpertHomePageBodyState();
+  _ActiveChatsListBodyState createState() => _ActiveChatsListBodyState();
 }
 
-class _ExpertHomePageBodyState extends State<ExpertHomePageBody> {
-  bool newPendingChats;
+class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
   ChatViewModel chatViewModel;
   UserViewModel userViewModel;
   AuthViewModel authViewModel;
@@ -42,21 +38,7 @@ class _ExpertHomePageBodyState extends State<ExpertHomePageBody> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Header(),
-        MediaQuery.of(context).orientation == Orientation.portrait
-            ? ChatsListConstructor(createChatCallback: (String id) => ActiveChat.fromId(id))
-            : VerticalSplitView(
-                left: ChatsListConstructor(createChatCallback: (String id) => ActiveChat.fromId(id)),
-                right: Consumer<ChatViewModel>(
-                  builder: (context, chatViewModel, child) {
-                    if (chatViewModel.currentChat != null) {
-                      return ChatPageBody(key: ValueKey(chatViewModel.currentChat.peerUser.id));
-                    } else {
-                      return EmptyLandscapeBody();
-                    }
-                  },
-                ),
-                ratio: 0.35,
-              ),
+        ChatsListConstructor(createChatCallback: (String id) => ActiveChat.fromId(id)),
       ],
     ));
   }
