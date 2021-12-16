@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:open_mail_app/open_mail_app.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:sizer/sizer.dart';
 
 class ExpertProfileBody extends StatefulWidget {
   final Expert expert;
@@ -62,12 +61,12 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                 width: size.width,
                 color: kPrimaryColor,
               ),
-              // Container(
-              //     transform: Matrix4.translationValues(0.0, -75.0, 0.0),
-              //     child: NetworkAvatar(
-              //       img: widget.expert.profilePhoto,
-              //       radius: 75.0,
-              //     )),
+              Container(
+                  transform: Matrix4.translationValues(0.0, -75.0, 0.0),
+                  child: NetworkAvatar(
+                    img: widget.expert.profilePhoto,
+                    radius: 75.0,
+                  )),
               Container(
                 transform: Matrix4.translationValues(0.0, -50.0, 0.0),
                 padding: EdgeInsets.only(left: size.width / 10, right: size.width / 10),
