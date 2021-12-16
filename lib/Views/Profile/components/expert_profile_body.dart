@@ -62,12 +62,12 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                 width: size.width,
                 color: kPrimaryColor,
               ),
-              Container(
-                  transform: Matrix4.translationValues(0.0, -75.0, 0.0),
-                  child: NetworkAvatar(
-                    img: widget.expert.profilePhoto,
-                    radius: 75.0,
-                  )),
+              // Container(
+              //     transform: Matrix4.translationValues(0.0, -75.0, 0.0),
+              //     child: NetworkAvatar(
+              //       img: widget.expert.profilePhoto,
+              //       radius: 75.0,
+              //     )),
               Container(
                 transform: Matrix4.translationValues(0.0, -50.0, 0.0),
                 padding: EdgeInsets.only(left: size.width / 10, right: size.width / 10),

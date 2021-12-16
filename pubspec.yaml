@@ -73,6 +73,8 @@ dependencies:
   fake_cloud_firestore: ^1.2.0
   analyzer: ^2.8.0
   sizer: ^2.0.15
+  firebase_auth_mocks: ^0.8.1
+  image_test_utils: ^1.0.0
 
 dev_dependencies:
   flutter_test:
