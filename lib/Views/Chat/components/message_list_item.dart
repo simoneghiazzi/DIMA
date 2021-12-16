@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart' as Date;
-import 'package:sApport/Model/Chat/message.dart';
+import 'package:sApport/Model/DBItems/message.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/constants.dart';

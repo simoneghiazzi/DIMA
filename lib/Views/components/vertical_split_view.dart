@@ -5,8 +5,11 @@ class VerticalSplitView extends StatefulWidget {
   final Widget right;
   final double ratio;
   final bool resizable;
+  final double dividerWidth;
+  final Color dividerColor;
 
-  const VerticalSplitView({Key key, @required this.left, @required this.right, this.ratio = 0.5, this.resizable = false})
+  const VerticalSplitView(
+      {Key key, @required this.left, @required this.right, this.ratio = 0.5, this.resizable = false, this.dividerWidth, this.dividerColor})
       : assert(left != null),
         assert(right != null),
         assert(ratio >= 0),
@@ -18,7 +21,6 @@ class VerticalSplitView extends StatefulWidget {
 }
 
 class _VerticalSplitViewState extends State<VerticalSplitView> {
-  final _dividerWidth = 16.0;
 
   //from 0-1
   double _ratio;
@@ -40,9 +42,9 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
     return LayoutBuilder(builder: (context, BoxConstraints constraints) {
       assert(_ratio <= 1);
       assert(_ratio >= 0);
-      if (_maxWidth == null) _maxWidth = constraints.maxWidth - _dividerWidth;
+      if (_maxWidth == null) _maxWidth = constraints.maxWidth - widget.dividerWidth;
       if (_maxWidth != constraints.maxWidth) {
-        _maxWidth = constraints.maxWidth - _dividerWidth;
+        _maxWidth = constraints.maxWidth - widget.dividerWidth;
       }
 
       return SizedBox(
@@ -57,7 +59,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 child: SizedBox(
-                  width: _dividerWidth,
+                  width: widget.dividerWidth,
                   height: constraints.maxHeight,
                   child: RotationTransition(
                     child: Icon(Icons.drag_handle),
@@ -73,10 +75,18 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
                   });
                 },
               ),
+            ] else ...[
+              Container(
+                width: widget.dividerWidth,
+                height: constraints.maxHeight,
+                color: widget.dividerColor,
+              )
             ],
-            SizedBox(
-              width: _width2,
-              child: widget.right,
+            Expanded(
+              child: SizedBox(
+                width: _width2,
+                child: widget.right,
+              ),
             ),
           ],
         ),

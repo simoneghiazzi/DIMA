@@ -1,7 +1,3 @@
-import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/BaseUser/base_user.dart';
-import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';

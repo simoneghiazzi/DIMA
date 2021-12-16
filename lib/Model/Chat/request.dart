@@ -1,7 +1,6 @@
-import 'package:sApport/Model/user.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
-import 'package:sApport/Model/BaseUser/base_user.dart';
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 
 /// New request of chat sent by the base user to another base user.
 ///

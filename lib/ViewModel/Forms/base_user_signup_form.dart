@@ -1,6 +1,6 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:sApport/Model/BaseUser/base_user.dart';
-import 'package:sApport/Model/user.dart';
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
+import 'package:sApport/Model/DBItems/user.dart';
 
 class BaseUserSignUpForm extends FormBloc<String, String> {
   String email;

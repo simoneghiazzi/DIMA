@@ -1,6 +1,5 @@
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/anonymous_chats_list_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -97,7 +96,7 @@ class _ChatAcceptDenyInputState extends State<ChatAcceptDenyInput> {
                 ),
                 onTap: () async {
                   chatViewModel.denyPendingChat();
-                  routerDelegate.replaceAllButNumber(3);
+                  routerDelegate.replaceAllButNumber(4);
                 },
               )
             ],

@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:sApport/Model/Services/user_service.dart';
-import 'package:sApport/Model/user.dart';
+import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
 
 class UserViewModel {

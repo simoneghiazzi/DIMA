@@ -1,4 +1,4 @@
-import 'package:sApport/Model/user.dart';
+import 'package:sApport/Model/DBItems/user.dart';
 
 /// Chat between the logged user and the [peerUser].
 ///

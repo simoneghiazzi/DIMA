@@ -6,8 +6,6 @@ import 'package:sApport/Views/Chat/BaseUser/PendingChatsList/components/pending_
 import 'package:sApport/Views/Chat/ChatPage/components/chat_page_body.dart';
 import 'package:sApport/Views/components/empty_landscape_body.dart';
 import 'package:sApport/Views/components/vertical_split_view.dart';
-import 'package:sApport/constants.dart';
-import 'package:split_view/split_view.dart';
 
 class PendingChatsListScreen extends StatefulWidget {
   static const route = '/pendingChatsListScreen';

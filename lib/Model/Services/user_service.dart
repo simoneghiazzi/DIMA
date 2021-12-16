@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:sApport/Model/user.dart';
+import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';

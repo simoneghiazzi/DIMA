@@ -1,7 +1,6 @@
-import 'package:sApport/Model/user.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/request.dart';
-import 'package:sApport/Model/BaseUser/base_user.dart';
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 
 /// New request of chat received from another base user awaiting confirmation or rejection.
 ///

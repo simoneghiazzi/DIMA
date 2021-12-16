@@ -1,7 +1,6 @@
-import 'package:sApport/Model/user.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/active_chat.dart';
-import 'package:sApport/Model/Expert/expert.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 
 /// Chat of the base user with an expert.
 ///

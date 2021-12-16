@@ -1,7 +1,6 @@
-import 'package:sApport/Model/BaseUser/base_user.dart';
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/Chat/chat.dart';
-import 'package:sApport/Model/Expert/expert.dart';
-import 'package:sApport/Model/user.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';

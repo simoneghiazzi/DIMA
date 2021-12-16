@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/db_item.dart';
+import 'package:sApport/Model/DBItems/db_item.dart';
 
 class Report extends DbItem {
   static const COLLECTION = "reports";
@@ -10,15 +10,18 @@ class Report extends DbItem {
 
   Report({String id, this.category, this.description, this.dateTime}) : super(COLLECTION, id: id);
 
-  @override
-  void setFromDocument(DocumentSnapshot doc) {
+  /// Create an instance of the [Report] form the [doc] fields retrieved from the FireBase DB.
+  factory Report.fromDocument(DocumentSnapshot doc) {
     try {
-      id = doc.id;
-      category = doc.get("category");
-      description = doc.get("description");
-      dateTime = doc.get("dateTime").toDate();
+      return Report(
+        id: doc.id,
+        category: doc.get("category"),
+        description: doc.get("description"),
+        dateTime: doc.get("dateTime").toDate(),
+      );
     } catch (e) {
-      print("Error in setting the report from the document snapshot: $e");
+      print("Error in creating the report from the document snapshot: $e");
+      return null;
     }
   }
 
