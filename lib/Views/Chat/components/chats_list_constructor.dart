@@ -1,3 +1,4 @@
+import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/components/chat_list_item.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
@@ -15,7 +16,6 @@ class ChatsListConstructor extends StatefulWidget {
 
 class _ChatsListConstructorState extends State<ChatsListConstructor> {
   ChatViewModel chatViewModel;
-  bool loading = true;
 
   var _loadChatsStream;
 
@@ -38,7 +38,9 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
               padding: EdgeInsets.all(10.0),
               childrenDelegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  return ChatListItem(chatItem: widget.createChatCallback(snapshot.data.docs[index].id), key: ValueKey(snapshot.data.docs[index].id));
+                  Chat _chatItem = widget.createChatCallback(snapshot.data.docs[index].id);
+                  _chatItem.setFromDocument(snapshot.data.docs[index]);
+                  return ChatListItem(chatItem: _chatItem, key: ValueKey(snapshot.data.docs[index].id));
                 },
                 childCount: snapshot.data.docs.length,
                 findChildIndexCallback: (Key key) {

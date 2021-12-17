@@ -41,6 +41,7 @@ class ChatViewModel extends ChangeNotifier {
 
   /// Send a message to the [peerUser]
   void sendMessage() {
+    _currentChat.lastMessage = contentTextCtrl.text;
     _firestoreService.addMessageIntoDB(
       _userService.loggedUser,
       _currentChat,
@@ -52,6 +53,14 @@ class ChatViewModel extends ChangeNotifier {
       ),
     );
     contentTextCtrl.clear();
+  }
+
+  Future<void> setMessageRead() {
+    if (!_currentChat.isLastMessageRead) {
+      _currentChat.isLastMessageRead = true;
+      return _firestoreService.setMessageHasRead(_userService.loggedUser, _currentChat);
+    }
+    return null;
   }
 
   /// Get the stream of messages between the 2 users.
@@ -82,7 +91,7 @@ class ChatViewModel extends ChangeNotifier {
 
   /// Accept a new pending chat request.
   void acceptPendingChat() {
-    _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser, _currentChat.peerUser);
+    _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser, _currentChat);
     setCurrentChat(AnonymousChat(peerUser: _currentChat.peerUser));
   }
 
