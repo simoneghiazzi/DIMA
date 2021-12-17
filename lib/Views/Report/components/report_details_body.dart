@@ -38,11 +38,7 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> with WidgetsBindi
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TopBar(
-              back: reportViewModel.resetCurrentReport,
-              text: _reportItem.category,
-              isPortrait: MediaQuery.of(context).orientation == Orientation.landscape,
-            ),
+            TopBar(back: reportViewModel.resetCurrentReport, text: _reportItem.category),
           ],
         ),
         Padding(

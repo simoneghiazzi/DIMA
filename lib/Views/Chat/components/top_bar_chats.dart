@@ -33,6 +33,9 @@ class TopBarChats extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     if (MediaQuery.of(context).orientation == Orientation.portrait) ...[
+                      SizedBox(
+                        width: size.width * 0.01,
+                      ),
                       IconButton(
                         icon: Icon(
                           Icons.arrow_back_ios_new_rounded,
@@ -45,22 +48,30 @@ class TopBarChats extends StatelessWidget {
                           routerDelegate.pop();
                         },
                       ),
+                    ] else ...[
+                      SizedBox(
+                      width: size.width * 0.03,
+                    ),
                     ],
                     SizedBox(
                       width: size.width * 0.01,
                     ),
-                    circleAvatar ?? networkAvatar ?? Container(),
-                    circleAvatar != null || networkAvatar != null
-                        ? SizedBox(
-                            width: size.width * 0.04,
-                          )
-                        : Container(),
                     Flexible(
                       child: GestureDetector(
-                        child: Text(
-                          text,
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-                          overflow: TextOverflow.ellipsis,
+                        child: Row(
+                          children: [
+                            circleAvatar ?? networkAvatar ?? Container(),
+                            circleAvatar != null || networkAvatar != null
+                                ? SizedBox(
+                                    width: size.width * 0.03,
+                                  )
+                                : Container(),
+                            Text(
+                              text,
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
                         onTap: () {
                           if (networkAvatar != null) {

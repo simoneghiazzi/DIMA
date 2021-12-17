@@ -7,9 +7,8 @@ class TopBar extends StatelessWidget {
   final String text;
   final List<InkWell> buttons;
   final Function back;
-  final bool isPortrait;
 
-  TopBar({Key key, @required this.text, this.buttons, this.back, this.isPortrait = false}) : super(key: key);
+  const TopBar({Key key, @required this.text, this.buttons, this.back}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,23 +28,25 @@ class TopBar extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    isPortrait
-                        ? Container(
-                            width: 15.0,
-                          )
-                        : IconButton(
-                            icon: Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              FocusScope.of(context).unfocus();
-                              if (back != null) {
-                                back();
-                              }
-                              routerDelegate.pop();
-                            },
-                          ),
+                    SizedBox(
+                      width: size.width * 0.01,
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        FocusScope.of(context).unfocus();
+                        if (back != null) {
+                          back();
+                        }
+                        routerDelegate.pop();
+                      },
+                    ),
+                    SizedBox(
+                      width: size.width * 0.01,
+                    ),
                     Text(
                       text,
                       style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold, color: Colors.white),

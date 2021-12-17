@@ -9,22 +9,17 @@ class Header extends StatelessWidget {
       color: kPrimaryColor,
       child: SafeArea(
         child: Container(
-          decoration: BoxDecoration(color: kPrimaryColor),
+          color: kPrimaryColor,
           height: size.height / 10,
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: Text(
-                      "sApport",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40, fontFamily: "Gabriola"),
-                    ),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: Text(
+                  "sApport",
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 40, fontFamily: "Gabriola"),
+                ),
               ),
             ],
           ),
