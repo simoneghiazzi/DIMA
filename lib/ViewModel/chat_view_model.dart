@@ -55,10 +55,10 @@ class ChatViewModel extends ChangeNotifier {
     contentTextCtrl.clear();
   }
 
-  Future<void> setMessageRead() {
-    if (!_currentChat.isLastMessageRead) {
-      _currentChat.isLastMessageRead = true;
-      return _firestoreService.setMessageHasRead(_userService.loggedUser, _currentChat);
+  Future<void> setMessagesHasRead() {
+    if (_currentChat.notReadMessages > 0) {
+      _currentChat.notReadMessages = 0;
+      return _firestoreService.setMessagesHasRead(_userService.loggedUser, _currentChat);
     }
     return null;
   }

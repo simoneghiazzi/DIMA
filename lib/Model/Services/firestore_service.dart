@@ -198,20 +198,20 @@ class FirestoreService {
     });
   }
 
-  /// It sets the `isLastMessageRead` field of the chat of the [senderUser] with the peerUser specified
-  /// in the [chat] to `true`.
-  Future<void> setMessageHasRead(User senderUser, Chat chat) {
+  /// It sets the `notReadMessages` field of the chat of the [senderUser] with the peerUser specified
+  /// in the [chat] to `0`.
+  Future<void> setMessagesHasRead(User senderUser, Chat chat) {
     return _firestore
         .collection(senderUser.collection)
         .doc(senderUser.id)
         .collection(chat.collection)
         .doc(chat.peerUser.id)
-        .update({"isLastMessageRead": true})
-        .then((value) => print("isLastMessageRead field setted to true"))
-        .catchError((error) => print("Failed to set the isLastMessageRead field: $error"));
+        .update({"notReadMessages": 0})
+        .then((value) => print("notReadMessages field setted to zero"))
+        .catchError((error) => print("Failed to set the notReadMessages field: $error"));
   }
 
-  /// It updates the `lastMessage`, `lastMessageTimestamp` and `isLastMessageRead` fields
+  /// It updates the `lastMessage`, `lastMessageTimestamp` and `notReadMessages` fields
   /// of the [senderUser] and peerUsers specified in the [chat].
   ///
   /// If the [chat] is a [Request], adds it to the list of chats of the 2 users
@@ -220,14 +220,18 @@ class FirestoreService {
     var senderUserRef = _firestore.collection(senderUser.collection).doc(senderUser.id).collection(chat.collection).doc(chat.peerUser.id);
     var peerUserRef = _firestore.collection(chat.peerUser.collection).doc(chat.peerUser.id).collection(chat.peerCollection).doc(senderUser.id);
 
+    var doc = await peerUserRef.get();
+    int counter;
+    doc.data() != null ? counter = doc.get("notReadMessages") + 1 : counter = 1;
+
     // If the chat is a Request it means that it is new and so call increment conversation counter
     if (chat is Request) {
       _incrementConversationCounter(senderUser, chat, 1);
     }
     WriteBatch batch = FirebaseFirestore.instance.batch();
-    // The isLastMessageRead field is setted to true for the sender user and to false for the peer user
-    batch.set(senderUserRef, {"lastMessageTimestamp": timestamp, "isLastMessageRead": true, "lastMessage": chat.lastMessage});
-    batch.set(peerUserRef, {"lastMessageTimestamp": timestamp, "isLastMessageRead": false, "lastMessage": chat.lastMessage});
+    // The notReadMessages field is setted to 0 for the sender user and to counter for the peer user
+    batch.set(senderUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
+    batch.set(peerUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": counter, "lastMessage": chat.lastMessage});
     batch.commit().then((value) => print("Chat info updated")).catchError((error) => print("Failed to update the chat info: $error"));
   }
 
@@ -248,10 +252,10 @@ class FirestoreService {
     WriteBatch batch = FirebaseFirestore.instance.batch();
     // Pending chat of the sender user is moved into active chats
     batch.delete(pendingChatsReference);
-    batch.set(senderAnonymousChatsReference, {"lastMessageTimestamp": timestamp, "isLastMessageRead": true, "lastMessage": chat.lastMessage});
+    batch.set(senderAnonymousChatsReference, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
     // Request chat of the peer user is moved into active chats
     batch.delete(requestsReference);
-    batch.set(peerAnonymousChatsReference, {"lastMessageTimestamp": timestamp, "isLastMessageRead": true, "lastMessage": chat.lastMessage});
+    batch.set(peerAnonymousChatsReference, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
 
     batch.commit().then((value) => print("Chats upgraded")).catchError((error) => print("Failed to upgrade the chats: $error"));
   }

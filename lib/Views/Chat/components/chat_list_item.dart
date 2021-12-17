@@ -42,7 +42,6 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     _chatItem = widget.chatItem;
-    _peerUserItem = widget.chatItem.peerUser;
     _getPeerUserDocFuture = chatViewModel.getPeerUserDoc(widget.chatItem.peerUser.collection, widget.chatItem.peerUser.id);
     super.initState();
   }
@@ -59,6 +58,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
               if (snapshot.hasData) {
                 _isLoaded = true;
                 widget.chatItem.peerUser.setFromDocument(snapshot.data.docs[0]);
+                _peerUserItem = widget.chatItem.peerUser;
                 return listItem();
               } else {
                 return Container();

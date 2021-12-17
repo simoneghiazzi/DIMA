@@ -21,7 +21,7 @@ abstract class Chat {
   DateTime lastMessageDateTime;
 
   // If the Last message received by the logged user is read.
-  bool isLastMessageRead;
+  int notReadMessages;
 
   /// Chat between the logged user and the [peerUser].
   ///
@@ -36,7 +36,7 @@ abstract class Chat {
       lastMessage = doc.get("lastMessage");
       int milli = doc.get("lastMessageTimestamp");
       lastMessageDateTime = DateTime.fromMillisecondsSinceEpoch(milli);
-      isLastMessageRead = doc.get("isLastMessageRead");
+      notReadMessages = doc.get("notReadMessages");
     } catch (e) {
       print("Error in setting the chat from the document snapshot: $e");
     }

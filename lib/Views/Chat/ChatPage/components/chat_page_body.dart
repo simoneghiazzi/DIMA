@@ -63,10 +63,18 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
                 text:
                     chatViewModel.currentChat.peerUser.data["name"].toString() + " " + chatViewModel.currentChat.peerUser.data["surname"].toString(),
               ),
-        // List of messages
-        MessagesListConstructor(),
-        // Input content
-        chatViewModel.currentChat is PendingChat ? ChatAcceptDenyInput() : ChatTextInput(),
+        Expanded(
+          child: Container(
+            child: Column(
+              children: [
+                // List of messages
+                Flexible(child: MessagesListConstructor(scrollController: scrollController)),
+                // Input content
+                chatViewModel.currentChat is PendingChat ? ChatAcceptDenyInput() : ChatTextInput(scrollController: scrollController),
+              ],
+            ),
+          ),
+        )
       ],
     );
   }

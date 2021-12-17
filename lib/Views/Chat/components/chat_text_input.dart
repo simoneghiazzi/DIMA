@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChatTextInput extends StatefulWidget {
+  final ScrollController scrollController;
+
+  const ChatTextInput({Key key, this.scrollController}) : super(key: key);
+
   @override
   _ChatTextInputState createState() => _ChatTextInputState();
 }
@@ -45,6 +49,9 @@ class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserv
                 textCapitalization: TextCapitalization.sentences,
                 onSubmitted: (value) {
                   sendMessage();
+                  if (widget.scrollController.hasClients) {
+                    widget.scrollController.jumpTo(widget.scrollController.position.minScrollExtent);
+                  }
                 },
                 textAlignVertical: TextAlignVertical.center,
                 style: TextStyle(fontFamily: "UbuntuCondensed"),
@@ -73,6 +80,9 @@ class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserv
   void sendMessage() {
     if (chatViewModel.contentTextCtrl.text.trim() != '') {
       chatViewModel.sendMessage();
+      if (widget.scrollController.hasClients) {
+        widget.scrollController.jumpTo(widget.scrollController.position.minScrollExtent);
+      }
     }
   }
 }
