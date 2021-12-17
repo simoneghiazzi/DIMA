@@ -8,16 +8,17 @@ import 'package:provider/provider.dart';
 class ChatsListConstructor extends StatefulWidget {
   final Function createChatCallback;
 
-  ChatsListConstructor({Key key, @required this.createChatCallback}) : super(key: key);
+  const ChatsListConstructor({Key key, @required this.createChatCallback}) : super(key: key);
 
   @override
   _ChatsListConstructorState createState() => _ChatsListConstructorState();
 }
 
-class _ChatsListConstructorState extends State<ChatsListConstructor> {
+class _ChatsListConstructorState extends State<ChatsListConstructor> with AutomaticKeepAliveClientMixin {
   ChatViewModel chatViewModel;
 
   var _loadChatsStream;
+  int selectedItemIndex;
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Flexible(
       child: StreamBuilder(
         stream: _loadChatsStream,
@@ -40,7 +42,15 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
                 (context, index) {
                   Chat _chatItem = widget.createChatCallback(snapshot.data.docs[index].id);
                   _chatItem.setFromDocument(snapshot.data.docs[index]);
-                  return ChatListItem(chatItem: _chatItem, key: ValueKey(snapshot.data.docs[index].id));
+                  return ChatListItem(
+                    chatItem: _chatItem,
+                    selectedItemCallback: () {
+                      selectedItemIndex = index;
+                      setState(() {});
+                    },
+                    selectedItem: chatViewModel.currentChat?.peerUser?.id == _chatItem.peerUser.id,
+                    key: ValueKey(snapshot.data.docs[index].id),
+                  );
                 },
                 childCount: snapshot.data.docs.length,
                 findChildIndexCallback: (Key key) {
@@ -61,4 +71,7 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

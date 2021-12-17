@@ -209,7 +209,6 @@ class FirestoreService {
         .update({"isLastMessageRead": true})
         .then((value) => print("isLastMessageRead field setted to true"))
         .catchError((error) => print("Failed to set the isLastMessageRead field: $error"));
-    ;
   }
 
   /// It updates the `lastMessage`, `lastMessageTimestamp` and `isLastMessageRead` fields
