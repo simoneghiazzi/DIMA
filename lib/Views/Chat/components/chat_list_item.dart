@@ -137,7 +137,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
                         : DateFormat("MM/dd/yyyy").format(_chatItem.lastMessageDateTime),
                     style: TextStyle(color: kPrimaryGreyColor, fontSize: 12.0, fontStyle: FontStyle.italic),
                   ),
-                  if (!_chatItem.isLastMessageRead) ...[
+                  if (_chatItem.notReadMessages > 0) ...[
                     SizedBox(
                       height: size.height * 0.01,
                     ),
@@ -145,6 +145,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
                       height: 15,
                       width: 15,
                       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.red),
+                      child: Text(_chatItem.notReadMessages.toString(), style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ],
@@ -154,7 +155,6 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
         ),
         onPressed: () {
           chatViewModel.setCurrentChat(_chatItem);
-          chatViewModel.setMessageRead();
           widget.selectedItemCallback();
           if (MediaQuery.of(context).orientation == Orientation.portrait) {
             routerDelegate.pushPage(name: ChatPageScreen.route);
