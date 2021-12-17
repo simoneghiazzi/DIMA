@@ -18,7 +18,6 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> with Automa
   ChatViewModel chatViewModel;
 
   var _loadChatsStream;
-  int selectedItemIndex;
 
   @override
   void initState() {
@@ -44,11 +43,8 @@ class _ChatsListConstructorState extends State<ChatsListConstructor> with Automa
                   _chatItem.setFromDocument(snapshot.data.docs[index]);
                   return ChatListItem(
                     chatItem: _chatItem,
-                    selectedItemCallback: () {
-                      selectedItemIndex = index;
-                      setState(() {});
-                    },
-                    selectedItem: chatViewModel.currentChat?.peerUser?.id == _chatItem.peerUser.id,
+                    selectedItemCallback: () => setState(() {}),
+                    isSelected: chatViewModel.currentChat?.peerUser?.id == _chatItem.peerUser.id,
                     key: ValueKey(snapshot.data.docs[index].id),
                   );
                 },
