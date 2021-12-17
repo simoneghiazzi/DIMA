@@ -16,8 +16,10 @@ import 'package:shimmer/shimmer.dart';
 
 class ChatListItem extends StatefulWidget {
   final Chat chatItem;
+  final bool selectedItem;
+  final Function selectedItemCallback;
 
-  ChatListItem({Key key, @required this.chatItem}) : super(key: key);
+  ChatListItem({Key key, @required this.chatItem, @required this.selectedItem, @required this.selectedItemCallback}) : super(key: key);
 
   @override
   _ChatListItemState createState() => _ChatListItemState();
@@ -153,12 +155,14 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
         onPressed: () {
           chatViewModel.setCurrentChat(_chatItem);
           chatViewModel.setMessageRead();
+          widget.selectedItemCallback();
           if (MediaQuery.of(context).orientation == Orientation.portrait) {
             routerDelegate.pushPage(name: ChatPageScreen.route);
           }
         },
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(kPrimaryLightColor),
+          backgroundColor: MaterialStateProperty.all<Color>(
+              widget.selectedItem && MediaQuery.of(context).orientation == Orientation.landscape ? Colors.indigoAccent.shade100 : kPrimaryLightColor),
           shape: MaterialStateProperty.all<OutlinedBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(25)),
