@@ -14,8 +14,13 @@ abstract class Chat {
   // Peer user of the chat.
   User peerUser;
 
+  // Last message received or sent by the logged user.
   String lastMessage;
+
+  // Date time of the Last message received or sent by the logged user.
   DateTime lastMessageDateTime;
+
+  // If the Last message received by the logged user is read.
   bool isLastMessageRead;
 
   /// Chat between the logged user and the [peerUser].

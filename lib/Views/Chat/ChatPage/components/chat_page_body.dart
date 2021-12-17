@@ -25,6 +25,8 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
   ChatViewModel chatViewModel;
   AppRouterDelegate routerDelegate;
 
+  final ScrollController scrollController = ScrollController();
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
