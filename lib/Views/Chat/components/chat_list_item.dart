@@ -1,6 +1,9 @@
+import 'package:intl/intl.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
+import 'package:sApport/Model/DBItems/user.dart';
+import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -28,7 +31,8 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
 
   var _getPeerUserDocFuture;
   Chat _chatItem;
-  var _isLoaded = false;
+  User _peerUserItem;
+  bool _isLoaded = false;
 
   @override
   void initState() {
@@ -36,6 +40,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     _chatItem = widget.chatItem;
+    _peerUserItem = widget.chatItem.peerUser;
     _getPeerUserDocFuture = chatViewModel.getPeerUserDoc(widget.chatItem.peerUser.collection, widget.chatItem.peerUser.id);
     super.initState();
   }
@@ -61,6 +66,8 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
             }
           });
     } else {
+      _chatItem = widget.chatItem;
+      _chatItem.peerUser = _peerUserItem;
       return listItem();
     }
   }
@@ -69,9 +76,9 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
     return Container(
       child: TextButton(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            _chatItem.peerUser is BaseUser
+            // Avatar
+            _peerUserItem is BaseUser
                 ? CircleAvatar(
                     backgroundColor: Colors.transparent,
                     radius: 25.0,
@@ -81,30 +88,71 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
                     ),
                   )
                 : NetworkAvatar(
-                    img: _chatItem.peerUser.data['profilePhoto'],
+                    img: _peerUserItem.data['profilePhoto'],
                     radius: 25.0,
                   ),
             SizedBox(
               width: 15,
             ),
-            // Profile info
+            // Profile info and lastMessage
             Flexible(
-              child: _chatItem.peerUser is BaseUser
-                  ? Text(
-                      _chatItem.peerUser.name + (userViewModel.loggedUser is Expert ? " " + _chatItem.peerUser.surname : ""),
-                      maxLines: 1,
-                      style: TextStyle(color: kPrimaryColor, fontSize: 18),
-                    )
-                  : Text(
-                      _chatItem.peerUser.name + " " + _chatItem.peerUser.surname,
-                      maxLines: 1,
-                      style: TextStyle(color: kPrimaryColor, fontSize: 18),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  _peerUserItem is BaseUser
+                      ? Text(
+                          _peerUserItem.name + (userViewModel.loggedUser is Expert ? " " + _peerUserItem.surname : ""),
+                          textAlign: TextAlign.left,
+                          maxLines: 1,
+                          style: TextStyle(color: kPrimaryColor, fontSize: 18),
+                        )
+                      : Text(
+                          _peerUserItem.name + " " + _peerUserItem.surname,
+                          textAlign: TextAlign.left,
+                          maxLines: 1,
+                          style: TextStyle(color: kPrimaryColor, fontSize: 18),
+                        ),
+                  SizedBox(
+                    height: size.height * 0.005,
+                  ),
+                  Text(
+                    _chatItem.lastMessage,
+                    textAlign: TextAlign.left,
+                    maxLines: 1,
+                    style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 12.0),
+                  ),
+                ],
+              ),
+            ),
+            // Time and lastMessageDatetime
+            Container(
+              padding: EdgeInsets.only(right: 10),
+              child: Column(
+                children: [
+                  Text(
+                    Utils.isToday(_chatItem.lastMessageDateTime)
+                        ? DateFormat("kk:mm").format(_chatItem.lastMessageDateTime)
+                        : DateFormat("MM/dd/yyyy").format(_chatItem.lastMessageDateTime),
+                    style: TextStyle(color: kPrimaryGreyColor, fontSize: 12.0, fontStyle: FontStyle.italic),
+                  ),
+                  if (!_chatItem.isLastMessageRead) ...[
+                    SizedBox(
+                      height: size.height * 0.01,
                     ),
+                    Container(
+                      height: 15,
+                      width: 15,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.red),
+                    ),
+                  ],
+                ],
+              ),
             ),
           ],
         ),
         onPressed: () {
           chatViewModel.setCurrentChat(_chatItem);
+          chatViewModel.setMessageRead();
           if (MediaQuery.of(context).orientation == Orientation.portrait) {
             routerDelegate.pushPage(name: ChatPageScreen.route);
           }

@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +46,7 @@ class TopBar extends StatelessWidget {
                               routerDelegate.pop();
                             },
                           ),
-                    AutoSizeText(
+                    Text(
                       text,
                       style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold, color: Colors.white),
                       maxLines: 1,
