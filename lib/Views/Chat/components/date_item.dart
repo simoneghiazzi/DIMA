@@ -39,7 +39,7 @@ class _DateItemState extends State<DateItem> {
                 ),
               ],
             ),
-            margin: EdgeInsets.only(bottom: 20.0, top: 20.0),
+            margin: EdgeInsets.only(bottom: 5.0, top: 25.0),
           ),
         ],
         mainAxisAlignment: MainAxisAlignment.center,

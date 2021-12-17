@@ -39,7 +39,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                   return Column(
                     children: [
                       DateItem(date: messageItem.timestamp),
-                      MessageListItem(messageItem: messageItem, index: index, key: ValueKey(snapshot.data.docs[index].get("timestamp"))),
+                      MessageListItem(messageItem: messageItem, key: ValueKey(messageItem.timestamp.millisecondsSinceEpoch)),
                     ],
                   );
                 } else {
@@ -48,11 +48,19 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                     return Column(
                       children: [
                         DateItem(date: messageItem.timestamp),
-                        MessageListItem(messageItem: messageItem, index: index, key: ValueKey(snapshot.data.docs[index].get("timestamp"))),
+                        MessageListItem(
+                          messageItem: messageItem,
+                          sameNextIdFrom: snapshot.data.docs[index + 1].get("idFrom") == messageItem.idFrom,
+                          key: ValueKey(messageItem.timestamp.millisecondsSinceEpoch),
+                        )
                       ],
                     );
                   } else {
-                    return MessageListItem(messageItem: messageItem, index: index, key: ValueKey(snapshot.data.docs[index].get("timestamp")));
+                    return MessageListItem(
+                      messageItem: messageItem,
+                      sameNextIdFrom: snapshot.data.docs[index + 1].get("idFrom") == messageItem.idFrom,
+                      key: ValueKey(messageItem.timestamp.millisecondsSinceEpoch),
+                    );
                   }
                 }
               },

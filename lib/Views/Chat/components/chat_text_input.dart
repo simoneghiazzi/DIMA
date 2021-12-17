@@ -9,13 +9,18 @@ class ChatTextInput extends StatefulWidget {
 }
 
 class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserver {
-  final ScrollController listScrollController = ScrollController();
+  ChatViewModel chatViewModel;
+
+  @override
+  void initState() {
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    var chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     return Padding(
-      padding: EdgeInsets.only(bottom: 10, left: 10, right: 10),
+      padding: EdgeInsets.all(10.0),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -39,7 +44,7 @@ class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserv
               child: TextField(
                 textCapitalization: TextCapitalization.sentences,
                 onSubmitted: (value) {
-                  listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+                  sendMessage();
                 },
                 textAlignVertical: TextAlignVertical.center,
                 style: TextStyle(fontFamily: "UbuntuCondensed"),
@@ -51,9 +56,7 @@ class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserv
                   suffixIcon: IconButton(
                     icon: Icon(Icons.send),
                     onPressed: () {
-                      if (chatViewModel.contentTextCtrl.text.trim() != '') {
-                        chatViewModel.sendMessage();
-                      }
+                      sendMessage();
                     },
                     color: kPrimaryColor,
                   ),
@@ -65,5 +68,11 @@ class _ChatTextInputState extends State<ChatTextInput> with WidgetsBindingObserv
         ),
       ),
     );
+  }
+
+  void sendMessage() {
+    if (chatViewModel.contentTextCtrl.text.trim() != '') {
+      chatViewModel.sendMessage();
+    }
   }
 }
