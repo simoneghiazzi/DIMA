@@ -23,7 +23,9 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
 
   var _loadMessagesStream;
   var _notReadMessages;
+  var _maxIndex;
   var _first = true;
+  var _scrollToNewMessage = true;
 
   @override
   void initState() {
@@ -43,33 +45,55 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
           stream: _loadMessagesStream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (_notReadMessages != 0) {
-                  Scrollable.ensureVisible(dataKey.currentContext, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd);
-                }
-                widget.scrollController.position.addListener(() {
-                  if (widget.scrollController.hasClients && widget.scrollController.offset >= 2 * size.height) {
-                    if (_first) {
-                      setState(() {});
-                      _first = false;
+              if (_scrollToNewMessage) {
+                _scrollToNewMessage = false;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (_notReadMessages != 0) {
+                    if (_maxIndex <= _notReadMessages) {
+                      var jumpValue = _notReadMessages * 40.0;
+                      var maxValue = widget.scrollController.position.maxScrollExtent;
+                      widget.scrollController.jumpTo(jumpValue < maxValue ? jumpValue : maxValue);
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Scrollable.ensureVisible(dataKey.currentContext, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart);
+                        if (widget.scrollController.position.pixels + size.height / 3 <= maxValue) {
+                          widget.scrollController.jumpTo(widget.scrollController.position.pixels - size.height / 3);
+                        }
+                      });
+                    } else {
+                      Scrollable.ensureVisible(dataKey.currentContext, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd);
+                      if (widget.scrollController.position.pixels != 0) {
+                        widget.scrollController.jumpTo(widget.scrollController.position.pixels + size.height / 3);
+                      }
                     }
-                  } else if (!_first) {
-                    setState(() {});
-                    _first = true;
                   }
+                  widget.scrollController.position.addListener(() {
+                    if (widget.scrollController.hasClients && widget.scrollController.offset >= 2 * size.height) {
+                      if (_first) {
+                        setState(() {});
+                        _first = false;
+                      }
+                    } else if (!_first) {
+                      setState(() {});
+                      _first = true;
+                    }
+                  });
                 });
-              });
+              }
               return ListView.custom(
                 controller: widget.scrollController,
                 physics: BouncingScrollPhysics(),
                 padding: EdgeInsets.all(10.0),
                 childrenDelegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
+                    _maxIndex = index;
                     Message messageItem = Message.fromDocument(snapshot.data.docs[index]);
                     if (index == snapshot.data.docs.length - 1) {
                       return Column(
                         children: [
                           DateItem(date: messageItem.timestamp),
+                          if (index == _notReadMessages - 1) ...[
+                            NotReadMessagesItem(counter: _notReadMessages, key: dataKey),
+                          ],
                           MessageListItem(messageItem: messageItem, key: ValueKey(messageItem.timestamp.millisecondsSinceEpoch)),
                         ],
                       );
