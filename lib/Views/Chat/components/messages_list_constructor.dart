@@ -18,9 +18,12 @@ class MessagesListConstructor extends StatefulWidget {
 
 class _MessagesListConstructorState extends State<MessagesListConstructor> {
   ChatViewModel chatViewModel;
+  final dataKey = new GlobalKey();
+  Size size;
 
   var _loadMessagesStream;
   var _notReadMessages;
+  var _first = true;
 
   @override
   void initState() {
@@ -33,13 +36,30 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
 
   @override
   Widget build(BuildContext context) {
+    size = MediaQuery.of(context).size;
+
     return Stack(
       children: [
         StreamBuilder(
           stream: _loadMessagesStream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              WidgetsBinding.instance.addPostFrameCallback((_) => widget.scrollController.jumpTo(_notReadMessages * 20.0));
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (_notReadMessages != 0) {
+                  Scrollable.ensureVisible(dataKey.currentContext, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd);
+                }
+                widget.scrollController.position.addListener(() {
+                  if (widget.scrollController.hasClients && widget.scrollController.offset >= 2 * size.height) {
+                    if (_first) {
+                      setState(() {});
+                      _first = false;
+                    }
+                  } else if (!_first) {
+                    setState(() {});
+                    _first = true;
+                  }
+                });
+              });
               return ListView.custom(
                 controller: widget.scrollController,
                 physics: BouncingScrollPhysics(),
@@ -62,7 +82,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                             DateItem(date: messageItem.timestamp),
                           ],
                           if (index == _notReadMessages - 1) ...[
-                            NotReadMessagesItem(counter: _notReadMessages),
+                            NotReadMessagesItem(counter: _notReadMessages, key: dataKey),
                           ],
                           MessageListItem(
                             messageItem: messageItem,
@@ -91,24 +111,30 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
             }
           },
         ),
-        if (widget.scrollController.hasClients && widget.scrollController.offset > 100) ...[
-          Align(
-            alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
-            child: FloatingActionButton(
-              onPressed: () {
-                widget.scrollController.animateTo(widget.scrollController.position.minScrollExtent,
-                    duration: const Duration(milliseconds: 1000), curve: Curves.fastOutSlowIn);
-              },
-              materialTapTargetSize: MaterialTapTargetSize.padded,
-              backgroundColor: kPrimaryColor,
-              child: const Icon(
-                Icons.arrow_drop_down_circle,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ]
+        buildGoDownButton(),
       ],
     );
+  }
+
+  Widget buildGoDownButton() {
+    if (widget.scrollController.hasClients && widget.scrollController.offset >= 2 * size.height) {
+      return Align(
+        alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
+        child: FloatingActionButton.small(
+          onPressed: () {
+            widget.scrollController.animateTo(widget.scrollController.position.minScrollExtent,
+                duration: const Duration(milliseconds: 1000), curve: Curves.fastOutSlowIn);
+          },
+          backgroundColor: kColorTransparent,
+          child: const Icon(
+            Icons.arrow_drop_down,
+            size: 40,
+            color: Colors.white,
+          ),
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 }
