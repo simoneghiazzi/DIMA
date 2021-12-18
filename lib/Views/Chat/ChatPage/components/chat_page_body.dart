@@ -65,6 +65,8 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
               ),
         Expanded(
           child: Container(
+            /************************************ QUI CI VA L'IMMAGINE DI BACKGROUND DELLA CHAT PAGE ******************************************** */
+            //decoration: BoxDecoration(image: DecorationImage(image: AssetImage(""))),
             child: Column(
               children: [
                 // List of messages

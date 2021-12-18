@@ -41,7 +41,6 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    _chatItem = widget.chatItem;
     _getPeerUserDocFuture = chatViewModel.getPeerUserDoc(widget.chatItem.peerUser.collection, widget.chatItem.peerUser.id);
     super.initState();
   }
@@ -52,21 +51,23 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
     super.build(context);
     if (!_isLoaded) {
       return FutureBuilder(
-          future: _getPeerUserDocFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                _isLoaded = true;
-                widget.chatItem.peerUser.setFromDocument(snapshot.data.docs[0]);
-                _peerUserItem = widget.chatItem.peerUser;
-                return listItem();
-              } else {
-                return Container();
-              }
+        future: _getPeerUserDocFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              _isLoaded = true;
+              _chatItem = widget.chatItem;
+              widget.chatItem.peerUser.setFromDocument(snapshot.data.docs[0]);
+              _peerUserItem = widget.chatItem.peerUser;
+              return listItem();
             } else {
-              return buildListItemShimmer();
+              return Container();
             }
-          });
+          } else {
+            return buildListItemShimmer();
+          }
+        },
+      );
     } else {
       _chatItem = widget.chatItem;
       _chatItem.peerUser = _peerUserItem;
@@ -142,7 +143,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
                         : DateFormat("MM/dd/yyyy").format(_chatItem.lastMessageDateTime),
                     style: TextStyle(color: kPrimaryGreyColor, fontSize: 12.0, fontStyle: FontStyle.italic),
                   ),
-                  // Check if there are not read messages 
+                  // Check if there are not read messages
                   if (_chatItem.notReadMessages > 0) ...[
                     SizedBox(
                       height: size.height * 0.01,

@@ -1,5 +1,6 @@
 import 'package:sApport/Model/DBItems/message.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Chat/components/date_item.dart';
 import 'package:sApport/Views/Chat/components/message_list_item.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class MessagesListConstructor extends StatefulWidget {
 }
 
 class _MessagesListConstructorState extends State<MessagesListConstructor> {
+  UserViewModel userViewModel;
   ChatViewModel chatViewModel;
   final dataKey = new GlobalKey();
   Size size;
@@ -26,9 +28,11 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
   var _maxIndex;
   var _first = true;
   var _scrollToNewMessage = true;
+  var _datakeyUsed = false;
 
   @override
   void initState() {
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     _loadMessagesStream = chatViewModel.loadMessages();
     _notReadMessages = chatViewModel.currentChat.notReadMessages;
@@ -55,12 +59,14 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                       widget.scrollController.jumpTo(jumpValue < maxValue ? jumpValue : maxValue);
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         Scrollable.ensureVisible(dataKey.currentContext, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart);
+                        _datakeyUsed = true;
                         if (widget.scrollController.position.pixels + size.height / 3 <= maxValue) {
                           widget.scrollController.jumpTo(widget.scrollController.position.pixels - size.height / 3);
                         }
                       });
                     } else {
                       Scrollable.ensureVisible(dataKey.currentContext, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd);
+                      _datakeyUsed = true;
                       if (widget.scrollController.position.pixels != 0) {
                         widget.scrollController.jumpTo(widget.scrollController.position.pixels + size.height / 3);
                       }
@@ -79,6 +85,16 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                   });
                 });
               }
+              // If the user is inside the chat and there are new messages, docChanges != docs
+              if (snapshot.data.docs.length != snapshot.data.docChanges.length) {
+                // If the new message is from the logged user, reset the _notReadMessages
+                if (snapshot.data.docs[0].get("idFrom") == userViewModel.loggedUser.id) {
+                  _notReadMessages = 0;
+                } else {
+                  // If the new message is from the peer user, increment the _notReadMessages
+                  _notReadMessages += snapshot.data.docChanges.length;
+                }
+              }
               return ListView.custom(
                 controller: widget.scrollController,
                 physics: BouncingScrollPhysics(),
@@ -92,7 +108,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                         children: [
                           DateItem(date: messageItem.timestamp),
                           if (index == _notReadMessages - 1) ...[
-                            NotReadMessagesItem(counter: _notReadMessages, key: dataKey),
+                            NotReadMessagesItem(counter: _notReadMessages, key: !_datakeyUsed ? dataKey : GlobalKey()),
                           ],
                           MessageListItem(messageItem: messageItem, key: ValueKey(messageItem.timestamp.millisecondsSinceEpoch)),
                         ],
@@ -105,7 +121,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                             DateItem(date: messageItem.timestamp),
                           ],
                           if (index == _notReadMessages - 1) ...[
-                            NotReadMessagesItem(counter: _notReadMessages, key: dataKey),
+                            NotReadMessagesItem(counter: _notReadMessages, key: !_datakeyUsed ? dataKey : GlobalKey()),
                           ],
                           MessageListItem(
                             messageItem: messageItem,
