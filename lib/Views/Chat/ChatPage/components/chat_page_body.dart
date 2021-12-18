@@ -13,6 +13,8 @@ import 'package:sApport/Views/components/network_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../constants.dart';
+
 class ChatPageBody extends StatefulWidget {
   const ChatPageBody({Key key}) : super(key: key);
 
@@ -66,7 +68,8 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
         Expanded(
           child: Container(
             /************************************ QUI CI VA L'IMMAGINE DI BACKGROUND DELLA CHAT PAGE ******************************************** */
-            //decoration: BoxDecoration(image: DecorationImage(image: AssetImage(""))),
+            decoration: BoxDecoration(
+                color: kPrimaryLightGreyColor, image: DecorationImage(image: AssetImage("assets/icons/logo.png"), scale: 1.7, opacity: 0.2)),
             child: Column(
               children: [
                 // List of messages
