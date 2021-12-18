@@ -170,11 +170,6 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
           ],
         ),
         onPressed: () {
-          chatViewModel.setCurrentChat(_chatItem);
-          widget.selectedItemCallback();
-          if (MediaQuery.of(context).orientation == Orientation.portrait) {
-            routerDelegate.pushPage(name: ChatPageScreen.route);
-          }
           if (chatViewModel.currentChat?.peerUser?.id != _chatItem.peerUser.id) {
             chatViewModel.setCurrentChat(_chatItem);
             widget.selectedItemCallback();
