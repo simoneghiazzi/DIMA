@@ -21,7 +21,7 @@ abstract class Chat {
   DateTime lastMessageDateTime;
 
   // If the Last message received by the logged user is read.
-  int notReadMessages;
+  int notReadMessages = 0;
 
   /// Chat between the logged user and the [peerUser].
   ///
