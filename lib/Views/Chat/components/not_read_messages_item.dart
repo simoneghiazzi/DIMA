@@ -12,7 +12,6 @@ class NotReadMessagesItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          width: size.width * 0.9,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
