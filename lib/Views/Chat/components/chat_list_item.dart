@@ -70,6 +70,11 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
     } else {
       _chatItem = widget.chatItem;
       _chatItem.peerUser = _peerUserItem;
+      // Check if there are not read messages and the chat is not the current chat
+      if (_chatItem.notReadMessages > 0 && _chatItem.peerUser == chatViewModel.currentChat.peerUser) {
+        _chatItem.notReadMessages = 0;
+        chatViewModel.setMessagesHasRead();
+      }
       return listItem();
     }
   }
@@ -137,6 +142,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
                         : DateFormat("MM/dd/yyyy").format(_chatItem.lastMessageDateTime),
                     style: TextStyle(color: kPrimaryGreyColor, fontSize: 12.0, fontStyle: FontStyle.italic),
                   ),
+                  // Check if there are not read messages and the chat is not the current chat
                   if (_chatItem.notReadMessages > 0) ...[
                     SizedBox(
                       height: size.height * 0.01,

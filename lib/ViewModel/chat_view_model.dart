@@ -56,11 +56,8 @@ class ChatViewModel extends ChangeNotifier {
   }
 
   Future<void> setMessagesHasRead() {
-    if (_currentChat.notReadMessages > 0) {
-      _currentChat.notReadMessages = 0;
-      return _firestoreService.setMessagesHasRead(_userService.loggedUser, _currentChat);
-    }
-    return null;
+    _currentChat.notReadMessages = 0;
+    return _firestoreService.setMessagesHasRead(_userService.loggedUser, _currentChat);
   }
 
   /// Get the stream of messages between the 2 users.
@@ -138,6 +135,8 @@ class ChatViewModel extends ChangeNotifier {
   }
 
   /// Reset the [_currentChat].
+  ///
+  /// It must be called after all the other reset methods.
   void resetCurrentChat() {
     _currentChat = null;
     print("Current chat resetted");

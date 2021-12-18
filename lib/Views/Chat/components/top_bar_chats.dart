@@ -50,8 +50,8 @@ class TopBarChats extends StatelessWidget {
                       ),
                     ] else ...[
                       SizedBox(
-                      width: size.width * 0.03,
-                    ),
+                        width: size.width * 0.03,
+                      ),
                     ],
                     SizedBox(
                       width: size.width * 0.01,

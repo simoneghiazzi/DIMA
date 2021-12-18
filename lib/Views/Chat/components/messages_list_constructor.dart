@@ -37,7 +37,6 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-
     return Stack(
       children: [
         StreamBuilder(
