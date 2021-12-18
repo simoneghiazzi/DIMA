@@ -32,7 +32,6 @@ class _ExpertChatsListScreenState extends State<ExpertChatsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: MediaQuery.of(context).orientation == Orientation.portrait
           ? ExpertChatsListBody()
           : VerticalSplitView(

@@ -31,7 +31,6 @@ class _ActiveChatsListScreenState extends State<ActiveChatsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: MediaQuery.of(context).orientation == Orientation.portrait
           ? ActiveChatsListBody()
           : VerticalSplitView(
