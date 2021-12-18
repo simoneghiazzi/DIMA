@@ -29,6 +29,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
   var _first = true;
   var _scrollToNewMessage = true;
   var _datakeyUsed = false;
+  var _previousSnapshotHashCode = 0;
 
   @override
   void initState() {
@@ -84,17 +85,19 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                     }
                   });
                 });
-              }
-              // If the user is inside the chat and there are new messages, docChanges != docs
-              if (snapshot.data.docs.length != snapshot.data.docChanges.length) {
-                // If the new message is from the logged user, reset the _notReadMessages
-                if (snapshot.data.docs[0].get("idFrom") == userViewModel.loggedUser.id) {
-                  _notReadMessages = 0;
-                } else {
-                  // If the new message is from the peer user, increment the _notReadMessages
-                  _notReadMessages += snapshot.data.docChanges.length;
+              } else if (_previousSnapshotHashCode != snapshot.hashCode) {
+                // If the user is inside the chat and there are new messages, docChanges != docs
+                if (snapshot.data.docs.length != snapshot.data.docChanges.length) {
+                  // If the new message is from the logged user, reset the _notReadMessages
+                  if (snapshot.data.docs[0].get("idFrom") == userViewModel.loggedUser.id) {
+                    _notReadMessages = 0;
+                  } else if (_notReadMessages != snapshot.data.docChanges.length && _notReadMessages > 0) {
+                    // If the new message is from the peer user, increment the _notReadMessages
+                    _notReadMessages += snapshot.data.docChanges.length;
+                  }
                 }
               }
+              _previousSnapshotHashCode = snapshot.hashCode;
               return ListView.custom(
                 controller: widget.scrollController,
                 physics: BouncingScrollPhysics(),
