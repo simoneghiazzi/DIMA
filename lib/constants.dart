@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 // Colors used into the application
 const kPrimaryColor = Color(0xFF212C8C);
 final kPrimaryLightColor = Color(0xFFC9E9FF);
-final kPrimaryButtonColor = Color(0xFFA1EBFF);
+final kPrimaryButtonColor = Color(0xFF6FFFFF);
 final kPrimaryDarkColor = Color(0xFF264B83);
 final kPrimaryDarkColorTrasparent = Color(0x9E0D397C);
 final kColorTransparent = Color(0x440D397C);
