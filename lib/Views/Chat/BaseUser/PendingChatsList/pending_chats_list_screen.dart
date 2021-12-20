@@ -15,8 +15,8 @@ class PendingChatsListScreen extends StatefulWidget {
 }
 
 class _PendingChatsListScreenState extends State<PendingChatsListScreen> {
-  ChatViewModel chatViewModel;
-  AppRouterDelegate routerDelegate;
+  ChatViewModel? chatViewModel;
+  AppRouterDelegate? routerDelegate;
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _PendingChatsListScreenState extends State<PendingChatsListScreen> {
               right: Consumer<ChatViewModel>(
                 builder: (context, chatViewModel, child) {
                   if (chatViewModel.currentChat != null) {
-                    return ChatPageBody(key: ValueKey(chatViewModel.currentChat.peerUser.id));
+                    return ChatPageBody(key: ValueKey(chatViewModel.currentChat!.peerUser!.id));
                   } else {
                     return EmptyLandscapeBody();
                   }

@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 
 class ExpertHomePageScreen extends StatefulWidget {
   static const route = '/expertHomePageScreen';
-  final int pageIndex;
+  final int? pageIndex;
 
-  ExpertHomePageScreen({Key key, @required this.pageIndex}) : super(key: key);
+  ExpertHomePageScreen({Key? key, required this.pageIndex}) : super(key: key);
 
   @override
   _ExpertHomePageScreenState createState() => _ExpertHomePageScreenState();
 }
 
 class _ExpertHomePageScreenState extends State<ExpertHomePageScreen> {
-  int _currentIndex;
+  int? _currentIndex;
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _ExpertHomePageScreenState extends State<ExpertHomePageScreen> {
             children: _pages,
           ),
           bottomNavigationBar: BottomNavigationBar(
-              currentIndex: _currentIndex,
+              currentIndex: _currentIndex!,
               showSelectedLabels: true,
               showUnselectedLabels: false,
               unselectedItemColor: kPrimaryColor,

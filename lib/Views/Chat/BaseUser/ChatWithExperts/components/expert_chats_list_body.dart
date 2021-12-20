@@ -1,7 +1,7 @@
 import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/Views/Chat/components/chats_list_constructor.dart';
+import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/components/anonymous_chats_list_constructor.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/constants.dart';
@@ -14,8 +14,8 @@ class ExpertChatsListBody extends StatefulWidget {
 }
 
 class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
-  ChatViewModel chatViewModel;
-  AppRouterDelegate routerDelegate;
+  late ChatViewModel chatViewModel;
+  late AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
@@ -32,11 +32,11 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TopBar(back: chatViewModel.resetCurrentChat, text: "Experts"),
-            ChatsListConstructor(createChatCallback: (String id) => ExpertChat.fromId(id)),
+            //ChatsListConstructor(createChatCallback: (String id) => ExpertChat.fromId(id)),
           ],
         ),
         Align(
-          alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
+          alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1)!,
           child: FloatingActionButton(
             onPressed: () async {
               routerDelegate.pushPage(name: MapScreen.route);

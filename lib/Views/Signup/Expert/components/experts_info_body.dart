@@ -20,12 +20,12 @@ class ExpertsInfoBody extends StatefulWidget {
 }
 
 class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
-  UserViewModel userViewModel;
-  ExpertSignUpForm expertSignUpForm;
-  AppRouterDelegate routerDelegate;
+  late UserViewModel userViewModel;
+  late ExpertSignUpForm expertSignUpForm;
+  late AppRouterDelegate routerDelegate;
   bool nextEnabled = false;
-  Alert errorAlert;
-  Alert addressConfirmationAlert;
+  late Alert errorAlert;
+  late Alert addressConfirmationAlert;
 
   @override
   void initState() {
@@ -70,7 +70,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                   child: ClipOval(
                       child: (expertSignUpForm.profilePhoto != null)
                           ? Image.file(
-                              File(expertSignUpForm.profilePhoto),
+                              File(expertSignUpForm.profilePhoto!),
                             )
                           : Container(
                               decoration: BoxDecoration(
@@ -293,7 +293,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
   }
 
   Future _cropImage(String imagePath) async {
-    File croppedFile = await ImageCropper.cropImage(
+    File? croppedFile = await ImageCropper.cropImage(
         sourcePath: imagePath,
         aspectRatioPresets: [CropAspectRatioPreset.square],
         cropStyle: CropStyle.circle,
@@ -319,7 +319,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
     return Alert(
       closeIcon: null,
       context: context,
-      title: "Found address: " + expertSignUpForm.expertAddress.address,
+      title: "Found address: " + expertSignUpForm.expertAddress.address!,
       style: AlertStyle(
         animationDuration: Duration(milliseconds: 0),
         isCloseButton: false,

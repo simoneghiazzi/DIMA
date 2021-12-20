@@ -10,17 +10,17 @@ import 'package:sApport/constants.dart';
 
 class ExpertChatsListScreen extends StatefulWidget {
   static const route = '/expertChatsListScreen';
-  final Widget chatPage;
+  final Widget? chatPage;
 
-  const ExpertChatsListScreen({Key key, this.chatPage}) : super(key: key);
+  const ExpertChatsListScreen({Key? key, this.chatPage}) : super(key: key);
 
   @override
   State<ExpertChatsListScreen> createState() => _ExpertChatsListScreenState();
 }
 
 class _ExpertChatsListScreenState extends State<ExpertChatsListScreen> {
-  ChatViewModel chatViewModel;
-  AppRouterDelegate routerDelegate;
+  ChatViewModel? chatViewModel;
+  AppRouterDelegate? routerDelegate;
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _ExpertChatsListScreenState extends State<ExpertChatsListScreen> {
               right: Consumer<ChatViewModel>(
                 builder: (context, chatViewModel, child) {
                   if (chatViewModel.currentChat != null) {
-                    return ChatPageBody(key: ValueKey(chatViewModel.currentChat.peerUser.id));
+                    return ChatPageBody(key: ValueKey(chatViewModel.currentChat!.peerUser!.id));
                   } else {
                     return EmptyLandscapeBody();
                   }

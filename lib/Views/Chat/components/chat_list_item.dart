@@ -19,21 +19,21 @@ class ChatListItem extends StatefulWidget {
   final bool isSelected;
   final Function selectedItemCallback;
 
-  ChatListItem({Key key, @required this.chatItem, @required this.isSelected, @required this.selectedItemCallback}) : super(key: key);
+  ChatListItem({Key? key, required this.chatItem, required this.isSelected, required this.selectedItemCallback}) : super(key: key);
 
   @override
   _ChatListItemState createState() => _ChatListItemState();
 }
 
 class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClientMixin {
-  UserViewModel userViewModel;
-  ChatViewModel chatViewModel;
-  AppRouterDelegate routerDelegate;
-  Size size;
+  late UserViewModel userViewModel;
+  late ChatViewModel chatViewModel;
+  late AppRouterDelegate routerDelegate;
+  late Size size;
 
   var _getPeerUserDocFuture;
-  Chat _chatItem;
-  User _peerUserItem;
+  late Chat _chatItem;
+  late User _peerUserItem;
   bool _isLoaded = false;
 
   @override
@@ -41,7 +41,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    _getPeerUserDocFuture = chatViewModel.getPeerUserDoc(widget.chatItem.peerUser.collection, widget.chatItem.peerUser.id);
+    _getPeerUserDocFuture = chatViewModel.getPeerUserDoc(widget.chatItem.peerUser!.collection, widget.chatItem.peerUser!.id);
     super.initState();
   }
 
@@ -49,35 +49,14 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     super.build(context);
-    if (!_isLoaded) {
-      return FutureBuilder(
-        future: _getPeerUserDocFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              _isLoaded = true;
-              _chatItem = widget.chatItem;
-              widget.chatItem.peerUser.setFromDocument(snapshot.data.docs[0]);
-              _peerUserItem = widget.chatItem.peerUser;
-              return listItem();
-            } else {
-              return Container();
-            }
-          } else {
-            return buildListItemShimmer();
-          }
-        },
-      );
-    } else {
-      _chatItem = widget.chatItem;
-      _chatItem.peerUser = _peerUserItem;
-      // Check if there are not read messages and the chat is not the current chat
-      if (_chatItem.notReadMessages > 0 && _chatItem.peerUser == chatViewModel.currentChat?.peerUser) {
-        _chatItem.notReadMessages = 0;
-        chatViewModel.setMessagesHasRead();
-      }
-      return listItem();
+    _chatItem = widget.chatItem;
+    _peerUserItem = _chatItem.peerUser!;
+    // Check if there are not read messages and the chat is not the current chat
+    if (_chatItem.notReadMessages > 0 && _chatItem.peerUser == chatViewModel.currentChat?.peerUser) {
+      _chatItem.notReadMessages = 0;
+      chatViewModel.setMessagesHasRead();
     }
+    return listItem();
   }
 
   Widget listItem() {
@@ -100,7 +79,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
                           ),
                         )
                       : NetworkAvatar(
-                          img: _peerUserItem.data['profilePhoto'],
+                          img: _peerUserItem.data['profilePhoto'] as String?,
                           radius: 25.0,
                         ),
                   SizedBox(
@@ -147,9 +126,9 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    Utils.isToday(_chatItem.lastMessageDateTime)
-                        ? DateFormat("kk:mm").format(_chatItem.lastMessageDateTime)
-                        : DateFormat("MM/dd/yyyy").format(_chatItem.lastMessageDateTime),
+                    Utils.isToday(_chatItem.lastMessageDateTime!)
+                        ? DateFormat("kk:mm").format(_chatItem.lastMessageDateTime!)
+                        : DateFormat("MM/dd/yyyy").format(_chatItem.lastMessageDateTime!),
                     style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 12.0, fontStyle: FontStyle.italic),
                   ),
                   // Check if there are not read messages
@@ -170,7 +149,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
           ],
         ),
         onPressed: () {
-          if (chatViewModel.currentChat?.peerUser?.id != _chatItem.peerUser.id) {
+          if (chatViewModel.currentChat?.peerUser?.id != _chatItem.peerUser?.id) {
             chatViewModel.setCurrentChat(_chatItem);
             widget.selectedItemCallback();
             if (MediaQuery.of(context).orientation == Orientation.portrait) {
@@ -195,7 +174,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
   Widget buildListItemShimmer() {
     return Shimmer.fromColors(
         baseColor: kPrimaryLightColor,
-        highlightColor: Colors.grey[100],
+        highlightColor: Colors.grey[100]!,
         period: Duration(seconds: 1),
         child: Container(
           child: TextButton(

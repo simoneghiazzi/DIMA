@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
 
 class TextFieldContainer extends StatelessWidget {
-  final Widget child;
+  final Widget? child;
   const TextFieldContainer({
-    Key key,
+    Key? key,
     this.child,
   }) : super(key: key);
 
@@ -17,7 +17,7 @@ class TextFieldContainer extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       width: size.width * 0.8,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[800]),
+        border: Border.all(color: Colors.grey[800]!),
         color: kPrimaryLightColor.withAlpha(100),
         borderRadius: BorderRadius.circular(25),
       ),

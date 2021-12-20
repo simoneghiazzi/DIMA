@@ -3,11 +3,11 @@ import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 
 class DashCard extends StatelessWidget {
-  final String imagePath;
-  final String text;
-  final Function press;
+  final String? imagePath;
+  final String? text;
+  final Function? press;
 
-  const DashCard({Key key, this.imagePath, this.text, this.press}) : super(key: key);
+  const DashCard({Key? key, this.imagePath, this.text, this.press}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class DashCard extends StatelessWidget {
         customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         splashColor: kPrimaryColor.withAlpha(100),
         highlightColor: Colors.transparent,
-        onTap: press,
+        onTap: press as void Function()?,
         child: Container(
           height: size.height / 3.3,
           child: Card(
@@ -35,12 +35,12 @@ class DashCard extends StatelessWidget {
                   children: <Widget>[
                     SizedBox(height: size.height / 25),
                     Image.asset(
-                      imagePath,
+                      imagePath!,
                       height: size.height * 0.13,
                     ),
                     SizedBox(height: 16),
                     Text(
-                      text,
+                      text!,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: kPrimaryColor,

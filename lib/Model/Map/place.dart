@@ -1,8 +1,8 @@
 class Place {
-  final double lat;
-  final double lng;
-  final String placeId;
-  final String address;
+  final double? lat;
+  final double? lng;
+  final String? placeId;
+  final String? address;
 
   Place({this.lat, this.lng, this.placeId, this.address});
 

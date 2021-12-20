@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
 
 class LoadingDialog {
-  Widget widget(BuildContext context, {String text}) {
+  Widget widget(BuildContext context, {String? text}) {
     return WillPopScope(
       onWillPop: () async => false,
       child: SizedBox(
@@ -14,7 +14,7 @@ class LoadingDialog {
     );
   }
 
-  static Future<void> show(BuildContext context, {String text}) async {
+  static Future<void> show(BuildContext context, {String? text}) async {
     return showDialog<void>(
         context: context,
         barrierDismissible: false,

@@ -20,12 +20,12 @@ class CredentialBody extends StatefulWidget {
 
 class _CredentialBodyState extends State<CredentialBody> {
   // View Models
-  AuthViewModel authViewModel;
-  UserViewModel userViewModel;
-  AppRouterDelegate routerDelegate;
+  late AuthViewModel authViewModel;
+  late UserViewModel userViewModel;
+  late AppRouterDelegate routerDelegate;
 
   // Subscriber
-  StreamSubscription<bool> subscriber;
+  late StreamSubscription<bool> subscriber;
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class _CredentialBodyState extends State<CredentialBody> {
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     subscriber = subscribeToUserCreatedStream();
     BackButtonInterceptor.add(backButtonInterceptor);
-    WidgetsBinding.instance.addPostFrameCallback((_) => authViewModel.getData());
+    WidgetsBinding.instance!.addPostFrameCallback((_) => authViewModel.getData());
     super.initState();
   }
 
@@ -72,24 +72,24 @@ class _CredentialBodyState extends State<CredentialBody> {
             SizedBox(height: size.height * 0.04),
             StreamBuilder(
               stream: authViewModel.loginForm.isSignUpEnabled,
-              builder: (context, snapshot) {
+              builder: (context, AsyncSnapshot snapshot) {
                 return RoundedButton(
                   text: "SIGN UP",
                   press: () async {
                     FocusScope.of(context).unfocus();
                     LoadingDialog.show(context);
-                    userViewModel.loggedUser.email = authViewModel.emailTextCtrl.text;
-                    authViewModel.signUpUser(userViewModel.loggedUser);
+                    userViewModel.loggedUser!.email = authViewModel.emailTextCtrl.text;
+                    authViewModel.signUpUser(userViewModel.loggedUser!);
                   },
                   enabled: snapshot.data ?? false,
                 );
               },
             ),
             SizedBox(height: size.height * 0.05),
-            StreamBuilder<String>(
+            StreamBuilder<String?>(
               stream: authViewModel.authMessage,
               builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data.isNotEmpty) {
+                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                   return Column(
                     children: [
                       Container(

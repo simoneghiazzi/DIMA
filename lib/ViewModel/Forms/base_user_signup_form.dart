@@ -3,7 +3,7 @@ import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/DBItems/user.dart';
 
 class BaseUserSignUpForm extends FormBloc<String, String> {
-  String email;
+  late String email;
 
   BaseUserSignUpForm() {
     // Add the field blocs to the base user signup form
@@ -24,7 +24,7 @@ class BaseUserSignUpForm extends FormBloc<String, String> {
   final birthDate = InputFieldBloc<DateTime, Object>(validators: [
     FieldBlocValidators.required,
     FieldBlocValidators.underage,
-  ], initialValue: null);
+  ], initialValue: DateTime.now());
 
   /// Get the user from the data of the signup form.
   User get user {

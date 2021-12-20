@@ -57,8 +57,8 @@ Future<void> main() async {
   //
   // If the user is not already logged or the email has not been verified, load the welcome page.
   if (_firebaseAuthService.isUserSignedIn() && _firebaseAuthService.isUserEmailVerified()) {
-    await _userService.loadLoggedUserFromDB().then((_) => print("User of category ${_userService.loggedUser.collection} logged"));
-    runApp(MyApp(homePage: _userService.loggedUser.homePageRoute));
+    await _userService.loadLoggedUserFromDB().then((_) => print("User of category ${_userService.loggedUser!.collection} logged"));
+    runApp(MyApp(homePage: _userService.loggedUser!.homePageRoute));
   } else {
     runApp(MyApp());
   }
@@ -74,9 +74,9 @@ void setupServices() {
 }
 
 class MyApp extends StatefulWidget {
-  final String homePage;
+  final String? homePage;
 
-  MyApp({Key key, this.homePage}) : super(key: key);
+  MyApp({Key? key, this.homePage}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();

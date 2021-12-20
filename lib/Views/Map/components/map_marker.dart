@@ -9,7 +9,7 @@ import 'package:sApport/constants.dart';
 class MapMarker extends StatelessWidget {
   final Expert expert;
 
-  MapMarker({@required this.expert});
+  MapMarker({required this.expert});
 
   @override
   Widget build(BuildContext context) {

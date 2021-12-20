@@ -19,11 +19,11 @@ class CreateReportBody extends StatefulWidget {
 }
 
 class _CreateReportBodyState extends State<CreateReportBody> {
-  UserViewModel userViewModel;
-  ReportViewModel reportViewModel;
-  AppRouterDelegate routerDelegate;
-  Alert errorAlert;
-  Alert successAlert;
+  UserViewModel? userViewModel;
+  ReportViewModel? reportViewModel;
+  late AppRouterDelegate routerDelegate;
+  late Alert errorAlert;
+  late Alert successAlert;
 
   @override
   void initState() {

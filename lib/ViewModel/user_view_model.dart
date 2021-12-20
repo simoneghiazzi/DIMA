@@ -10,7 +10,7 @@ class UserViewModel {
   /// It load the signed in user with all the retrieved information from the DB.
   ///
   /// If the user is not signed in, it throws an exception.
-  Future<void> loadUser() {
+  Future<void> loadLoggedUser() {
     return _userService.loadLoggedUserFromDB();
   }
 
@@ -20,5 +20,5 @@ class UserViewModel {
   }
 
   /// Returns the currently logged user.
-  User get loggedUser => _userService.loggedUser;
+  User? get loggedUser => _userService.loggedUser;
 }

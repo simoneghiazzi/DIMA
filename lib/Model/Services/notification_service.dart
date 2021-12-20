@@ -14,7 +14,7 @@ class NotificationService {
   }
 
   /// Returns the default FCM token for this device.
-  Future<String> getDeviceToken() {
+  Future<String?> getDeviceToken() {
     return _firebaseMessaging.getToken();
   }
 
@@ -32,7 +32,7 @@ class NotificationService {
     // Handle notification messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
-        _showNotification(message.notification);
+        _showNotification(message.notification!);
         FlutterAppBadger.updateBadgeCount(1);
       }
       return;

@@ -21,10 +21,10 @@ class MapBody extends StatefulWidget {
 }
 
 class _MapBodyState extends State<MapBody> {
-  GoogleMapController mapController;
-  MapViewModel mapViewModel;
-  StreamSubscription<Place> subscriber;
-  AppRouterDelegate routerDelegate;
+  late GoogleMapController mapController;
+  late MapViewModel mapViewModel;
+  late StreamSubscription<Place?> subscriber;
+  late AppRouterDelegate routerDelegate;
   var isPositionSearched = false;
 
   Set<Marker> _markers = Set<Marker>();
@@ -32,10 +32,10 @@ class _MapBodyState extends State<MapBody> {
   CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
 
   //For setting the map style as specified in assets/map_style.txt
-  String _mapStyle;
+  late String _mapStyle;
 
   //For placing custom markers on the map
-  BitmapDescriptor pinLocationIcon;
+  late BitmapDescriptor pinLocationIcon;
 
   var _loadCurrentPositionFuture;
 
@@ -89,7 +89,7 @@ class _MapBodyState extends State<MapBody> {
               future: _loadCurrentPositionFuture,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return buildMap(lat: snapshot.data.latitude, lng: snapshot.data.longitude);
+                  return buildMap(lat: snapshot.data!.latitude, lng: snapshot.data!.longitude);
                 } else {
                   return LoadingDialog().widget(context);
                 }
@@ -97,7 +97,7 @@ class _MapBodyState extends State<MapBody> {
         ),
         // Button My Position
         Align(
-          alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
+          alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1)!,
           child: FloatingActionButton(
             onPressed: () async {
               mapViewModel.clearControllers();
@@ -119,7 +119,7 @@ class _MapBodyState extends State<MapBody> {
       buildSearchBar(),
       StreamBuilder(
           stream: mapViewModel.autocompletedPlaces,
-          builder: (context, snapshot) {
+          builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               var height = snapshot.data.length * 62.0;
               return Stack(children: [
@@ -185,17 +185,17 @@ class _MapBodyState extends State<MapBody> {
 
   void getMarkers() {
     mapViewModel.loadExperts().then((snapshot) {
-      for (var doc in snapshot.docs) {
+      for (var doc in snapshot!.docs) {
         Expert expert = Expert.fromDocument(doc);
         _markers.add(
           Marker(
             markerId: MarkerId(expert.data["surname"].toString() + expert.data["lat"].toString() + expert.data["lng"].toString()),
-            position: LatLng(expert.data["lat"], expert.data["lng"]),
+            position: LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
             icon: pinLocationIcon,
             onTap: () {
-              _customInfoWindowController.addInfoWindow(
+              _customInfoWindowController.addInfoWindow!(
                 MapMarker(expert: expert),
-                LatLng(expert.data["lat"], expert.data["lng"]),
+                LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
               );
             },
           ),
@@ -205,10 +205,10 @@ class _MapBodyState extends State<MapBody> {
     });
   }
 
-  StreamSubscription<Place> subscribeToViewModel() {
+  StreamSubscription<Place?> subscribeToViewModel() {
     return mapViewModel.selectedPlace.listen((place) {
       if (place != null) {
-        _goToPlace(LatLng(place.lat, place.lng));
+        _goToPlace(LatLng(place.lat!, place.lng!));
       } else {
         print("Error, search again");
       }
@@ -226,14 +226,14 @@ class _MapBodyState extends State<MapBody> {
   Widget buildMap({lat = 45.478195, lng = 9.2256787}) {
     return GoogleMap(
       onTap: (position) {
-        _customInfoWindowController.hideInfoWindow();
+        _customInfoWindowController.hideInfoWindow!();
         FocusScopeNode currentFocus = FocusScope.of(context);
         if (!currentFocus.hasPrimaryFocus) {
           currentFocus.unfocus();
         }
       },
       onCameraMove: (position) {
-        _customInfoWindowController.onCameraMove();
+        _customInfoWindowController.onCameraMove!();
       },
       onMapCreated: (GoogleMapController controller) async {
         mapController = controller;
@@ -257,7 +257,7 @@ class _MapBodyState extends State<MapBody> {
   Widget buildSearchBar() {
     return StreamBuilder(
         stream: mapViewModel.autocompletedPlaces,
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot snapshot) {
           return Positioned(
             top: 50,
             right: 20,
@@ -321,13 +321,13 @@ class _MapBodyState extends State<MapBody> {
                         )),
                     onChanged: (value) => mapViewModel.autocompleteSearchedPlace(),
                     onTap: () {
-                      _customInfoWindowController.hideInfoWindow();
+                      _customInfoWindowController.hideInfoWindow!();
                       if (isPositionSearched) {
                         mapViewModel.searchTextCtrl.clear();
                         isPositionSearched = false;
                       }
                     },
-                    onSubmitted: (value) async => mapViewModel.searchPlace((await mapViewModel.firstSimilarPlace(value)).placeId),
+                    onSubmitted: (value) async => mapViewModel.searchPlace((await mapViewModel.firstSimilarPlace(value)).placeId!),
                   ),
                 ),
               ]),

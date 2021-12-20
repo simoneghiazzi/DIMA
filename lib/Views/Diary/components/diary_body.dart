@@ -11,15 +11,15 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class DiaryBody extends StatefulWidget {
-  const DiaryBody({Key key}) : super(key: key);
+  const DiaryBody({Key? key}) : super(key: key);
 
   _DiaryBodyState createState() => _DiaryBodyState();
 }
 
 class _DiaryBodyState extends State<DiaryBody> {
-  DiaryViewModel diaryViewModel;
-  UserViewModel userViewModel;
-  AppRouterDelegate routerDelegate;
+  DiaryViewModel? diaryViewModel;
+  UserViewModel? userViewModel;
+  late AppRouterDelegate routerDelegate;
   final CalendarController _controller = CalendarController();
 
   var _loadDiaryPagesStream;
@@ -29,7 +29,7 @@ class _DiaryBodyState extends State<DiaryBody> {
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    _loadDiaryPagesStream = diaryViewModel.loadDiaryPages();
+    _loadDiaryPagesStream = diaryViewModel!.loadDiaryPages();
     super.initState();
   }
 
@@ -38,7 +38,7 @@ class _DiaryBodyState extends State<DiaryBody> {
     Size size = MediaQuery.of(context).size;
     return StreamBuilder(
       stream: _loadDiaryPagesStream,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           return Stack(
             children: <Widget>[
@@ -92,7 +92,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                         appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
                         appointmentDisplayCount: 1,
                         showAgenda: true,
-                        agendaViewHeight: diaryViewModel.hasNoteToday ? size.height / 10 : size.height / 8,
+                        agendaViewHeight: diaryViewModel!.hasNoteToday ? size.height / 10 : size.height / 8,
                         agendaItemHeight: size.height / 15,
                         monthCellStyle: MonthCellStyle(
                           trailingDatesBackgroundColor: kPrimaryLightColor,
@@ -105,15 +105,15 @@ class _DiaryBodyState extends State<DiaryBody> {
                   ),
                 ),
               ),
-              !diaryViewModel.hasNoteToday
+              !diaryViewModel!.hasNoteToday
                   ? Align(
                       alignment: Alignment.lerp(
                           Alignment.lerp(Alignment.lerp(Alignment.bottomRight, Alignment.topRight, 0.005), Alignment.center, 0.05),
                           Alignment.bottomLeft,
-                          0.02),
+                          0.02)!,
                       child: FloatingActionButton(
                         onPressed: () {
-                          diaryViewModel.setCurrentDiaryPage(DiaryPage());
+                          diaryViewModel!.setCurrentDiaryPage(DiaryPage());
                           if (MediaQuery.of(context).orientation == Orientation.portrait) {
                             routerDelegate.pushPage(name: DiaryPageScreen.route);
                           }
@@ -138,8 +138,8 @@ class _DiaryBodyState extends State<DiaryBody> {
 
   void showDetails(CalendarTapDetails details) {
     if (details.appointments != null) {
-      if (details.appointments.isNotEmpty && details.targetElement == CalendarElement.appointment) {
-        diaryViewModel.setCurrentDiaryPage(details.appointments[0]);
+      if (details.appointments!.isNotEmpty && details.targetElement == CalendarElement.appointment) {
+        diaryViewModel!.setCurrentDiaryPage(details.appointments![0]);
         if (MediaQuery.of(context).orientation == Orientation.portrait) {
           routerDelegate.pushPage(name: DiaryPageScreen.route);
         }

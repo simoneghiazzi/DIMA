@@ -11,12 +11,12 @@ class ReportViewModel extends ChangeNotifier {
   final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
   final UserService _userService = GetIt.I<UserService>();
 
-  Report _currentReport;
+  Report? _currentReport;
 
   /// Get the stream of reports.
-  Stream<QuerySnapshot> loadReports() {
+  Stream<QuerySnapshot>? loadReports() {
     try {
-      return _firestoreService.getReportsFromDB(_userService.loggedUser.id);
+      return _firestoreService.getReportsFromDB(_userService.loggedUser!.id);
     } catch (e) {
       print("Failed to get the stream of reports: $e");
       return null;
@@ -37,5 +37,5 @@ class ReportViewModel extends ChangeNotifier {
   }
 
   /// Get the [_currentReport] instance.
-  Report get currentReport => _currentReport;
+  Report? get currentReport => _currentReport;
 }

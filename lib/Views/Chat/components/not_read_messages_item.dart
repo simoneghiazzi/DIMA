@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class NotReadMessagesItem extends StatelessWidget {
-  final int counter;
+  final int? counter;
 
-  const NotReadMessagesItem({Key key, this.counter}) : super(key: key);
+  const NotReadMessagesItem({Key? key, this.counter}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

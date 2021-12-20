@@ -11,15 +11,15 @@ import 'package:sApport/constants.dart';
 class ActiveChatsListScreen extends StatefulWidget {
   static const route = '/activeChatsListScreen';
 
-  const ActiveChatsListScreen({Key key}) : super(key: key);
+  const ActiveChatsListScreen({Key? key}) : super(key: key);
 
   @override
   State<ActiveChatsListScreen> createState() => _ActiveChatsListScreenState();
 }
 
 class _ActiveChatsListScreenState extends State<ActiveChatsListScreen> {
-  ChatViewModel chatViewModel;
-  AppRouterDelegate routerDelegate;
+  ChatViewModel? chatViewModel;
+  AppRouterDelegate? routerDelegate;
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _ActiveChatsListScreenState extends State<ActiveChatsListScreen> {
               right: Consumer<ChatViewModel>(
                 builder: (context, chatViewModel, child) {
                   if (chatViewModel.currentChat != null) {
-                    return ChatPageBody(key: ValueKey(chatViewModel.currentChat.peerUser.id));
+                    return ChatPageBody(key: ValueKey(chatViewModel.currentChat!.peerUser!.id));
                   } else {
                     return EmptyLandscapeBody();
                   }

@@ -10,15 +10,15 @@ import 'package:sApport/Views/components/vertical_split_view.dart';
 class ReportsListScreen extends StatefulWidget {
   static const route = '/reportListScreen';
 
-  ReportsListScreen({Key key}) : super(key: key);
+  ReportsListScreen({Key? key}) : super(key: key);
 
   @override
   State<ReportsListScreen> createState() => _ReportsListScreenState();
 }
 
 class _ReportsListScreenState extends State<ReportsListScreen> {
-  ReportViewModel reportViewModel;
-  AppRouterDelegate routerDelegate;
+  ReportViewModel? reportViewModel;
+  AppRouterDelegate? routerDelegate;
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
               right: Consumer<ReportViewModel>(
                 builder: (context, reportViewModel, child) {
                   if (reportViewModel.currentReport != null) {
-                    return ReportDetailsBody(key: ValueKey(reportViewModel.currentReport.id));
+                    return ReportDetailsBody(key: ValueKey(reportViewModel.currentReport!.id));
                   } else {
                     return EmptyLandscapeBody();
                   }

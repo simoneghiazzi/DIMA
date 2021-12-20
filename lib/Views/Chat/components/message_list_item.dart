@@ -9,20 +9,20 @@ import 'package:provider/provider.dart';
 
 class MessageListItem extends StatefulWidget {
   final Message messageItem;
-  final bool sameNextIdFrom;
+  final bool? sameNextIdFrom;
 
-  MessageListItem({Key key, @required this.messageItem, this.sameNextIdFrom}) : super(key: key);
+  MessageListItem({Key? key, required this.messageItem, this.sameNextIdFrom}) : super(key: key);
 
   @override
   _MessageListItemState createState() => _MessageListItemState();
 }
 
 class _MessageListItemState extends State<MessageListItem> {
-  ChatViewModel chatViewModel;
-  UserViewModel userViewModel;
+  ChatViewModel? chatViewModel;
+  late UserViewModel userViewModel;
 
-  Size size;
-  double _containerWidth;
+  late Size size;
+  late double _containerWidth;
 
   @override
   void initState() {
@@ -34,46 +34,42 @@ class _MessageListItemState extends State<MessageListItem> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    _containerWidth = calcTextSize(widget.messageItem.data["content"], TextStyle(fontFamily: "UbuntuCondensed")).width;
+    _containerWidth = calcTextSize(widget.messageItem.data["content"] as String?, TextStyle(fontFamily: "UbuntuCondensed")).width;
     _containerWidth += MediaQuery.of(context).orientation == Orientation.portrait ? size.width / 5 : size.width / 10;
-    if (widget.messageItem != null) {
-      if (widget.messageItem.data["idFrom"] == userViewModel.loggedUser.id) {
-        // Right (my message)
-        return Row(
-          children: [
-            buildMessageBubble(false),
-            if (!(widget.sameNextIdFrom ?? false))
-              Container(
+    if (widget.messageItem.data["idFrom"] == userViewModel.loggedUser!.id) {
+      // Right (my message)
+      return Row(
+        children: [
+          buildMessageBubble(false),
+          if (!(widget.sameNextIdFrom ?? false))
+            Container(
+              // Same top as the message bubble margin
+              margin: EdgeInsets.only(top: 20.0),
+              child: CustomPaint(painter: Clip(kPrimaryLightColor)),
+            ),
+        ],
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+      );
+    } else {
+      // Left (peer message)
+      return Row(
+        children: [
+          if (!(widget.sameNextIdFrom ?? false))
+            Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.rotationY(math.pi),
+              child: Container(
                 // Same top as the message bubble margin
                 margin: EdgeInsets.only(top: 20.0),
-                child: CustomPaint(painter: Clip(kPrimaryLightColor)),
+                child: CustomPaint(painter: Clip(kPrimaryColor)),
               ),
-          ],
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-        );
-      } else {
-        // Left (peer message)
-        return Row(
-          children: [
-            if (!(widget.sameNextIdFrom ?? false))
-              Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.rotationY(math.pi),
-                child: Container(
-                  // Same top as the message bubble margin
-                  margin: EdgeInsets.only(top: 20.0),
-                  child: CustomPaint(painter: Clip(kPrimaryColor)),
-                ),
-              ),
-            buildMessageBubble(true)
-          ],
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-        );
-      }
-    } else {
-      return SizedBox.shrink();
+            ),
+          buildMessageBubble(true)
+        ],
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+      );
     }
   }
 
@@ -89,7 +85,7 @@ class _MessageListItemState extends State<MessageListItem> {
             child: Container(
               padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
               child: Text(
-                widget.messageItem.data["content"],
+                widget.messageItem.data["content"] as String,
                 style: TextStyle(fontFamily: "UbuntuCondensed", color: peerMessage ? Colors.white : kPrimaryColor),
               ),
             ),
@@ -120,10 +116,10 @@ class _MessageListItemState extends State<MessageListItem> {
     );
   }
 
-  Size calcTextSize(String text, TextStyle style) {
+  Size calcTextSize(String? text, TextStyle style) {
     final TextPainter textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
-      textScaleFactor: WidgetsBinding.instance.window.textScaleFactor,
+      textScaleFactor: WidgetsBinding.instance!.window.textScaleFactor,
       textDirection: TextDirection.ltr,
     )..layout();
     return textPainter.size;

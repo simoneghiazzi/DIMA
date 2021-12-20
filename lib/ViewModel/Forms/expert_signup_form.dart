@@ -10,8 +10,8 @@ class ExpertSignUpForm extends BaseUserSignUpForm {
   // Services
   final MapService mapService = GetIt.I();
 
-  Place expertAddress;
-  String profilePhoto;
+  late Place expertAddress;
+  String? profilePhoto;
 
   ExpertSignUpForm() {
     // Add the field blocs to the base user signup form
@@ -41,7 +41,7 @@ class ExpertSignUpForm extends BaseUserSignUpForm {
   /// Define the phone number field bloc and add the required and phoneCorrect validators
   final phoneNumber = TextFieldBloc(validators: [
     FieldBlocValidators.required,
-    FieldBlocValidators.phoneCorrect,
+    // FieldBlocValidators.phoneCorrect,
   ]);
 
   @override
@@ -50,12 +50,12 @@ class ExpertSignUpForm extends BaseUserSignUpForm {
       name: nameText.value,
       surname: surnameText.value,
       birthDate: birthDate.value,
-      latitude: expertAddress.lat,
-      longitude: expertAddress.lng,
-      address: expertAddress.address,
+      latitude: expertAddress.lat!,
+      longitude: expertAddress.lng!,
+      address: expertAddress.address!,
       email: email,
       phoneNumber: phoneNumber.value,
-      profilePhoto: profilePhoto,
+      profilePhoto: profilePhoto!,
     );
   }
 
@@ -63,7 +63,7 @@ class ExpertSignUpForm extends BaseUserSignUpForm {
   void onSubmitting() async {
     List<Place> places = await mapService.autocomplete("${countryText.value} ${cityText.value} ${streetText.value} ${houseNumber.value}");
     if (places.isNotEmpty) {
-      expertAddress = await mapService.searchPlace(places.first.placeId);
+      expertAddress = await mapService.searchPlace(places.first.placeId!);
       emitSuccess(canSubmitAgain: true);
     } else {
       emitFailure();

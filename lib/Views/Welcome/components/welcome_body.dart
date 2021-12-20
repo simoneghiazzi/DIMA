@@ -22,12 +22,12 @@ class WelcomeBody extends StatefulWidget {
 
 class _WelcomeBodyState extends State<WelcomeBody> {
   // View Models
-  AuthViewModel authViewModel;
-  UserViewModel userViewModel;
-  AppRouterDelegate routerDelegate;
+  late AuthViewModel authViewModel;
+  late UserViewModel userViewModel;
+  late AppRouterDelegate routerDelegate;
 
   // Subscriber
-  StreamSubscription<bool> subscriber;
+  late StreamSubscription<bool> subscriber;
 
   @override
   void initState() {
@@ -87,10 +87,10 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                   }),
             ]),
             SizedBox(height: size.height * 0.05),
-            StreamBuilder<String>(
+            StreamBuilder<String?>(
               stream: authViewModel.authMessage,
               builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data.isNotEmpty) {
+                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                   LoadingDialog.hide(context);
                   return Column(
                     children: [
@@ -132,10 +132,10 @@ class _WelcomeBodyState extends State<WelcomeBody> {
     return authViewModel.isUserLogged.listen((isUserLogged) async {
       if (isUserLogged) {
         // Called on sign in
-        await userViewModel.loadUser().then((_) => print("User of category ${userViewModel.loggedUser.collection} logged"));
+        await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser!.collection} logged"));
         LoadingDialog.hide(context);
         if (userViewModel.loggedUser != null) {
-          routerDelegate.replaceAllButNumber(1, routeSettingsList: [RouteSettings(name: userViewModel.loggedUser.homePageRoute)]);
+          routerDelegate.replaceAllButNumber(1, routeSettingsList: [RouteSettings(name: userViewModel.loggedUser!.homePageRoute)]);
         } else {
           print("Error in logging the user in");
         }

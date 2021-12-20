@@ -18,10 +18,10 @@ class MapViewModel {
   final TextEditingController searchTextCtrl = TextEditingController();
 
   // Stream Controllers
-  var _autocompletedPlacesCtrl = StreamController<List<Place>>.broadcast();
-  var _selectedPlaceCtrl = StreamController<Place>.broadcast();
+  var _autocompletedPlacesCtrl = StreamController<List<Place>?>.broadcast();
+  var _selectedPlaceCtrl = StreamController<Place?>.broadcast();
 
-  PermissionStatus positionPermission;
+  late PermissionStatus positionPermission;
 
   MapViewModel() {
     // Set the position permission status on the location of the device
@@ -61,7 +61,7 @@ class MapViewModel {
   Future<void> searchPlace(String placeId) async {
     _autocompletedPlacesCtrl.add(null);
     return mapService.searchPlace(placeId).then((place) {
-      searchTextCtrl.text = place.address;
+      searchTextCtrl.text = place.address!;
       _selectedPlaceCtrl.add(place);
     });
   }
@@ -74,7 +74,7 @@ class MapViewModel {
   }
 
   /// Return the list of experts.
-  Future<QuerySnapshot> loadExperts() async {
+  Future<QuerySnapshot?> loadExperts() async {
     try {
       return _firestoreService.getBaseCollectionFromDB(Expert.COLLECTION);
     } catch (e) {
@@ -91,8 +91,8 @@ class MapViewModel {
   }
 
   /// Stream of the selected palce controller
-  Stream<Place> get selectedPlace => _selectedPlaceCtrl.stream;
+  Stream<Place?> get selectedPlace => _selectedPlaceCtrl.stream;
 
   /// Stream of the autocompleted places controller
-  Stream<List<Place>> get autocompletedPlaces => _autocompletedPlacesCtrl.stream;
+  Stream<List<Place>?> get autocompletedPlaces => _autocompletedPlacesCtrl.stream;
 }

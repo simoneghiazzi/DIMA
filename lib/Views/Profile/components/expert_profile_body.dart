@@ -12,17 +12,17 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ExpertProfileBody extends StatefulWidget {
-  final Expert expert;
+  final Expert? expert;
 
-  ExpertProfileBody({Key key, @required this.expert}) : super(key: key);
+  ExpertProfileBody({Key? key, required this.expert}) : super(key: key);
 
   @override
   _ExpertProfileBodyState createState() => _ExpertProfileBodyState();
 }
 
 class _ExpertProfileBodyState extends State<ExpertProfileBody> {
-  ChatViewModel chatViewModel;
-  AppRouterDelegate routerDelegate;
+  late ChatViewModel chatViewModel;
+  late AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
@@ -64,7 +64,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
               Container(
                   transform: Matrix4.translationValues(0.0, -75.0, 0.0),
                   child: NetworkAvatar(
-                    img: widget.expert.profilePhoto,
+                    img: widget.expert!.profilePhoto,
                     radius: 75.0,
                   )),
               Container(
@@ -84,7 +84,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                           children: [
                             Flexible(
                               child: Text(
-                                widget.expert.name.toUpperCase() + " " + widget.expert.surname.toUpperCase(),
+                                widget.expert!.name.toUpperCase() + " " + widget.expert!.surname.toUpperCase(),
                                 style: TextStyle(color: kPrimaryColor, fontSize: 22, fontWeight: FontWeight.bold),
                               ),
                             )
@@ -107,10 +107,10 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                                 width: size.width * 0.05,
                               ),
                               GestureDetector(
-                                child: Text(widget.expert.phoneNumber,
+                                child: Text(widget.expert!.phoneNumber,
                                     style: TextStyle(color: kPrimaryColor, fontSize: 22, fontWeight: FontWeight.bold)),
                                 onTap: () {
-                                  launch('tel://' + widget.expert.phoneNumber);
+                                  launch('tel://' + widget.expert!.phoneNumber);
                                 },
                               ),
                             ],
@@ -130,11 +130,11 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                               ),
                               Flexible(
                                 child: GestureDetector(
-                                  child: Text(widget.expert.email, style: TextStyle(color: kPrimaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
+                                  child: Text(widget.expert!.email, style: TextStyle(color: kPrimaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
                                   onTap: () async {
                                     EmailContent email = EmailContent(
                                       to: [
-                                        widget.expert.email,
+                                        widget.expert!.email,
                                       ],
                                     );
 
@@ -181,7 +181,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                               Flexible(
                                 child: GestureDetector(
                                   child:
-                                      Text(widget.expert.address, style: TextStyle(color: kPrimaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
+                                      Text(widget.expert!.address, style: TextStyle(color: kPrimaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
                                   onTap: () {
                                     openMaps();
                                   },
@@ -230,7 +230,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                             ),
                           ),
                           onTap: () {
-                            chatViewModel.setCurrentChat(ExpertChat(peerUser: widget.expert));
+                            chatViewModel.setCurrentChat(ExpertChat(peerUser: widget.expert!));
                             if (MediaQuery.of(context).orientation == Orientation.portrait) {
                               routerDelegate.replaceAllButNumber(2, routeSettingsList: [
                                 RouteSettings(name: ExpertChatsListScreen.route),
@@ -273,8 +273,8 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
   }
 
   void openMaps() async {
-    var lat = widget.expert.latitude;
-    var lng = widget.expert.longitude;
+    var lat = widget.expert!.latitude;
+    var lng = widget.expert!.longitude;
     var uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
     if (await canLaunch(uri.toString())) {
       await launch(uri.toString());

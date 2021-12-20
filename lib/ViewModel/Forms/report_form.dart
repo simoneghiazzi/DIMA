@@ -33,11 +33,11 @@ class ReportForm extends FormBloc<String, String> {
     var now = DateTime.now();
     Report report = Report(
       id: now.millisecondsSinceEpoch.toString(),
-      category: reportCategory.value,
+      category: reportCategory.value!,
       description: reportText.value,
       dateTime: now,
     );
-    _firestoreService.addReportIntoDB(_userService.loggedUser.id, report).then((value) {
+    _firestoreService.addReportIntoDB(_userService.loggedUser!.id, report).then((value) {
       reportCategory.clear();
       reportText.clear();
       emitSuccess(canSubmitAgain: true);

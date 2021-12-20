@@ -16,10 +16,10 @@ class BaseUserGrid extends StatefulWidget {
 }
 
 class _BaseUserGridState extends State<BaseUserGrid> {
-  UserViewModel userViewModel;
-  ChatViewModel chatViewModel;
-  DiaryViewModel diaryViewModel;
-  AppRouterDelegate routerDelegate;
+  UserViewModel? userViewModel;
+  ChatViewModel? chatViewModel;
+  DiaryViewModel? diaryViewModel;
+  late AppRouterDelegate routerDelegate;
 
   @override
   void initState() {

@@ -16,8 +16,8 @@ abstract class DiaryFormInterface {
 
 class DiaryForm implements DiaryFormInterface {
   // Stream controllers
-  var _titleStream = StreamController<String>.broadcast();
-  var _contentStream = StreamController<String>.broadcast();
+  var _titleStream = StreamController<String?>.broadcast();
+  var _contentStream = StreamController<String?>.broadcast();
 
   // Sinks
   @override
@@ -27,14 +27,14 @@ class DiaryForm implements DiaryFormInterface {
   Sink get content => _contentStream;
 
   /// Validate the title by checking if it is not empty
-  Stream<bool> get _titleController => _titleStream.stream.map((title) => title.isNotEmpty);
+  Stream<bool> get _titleController => _titleStream.stream.map((title) => title!.isNotEmpty);
 
   /// Validate the content by checking if it is not empty
-  Stream<bool> get _contentController => _contentStream.stream.map((content) => content.isNotEmpty);
+  Stream<bool> get _contentController => _contentStream.stream.map((content) => content!.isNotEmpty);
 
   // Stream
   @override
-  Stream<bool> get isButtonEnabled => Rx.combineLatest2(_titleController, _contentController, (a, b) => a && b);
+  Stream<bool> get isButtonEnabled => Rx.combineLatest2(_titleController, _contentController, (dynamic a, dynamic b) => a && b);
 
   /// Reset all the controllers and the variables for the password check
   void resetControllers() {

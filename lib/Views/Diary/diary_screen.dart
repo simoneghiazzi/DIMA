@@ -10,15 +10,15 @@ import 'package:sApport/constants.dart';
 class DiaryScreen extends StatefulWidget {
   static const route = '/diaryScreen';
 
-  const DiaryScreen({Key key}) : super(key: key);
+  const DiaryScreen({Key? key}) : super(key: key);
 
   @override
   State<DiaryScreen> createState() => _DiaryScreenState();
 }
 
 class _DiaryScreenState extends State<DiaryScreen> {
-  DiaryViewModel diaryViewModel;
-  AppRouterDelegate routerDelegate;
+  DiaryViewModel? diaryViewModel;
+  AppRouterDelegate? routerDelegate;
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 var _ratio = diaryViewModel.currentDiaryPage != null ? 0.50 : 1.0;
                 return VerticalSplitView(
                   left: DiaryBody(),
-                  right: diaryViewModel.currentDiaryPage != null ? DiaryPageBody(key: ValueKey(diaryViewModel.currentDiaryPage.id)) : Container(),
+                  right: diaryViewModel.currentDiaryPage != null ? DiaryPageBody(key: ValueKey(diaryViewModel.currentDiaryPage!.id)) : Container(),
                   ratio: _ratio,
                   dividerWidth: 2.0,
                   dividerColor: kPrimaryColor,

@@ -18,12 +18,12 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserver {
   // Router
-  AppRouterDelegate routerDelegate;
+  late AppRouterDelegate routerDelegate;
 
   // View Models
-  ChatViewModel chatViewModel;
-  ReportViewModel reportViewModel;
-  DiaryViewModel diaryViewModel;
+  late ChatViewModel chatViewModel;
+  late ReportViewModel reportViewModel;
+  late DiaryViewModel diaryViewModel;
 
   bool _first = true;
   var _width;
@@ -34,8 +34,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
-    _width = WidgetsBinding.instance.window.physicalSize.width;
-    WidgetsBinding.instance.addObserver(this);
+    _width = WidgetsBinding.instance!.window.physicalSize.width;
+    WidgetsBinding.instance!.addObserver(this);
     super.initState();
   }
 
@@ -67,11 +67,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
 
   @override
   void didChangeMetrics() {
-    if (_width != WidgetsBinding.instance.window.physicalSize.width) {
+    if (_width != WidgetsBinding.instance!.window.physicalSize.width) {
       if (_first) {
         handleOrientationChanges();
       }
-      _width = WidgetsBinding.instance.window.physicalSize.width;
+      _width = WidgetsBinding.instance!.window.physicalSize.width;
       _first = true;
     }
     super.didChangeMetrics();
@@ -79,7 +79,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 }

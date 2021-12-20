@@ -9,10 +9,10 @@ import 'package:provider/provider.dart';
 
 class TopBarChats extends StatelessWidget {
   final String text;
-  final CircleAvatar circleAvatar;
-  final NetworkAvatar networkAvatar;
+  final CircleAvatar? circleAvatar;
+  final NetworkAvatar? networkAvatar;
 
-  TopBarChats({Key key, @required this.text, this.circleAvatar, this.networkAvatar}) : super(key: key);
+  TopBarChats({Key? key, required this.text, this.circleAvatar, this.networkAvatar}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +75,7 @@ class TopBarChats extends StatelessWidget {
                         ),
                         onTap: () {
                           if (networkAvatar != null) {
-                            routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: chatViewModel.currentChat.peerUser as Expert);
+                            routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: chatViewModel.currentChat!.peerUser as Expert);
                           }
                         },
                       ),

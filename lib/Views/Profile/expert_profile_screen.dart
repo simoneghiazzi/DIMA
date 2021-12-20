@@ -4,9 +4,9 @@ import 'package:sApport/Model/DBItems/Expert/expert.dart';
 
 class ExpertProfileScreen extends StatelessWidget {
   static const route = '/expertProfileScreen';
-  final Expert expert;
+  final Expert? expert;
 
-  ExpertProfileScreen({Key key, @required this.expert}) : super(key: key);
+  ExpertProfileScreen({Key? key, required this.expert}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

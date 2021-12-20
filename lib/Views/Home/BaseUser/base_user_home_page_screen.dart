@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/Model/Chat/active_chat.dart';
+import 'package:sApport/Model/Chat/anonymous_chat.dart';
+import 'package:sApport/Model/Chat/expert_chat.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
+import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/anonymous_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/Views/Diary/diary_screen.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
@@ -10,29 +17,36 @@ import 'package:sApport/Views/Home/BaseUser/components/base_user_home_page_body.
 
 class BaseUserHomePageScreen extends StatefulWidget {
   static const route = '/baseUserHomePageScreen';
-  final int pageIndex;
+  final int? pageIndex;
 
   /// The [pageIndex] indicates the tab to show
-  BaseUserHomePageScreen({Key key, @required this.pageIndex}) : super(key: key);
+  BaseUserHomePageScreen({Key? key, required this.pageIndex}) : super(key: key);
 
   @override
   _BaseUserHomePageScreenState createState() => _BaseUserHomePageScreenState();
 }
 
 class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
-  UserViewModel userViewModel;
-  AuthViewModel authViewModel;
-  DiaryViewModel diaryViewModel;
-  int _currentIndex;
+  late UserViewModel userViewModel;
+  late AuthViewModel authViewModel;
+  late DiaryViewModel diaryViewModel;
+  late ChatViewModel chatViewModel;
+  late AppRouterDelegate routerDelegate;
+  int? _currentIndex;
 
   @override
   void initState() {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+
+    chatViewModel.loadAnonymousChats();
+    chatViewModel.loadPendingChats();
 
     // Register the notification service
-    authViewModel.setNotification(userViewModel.loggedUser);
+    authViewModel.setNotification(userViewModel.loggedUser!);
 
     _currentIndex = widget.pageIndex ?? 0;
     super.initState();
@@ -52,7 +66,7 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
         children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+        currentIndex: _currentIndex!,
         showSelectedLabels: true,
         showUnselectedLabels: false,
         unselectedItemColor: kPrimaryColor,

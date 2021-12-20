@@ -15,9 +15,9 @@ class ForgotPasswordBody extends StatefulWidget {
 }
 
 class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
-  AuthViewModel authViewModel;
-  AppRouterDelegate routerDelegate;
-  var _errorTextController = StreamController<String>.broadcast();
+  late AuthViewModel authViewModel;
+  late AppRouterDelegate routerDelegate;
+  var _errorTextController = StreamController<String?>.broadcast();
 
   @override
   void initState() {
@@ -49,7 +49,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                     errorText: snapshot.data,
                   );
                 }),
-            StreamBuilder<String>(
+            StreamBuilder<String?>(
                 stream: errorText,
                 builder: (context, snapshot) {
                   return RichText(text: TextSpan(text: snapshot.data, style: TextStyle(color: Colors.red, fontSize: 15)));
@@ -57,7 +57,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
             SizedBox(height: size.height * 0.03),
             StreamBuilder(
                 stream: authViewModel.loginForm.isResetPasswordEnabled,
-                builder: (context, snapshot) {
+                builder: (context, AsyncSnapshot snapshot) {
                   return RoundedButton(
                     text: "Send link",
                     press: () async {
@@ -92,7 +92,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
     return true;
   }
 
-  Stream<String> get errorText => _errorTextController.stream;
+  Stream<String?> get errorText => _errorTextController.stream;
 
   @override
   void dispose() {

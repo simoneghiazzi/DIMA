@@ -9,23 +9,23 @@ import 'package:sApport/Views/Chat/components/not_read_messages_item.dart';
 import 'package:sApport/constants.dart';
 
 class MessagesListConstructor extends StatefulWidget {
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
-  const MessagesListConstructor({Key key, this.scrollController}) : super(key: key);
+  const MessagesListConstructor({Key? key, this.scrollController}) : super(key: key);
 
   @override
   _MessagesListConstructorState createState() => _MessagesListConstructorState();
 }
 
 class _MessagesListConstructorState extends State<MessagesListConstructor> {
-  UserViewModel userViewModel;
-  ChatViewModel chatViewModel;
+  late UserViewModel userViewModel;
+  late ChatViewModel chatViewModel;
   final dataKey = new GlobalKey();
-  Size size;
+  late Size size;
 
   var _loadMessagesStream;
   var _notReadMessages;
-  var _maxIndex;
+  late var _maxIndex;
   var _first = true;
   var _scrollToNewMessage = true;
   var _datakeyUsed = false;
@@ -36,7 +36,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     _loadMessagesStream = chatViewModel.loadMessages();
-    _notReadMessages = chatViewModel.currentChat.notReadMessages;
+    _notReadMessages = chatViewModel.currentChat!.notReadMessages;
     chatViewModel.setMessagesHasRead();
     super.initState();
   }
@@ -48,33 +48,33 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
       children: [
         StreamBuilder(
           stream: _loadMessagesStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.active) {
               if (_scrollToNewMessage) {
                 _scrollToNewMessage = false;
-                WidgetsBinding.instance.addPostFrameCallback((_) {
+                WidgetsBinding.instance!.addPostFrameCallback((_) {
                   if (_notReadMessages != 0) {
                     if (_maxIndex <= _notReadMessages) {
                       var jumpValue = _notReadMessages * 40.0;
-                      var maxValue = widget.scrollController.position.maxScrollExtent;
-                      widget.scrollController.jumpTo(jumpValue < maxValue ? jumpValue : maxValue);
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        Scrollable.ensureVisible(dataKey.currentContext, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart);
+                      var maxValue = widget.scrollController!.position.maxScrollExtent;
+                      widget.scrollController!.jumpTo(jumpValue < maxValue ? jumpValue : maxValue);
+                      WidgetsBinding.instance!.addPostFrameCallback((_) {
+                        Scrollable.ensureVisible(dataKey.currentContext!, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart);
                         _datakeyUsed = true;
-                        if (widget.scrollController.position.pixels + size.height / 3 <= maxValue) {
-                          widget.scrollController.jumpTo(widget.scrollController.position.pixels - size.height / 3);
+                        if (widget.scrollController!.position.pixels + size.height / 3 <= maxValue) {
+                          widget.scrollController!.jumpTo(widget.scrollController!.position.pixels - size.height / 3);
                         }
                       });
                     } else {
-                      Scrollable.ensureVisible(dataKey.currentContext, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd);
+                      Scrollable.ensureVisible(dataKey.currentContext!, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd);
                       _datakeyUsed = true;
-                      if (widget.scrollController.position.pixels != 0) {
-                        widget.scrollController.jumpTo(widget.scrollController.position.pixels + size.height / 3);
+                      if (widget.scrollController!.position.pixels != 0) {
+                        widget.scrollController!.jumpTo(widget.scrollController!.position.pixels + size.height / 3);
                       }
                     }
                   }
-                  widget.scrollController.position.addListener(() {
-                    if (widget.scrollController.hasClients && widget.scrollController.offset >= 2 * size.height) {
+                  widget.scrollController!.position.addListener(() {
+                    if (widget.scrollController!.hasClients && widget.scrollController!.offset >= 2 * size.height) {
                       if (_first) {
                         setState(() {});
                         _first = false;
@@ -89,7 +89,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                 // If the user is inside the chat and there are new messages, docChanges != docs
                 if (snapshot.data.docs.length != snapshot.data.docChanges.length) {
                   // If the new message is from the logged user, reset the _notReadMessages
-                  if (snapshot.data.docs[0].get("idFrom") == userViewModel.loggedUser.id) {
+                  if (snapshot.data.docs[0].get("idFrom") == userViewModel.loggedUser!.id) {
                     _notReadMessages = 0;
                   } else if (_notReadMessages != snapshot.data.docChanges.length && _notReadMessages > 0) {
                     // If the new message is from the peer user, increment the _notReadMessages
@@ -137,7 +137,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                   },
                   childCount: snapshot.data.docs.length,
                   findChildIndexCallback: (Key key) {
-                    final ValueKey valueKey = key;
+                    final ValueKey valueKey = key as ValueKey<dynamic>;
                     for (int index = 0; index < snapshot.data.docs.length; index++) {
                       if (snapshot.data.docs[index].get("timestamp") == valueKey.value) {
                         return index;
@@ -159,15 +159,15 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
   }
 
   Widget buildGoDownButton() {
-    if (widget.scrollController.hasClients && widget.scrollController.offset >= 2 * size.height) {
+    if (widget.scrollController!.hasClients && widget.scrollController!.offset >= 2 * size.height) {
       return Align(
-        alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1),
+        alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1)!,
         child: FloatingActionButton.small(
           onPressed: () {
-            widget.scrollController.animateTo(widget.scrollController.position.minScrollExtent,
+            widget.scrollController!.animateTo(widget.scrollController!.position.minScrollExtent,
                 duration: const Duration(milliseconds: 1000), curve: Curves.fastOutSlowIn);
           },
-          backgroundColor: kColorTransparent,
+          backgroundColor: kPrimaryDarkColorTrasparent,
           child: const Icon(
             Icons.arrow_drop_down,
             size: 40,

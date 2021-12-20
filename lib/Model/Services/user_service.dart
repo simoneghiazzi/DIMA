@@ -10,18 +10,17 @@ class UserService {
   final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
   final FirebaseAuthService _firebaseAuthService = GetIt.I<FirebaseAuthService>();
 
-  User loggedUser;
+  User? loggedUser;
 
   /// It instantiate the [loggedUser] with all the retrieved information from the DB.
   ///
   /// If the user is not signed in, it throws an exception.
   Future<void> loadLoggedUserFromDB() async {
-    assert(_firebaseAuthService.firebaseUser != null);
-    loggedUser = await _firestoreService.findUserType(_firebaseAuthService.firebaseUser.uid);
+    loggedUser = await _firestoreService.findUserType(_firebaseAuthService.firebaseUser!.uid);
     if (loggedUser != null) {
       return _firestoreService
-          .getUserByIdFromDB(loggedUser.collection, _firebaseAuthService.firebaseUser.uid)
-          .then((value) => loggedUser.setFromDocument(value.docs[0]))
+          .getUserByIdFromDB(loggedUser!.collection, _firebaseAuthService.firebaseUser!.uid)
+          .then((value) => loggedUser!.setFromDocument(value.docs[0]))
           .catchError((error) => print("Error in getting the user from DB: $error"));
     }
   }

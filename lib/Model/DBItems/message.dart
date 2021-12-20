@@ -9,22 +9,18 @@ class Message extends DbItem {
   DateTime timestamp;
   String content;
 
-  Message({this.idFrom, this.idTo, this.timestamp, this.content}) : super(COLLECTION);
+  Message({String id = "", required this.idFrom, required this.idTo, required this.timestamp, required this.content}) : super(COLLECTION, id: id);
 
   /// Create an instance of the [Message] form the [doc] fields retrieved from the FireBase DB.
   factory Message.fromDocument(DocumentSnapshot doc) {
-    try {
-      int milli = doc.get("timestamp");
-      return Message(
-        idFrom: doc.get("idFrom"),
-        idTo: doc.get("idTo"),
-        timestamp: DateTime.fromMillisecondsSinceEpoch(milli),
-        content: doc.get("content"),
-      );
-    } catch (e) {
-      print("Error in creating the message from the document snapshot: $e");
-      return null;
-    }
+    int milli = doc.get("timestamp");
+    return Message(
+      id: doc.id,
+      idFrom: doc.get("idFrom"),
+      idTo: doc.get("idTo"),
+      timestamp: DateTime.fromMillisecondsSinceEpoch(milli),
+      content: doc.get("content"),
+    );
   }
 
   @override

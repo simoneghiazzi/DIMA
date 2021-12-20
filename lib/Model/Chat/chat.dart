@@ -12,23 +12,23 @@ abstract class Chat {
   // Name of the peer chat collection saved into the DB.
   final String peerCollection;
   // Peer user of the chat.
-  User peerUser;
+  User? peerUser;
 
   // Last message received or sent by the logged user.
   String lastMessage;
 
   // Date time of the Last message received or sent by the logged user.
-  DateTime lastMessageDateTime;
+  DateTime? lastMessageDateTime;
 
   // If the Last message received by the logged user is read.
-  int notReadMessages = 0;
+  int notReadMessages;
 
   /// Chat between the logged user and the [peerUser].
   ///
   /// Every type of chat has an associated type of peer chat.
   /// - [collection] : name of the chat collection of the sender user saved into the DB.
   /// - [peerCollection] :   name of the peer chat collection saved into the DB.
-  Chat(this.collection, this.peerCollection, {this.peerUser});
+  Chat(this.collection, this.peerCollection, {this.peerUser, required this.lastMessage, this.lastMessageDateTime, required this.notReadMessages});
 
   /// Set dinamically the fields of the [User] from the [doc].
   void setFromDocument(DocumentSnapshot doc) {

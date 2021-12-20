@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
 
 class SocialIcon extends StatelessWidget {
-  final String iconSrc;
-  final Function press;
+  final String? iconSrc;
+  final Function? press;
   const SocialIcon({
-    Key key,
+    Key? key,
     this.iconSrc,
     this.press,
   }) : super(key: key);
@@ -13,7 +13,7 @@ class SocialIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: press,
+      onTap: press as void Function()?,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20),
         padding: EdgeInsets.all(10),
@@ -25,7 +25,7 @@ class SocialIcon extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Image.asset(
-          iconSrc,
+          iconSrc!,
           height: 35,
           width: 35,
         ),

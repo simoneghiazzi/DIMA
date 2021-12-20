@@ -9,23 +9,23 @@ import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 
 class ReportDetailsBody extends StatefulWidget {
-  const ReportDetailsBody({Key key}) : super(key: key);
+  const ReportDetailsBody({Key? key}) : super(key: key);
 
   @override
   _ReportDetailsBodyState createState() => _ReportDetailsBodyState();
 }
 
 class _ReportDetailsBodyState extends State<ReportDetailsBody> with WidgetsBindingObserver {
-  ReportViewModel reportViewModel;
-  AppRouterDelegate routerDelegate;
+  late ReportViewModel reportViewModel;
+  late AppRouterDelegate routerDelegate;
 
-  Report _reportItem;
+  late Report _reportItem;
 
   @override
   void initState() {
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
-    _reportItem = reportViewModel.currentReport;
+    _reportItem = reportViewModel.currentReport!;
     BackButtonInterceptor.add(backButtonInterceptor);
     super.initState();
   }
@@ -62,7 +62,7 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> with WidgetsBindi
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Text(
-                          DateFormat('dd MMM yyyy').format(_reportItem.dateTime),
+                          DateFormat('dd MMM yyyy').format(_reportItem.dateTime!),
                           style: TextStyle(
                             color: kPrimaryColor.withAlpha(150),
                             fontSize: 15,
@@ -112,7 +112,7 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> with WidgetsBindi
   @override
   void dispose() {
     BackButtonInterceptor.remove(backButtonInterceptor);
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 }

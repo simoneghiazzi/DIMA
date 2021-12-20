@@ -18,11 +18,11 @@ class UserSettingsBody extends StatefulWidget {
 }
 
 class _UserSettingsBodyState extends State<UserSettingsBody> {
-  UserViewModel userViewModel;
-  AuthViewModel authViewModel;
-  AppRouterDelegate routerDelegate;
-  StreamSubscription<String> subscriber;
-  Alert alert;
+  late UserViewModel userViewModel;
+  late AuthViewModel authViewModel;
+  AppRouterDelegate? routerDelegate;
+  late StreamSubscription<String?> subscriber;
+  late Alert alert;
 
   var _hasPasswordAuthenticationFuture;
 
@@ -32,7 +32,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     subscriber = subscribeToAuthMessage();
-    _hasPasswordAuthenticationFuture = authViewModel.hasPasswordAuthentication(userViewModel.loggedUser.email);
+    _hasPasswordAuthenticationFuture = authViewModel.hasPasswordAuthentication(userViewModel.loggedUser!.email);
     alert = createAlert();
     super.initState();
   }
@@ -54,9 +54,9 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                 width: size.width,
                 color: kPrimaryColor,
                 child: Container(
-                    child: userViewModel.loggedUser.data["profilePhoto"] != null
+                    child: userViewModel.loggedUser!.data["profilePhoto"] != null
                         ? NetworkAvatar(
-                            img: userViewModel.loggedUser.data["profilePhoto"],
+                            img: userViewModel.loggedUser!.data["profilePhoto"] as String?,
                             radius: 50.0,
                           )
                         : CircleAvatar(
@@ -83,7 +83,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               ),
                               child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
                                 Text(
-                                  userViewModel.loggedUser.name.toUpperCase() + " " + userViewModel.loggedUser.surname.toUpperCase(),
+                                  userViewModel.loggedUser!.name.toUpperCase() + " " + userViewModel.loggedUser!.surname.toUpperCase(),
                                   style: TextStyle(color: kPrimaryColor, fontSize: 14.sp, fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.center,
                                 )
@@ -93,7 +93,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                           SizedBox(
                             height: size.height * 0.05,
                           ),
-                          if (userViewModel.loggedUser.data["address"] != null) ...[
+                          if (userViewModel.loggedUser!.data["address"] != null) ...[
                             Row(
                               children: <Widget>[
                                 Icon(
@@ -104,7 +104,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   width: size.width * 0.05,
                                 ),
                                 Flexible(
-                                  child: Text(userViewModel.loggedUser.data["address"],
+                                  child: Text(userViewModel.loggedUser!.data["address"] as String,
                                       style: TextStyle(
                                         color: kPrimaryColor,
                                         fontSize: 15,
@@ -116,7 +116,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               height: size.height * 0.04,
                             ),
                           ],
-                          if (userViewModel.loggedUser.data["phoneNumber"] != null) ...[
+                          if (userViewModel.loggedUser!.data["phoneNumber"] != null) ...[
                             Row(
                               children: <Widget>[
                                 Icon(
@@ -126,7 +126,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                 SizedBox(
                                   width: size.width * 0.05,
                                 ),
-                                Text(userViewModel.loggedUser.data["phoneNumber"],
+                                Text(userViewModel.loggedUser!.data["phoneNumber"] as String,
                                     style: TextStyle(
                                       color: kPrimaryColor,
                                       fontSize: 15,
@@ -137,7 +137,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               height: size.height * 0.04,
                             ),
                           ],
-                          if (userViewModel.loggedUser.email != null) ...[
+                          if (userViewModel.loggedUser!.email != null) ...[
                             Row(
                               children: [
                                 Icon(
@@ -148,7 +148,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   width: size.width * 0.05,
                                 ),
                                 Flexible(
-                                    child: Text(userViewModel.loggedUser.email,
+                                    child: Text(userViewModel.loggedUser!.email,
                                         style: TextStyle(
                                           color: kPrimaryColor,
                                           fontSize: 12.sp,
@@ -184,7 +184,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                               ),
                                             ),
                                             onTap: () {
-                                              authViewModel.resetPassword(userViewModel.loggedUser.email);
+                                              authViewModel.resetPassword(userViewModel.loggedUser!.email);
                                               showSnackBar("Please check your email for the password reset link.");
                                               authViewModel.logOut();
                                             },
@@ -419,7 +419,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
         ]);
   }
 
-  StreamSubscription<String> subscribeToAuthMessage() {
+  StreamSubscription<String?> subscribeToAuthMessage() {
     return authViewModel.authMessage.listen((message) {
       if (message != null) {
         if (message.isNotEmpty) {

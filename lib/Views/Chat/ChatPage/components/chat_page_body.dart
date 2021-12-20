@@ -13,25 +13,23 @@ import 'package:sApport/Views/components/network_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../constants.dart';
-
 class ChatPageBody extends StatefulWidget {
-  const ChatPageBody({Key key}) : super(key: key);
+  const ChatPageBody({Key? key}) : super(key: key);
 
   @override
   _ChatPageBodyState createState() => _ChatPageBodyState();
 }
 
 class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver {
-  UserViewModel userViewModel;
-  ChatViewModel chatViewModel;
-  AppRouterDelegate routerDelegate;
+  late UserViewModel userViewModel;
+  late ChatViewModel chatViewModel;
+  late AppRouterDelegate routerDelegate;
 
   final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
@@ -44,7 +42,7 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        chatViewModel.currentChat.peerUser is BaseUser
+        chatViewModel.currentChat!.peerUser is BaseUser
             ? TopBarChats(
                 circleAvatar: CircleAvatar(
                   backgroundColor: Colors.transparent,
@@ -54,16 +52,16 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
                     color: Colors.white,
                   ),
                 ),
-                text: chatViewModel.currentChat.peerUser.data["name"].toString() +
-                    (userViewModel.loggedUser is Expert ? " " + chatViewModel.currentChat.peerUser.data["surname"].toString() : ""),
+                text: chatViewModel.currentChat!.peerUser!.data["name"].toString() +
+                    (userViewModel.loggedUser is Expert ? " " + chatViewModel.currentChat!.peerUser!.data["surname"].toString() : ""),
               )
             : TopBarChats(
                 networkAvatar: NetworkAvatar(
-                  img: chatViewModel.currentChat.peerUser.data["profilePhoto"],
+                  img: chatViewModel.currentChat!.peerUser!.data["profilePhoto"] as String?,
                   radius: 20.0,
                 ),
                 text:
-                    chatViewModel.currentChat.peerUser.data["name"].toString() + " " + chatViewModel.currentChat.peerUser.data["surname"].toString(),
+                    chatViewModel.currentChat!.peerUser!.data["name"].toString() + " " + chatViewModel.currentChat!.peerUser!.data["surname"].toString(),
               ),
         Expanded(
           child: Container(
@@ -104,7 +102,7 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
   @override
   void dispose() {
     BackButtonInterceptor.remove(backButtonInterceptor);
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 }

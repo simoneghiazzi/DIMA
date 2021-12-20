@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart' as Firebase;
 import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/ViewModel/Forms/auth_form.dart';
@@ -22,7 +23,7 @@ class AuthViewModel {
   // Stream Controllers
   var _isUserLoggedCtrl = StreamController<bool>.broadcast();
   var _isUserCreatedCtrl = StreamController<bool>.broadcast();
-  var _authMessageCtrl = StreamController<String>.broadcast();
+  var _authMessageCtrl = StreamController<String?>.broadcast();
 
   // Login Form
   final LoginForm loginForm = LoginForm();
@@ -48,7 +49,7 @@ class AuthViewModel {
       } else {
         _authMessageCtrl.add("The email is not verified.");
       }
-    } catch (error) {
+    } on Firebase.FirebaseAuthException catch (error) {
       if (error.code == "user-not-found" || error.code == "wrong-password") {
         _authMessageCtrl.add("Wrong email or password.");
       } else {
@@ -66,11 +67,11 @@ class AuthViewModel {
   Future<void> signUpUser(User newUser) async {
     try {
       await _firebaseAuthService.createUserWithEmailAndPassword(emailTextCtrl.text, pswTextCtrl.text);
-      newUser.id = _firebaseAuthService.firebaseUser.uid;
+      newUser.id = _firebaseAuthService.firebaseUser!.uid;
       _firestoreService.addUserIntoDB(newUser);
       _authMessageCtrl.add("");
       _isUserCreatedCtrl.add(true);
-    } catch (error) {
+    } on Firebase.FirebaseAuthException catch (error) {
       if (error.code == "email-already-in-use") {
         _authMessageCtrl.add("An account associated with this email already exists.");
       } else if (error.code == "weak-password") {
@@ -95,11 +96,11 @@ class AuthViewModel {
       var userData = await _firebaseAuthService.signInWithGoogle(link);
       _authMessageCtrl.add("");
       if (!link) {
-        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.firebaseUser.uid).then((userSnap) {
+        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.firebaseUser!.uid).then((userSnap) {
           // Check if it is a new user. If yes, insert the data into the DB
           if (userSnap.docs.isEmpty) {
             _firestoreService.addUserIntoDB(BaseUser(
-                id: _firebaseAuthService.firebaseUser.uid,
+                id: _firebaseAuthService.firebaseUser!.uid,
                 name: userData["name"],
                 surname: userData["surname"],
                 birthDate: userData["birthDate"],
@@ -108,7 +109,7 @@ class AuthViewModel {
           _isUserLoggedCtrl.add(true);
         });
       }
-    } catch (error) {
+    } on Firebase.FirebaseAuthException catch (error) {
       if (error.code == "account-exists-with-different-credential") {
         _authMessageCtrl.add("An account already exists with the same email address but different sign-in credentials.");
       } else if (error.code == "email-already-in-use" || error.code == "credential-already-in-use") {
@@ -133,11 +134,11 @@ class AuthViewModel {
       var userData = await _firebaseAuthService.signInWithFacebook(link);
       _authMessageCtrl.add("");
       if (!link) {
-        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.firebaseUser.uid).then((userSnap) {
+        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.firebaseUser!.uid).then((userSnap) {
           // Check if it is a new user. If yes, insert the data into the DB
           if (userSnap.docs.isEmpty) {
             _firestoreService.addUserIntoDB(BaseUser(
-                id: _firebaseAuthService.firebaseUser.uid,
+                id: _firebaseAuthService.firebaseUser!.uid,
                 name: userData["name"],
                 surname: userData["surname"],
                 birthDate: userData["birthDate"],
@@ -146,7 +147,7 @@ class AuthViewModel {
           _isUserLoggedCtrl.add(true);
         });
       }
-    } catch (error) {
+    } on Firebase.FirebaseAuthException catch (error) {
       if (error.code == "account-exists-with-different-credential") {
         _authMessageCtrl.add("An account already exists with the same email address but different sign-in credentials.");
       } else if (error.code == "email-already-in-use" || error.code == "credential-already-in-use") {
@@ -208,7 +209,9 @@ class AuthViewModel {
     _notificationService.configNotification();
     _notificationService.getDeviceToken().then((token) {
       _firestoreService.updateUserFieldIntoDB(loggedUser, "pushToken", token);
-    }).catchError((e) => print("Error in getting the device token: $e"));
+    }).catchError((e) {
+      print("Error in getting the device token: $e");
+    });
   }
 
   /// Delete the [loggedUser] account both from the authentication FirebaseService and from the Firebase DB
@@ -226,5 +229,5 @@ class AuthViewModel {
   Stream<bool> get isUserCreated => _isUserCreatedCtrl.stream;
 
   /// Stream of the authentication message controller.
-  Stream<String> get authMessage => _authMessageCtrl.stream;
+  Stream<String?> get authMessage => _authMessageCtrl.stream;
 }

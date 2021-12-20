@@ -4,7 +4,7 @@ import 'background.dart';
 import 'base_user_grid.dart';
 
 class BaseUserHomePageBody extends StatefulWidget {
-  const BaseUserHomePageBody({Key key}) : super(key: key);
+  const BaseUserHomePageBody({Key? key}) : super(key: key);
   @override
   _BaseUserHomePageBodyState createState() => _BaseUserHomePageBodyState();
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/request.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
@@ -12,10 +13,23 @@ class PendingChat extends Chat {
   /// New request of chat received from another base user awaiting confirmation or rejection.
   ///
   /// The peer collection of an [PendingChat] is the expert [Request].
-  PendingChat({BaseUser peerUser}) : super(COLLECTION, PEER_COLLECTION, peerUser: peerUser);
+  PendingChat({BaseUser? peerUser, String lastMessage = "", DateTime? lastMessageDateTime, int notReadMessages = 0})
+      : super(
+          COLLECTION,
+          PEER_COLLECTION,
+          peerUser: peerUser,
+          lastMessage: lastMessage,
+          lastMessageDateTime: lastMessageDateTime,
+          notReadMessages: notReadMessages,
+        );
 
-  /// Factory that returns the instance of the [PendingChat] with the correct [peerUser] instance.
-  factory PendingChat.fromId(String id) {
-    return PendingChat(peerUser: BaseUser(id: id));
+  /// Create an instance of [PendingChat] form the [doc] fields retrieved from the FireBase DB.
+  factory PendingChat.fromDocument(DocumentSnapshot doc) {
+    int milli = doc.get("lastMessageTimestamp");
+    return PendingChat(
+        lastMessage: doc.get("lastMessage"),
+        lastMessageDateTime: DateTime.fromMillisecondsSinceEpoch(milli),
+        notReadMessages: doc.get("notReadMessages"),
+        peerUser: BaseUser(id: doc.id));
   }
 }

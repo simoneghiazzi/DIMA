@@ -24,7 +24,7 @@ class DiaryViewModel with ChangeNotifier {
 
   var hasNoteToday = false;
 
-  DiaryPage _currentDiaryPage;
+  DiaryPage? _currentDiaryPage;
 
   DiaryViewModel() {
     // Register the listeners for the input text field
@@ -44,8 +44,8 @@ class DiaryViewModel with ChangeNotifier {
     );
     return _firestoreService
         .addDiaryPageIntoDB(
-          _userService.loggedUser.id,
-          _currentDiaryPage,
+          _userService.loggedUser!.id,
+          _currentDiaryPage!,
         )
         .then((value) => _isPageAddedCtrl.add(true))
         .catchError((error) => _isPageAddedCtrl.add(false));
@@ -54,13 +54,13 @@ class DiaryViewModel with ChangeNotifier {
   /// Update the already existing [_currentDiaryPage] into the DB
   Future<void> updatePage() {
     var now = DateTime.now();
-    _currentDiaryPage.title = titleTextCtrl.text;
-    _currentDiaryPage.content = contentTextCtrl.text;
-    _currentDiaryPage.dateTime = now;
+    _currentDiaryPage!.title = titleTextCtrl.text;
+    _currentDiaryPage!.content = contentTextCtrl.text;
+    _currentDiaryPage!.dateTime = now;
     return _firestoreService
         .updateDiaryPageIntoDB(
-          _userService.loggedUser.id,
-          _currentDiaryPage,
+          _userService.loggedUser!.id,
+          _currentDiaryPage!,
         )
         .then((value) => _isPageAddedCtrl.add(true))
         .catchError((error) => _isPageAddedCtrl.add(false));
@@ -68,17 +68,17 @@ class DiaryViewModel with ChangeNotifier {
 
   /// Set the [isFavourite] parameter of the [_currentDiaryPage] into the DB.
   Future<void> setFavourite(bool isFavourite) {
-    _currentDiaryPage.favourite = isFavourite;
+    _currentDiaryPage!.favourite = isFavourite;
     return _firestoreService.setFavouriteDiaryNotesIntoDB(
-      _userService.loggedUser.id,
-      _currentDiaryPage,
+      _userService.loggedUser!.id,
+      _currentDiaryPage!,
     );
   }
 
   /// Get the stream of diary pages from the DB
-  Stream<QuerySnapshot> loadDiaryPages() {
+  Stream<QuerySnapshot>? loadDiaryPages() {
     try {
-      return _firestoreService.getDiaryPagesStreamFromDB(_userService.loggedUser.id);
+      return _firestoreService.getDiaryPagesStreamFromDB(_userService.loggedUser!.id);
     } catch (e) {
       print("Failed to get the stream of diary pages: $e");
       return null;
@@ -113,7 +113,7 @@ class DiaryViewModel with ChangeNotifier {
   }
 
   /// Get the [_currentDiaryPage] instance.
-  DiaryPage get currentDiaryPage => _currentDiaryPage;
+  DiaryPage? get currentDiaryPage => _currentDiaryPage;
 
   /// Stream of the succesfully addition of the diary page
   Stream<bool> get isPageAdded => _isPageAddedCtrl.stream;

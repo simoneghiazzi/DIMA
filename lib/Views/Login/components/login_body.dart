@@ -21,9 +21,9 @@ class LoginBody extends StatefulWidget {
 
 class _LoginBodyState extends State<LoginBody> {
   // View Models
-  AuthViewModel authViewModel;
-  UserViewModel userViewModel;
-  AppRouterDelegate routerDelegate;
+  late AuthViewModel authViewModel;
+  UserViewModel? userViewModel;
+  late AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _LoginBodyState extends State<LoginBody> {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     BackButtonInterceptor.add(backButtonInterceptor);
-    WidgetsBinding.instance.addPostFrameCallback((_) => authViewModel.getData());
+    WidgetsBinding.instance!.addPostFrameCallback((_) => authViewModel.getData());
     super.initState();
   }
 
@@ -70,7 +70,7 @@ class _LoginBodyState extends State<LoginBody> {
             SizedBox(height: size.height * 0.04),
             StreamBuilder(
                 stream: authViewModel.loginForm.isLoginEnabled,
-                builder: (context, snapshot) {
+                builder: (context, AsyncSnapshot snapshot) {
                   return RoundedButton(
                     text: "LOGIN",
                     press: () {
@@ -82,10 +82,10 @@ class _LoginBodyState extends State<LoginBody> {
                   );
                 }),
             SizedBox(height: size.height * 0.05),
-            StreamBuilder<String>(
+            StreamBuilder<String?>(
               stream: authViewModel.authMessage,
               builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data.isNotEmpty) {
+                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                   return Column(
                     children: [
                       Container(

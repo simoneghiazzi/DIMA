@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TopBar extends StatelessWidget {
-  final String text;
-  final List<InkWell> buttons;
-  final Function back;
+  final String? text;
+  final List<Widget>? buttons;
+  final Function? back;
 
-  const TopBar({Key key, @required this.text, this.buttons, this.back}) : super(key: key);
+  const TopBar({Key? key, required this.text, this.buttons, this.back}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class TopBar extends StatelessWidget {
                       onPressed: () {
                         FocusScope.of(context).unfocus();
                         if (back != null) {
-                          back();
+                          back!();
                         }
                         routerDelegate.pop();
                       },
@@ -48,12 +48,12 @@ class TopBar extends StatelessWidget {
                       width: size.width * 0.01,
                     ),
                     Text(
-                      text,
+                      text!,
                       style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold, color: Colors.white),
                       maxLines: 1,
                     ),
                     Spacer(),
-                    if (buttons != null) ...[...buttons],
+                    ...?buttons,
                   ],
                 ),
               ),

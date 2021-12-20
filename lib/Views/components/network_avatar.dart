@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
 
 class NetworkAvatar extends StatelessWidget {
-  final String img;
-  final double radius;
+  final String? img;
+  final double? radius;
   const NetworkAvatar({
-    Key key,
+    Key? key,
     this.img,
     this.radius,
   }) : super(key: key);
@@ -20,22 +20,22 @@ class NetworkAvatar extends StatelessWidget {
       backgroundColor: Colors.white,
       child: ClipOval(
         child: Image.network(
-          img,
+          img!,
           fit: BoxFit.cover,
-          width: radius * 2,
-          height: radius * 2,
+          width: radius! * 2,
+          height: radius! * 2,
           loadingBuilder: (BuildContext context, Widget child,
-              ImageChunkEvent loadingProgress) {
+              ImageChunkEvent? loadingProgress) {
             if (loadingProgress == null) return child;
             return SizedBox(
-              width: radius * 2,
-              height: radius * 2,
+              width: radius! * 2,
+              height: radius! * 2,
               child: CircularProgressIndicator(
                 color: kPrimaryColor,
                 value: loadingProgress.expectedTotalBytes != null &&
                         loadingProgress.expectedTotalBytes != null
                     ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes
+                        loadingProgress.expectedTotalBytes!
                     : null,
               ),
             );

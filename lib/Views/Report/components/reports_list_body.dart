@@ -17,9 +17,9 @@ class ReportsListBody extends StatefulWidget {
 }
 
 class _ReportsListBodyState extends State<ReportsListBody> {
-  ReportViewModel reportViewModel;
-  AppRouterDelegate routerDelegate;
-  Alert alert;
+  late ReportViewModel reportViewModel;
+  late AppRouterDelegate routerDelegate;
+  late Alert alert;
   bool isLoading = false;
 
   var _loadReportsStream;
@@ -40,7 +40,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
         Flexible(
           child: StreamBuilder(
             stream: _loadReportsStream,
-            builder: (context, snapshot) {
+            builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.active) {
                 return ListView.builder(
                   physics: BouncingScrollPhysics(),
@@ -58,12 +58,12 @@ class _ReportsListBodyState extends State<ReportsListBody> {
     );
   }
 
-  Widget buildItem(BuildContext context, DocumentSnapshot doc) {
+  Widget buildItem(BuildContext context, DocumentSnapshot? doc) {
     // This size provide us total height and width of our screen
     Size size = MediaQuery.of(context).size;
     if (doc != null) {
       Report report = Report.fromDocument(doc);
-      String date = DateFormat('yyyy-MM-dd kk:mm').format(report.dateTime);
+      String date = DateFormat('yyyy-MM-dd kk:mm').format(report.dateTime!);
       return Container(
         child: TextButton(
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
