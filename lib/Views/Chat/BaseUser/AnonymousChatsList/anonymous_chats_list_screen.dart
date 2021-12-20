@@ -1,5 +1,4 @@
 import 'package:provider/provider.dart';
-import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/components/anonymous_chats_list_body.dart';
@@ -8,37 +7,54 @@ import 'package:sApport/Views/components/empty_landscape_body.dart';
 import 'package:sApport/Views/components/vertical_split_view.dart';
 import 'package:sApport/constants.dart';
 
+/// List of the anonymous chats of the user.
+///
+/// If the orientation of the device is:
+/// - portrait: it displays the [AnonymousChatsListBody].
+/// - landscape: it uses the [VerticalSplitView] for displayng the [AnonymousChatsListBody] on the left and the
+/// [ChatPageBody] (if there is an active chat) on the right.
+///
+/// It subscribes to the chat view model in order to rebuild the right hand side of the page when a new
+/// current chat is selected.
+/// If the current chat is null, it shows the [EmptyLandscapeBody].
 class AnonymousChatsListScreen extends StatefulWidget {
-  static const route = '/activeChatsListScreen';
+  /// Route of the page used by the navigator.
+  static const route = "/activeChatsListScreen";
 
-  const AnonymousChatsListScreen({Key key}) : super(key: key);
+  /// List of the anonymous chats of the user.
+  ///
+  /// If the orientation of the device is:
+  /// - portrait: it displays the [AnonymousChatsListBody].
+  /// - landscape: it uses the [VerticalSplitView] for displayng the [AnonymousChatsListBody] on the left and the
+  /// [ChatPageBody] (if there is an active chat) on the right.
+  ///
+  /// It subscribes to the chat view model in order to rebuild the right hand side of the page when a new
+  /// current chat is selected.
+  /// If the current chat is null, it shows the [EmptyLandscapeBody].
+  AnonymousChatsListScreen({Key? key}) : super(key: key);
 
   @override
   State<AnonymousChatsListScreen> createState() => _AnonymousChatsListScreenState();
 }
 
 class _AnonymousChatsListScreenState extends State<AnonymousChatsListScreen> {
-  ChatViewModel chatViewModel;
-  AppRouterDelegate routerDelegate;
-
-  @override
-  void initState() {
-    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: MediaQuery.of(context).orientation == Orientation.portrait
-          ? AnonymousChatsListBody()
-          : VerticalSplitView(
+          ?
+          // If the orientation is protrait, shows the AnonymousChatsListBody
+          AnonymousChatsListBody()
+          :
+          // If the orientation is landscape, shows the VerticalSplitView with the AnonymousChatsListBody
+          // on the left and the Consumer<ChatViewModel> listener on the right
+          VerticalSplitView(
               left: AnonymousChatsListBody(),
               right: Consumer<ChatViewModel>(
                 builder: (context, chatViewModel, child) {
+                  // Check if the current chat is null
                   if (chatViewModel.currentChat != null) {
-                    return ChatPageBody(key: ValueKey(chatViewModel.currentChat.peerUser.id));
+                    return ChatPageBody(key: ValueKey(chatViewModel.currentChat!.peerUser!.id));
                   } else {
                     return EmptyLandscapeBody();
                   }
