@@ -67,7 +67,7 @@ class AuthViewModel {
   Future<void> signUpUser(User newUser) async {
     try {
       await _firebaseAuthService.createUserWithEmailAndPassword(emailTextCtrl.text, pswTextCtrl.text);
-      newUser.id = _firebaseAuthService.firebaseUser!.uid;
+      newUser.id = _firebaseAuthService.currentUser!.uid;
       _firestoreService.addUserIntoDB(newUser);
       _authMessageCtrl.add("");
       _isUserCreatedCtrl.add(true);
@@ -96,11 +96,11 @@ class AuthViewModel {
       var userData = await _firebaseAuthService.signInWithGoogle(link);
       _authMessageCtrl.add("");
       if (!link) {
-        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.firebaseUser!.uid).then((userSnap) {
+        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.currentUser!.uid).then((userSnap) {
           // Check if it is a new user. If yes, insert the data into the DB
           if (userSnap.docs.isEmpty) {
             _firestoreService.addUserIntoDB(BaseUser(
-                id: _firebaseAuthService.firebaseUser!.uid,
+                id: _firebaseAuthService.currentUser!.uid,
                 name: userData["name"],
                 surname: userData["surname"],
                 birthDate: userData["birthDate"],
@@ -134,11 +134,11 @@ class AuthViewModel {
       var userData = await _firebaseAuthService.signInWithFacebook(link);
       _authMessageCtrl.add("");
       if (!link) {
-        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.firebaseUser!.uid).then((userSnap) {
+        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.currentUser!.uid).then((userSnap) {
           // Check if it is a new user. If yes, insert the data into the DB
           if (userSnap.docs.isEmpty) {
             _firestoreService.addUserIntoDB(BaseUser(
-                id: _firebaseAuthService.firebaseUser!.uid,
+                id: _firebaseAuthService.currentUser!.uid,
                 name: userData["name"],
                 surname: userData["surname"],
                 birthDate: userData["birthDate"],
@@ -190,8 +190,8 @@ class AuthViewModel {
 
   /// Log out the user from the app, updates the [isUserLogged] stream controller and call [clearControllers].
   Future<void> logOut() async {
-    await _firebaseAuthService.signOut();
     _isUserLoggedCtrl.add(false);
+    _firebaseAuthService.signOut();
     clearControllers();
   }
 

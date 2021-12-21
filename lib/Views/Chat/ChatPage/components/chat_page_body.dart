@@ -42,7 +42,7 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        chatViewModel.currentChat!.peerUser is BaseUser
+        chatViewModel.currentChat.value?.peerUser is BaseUser
             ? TopBarChats(
                 circleAvatar: CircleAvatar(
                   backgroundColor: Colors.transparent,
@@ -52,16 +52,17 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
                     color: Colors.white,
                   ),
                 ),
-                text: chatViewModel.currentChat!.peerUser!.data["name"].toString() +
-                    (userViewModel.loggedUser is Expert ? " " + chatViewModel.currentChat!.peerUser!.data["surname"].toString() : ""),
+                text: chatViewModel.currentChat.value!.peerUser!.data["name"].toString() +
+                    (userViewModel.loggedUser is Expert ? " " + chatViewModel.currentChat.value!.peerUser!.data["surname"].toString() : ""),
               )
             : TopBarChats(
                 networkAvatar: NetworkAvatar(
-                  img: chatViewModel.currentChat!.peerUser!.data["profilePhoto"] as String?,
+                  img: chatViewModel.currentChat.value!.peerUser!.data["profilePhoto"] as String?,
                   radius: 20.0,
                 ),
-                text:
-                    chatViewModel.currentChat!.peerUser!.data["name"].toString() + " " + chatViewModel.currentChat!.peerUser!.data["surname"].toString(),
+                text: chatViewModel.currentChat.value!.peerUser!.data["name"].toString() +
+                    " " +
+                    chatViewModel.currentChat.value!.peerUser!.data["surname"].toString(),
               ),
         Expanded(
           child: Container(
@@ -73,7 +74,7 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
                 // List of messages
                 Flexible(child: MessagesListConstructor(scrollController: scrollController)),
                 // Input content
-                chatViewModel.currentChat is PendingChat ? ChatAcceptDenyInput() : ChatTextInput(scrollController: scrollController),
+                chatViewModel.currentChat.value is PendingChat ? ChatAcceptDenyInput() : ChatTextInput(scrollController: scrollController),
               ],
             ),
           ),

@@ -59,7 +59,7 @@ void main() {
       MultiProvider(
         providers: [
           ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
-          ChangeNotifierProvider<ChatViewModel>(create: (_) => ChatViewModel()),
+          Provider<ChatViewModel>(create: (_) => ChatViewModel()),
         ],
         child: Builder(
           builder: (_) => testWidget,

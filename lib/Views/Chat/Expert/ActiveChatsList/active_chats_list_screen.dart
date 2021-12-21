@@ -1,4 +1,5 @@
 import 'package:provider/provider.dart';
+import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,8 @@ class ActiveChatsListScreen extends StatefulWidget {
 }
 
 class _ActiveChatsListScreenState extends State<ActiveChatsListScreen> {
-  ChatViewModel? chatViewModel;
-  AppRouterDelegate? routerDelegate;
+  late ChatViewModel chatViewModel;
+  late AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
@@ -35,10 +36,11 @@ class _ActiveChatsListScreenState extends State<ActiveChatsListScreen> {
           ? ActiveChatsListBody()
           : VerticalSplitView(
               left: ActiveChatsListBody(),
-              right: Consumer<ChatViewModel>(
-                builder: (context, chatViewModel, child) {
-                  if (chatViewModel.currentChat != null) {
-                    return ChatPageBody(key: ValueKey(chatViewModel.currentChat!.peerUser!.id));
+              right: ValueListenableBuilder(
+                valueListenable: chatViewModel.currentChat,
+                builder: (context, Chat? chat, child) {
+                  if (chat != null) {
+                    return ChatPageBody(key: ValueKey(chat.peerUser!.id));
                   } else {
                     return EmptyLandscapeBody();
                   }

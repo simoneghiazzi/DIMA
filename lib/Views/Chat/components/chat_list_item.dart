@@ -52,7 +52,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
     _chatItem = widget.chatItem;
     _peerUserItem = _chatItem.peerUser!;
     // Check if there are not read messages and the chat is not the current chat
-    if (_chatItem.notReadMessages > 0 && _chatItem.peerUser == chatViewModel.currentChat?.peerUser) {
+    if (_chatItem.notReadMessages > 0 && _chatItem.peerUser == chatViewModel.currentChat.value?.peerUser) {
       _chatItem.notReadMessages = 0;
       chatViewModel.setMessagesHasRead();
     }
@@ -149,7 +149,7 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
           ],
         ),
         onPressed: () {
-          if (chatViewModel.currentChat?.peerUser?.id != _chatItem.peerUser?.id) {
+          if (chatViewModel.currentChat.value?.peerUser?.id != _chatItem.peerUser?.id) {
             chatViewModel.setCurrentChat(_chatItem);
             widget.selectedItemCallback();
             if (MediaQuery.of(context).orientation == Orientation.portrait) {

@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
@@ -24,15 +27,23 @@ class _WelcomeBodyState extends State<WelcomeBody> {
   // View Models
   late AuthViewModel authViewModel;
   late UserViewModel userViewModel;
+  late ChatViewModel chatViewModel;
+  late ReportViewModel reportViewModel;
+  late DiaryViewModel diaryViewModel;
+
+  // Router Delegate
   late AppRouterDelegate routerDelegate;
 
   // Subscriber
-  late StreamSubscription<bool> subscriber;
+  late StreamSubscription subscriber;
 
   @override
   void initState() {
     authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
+    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     subscriber = subscribeToUserLoggedStream();
     super.initState();
@@ -141,6 +152,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
         }
       } else {
         // Called on sign out
+        chatViewModel.reset();
         routerDelegate.replaceAll(name: WelcomeScreen.route);
       }
     });

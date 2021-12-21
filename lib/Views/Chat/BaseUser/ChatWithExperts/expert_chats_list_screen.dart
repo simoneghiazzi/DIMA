@@ -1,4 +1,5 @@
 import 'package:provider/provider.dart';
+import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/components/expert_chats_list_body.dart';
@@ -19,12 +20,10 @@ class ExpertChatsListScreen extends StatefulWidget {
 }
 
 class _ExpertChatsListScreenState extends State<ExpertChatsListScreen> {
-  ChatViewModel? chatViewModel;
-  AppRouterDelegate? routerDelegate;
+  late ChatViewModel chatViewModel;
 
   @override
   void initState() {
-    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     super.initState();
   }
@@ -36,10 +35,11 @@ class _ExpertChatsListScreenState extends State<ExpertChatsListScreen> {
           ? ExpertChatsListBody()
           : VerticalSplitView(
               left: ExpertChatsListBody(),
-              right: Consumer<ChatViewModel>(
-                builder: (context, chatViewModel, child) {
-                  if (chatViewModel.currentChat != null) {
-                    return ChatPageBody(key: ValueKey(chatViewModel.currentChat!.peerUser!.id));
+              right: ValueListenableBuilder(
+                valueListenable: chatViewModel.currentChat,
+                builder: (context, Chat? chat, child) {
+                  if (chat != null) {
+                    return ChatPageBody(key: ValueKey(chat.peerUser!.id));
                   } else {
                     return EmptyLandscapeBody();
                   }

@@ -279,13 +279,7 @@ class FirestoreService {
   /// It takes the [user] and returns the list of all the chat of the
   /// user based on the [chatCollection] ordered by lastMessageTimestamp.
   Stream<QuerySnapshot> getChatsFromDB(User user, String chatCollection) {
-    return _firestore
-        .collection(user.collection)
-        .doc(user.id)
-        .collection(chatCollection)
-        .orderBy("lastMessageTimestamp", descending: true)
-        .limit(_limit)
-        .snapshots();
+    return _firestore.collection(user.collection).doc(user.id).collection(chatCollection).orderBy("lastMessageTimestamp").limit(_limit).snapshots();
   }
 
   /// It takes the [user] and returns the hash set of ids of all the chat

@@ -36,7 +36,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     _loadMessagesStream = chatViewModel.loadMessages();
-    _notReadMessages = chatViewModel.currentChat!.notReadMessages;
+    _notReadMessages = chatViewModel.currentChat.value!.notReadMessages;
     chatViewModel.setMessagesHasRead();
     super.initState();
   }

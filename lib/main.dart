@@ -56,7 +56,7 @@ Future<void> main() async {
   // fetch the correct user data from the DB and load the relative homePage.
   //
   // If the user is not already logged or the email has not been verified, load the welcome page.
-  if (_firebaseAuthService.isUserSignedIn() && _firebaseAuthService.isUserEmailVerified()) {
+  if (_firebaseAuthService.currentUser != null && _firebaseAuthService.isUserEmailVerified()) {
     await _userService.loadLoggedUserFromDB().then((_) => print("User of category ${_userService.loggedUser!.collection} logged"));
     runApp(MyApp(homePage: _userService.loggedUser!.homePageRoute));
   } else {
@@ -100,8 +100,8 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
-        ChangeNotifierProvider<ReportViewModel>(create: (_) => ReportViewModel()),
         ChangeNotifierProvider<ChatViewModel>(create: (_) => ChatViewModel()),
+        ChangeNotifierProvider<ReportViewModel>(create: (_) => ReportViewModel()),
         ChangeNotifierProvider<DiaryViewModel>(create: (_) => DiaryViewModel()),
         Provider(create: (context) => AuthViewModel()),
         Provider(create: (context) => UserViewModel()),

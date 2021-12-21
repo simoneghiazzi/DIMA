@@ -10,9 +10,6 @@ class FirebaseAuthService {
   // Firebase Auth instance
   final FirebaseAuth _firebaseAuth;
 
-  // Instance of the firebase user returned by the FirebaseAuth SDK
-  User? firebaseUser;
-
   /// Service used by the view models to interact with the Firebase Auth service.
   FirebaseAuthService(this._firebaseAuth);
 
@@ -26,7 +23,7 @@ class FirebaseAuthService {
   /// - **wrong-password**:
   ///   - Thrown if the password is invalid for the given email.
   Future<void> signInWithEmailAndPassword(String email, String password) {
-    return _firebaseAuth.signInWithEmailAndPassword(email: email, password: password).then((credential) => firebaseUser = credential.user);
+    return _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   /// Tries to create a new user account with the given [email] address and [password].
@@ -41,7 +38,6 @@ class FirebaseAuthService {
   ///   - Thrown if the password is not strong enough.
   Future<void> createUserWithEmailAndPassword(String email, String password) {
     return _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password).then((credential) {
-      firebaseUser = credential.user!;
       _sendVerificationEmail();
     });
   }
@@ -81,13 +77,13 @@ class FirebaseAuthService {
 
       // If link is true, it links the Google account to the logged user
       if (link) {
-        firebaseUser = (await firebaseUser!.linkWithCredential(googleCredential)).user;
+        await currentUser!.linkWithCredential(googleCredential);
       } else {
         // Check the sign in methods of the user to prevent profiles from being automatically linked
         var signInMethods = await fetchSignInMethods(googleUser.email);
         if (signInMethods.contains("google.com") || signInMethods.isEmpty) {
           // Sign in with Google credential
-          firebaseUser = (await _firebaseAuth.signInWithCredential(googleCredential)).user!;
+          await _firebaseAuth.signInWithCredential(googleCredential);
 
           // Retrieve the user birthdate info from the Google account
           final res = await get(
@@ -135,10 +131,10 @@ class FirebaseAuthService {
 
     // If link is true, it links the Facebook account to the logged user
     if (link) {
-      firebaseUser = (await firebaseUser!.linkWithCredential(facebookCredential)).user!;
+      await currentUser!.linkWithCredential(facebookCredential);
     } else {
       // Sign in with Facebook credential
-      firebaseUser = (await _firebaseAuth.signInWithCredential(facebookCredential)).user!;
+      await _firebaseAuth.signInWithCredential(facebookCredential);
       final userData = await FacebookAuth.instance.getUserData(fields: "name, birthday");
 
       // Format the user birthdate info from the Facebook account
@@ -146,7 +142,7 @@ class FirebaseAuthService {
       return {
         "name": userData["name"].split(" ")[0],
         "surname": userData["name"].split(" ")[1],
-        "email": firebaseUser?.email,
+        "email": currentUser?.email,
         "birthDate": DateTime.parse("${birthDate[2]}-${birthDate[0]}-${birthDate[1]}")
       };
     }
@@ -165,7 +161,6 @@ class FirebaseAuthService {
   ///
   /// It sets the firebase User to `null`.
   Future<void> signOut() {
-    firebaseUser = null;
     return _firebaseAuth.signOut();
   }
 
@@ -191,7 +186,6 @@ class FirebaseAuthService {
 
   /// Delete and signs out the user.
   Future deleteUser() async {
-    firebaseUser = null;
     _firebaseAuth.currentUser!.delete();
   }
 
@@ -205,20 +199,17 @@ class FirebaseAuthService {
     return true;
   }
 
-  /// Determines the current sign-in state of the user.
-  bool isUserSignedIn() {
-    if (_firebaseAuth.currentUser != null) {
-      firebaseUser = _firebaseAuth.currentUser;
-      return true;
-    }
-    return false;
-  }
-
-  /// Send the verification email to the user in the sign up process
+  /// Send the verification email to the user in the sign up process.
   void _sendVerificationEmail() {
     _firebaseAuth.currentUser!
         .sendEmailVerification()
         .then((value) => print("Verification email sent"))
         .catchError((error) => print("Failed to send the verification email: $error"));
   }
+
+  /// Stream of the user authentication state.
+  Stream<User?> get onAuthStateChanged => _firebaseAuth.authStateChanges();
+
+  /// Get the uid of the current logged user.
+  User? get currentUser => _firebaseAuth.currentUser;
 }
