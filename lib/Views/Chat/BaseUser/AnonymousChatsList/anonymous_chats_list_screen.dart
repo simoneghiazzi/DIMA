@@ -15,11 +15,11 @@ import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/components/anonym
 /// - landscape: it uses the [VerticalSplitView] for displayng the [AnonymousChatsListBody] on the left and the
 /// [ChatPageBody] (if there is an active chat) on the right.
 ///
-/// It subscribes to the chat view model in order to rebuild the right hand side of the page when a new
-/// current chat is selected.
+/// It subscribes to the chat view model currentChat value notifier in order to rebuild the right hand side of the page
+/// when a new current chat is selected.
 /// If the current chat is null, it shows the [EmptyLandscapeBody].
 class AnonymousChatsListScreen extends StatefulWidget {
-  /// Route of the page used by the navigator.
+  /// Route of the page used by the Navigator.
   static const route = "/activeChatsListScreen";
 
   /// List of the anonymous chats of the user.
@@ -29,8 +29,8 @@ class AnonymousChatsListScreen extends StatefulWidget {
   /// - landscape: it uses the [VerticalSplitView] for displayng the [AnonymousChatsListBody] on the left and the
   /// [ChatPageBody] (if there is an active chat) on the right.
   ///
-  /// It subscribes to the chat view model in order to rebuild the right hand side of the page when a new
-  /// current chat is selected.
+  /// It subscribes to the chat view model currentChat value notifier in order to rebuild the right hand side of the page
+  /// when a new current chat is selected.
   /// If the current chat is null, it shows the [EmptyLandscapeBody].
   AnonymousChatsListScreen({Key? key}) : super(key: key);
 

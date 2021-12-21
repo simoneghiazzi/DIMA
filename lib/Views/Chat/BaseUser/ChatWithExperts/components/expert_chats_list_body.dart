@@ -1,20 +1,30 @@
-import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/components/anonymous_chats_list_constructor.dart';
+import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/// Body of the experts chat list page.
+///
+/// It contains the top bar, the chat list constructor of the experts chats and the button for searching new experts.
 class ExpertChatsListBody extends StatefulWidget {
+  /// Body of the experts chat list page.
+  ///
+  /// It contains the top bar, the chat list constructor of the experts chats and the button for searching new experts.
+  const ExpertChatsListBody({Key? key}) : super(key: key);
+
   @override
   _ExpertChatsListBodyState createState() => _ExpertChatsListBodyState();
 }
 
 class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
+  // View Models
   late ChatViewModel chatViewModel;
+
+  // Router Delegate
   late AppRouterDelegate routerDelegate;
 
   @override
@@ -32,22 +42,17 @@ class _ExpertChatsListBodyState extends State<ExpertChatsListBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TopBar(back: chatViewModel.resetCurrentChat, text: "Experts"),
-            //ChatsListConstructor(createChatCallback: (String id) => ExpertChat.fromId(id)),
+            ChatListConstructor(valueNotifier: chatViewModel.expertChats),
           ],
         ),
+        // "+" button used to look for new expert
         Align(
           alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1)!,
           child: FloatingActionButton(
-            onPressed: () async {
-              routerDelegate.pushPage(name: MapScreen.route);
-            },
+            onPressed: () => routerDelegate.pushPage(name: MapScreen.route),
             materialTapTargetSize: MaterialTapTargetSize.padded,
             backgroundColor: kPrimaryColor,
-            child: const Icon(
-              Icons.add,
-              size: 40.0,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.add, size: 40.0, color: Colors.white),
           ),
         ),
       ],

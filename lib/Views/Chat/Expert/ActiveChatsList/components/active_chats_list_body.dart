@@ -3,7 +3,6 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/components/anonymous_chats_list_constructor.dart';
 import 'package:sApport/Views/Home/components/header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

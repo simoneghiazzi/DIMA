@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Model/Chat/chat.dart';
+import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
@@ -10,15 +11,16 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Chat/BaseUser/PendingChatsList/pending_chats_list_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/components/anonymous_chats_list_constructor.dart';
 
 /// Body of the anonymous chat list page.
 ///
-/// It contains the top bar with the listener for new requests, the anonymous chat list constructor and the button for searching new random users.
+/// It contains the top bar with the [ValueListenableBuilder] in order to listen for new requests,
+/// the chat list constructor of the anonymous chats and the button for searching new random users.
 class AnonymousChatsListBody extends StatefulWidget {
   /// Body of the anonymous chat list page.
   ///
-  /// It contains the top bar with the listener for new requests, the anonymous chat list constructor and the button for searching new random users.
+  /// It contains the top bar with the [ValueListenableBuilder] in order to listen for new requests,
+  /// the chat list constructor of the anonymous chats and the button for searching new random users.
   const AnonymousChatsListBody({Key? key}) : super(key: key);
 
   @override
@@ -26,11 +28,11 @@ class AnonymousChatsListBody extends StatefulWidget {
 }
 
 class _AnonymousChatsListBodyState extends State<AnonymousChatsListBody> {
-  // Router Delegate
-  late AppRouterDelegate routerDelegate;
-
   // View Models
   late ChatViewModel chatViewModel;
+
+  // Router Delegate
+  late AppRouterDelegate routerDelegate;
 
   // Streams
   late StreamSubscription<bool> subscriberNewRandomUser;
@@ -80,10 +82,10 @@ class _AnonymousChatsListBodyState extends State<AnonymousChatsListBody> {
                 ),
               ],
             ),
-            AnonymousChatsListConstructor(),
+            ChatListConstructor(valueNotifier: chatViewModel.anonymousChats),
           ],
         ),
-        // "+" button to look for new random users
+        // "+" button used to look for new random users
         Align(
           alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1)!,
           child: FloatingActionButton(
