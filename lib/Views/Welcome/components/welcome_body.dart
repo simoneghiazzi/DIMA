@@ -152,7 +152,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
         }
       } else {
         // Called on sign out
-        chatViewModel.reset();
+        chatViewModel.resetViewModel();
         routerDelegate.replaceAll(name: WelcomeScreen.route);
       }
     });
