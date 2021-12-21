@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
@@ -54,9 +56,10 @@ class _AnonymousChatsListBodyState extends State<AnonymousChatsListBody> {
               text: "Anonymous",
               buttons: [
                 // Listener for new pending chats
-                Consumer<ChatViewModel>(
-                  builder: (context, chatViewModel, child) {
-                    if (chatViewModel.pendingChats.length != 0) {
+                ValueListenableBuilder(
+                  valueListenable: chatViewModel.pendingChats,
+                  builder: (context, LinkedHashMap<String, Chat> pendingChats, child) {
+                    if (pendingChats.length != 0) {
                       // If there are pending chats, show the "Requests" button
                       return InkWell(
                         child: Container(

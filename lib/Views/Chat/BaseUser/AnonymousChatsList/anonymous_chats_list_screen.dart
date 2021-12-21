@@ -1,11 +1,12 @@
-import 'package:provider/provider.dart';
-import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/components/anonymous_chats_list_body.dart';
-import 'package:sApport/Views/Chat/ChatPage/components/chat_page_body.dart';
-import 'package:sApport/Views/components/empty_landscape_body.dart';
-import 'package:sApport/Views/components/vertical_split_view.dart';
+import 'package:provider/provider.dart';
+import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/constants.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/Views/components/vertical_split_view.dart';
+import 'package:sApport/Views/components/empty_landscape_body.dart';
+import 'package:sApport/Views/Chat/ChatPage/components/chat_page_body.dart';
+import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/components/anonymous_chats_list_body.dart';
 
 /// List of the anonymous chats of the user.
 ///
@@ -38,6 +39,14 @@ class AnonymousChatsListScreen extends StatefulWidget {
 }
 
 class _AnonymousChatsListScreenState extends State<AnonymousChatsListScreen> {
+  late ChatViewModel chatViewModel;
+
+  @override
+  void initState() {
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,11 +59,12 @@ class _AnonymousChatsListScreenState extends State<AnonymousChatsListScreen> {
           // on the left and the Consumer<ChatViewModel> listener on the right
           VerticalSplitView(
               left: AnonymousChatsListBody(),
-              right: Consumer<ChatViewModel>(
-                builder: (context, chatViewModel, child) {
+              right: ValueListenableBuilder(
+                valueListenable: chatViewModel.currentChat,
+                builder: (context, Chat? chat, child) {
                   // Check if the current chat is null
-                  if (chatViewModel.currentChat != null) {
-                    return ChatPageBody(key: ValueKey(chatViewModel.currentChat!.peerUser!.id));
+                  if (chat != null) {
+                    return ChatPageBody(key: ValueKey(chat.peerUser!.id));
                   } else {
                     return EmptyLandscapeBody();
                   }
