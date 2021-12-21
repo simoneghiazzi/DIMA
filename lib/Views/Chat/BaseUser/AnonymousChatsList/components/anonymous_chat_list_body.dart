@@ -12,15 +12,11 @@ import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
 import 'package:sApport/Views/Chat/BaseUser/PendingChatsList/pending_chat_list_screen.dart';
 
-/// Body of the anonymous chat list page.
-///
-/// It contains the top bar with the [ValueListenableBuilder] in order to listen for new requests,
-/// the chat list constructor of the anonymous chats and the button for searching new random users.
+/// It contains the [TopBar] with the [ValueListenableBuilder] in order to listen for new requests,
+/// the [ChatListConstructor] of the anonymous chats and the button for searching new random users.
 class AnonymousChatListBody extends StatefulWidget {
-  /// Body of the anonymous chat list page.
-  ///
-  /// It contains the top bar with the [ValueListenableBuilder] in order to listen for new requests,
-  /// the chat list constructor of the anonymous chats and the button for searching new random users.
+  /// It contains the [TopBar] with the [ValueListenableBuilder] in order to listen for new requests,
+  /// the [ChatListConstructor] of the anonymous chats and the button for searching new random users.
   const AnonymousChatListBody({Key? key}) : super(key: key);
 
   @override

@@ -4,13 +4,9 @@ import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
 
-/// Body of the pending chat list page.
-///
-/// It contains the top bar and the chat list constructor of the pending chats.
+/// It contains the [TopBar] and the [ChatListConstructor] of the pending chats.
 class PendingChatListBody extends StatefulWidget {
-  /// Body of the pending chat list page.
-  ///
-  /// It contains the top bar and the chat list constructor of the pending chats.
+  /// It contains the [TopBar] and the [ChatListConstructor] of the pending chats.
   const PendingChatListBody({Key? key}) : super(key: key);
 
   @override

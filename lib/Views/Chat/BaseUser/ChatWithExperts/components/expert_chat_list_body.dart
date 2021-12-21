@@ -7,13 +7,9 @@ import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
 
-/// Body of the experts chat list page.
-///
-/// It contains the top bar, the chat list constructor of the experts chats and the button for searching new experts.
+/// It contains the [TopBar], the [ChatListConstructor] of the experts chats and the button for searching new random users.
 class ExpertChatListBody extends StatefulWidget {
-  /// Body of the experts chat list page.
-  ///
-  /// It contains the top bar, the chat list constructor of the experts chats and the button for searching new experts.
+  /// It contains the [TopBar], the [ChatListConstructor] of the experts chats and the button for searching new random users.
   const ExpertChatListBody({Key? key}) : super(key: key);
 
   @override

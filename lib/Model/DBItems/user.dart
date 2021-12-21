@@ -7,9 +7,12 @@ abstract class User extends DbItem {
   String surname;
   DateTime? birthDate;
   String email;
+  String fullName = "";
 
   User(String collection, this.homePageRoute, {String id = "", this.name = "", this.surname = "", this.birthDate, this.email = ""})
-      : super(collection, id: id);
+      : super(collection, id: id) {
+    fullName = "$name $surname";
+  }
 
   /// Set dinamically the fields of the [User] from the [doc].
   void setFromDocument(DocumentSnapshot doc);
