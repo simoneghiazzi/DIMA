@@ -2,8 +2,8 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/anonymous_chats_list_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/anonymous_chat_list_screen.dart';
+import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chat_list_screen.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Report/create_report_screen.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +54,7 @@ class _BaseUserGridState extends State<BaseUserGrid> {
                   imagePath: "assets/icons/anonymous.png",
                   text: "Anonymous\nchats",
                   press: () {
-                    routerDelegate.pushPage(name: AnonymousChatsListScreen.route);
+                    routerDelegate.pushPage(name: AnonymousChatListScreen.route);
                   },
                 ),
               ]),
