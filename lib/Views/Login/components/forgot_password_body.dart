@@ -8,6 +8,7 @@ import 'package:sApport/Views/Login/components/background.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/rounded_input_field.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 
 class ForgotPasswordBody extends StatefulWidget {
   @override
@@ -29,7 +30,6 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(
         child: Column(
@@ -39,7 +39,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
               "sApport",
               style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
             ),
-            SizedBox(height: size.height * 0.02),
+            SizedBox(height: 2.h),
             StreamBuilder<String>(
                 stream: authViewModel.loginForm.errorEmailText,
                 builder: (context, snapshot) {
@@ -54,7 +54,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                 builder: (context, snapshot) {
                   return RichText(text: TextSpan(text: snapshot.data, style: TextStyle(color: Colors.red, fontSize: 15)));
                 }),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: 3.h),
             StreamBuilder(
                 stream: authViewModel.loginForm.isResetPasswordEnabled,
                 builder: (context, AsyncSnapshot snapshot) {

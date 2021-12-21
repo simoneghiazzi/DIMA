@@ -57,19 +57,21 @@ class ChatViewModel extends ChangeNotifier {
 
   /// Send a message to the [peerUser] of the [_currentChat].
   void sendMessage() {
-    _currentChat.value!.lastMessage = contentTextCtrl.text;
-    _currentChat.value!.lastMessageDateTime = DateTime.now();
-    _firestoreService.addMessageIntoDB(
-      _userService.loggedUser!,
-      _currentChat.value!,
-      Message(
-        idFrom: _userService.loggedUser!.id,
-        idTo: _currentChat.value!.peerUser!.id,
-        timestamp: _currentChat.value!.lastMessageDateTime!,
-        content: contentTextCtrl.text,
-      ),
-    );
-    contentTextCtrl.clear();
+    if (contentTextCtrl.text.trim().isNotEmpty) {
+      _currentChat.value!.lastMessage = contentTextCtrl.text.trim();
+      _currentChat.value!.lastMessageDateTime = DateTime.now();
+      _firestoreService.addMessageIntoDB(
+        _userService.loggedUser!,
+        _currentChat.value!,
+        Message(
+          idFrom: _userService.loggedUser!.id,
+          idTo: _currentChat.value!.peerUser!.id,
+          timestamp: _currentChat.value!.lastMessageDateTime!,
+          content: _currentChat.value!.lastMessage,
+        ),
+      );
+      contentTextCtrl.clear();
+    }
   }
 
   /// Set the [notReadMessages] of the logged user with the [peerUser] of the [_currentChat] to `0`.
@@ -254,11 +256,12 @@ class ChatViewModel extends ChangeNotifier {
     print("Current chat setted");
   }
 
-  /// Reset the [_currentChat].
+  /// Reset the [_currentChat] and clear the [contentTextCtrl].
   ///
   /// It must be called after all the other reset methods.
   void resetCurrentChat() {
     _currentChat.value = null;
+    contentTextCtrl.clear();
     print("Current chat resetted");
   }
 

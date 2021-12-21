@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
+import 'package:sizer/sizer.dart';
 
 class Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Container(
       color: kPrimaryColor,
       child: SafeArea(
         child: Container(
           color: kPrimaryColor,
-          height: size.height / 10,
+          height: 10.h,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

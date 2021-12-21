@@ -1,3 +1,4 @@
+import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
 
@@ -5,7 +6,6 @@ class EmptyLandscapeBody extends StatelessWidget {
   const EmptyLandscapeBody({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Column(
       children: [
         Container(
@@ -13,7 +13,7 @@ class EmptyLandscapeBody extends StatelessWidget {
           child: SafeArea(
             child: Container(
               color: kPrimaryColor,
-              height: size.height / 10,
+              height: 10.h,
             ),
           ),
         ),

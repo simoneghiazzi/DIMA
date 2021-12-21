@@ -12,6 +12,7 @@ import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/rounded_input_field.dart';
 import 'package:sApport/Views/components/rounded_password_field.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 
 class CredentialBody extends StatefulWidget {
   @override
@@ -40,7 +41,6 @@ class _CredentialBodyState extends State<CredentialBody> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(
         child: Column(
@@ -50,7 +50,7 @@ class _CredentialBodyState extends State<CredentialBody> {
               "sApport",
               style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
             ),
-            SizedBox(height: size.height * 0.02),
+            SizedBox(height: 2.h),
             StreamBuilder<String>(
                 stream: authViewModel.loginForm.errorEmailText,
                 builder: (context, snapshot) {
@@ -69,7 +69,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                 return RoundedPasswordField(controller: authViewModel.repeatPswTextCtrl, hintText: "Confirm Password", errorText: snapshot.data);
               },
             ),
-            SizedBox(height: size.height * 0.04),
+            SizedBox(height: 4.h),
             StreamBuilder(
               stream: authViewModel.loginForm.isSignUpEnabled,
               builder: (context, AsyncSnapshot snapshot) {
@@ -85,7 +85,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                 );
               },
             ),
-            SizedBox(height: size.height * 0.05),
+            SizedBox(height: 5.h),
             StreamBuilder<String?>(
               stream: authViewModel.authMessage,
               builder: (context, snapshot) {
@@ -102,11 +102,11 @@ class _CredentialBodyState extends State<CredentialBody> {
                           ),
                         ),
                       ),
-                      SizedBox(height: size.height * 0.05),
+                      SizedBox(height: 5.h),
                     ],
                   );
                 } else {
-                  return SizedBox(height: size.height * 0.05);
+                  return SizedBox(height: 5.h);
                 }
               },
             ),

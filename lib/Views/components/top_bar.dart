@@ -1,3 +1,4 @@
+import 'package:sizer/sizer.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
@@ -13,13 +14,12 @@ class TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    Size size = MediaQuery.of(context).size;
     return Container(
       color: kPrimaryColor,
       child: SafeArea(
         child: Container(
           decoration: BoxDecoration(color: kPrimaryColor),
-          height: size.height / 10,
+          height: 10.h,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -28,14 +28,9 @@ class TopBar extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    SizedBox(
-                      width: size.width * 0.01,
-                    ),
+                    SizedBox(width: 1.w),
                     IconButton(
-                      icon: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: Colors.white,
-                      ),
+                      icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
                       onPressed: () {
                         FocusScope.of(context).unfocus();
                         if (back != null) {
@@ -44,9 +39,7 @@ class TopBar extends StatelessWidget {
                         routerDelegate.pop();
                       },
                     ),
-                    SizedBox(
-                      width: size.width * 0.01,
-                    ),
+                    SizedBox(width: 1.w),
                     Text(
                       text!,
                       style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.bold, color: Colors.white),

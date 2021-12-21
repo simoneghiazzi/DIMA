@@ -1,23 +1,41 @@
+import 'dart:math' as math;
+import 'package:sizer/sizer.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sApport/constants.dart';
 import 'package:sApport/Model/DBItems/message.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Chat/components/date_item.dart';
 import 'package:sApport/Views/Chat/components/message_list_item.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:sApport/Views/Chat/components/not_read_messages_item.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Chat/components/new_messages_item.dart';
 
-class MessagesListConstructor extends StatefulWidget {
-  final ScrollController? scrollController;
+/// Constructor of the message list of a chat between 2 users.
+///
+/// It takes the [scrollController] of the list that it uses for scrolling to the [NewMessagesItem]
+/// if it is present.
+///
+/// It uses a [ValueListenableBuilder] for listening to the messages of the chat
+/// and for updating the ListView of [MessageListItem].
+/// Based on the sequence of messages, it draws the [DateTime] and the [NewMessagesItem].
+class MessageListConstructor extends StatefulWidget {
+  final ScrollController scrollController;
 
-  const MessagesListConstructor({Key? key, this.scrollController}) : super(key: key);
+  /// Constructor of the message list of a chat between 2 users.
+  ///
+  /// It takes the [scrollController] of the list that it uses for scrolling to the [NewMessagesItem]
+  /// if it is present.
+  ///
+  /// It uses a [ValueListenableBuilder] for listening to the messages of the chat
+  /// and for updating the ListView of [MessageListItem].
+  /// Based on the sequence of messages, it draws the [DateTime] and the [NewMessagesItem].
+  const MessageListConstructor({Key? key, required this.scrollController}) : super(key: key);
 
   @override
-  _MessagesListConstructorState createState() => _MessagesListConstructorState();
+  _MessageListConstructorState createState() => _MessageListConstructorState();
 }
 
-class _MessagesListConstructorState extends State<MessagesListConstructor> {
+class _MessageListConstructorState extends State<MessageListConstructor> {
   late UserViewModel userViewModel;
   late ChatViewModel chatViewModel;
   final dataKey = new GlobalKey();
@@ -26,9 +44,9 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
   var _loadMessagesStream;
   var _notReadMessages;
   late var _maxIndex;
-  var _first = true;
   var _scrollToNewMessage = true;
   var _datakeyUsed = false;
+  var _first = true;
   var _previousSnapshotHashCode = 0;
 
   @override
@@ -43,7 +61,6 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
 
   @override
   Widget build(BuildContext context) {
-    size = MediaQuery.of(context).size;
     return Stack(
       children: [
         StreamBuilder(
@@ -56,34 +73,40 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                   if (_notReadMessages != 0) {
                     if (_maxIndex <= _notReadMessages) {
                       var jumpValue = _notReadMessages * 40.0;
-                      var maxValue = widget.scrollController!.position.maxScrollExtent;
-                      widget.scrollController!.jumpTo(jumpValue < maxValue ? jumpValue : maxValue);
+                      var maxValue = widget.scrollController.position.maxScrollExtent;
+                      widget.scrollController.jumpTo(jumpValue < maxValue ? jumpValue : maxValue);
                       WidgetsBinding.instance!.addPostFrameCallback((_) {
                         Scrollable.ensureVisible(dataKey.currentContext!, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart);
                         _datakeyUsed = true;
-                        if (widget.scrollController!.position.pixels + size.height / 3 <= maxValue) {
-                          widget.scrollController!.jumpTo(widget.scrollController!.position.pixels - size.height / 3);
+                        if (widget.scrollController.position.pixels + size.height / 3 <= maxValue) {
+                          widget.scrollController.jumpTo(widget.scrollController.position.pixels - size.height / 3);
                         }
                       });
                     } else {
                       Scrollable.ensureVisible(dataKey.currentContext!, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd);
                       _datakeyUsed = true;
-                      if (widget.scrollController!.position.pixels != 0) {
-                        widget.scrollController!.jumpTo(widget.scrollController!.position.pixels + size.height / 3);
+                      if (widget.scrollController.position.pixels != 0) {
+                        widget.scrollController.jumpTo(widget.scrollController.position.pixels + size.height / 3);
                       }
                     }
                   }
-                  widget.scrollController!.position.addListener(() {
-                    if (widget.scrollController!.hasClients && widget.scrollController!.offset >= 2 * size.height) {
-                      if (_first) {
+                  // Add a listener to the scroll controller for showing the 'Go Down' button when a
+                  // threshold is reached.
+                  // _first is used to call setState only one time when the scroller is above the threshold
+                  // and one time when it is below
+                  if (widget.scrollController.hasClients) {
+                    widget.scrollController.position.addListener(() {
+                      if (widget.scrollController.offset >= 200.h) {
+                        if (_first) {
+                          setState(() {});
+                          _first = false;
+                        }
+                      } else if (!_first) {
                         setState(() {});
-                        _first = false;
+                        _first = true;
                       }
-                    } else if (!_first) {
-                      setState(() {});
-                      _first = true;
-                    }
-                  });
+                    });
+                  }
                 });
               } else if (_previousSnapshotHashCode != snapshot.hashCode) {
                 // If the user is inside the chat and there are new messages, docChanges != docs
@@ -111,7 +134,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                         children: [
                           DateItem(date: messageItem.timestamp),
                           if (index == _notReadMessages - 1) ...[
-                            NotReadMessagesItem(counter: _notReadMessages, key: !_datakeyUsed ? dataKey : GlobalKey()),
+                            NewMessagesItem(counter: _notReadMessages, key: !_datakeyUsed ? dataKey : GlobalKey()),
                           ],
                           MessageListItem(messageItem: messageItem, key: ValueKey(messageItem.timestamp.millisecondsSinceEpoch)),
                         ],
@@ -124,7 +147,7 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
                             DateItem(date: messageItem.timestamp),
                           ],
                           if (index == _notReadMessages - 1) ...[
-                            NotReadMessagesItem(counter: _notReadMessages, key: !_datakeyUsed ? dataKey : GlobalKey()),
+                            NewMessagesItem(counter: _notReadMessages, key: !_datakeyUsed ? dataKey : GlobalKey()),
                           ],
                           MessageListItem(
                             messageItem: messageItem,
@@ -153,30 +176,21 @@ class _MessagesListConstructorState extends State<MessagesListConstructor> {
             }
           },
         ),
-        buildGoDownButton(),
+        if (widget.scrollController.hasClients && widget.scrollController.offset >= 200.h) ...[
+          Align(
+            alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1)!,
+            child: FloatingActionButton.small(
+              onPressed: () => widget.scrollController.animateTo(
+                widget.scrollController.position.minScrollExtent,
+                duration: const Duration(milliseconds: 1000),
+                curve: Curves.fastOutSlowIn,
+              ),
+              backgroundColor: kPrimaryDarkColorTrasparent.withOpacity(0.8),
+              child: Transform.rotate(angle: 90 * math.pi / 180, child: Icon(Icons.double_arrow_rounded, size: 20.0, color: Colors.white)),
+            ),
+          ),
+        ],
       ],
     );
-  }
-
-  Widget buildGoDownButton() {
-    if (widget.scrollController!.hasClients && widget.scrollController!.offset >= 2 * size.height) {
-      return Align(
-        alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1)!,
-        child: FloatingActionButton.small(
-          onPressed: () {
-            widget.scrollController!.animateTo(widget.scrollController!.position.minScrollExtent,
-                duration: const Duration(milliseconds: 1000), curve: Curves.fastOutSlowIn);
-          },
-          backgroundColor: kPrimaryDarkColorTrasparent,
-          child: const Icon(
-            Icons.arrow_drop_down,
-            size: 40,
-            color: Colors.white,
-          ),
-        ),
-      );
-    } else {
-      return Container();
-    }
   }
 }

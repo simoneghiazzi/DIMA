@@ -14,6 +14,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 
 class MapBody extends StatefulWidget {
   @override
@@ -81,7 +82,6 @@ class _MapBodyState extends State<MapBody> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Stack(children: <Widget>[
       if (mapViewModel.positionPermission.isGranted) ...[
         Center(
@@ -91,7 +91,7 @@ class _MapBodyState extends State<MapBody> {
                 if (snapshot.hasData) {
                   return buildMap(lat: snapshot.data!.latitude, lng: snapshot.data!.longitude);
                 } else {
-                  return LoadingDialog().widget(context);
+                  return CircularProgressIndicator();
                 }
               }),
         ),
@@ -168,13 +168,13 @@ class _MapBodyState extends State<MapBody> {
           }),
       CustomInfoWindow(
         controller: _customInfoWindowController,
-        height: size.height * 0.15,
+        height: 15.h,
         width: Device.get().isTablet
-            ? (MediaQuery.of(context).orientation == Orientation.portrait)
-                ? size.width * 0.5
-                : size.width * 0.35
-            : size.width * 0.65,
-        offset: (MediaQuery.of(context).orientation == Orientation.portrait) ? 10 : 30,
+            ? (SizerUtil.orientation == Orientation.portrait)
+                ? 5.w
+                : 35.w
+            : 65.w,
+        offset: (SizerUtil.orientation == Orientation.portrait) ? 10 : 30,
       ),
     ]);
   }

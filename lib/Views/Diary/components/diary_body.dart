@@ -8,6 +8,7 @@ import 'package:sApport/Views/Home/components/header.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class DiaryBody extends StatefulWidget {
@@ -35,7 +36,6 @@ class _DiaryBodyState extends State<DiaryBody> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return StreamBuilder(
       stream: _loadDiaryPagesStream,
       builder: (context, AsyncSnapshot snapshot) {
@@ -49,14 +49,14 @@ class _DiaryBodyState extends State<DiaryBody> {
                     Header(),
                     Container(
                       transform: Matrix4.translationValues(0.0, -5.0, 0.0),
-                      height: size.height / 2,
+                      height: 50.h,
                       color: kPrimaryColor,
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: size.height / 8),
+                padding: EdgeInsets.only(top: 12.5.h),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -92,8 +92,8 @@ class _DiaryBodyState extends State<DiaryBody> {
                         appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
                         appointmentDisplayCount: 1,
                         showAgenda: true,
-                        agendaViewHeight: diaryViewModel!.hasNoteToday ? size.height / 10 : size.height / 8,
-                        agendaItemHeight: size.height / 15,
+                        agendaViewHeight: diaryViewModel!.hasNoteToday ? 10.h : 12.5.h,
+                        agendaItemHeight: 7.h,
                         monthCellStyle: MonthCellStyle(
                           trailingDatesBackgroundColor: kPrimaryLightColor,
                           leadingDatesBackgroundColor: kPrimaryLightColor,
@@ -114,7 +114,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                       child: FloatingActionButton(
                         onPressed: () {
                           diaryViewModel!.setCurrentDiaryPage(DiaryPage());
-                          if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                          if (SizerUtil.orientation == Orientation.portrait) {
                             routerDelegate.pushPage(name: DiaryPageScreen.route);
                           }
                         },
@@ -140,7 +140,7 @@ class _DiaryBodyState extends State<DiaryBody> {
     if (details.appointments != null) {
       if (details.appointments!.isNotEmpty && details.targetElement == CalendarElement.appointment) {
         diaryViewModel!.setCurrentDiaryPage(details.appointments![0]);
-        if (MediaQuery.of(context).orientation == Orientation.portrait) {
+        if (SizerUtil.orientation == Orientation.portrait) {
           routerDelegate.pushPage(name: DiaryPageScreen.route);
         }
       }

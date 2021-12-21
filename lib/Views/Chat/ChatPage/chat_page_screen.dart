@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_page_body.dart';
 
 /// Page of the chat with another User.

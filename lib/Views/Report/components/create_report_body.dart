@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:sizer/sizer.dart';
 
 class CreateReportBody extends StatefulWidget {
   @override
@@ -36,7 +37,6 @@ class _CreateReportBodyState extends State<CreateReportBody> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Column(
       children: [
         TopBar(
@@ -96,14 +96,14 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                       child: Column(
                         children: <Widget>[
                           SizedBox(
-                            height: size.height * 0.1,
+                            height: 10.h,
                           ),
                           Image.asset(
                             "assets/icons/safety.png",
-                            height: size.height * 0.15,
+                            scale: 10,
                           ),
                           Padding(
-                              padding: EdgeInsets.only(top: size.height * 0.05, left: 40, right: 40),
+                              padding: EdgeInsets.only(top: 5.h, left: 40, right: 40),
                               child: FormBlocListener<ReportForm, String, String>(
                                 onSubmitting: (context, state) {
                                   LoadingDialog.show(context);
@@ -140,7 +140,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                       )),
                                     ),
                                     SizedBox(
-                                      height: size.height * 0.01,
+                                      height: 1.h,
                                     ),
                                     TextFieldBlocBuilder(
                                       textCapitalization: TextCapitalization.sentences,
@@ -157,7 +157,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: size.height * 0.06,
+                                      height: 6.h,
                                     ),
                                     RoundedButton(
                                       text: "SUBMIT",

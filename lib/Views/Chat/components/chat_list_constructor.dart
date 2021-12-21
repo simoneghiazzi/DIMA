@@ -9,7 +9,8 @@ import 'package:sApport/Views/Chat/components/chat_list_item.dart';
 ///
 /// It takes the [valueNotifier] of the linked hash map of chats that it has to construct.
 ///
-/// It uses a [ValueListenableBuilder] for listening to the user chats and for updating the ListView.
+/// It uses a [ValueListenableBuilder] for listening to the user chats and for updating the ListView
+/// of [ChatListItem].
 class ChatListConstructor extends StatefulWidget {
   /// Notifier of the linked hash map of the user chat list.
   final ValueNotifier<LinkedHashMap<String, Chat>> valueNotifier;
@@ -18,7 +19,8 @@ class ChatListConstructor extends StatefulWidget {
   ///
   /// It takes the [valueNotifier] of the linked hash map of chats that it has to construct.
   ///
-  /// It uses a [ValueListenableBuilder] for listening to the user chats and for updating the ListView.
+  /// It uses a [ValueListenableBuilder] for listening to the user chats and for updating the ListView
+  /// of [ChatListItem].
   const ChatListConstructor({Key? key, required this.valueNotifier}) : super(key: key);
 
   @override
@@ -48,11 +50,10 @@ class _ChatListConstructorState extends State<ChatListConstructor> {
               // The index for the linked hash map runs from expertChats.length - 1 to 0 because the hash map
               // is ordered by the time of insertion, so the last inserted element (the newer chat) is the first element
               // to show in the list.
-              Chat _chatItem = chatList.values.elementAt(chatList.length - 1 - index);
               return ChatListItem(
-                  chatItem: _chatItem,
-                  selectedItemCallback: () => setState(() {}),
-                  isSelected: chatViewModel.currentChat.value?.peerUser?.id == _chatItem.peerUser!.id);
+                chatItem: chatList.values.elementAt(chatList.length - 1 - index),
+                selectedItemCallback: () => setState(() {}),
+              );
             },
             itemCount: chatList.length,
           );

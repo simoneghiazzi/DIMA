@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:sizer/sizer.dart';
 
 class ReportsListBody extends StatefulWidget {
   @override
@@ -50,7 +51,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
                   shrinkWrap: true,
                 );
               } else
-                return LoadingDialog().widget(context);
+                return CircularProgressIndicator();
             },
           ),
         ),
@@ -59,8 +60,6 @@ class _ReportsListBodyState extends State<ReportsListBody> {
   }
 
   Widget buildItem(BuildContext context, DocumentSnapshot? doc) {
-    // This size provide us total height and width of our screen
-    Size size = MediaQuery.of(context).size;
     if (doc != null) {
       Report report = Report.fromDocument(doc);
       String date = DateFormat('yyyy-MM-dd kk:mm').format(report.dateTime!);
@@ -74,7 +73,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
                   radius: 25.0,
                   child: Image.asset(
                     "assets/icons/logo.png",
-                    height: size.height * 0.05,
+                    height: 5.h,
                   ),
                 ),
                 SizedBox(
@@ -96,7 +95,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
           ]),
           onPressed: () {
             reportViewModel.setCurrentReport(report);
-            if (MediaQuery.of(context).orientation == Orientation.portrait) {
+            if (SizerUtil.orientation == Orientation.portrait) {
               routerDelegate.pushPage(name: ReportDetailsScreen.route);
             }
           },

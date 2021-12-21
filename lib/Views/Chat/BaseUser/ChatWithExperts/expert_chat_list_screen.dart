@@ -1,3 +1,4 @@
+import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/constants.dart';
@@ -51,7 +52,7 @@ class _ExpertChatsListScreenState extends State<ExpertChatsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: MediaQuery.of(context).orientation == Orientation.portrait
+      body: SizerUtil.orientation == Orientation.portrait
           ?
           // If the orientation is protrait, shows the ExpertChatsListBody
           ExpertChatListBody()

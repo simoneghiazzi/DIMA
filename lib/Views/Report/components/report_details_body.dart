@@ -7,6 +7,7 @@ import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class ReportDetailsBody extends StatefulWidget {
   const ReportDetailsBody({Key? key}) : super(key: key);
@@ -32,7 +33,6 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> with WidgetsBindi
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Stack(
       children: <Widget>[
         Column(
@@ -42,7 +42,7 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> with WidgetsBindi
           ],
         ),
         Padding(
-          padding: EdgeInsets.only(top: size.height / 8),
+          padding: EdgeInsets.only(top: 12.5.h),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,

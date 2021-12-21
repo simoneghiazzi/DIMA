@@ -9,6 +9,7 @@ import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:open_mail_app/open_mail_app.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ExpertProfileBody extends StatefulWidget {
@@ -33,7 +34,6 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return SizedBox.expand(
       child: Stack(
         alignment: Alignment.topCenter,
@@ -58,7 +58,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                 ),
                 alignment: Alignment.topLeft,
                 height: 150.0,
-                width: size.width,
+                width: 100.w,
                 color: kPrimaryColor,
               ),
               Container(
@@ -69,7 +69,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                   )),
               Container(
                 transform: Matrix4.translationValues(0.0, -50.0, 0.0),
-                padding: EdgeInsets.only(left: size.width / 10, right: size.width / 10),
+                padding: EdgeInsets.only(left: 10.w, right: 10.w),
                 color: Colors.white,
                 child: Center(
                   child: Column(
@@ -94,7 +94,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                       Column(
                         children: <Widget>[
                           SizedBox(
-                            height: size.height * 0.07,
+                            height: 7.h,
                           ),
                           // Phone number
                           Row(
@@ -104,7 +104,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                                 color: kPrimaryColor,
                               ),
                               SizedBox(
-                                width: size.width * 0.05,
+                                width: 5.w,
                               ),
                               GestureDetector(
                                 child: Text(widget.expert!.phoneNumber,
@@ -116,7 +116,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                             ],
                           ),
                           SizedBox(
-                            height: size.height * 0.05,
+                            height: 5.h,
                           ),
                           // Email
                           Row(
@@ -126,11 +126,12 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                                 color: kPrimaryColor,
                               ),
                               SizedBox(
-                                width: size.width * 0.05,
+                                width: 5.w,
                               ),
                               Flexible(
                                 child: GestureDetector(
-                                  child: Text(widget.expert!.email, style: TextStyle(color: kPrimaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
+                                  child:
+                                      Text(widget.expert!.email, style: TextStyle(color: kPrimaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
                                   onTap: () async {
                                     EmailContent email = EmailContent(
                                       to: [
@@ -166,7 +167,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                             ],
                           ),
                           SizedBox(
-                            height: size.height * 0.05,
+                            height: 5.h,
                           ),
                           // Address
                           Row(
@@ -176,7 +177,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                                 color: kPrimaryColor,
                               ),
                               SizedBox(
-                                width: size.width * 0.05,
+                                width: 5.w,
                               ),
                               Flexible(
                                 child: GestureDetector(
@@ -190,14 +191,14 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                             ],
                           ),
                           SizedBox(
-                            height: size.height * 0.07,
+                            height: 7.h,
                           ),
                           Divider(
                             color: kPrimaryColor,
                             height: 1.5,
                           ),
                           SizedBox(
-                            height: size.height * 0.08,
+                            height: 8.h,
                           ),
                         ],
                       ),
@@ -205,8 +206,8 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                         child: InkWell(
                           child: Container(
                             padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                            height: size.height * 0.05,
-                            width: size.width * 0.5,
+                            height: 5.h,
+                            width: 5.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
                               color: kPrimaryColor,
@@ -231,7 +232,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                           ),
                           onTap: () {
                             chatViewModel.setCurrentChat(ExpertChat(peerUser: widget.expert!));
-                            if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                            if (SizerUtil.orientation == Orientation.portrait) {
                               routerDelegate.replaceAllButNumber(2, routeSettingsList: [
                                 RouteSettings(name: ExpertChatsListScreen.route),
                                 RouteSettings(name: ChatPageScreen.route),

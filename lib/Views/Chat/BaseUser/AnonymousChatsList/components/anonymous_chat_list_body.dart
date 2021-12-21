@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/constants.dart';
@@ -106,7 +107,7 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
     return chatViewModel.newRandomUser.listen((isNewRandomUser) {
       LoadingDialog.hide(context);
       if (isNewRandomUser) {
-        if (MediaQuery.of(context).orientation == Orientation.portrait) {
+        if (SizerUtil.orientation == Orientation.portrait) {
           routerDelegate.pushPage(name: ChatPageScreen.route);
         }
       } else {

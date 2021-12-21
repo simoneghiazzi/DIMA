@@ -1,3 +1,4 @@
+import 'package:sizer/sizer.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
@@ -34,7 +35,7 @@ class _BaseUserGridState extends State<BaseUserGrid> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-          constraints: (MediaQuery.of(context).orientation == Orientation.landscape) ? BoxConstraints(maxWidth: 800) : BoxConstraints(maxWidth: 700),
+          constraints: (SizerUtil.orientation == Orientation.landscape) ? BoxConstraints(maxWidth: 800) : BoxConstraints(maxWidth: 700),
           padding: EdgeInsets.only(left: 5, right: 5),
           child: Table(
             // columnWidths: {

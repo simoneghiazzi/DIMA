@@ -17,6 +17,7 @@ import 'package:sApport/Views/Welcome/components/or_divider.dart';
 import 'package:sApport/Views/Welcome/components/social_icon.dart';
 import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
+import 'package:sizer/sizer.dart';
 
 class WelcomeBody extends StatefulWidget {
   @override
@@ -52,7 +53,6 @@ class _WelcomeBodyState extends State<WelcomeBody> {
   @override
   Widget build(BuildContext context) {
     // This size provide us total height and width of our screen
-    Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(
         child: Column(
@@ -63,16 +63,16 @@ class _WelcomeBodyState extends State<WelcomeBody> {
             ),
             Image.asset(
               "assets/icons/logo.png",
-              height: size.height * 0.12,
+              height: 12.h,
             ),
-            SizedBox(height: size.height * 0.05),
+            SizedBox(height: 5.h),
             RoundedButton(
               press: () {
                 routerDelegate.pushPage(name: LoginScreen.route);
               },
               text: "LOGIN",
             ),
-            SizedBox(height: size.height * 0.02),
+            SizedBox(height: 2.h),
             RoundedButton(
               press: () {
                 routerDelegate.pushPage(name: BaseUsersSignUpScreen.route);
@@ -81,7 +81,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
               color: kPrimaryLightColor,
               textColor: kPrimaryColor,
             ),
-            SizedBox(height: size.height * 0.02),
+            SizedBox(height: 2.h),
             OrDivider(),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               SocialIcon(
@@ -97,7 +97,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                     authViewModel.logInWithGoogle();
                   }),
             ]),
-            SizedBox(height: size.height * 0.05),
+            SizedBox(height: 5.h),
             StreamBuilder<String?>(
               stream: authViewModel.authMessage,
               builder: (context, snapshot) {
@@ -115,11 +115,11 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                           ),
                         ),
                       ),
-                      SizedBox(height: size.height * 0.05),
+                      SizedBox(height: 5.h),
                     ],
                   );
                 } else {
-                  return SizedBox(height: size.height * 0.04);
+                  return SizedBox(height: 4.h);
                 }
               },
             ),

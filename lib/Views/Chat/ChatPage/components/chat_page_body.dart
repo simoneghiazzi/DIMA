@@ -1,3 +1,4 @@
+import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
@@ -11,14 +12,15 @@ import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Views/Chat/components/chat_text_input.dart';
 import 'package:sApport/Views/Chat/components/chat_accept_deny.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_top_bar.dart';
-import 'package:sApport/Views/Chat/components/messages_list_constructor.dart';
+import 'package:sApport/Views/Chat/components/message_list_constructor.dart';
+import 'package:sApport/constants.dart';
 
 /// It contains the [ChatTopBar] that differs based on the type of the peer user ([BaseUser] or [Expert]),
-/// the [MessagesListConstructor] of the messages between the 2 users and the [ChatTextInput] or the
+/// the [MessageListConstructor] of the messages between the 2 users and the [ChatTextInput] or the
 /// [ChatAcceptDenyInput] if the chat is a new [PendingChat].
 class ChatPageBody extends StatefulWidget {
   /// It contains the [ChatTopBar] that differs based on the type of the peer user ([BaseUser] or [Expert]),
-  /// the [MessagesListConstructor] of the messages between the 2 users and the [ChatTextInput] or the
+  /// the [MessageListConstructor] of the messages between the 2 users and the [ChatTextInput] or the
   /// [ChatAcceptDenyInput] if the chat is a new [PendingChat].
   const ChatPageBody({Key? key}) : super(key: key);
 
@@ -61,28 +63,22 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
       children: <Widget>[
         chatViewModel.currentChat.value!.peerUser is BaseUser
             ?
-            // If the peer user is a base user, show the icon circle avatar
+            // If the peer user is a BaseUser, show the icon circle avatar
             ChatTopBar.circleAvatar(
                 text: userViewModel.loggedUser is Expert
                     ?
-                    // If the logged user is an expert, show the full name of the peer base user
+                    // If the logged user is an Expert, show the full name of the peer BaseUser
                     "${chatViewModel.currentChat.value!.peerUser!.fullName}"
                     :
-                    // If the logged user is a base user, show only the name of the peer base user
+                    // If the logged user is a BaseUser, show only the name of the peer BaseUser
                     "${chatViewModel.currentChat.value!.peerUser!.name}",
-                circleAvatar: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  child: Icon(Icons.account_circle, size: 40, color: Colors.white),
-                ),
+                circleAvatar: CircleAvatar(backgroundColor: Colors.transparent, child: Icon(Icons.account_circle, size: 40, color: Colors.white)),
               )
             :
-            // If the peer user is an expert, show his/her profile photo as a network avatar
+            // If the peer user is an Expert, show his/her profile photo as a network avatar and the full name
             ChatTopBar.networkAvatar(
                 text: "${chatViewModel.currentChat.value!.peerUser!.fullName}",
-                networkAvatar: NetworkAvatar(
-                  img: chatViewModel.currentChat.value!.peerUser!.data["profilePhoto"] as String,
-                  radius: 20.0,
-                ),
+                networkAvatar: NetworkAvatar(img: chatViewModel.currentChat.value!.peerUser!.data["profilePhoto"] as String, radius: 20.0),
               ),
         Expanded(
           child: Container(
@@ -92,7 +88,7 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
             child: Column(
               children: [
                 // List of messages
-                Flexible(child: MessagesListConstructor(scrollController: scrollController)),
+                Flexible(child: MessageListConstructor(scrollController: scrollController)),
                 // Input content
                 chatViewModel.currentChat.value is PendingChat
                     ?

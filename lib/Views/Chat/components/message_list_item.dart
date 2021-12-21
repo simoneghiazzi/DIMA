@@ -1,61 +1,84 @@
-import 'package:intl/intl.dart' as Date;
 import 'dart:math' as math;
+import 'package:sizer/sizer.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart' as Date;
+import 'package:sApport/constants.dart';
 import 'package:sApport/Model/DBItems/message.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/constants.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:sApport/Views/Chat/components/message_list_constructor.dart';
 
+/// Message list item of the [MessageListConstructor].
+///
+/// It takes the [messageItem] from the ListView builder that represents a message between 2 users
+/// and the [sameNextIdFrom] that is used for applying the correct margin to the message.
+///
+/// It contains the content and the time of the message.
 class MessageListItem extends StatefulWidget {
   final Message messageItem;
-  final bool? sameNextIdFrom;
+  final bool sameNextIdFrom;
 
-  MessageListItem({Key? key, required this.messageItem, this.sameNextIdFrom}) : super(key: key);
+  /// Message list item of the [MessageListConstructor].
+  ///
+  /// It takes the [messageItem] from the ListView builder that represents a message between 2 users
+  /// and the [sameNextIdFrom] that is used for applying the correct margin to the message.
+  ///
+  /// It contains the content and the time of the message.
+  const MessageListItem({Key? key, required this.messageItem, this.sameNextIdFrom = false}) : super(key: key);
 
   @override
   _MessageListItemState createState() => _MessageListItemState();
 }
 
 class _MessageListItemState extends State<MessageListItem> {
-  ChatViewModel? chatViewModel;
+  // View Models
+  late ChatViewModel chatViewModel;
   late UserViewModel userViewModel;
 
-  late Size size;
   late double _containerWidth;
 
   @override
   void initState() {
-    userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    userViewModel = Provider.of<UserViewModel>(context, listen: false);
+
+    // Calculate the width of the container for the message
+    _containerWidth = calcTextSize(widget.messageItem.content, TextStyle(fontFamily: "UbuntuCondensed")).width;
+    // Apply a constant value to the container width based on the orientatio of the device
+    _containerWidth += SizerUtil.orientation == Orientation.portrait ? 18.w : 10.w;
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    size = MediaQuery.of(context).size;
-    _containerWidth = calcTextSize(widget.messageItem.data["content"] as String?, TextStyle(fontFamily: "UbuntuCondensed")).width;
-    _containerWidth += MediaQuery.of(context).orientation == Orientation.portrait ? size.width / 5 : size.width / 10;
-    if (widget.messageItem.data["idFrom"] == userViewModel.loggedUser!.id) {
-      // Right (my message)
+    // Check if the message is sent or received by the logged user
+    if (widget.messageItem.idFrom == userViewModel.loggedUser!.id) {
+      // Logged user message (rigth)
       return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           buildMessageBubble(false),
-          if (!(widget.sameNextIdFrom ?? false))
+          if (!widget.sameNextIdFrom) ...[
+            // If the next message is not from the same id, add a further margin and the CustomPaint
             Container(
               // Same top as the message bubble margin
               margin: EdgeInsets.only(top: 20.0),
               child: CustomPaint(painter: Clip(kPrimaryLightColor)),
             ),
+          ]
         ],
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.start,
       );
     } else {
-      // Left (peer message)
+      // Peer user message (left)
       return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!(widget.sameNextIdFrom ?? false))
+          if (!widget.sameNextIdFrom) ...[
+            // If the next message is not from the same id, add a further margin and the rotated CustomPaint
             Transform(
               alignment: Alignment.center,
               transform: Matrix4.rotationY(math.pi),
@@ -65,27 +88,32 @@ class _MessageListItemState extends State<MessageListItem> {
                 child: CustomPaint(painter: Clip(kPrimaryColor)),
               ),
             ),
+          ],
           buildMessageBubble(true)
         ],
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
       );
     }
   }
 
+  /// Builder of the bubble container of the message.
+  ///
+  /// [peerUser] is used to select the correct color and the correct non-rounded border vertex position.
+  ///
+  /// It also sets the container constraints based on the orientation of the device.
   Widget buildMessageBubble(bool peerMessage) {
     return Container(
-      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).orientation == Orientation.portrait ? size.width / 1.5 : size.width / 2.5),
+      constraints: BoxConstraints(maxWidth: SizerUtil.orientation == Orientation.portrait ? 66.7.w : 40.w),
       width: _containerWidth,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          // Content
           Flexible(
             child: Container(
               padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
               child: Text(
-                widget.messageItem.data["content"] as String,
+                widget.messageItem.content,
                 style: TextStyle(fontFamily: "UbuntuCondensed", color: peerMessage ? Colors.white : kPrimaryColor),
               ),
             ),
@@ -97,14 +125,19 @@ class _MessageListItemState extends State<MessageListItem> {
               Date.DateFormat("kk:mm").format(widget.messageItem.timestamp),
               style: TextStyle(color: kPrimaryGreyColor, fontSize: 10.5, fontStyle: FontStyle.italic),
             ),
-          )
+          ),
         ],
       ),
       decoration: BoxDecoration(
         color: peerMessage ? kPrimaryColor : kPrimaryLightColor,
-        borderRadius: widget.sameNextIdFrom ?? false
-            ? BorderRadius.circular(12.5)
-            : BorderRadius.only(
+        borderRadius: widget.sameNextIdFrom
+            ?
+            // If the next id is the same, the border radius is applied to all the vertexes
+            BorderRadius.circular(12.5)
+            :
+            // Otherwise, the border radius is applied to all the bottom vertexes and only one of the
+            // top vertixes based on the fact that it is a peer message or not
+            BorderRadius.only(
                 topLeft: Radius.circular(peerMessage ? 0 : 12.5),
                 topRight: Radius.circular(!peerMessage ? 0 : 12.5),
                 bottomLeft: Radius.circular(12.5),
@@ -112,11 +145,12 @@ class _MessageListItemState extends State<MessageListItem> {
               ),
       ),
       // Same top as the Clip margin
-      margin: EdgeInsets.only(top: widget.sameNextIdFrom ?? false ? 2.0 : 20.0),
+      margin: EdgeInsets.only(top: widget.sameNextIdFrom ? 2.0 : 20.0),
     );
   }
 
-  Size calcTextSize(String? text, TextStyle style) {
+  /// Calculate the width of the [text] based on the applyed [style].
+  Size calcTextSize(String text, TextStyle style) {
     final TextPainter textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
       textScaleFactor: WidgetsBinding.instance!.window.textScaleFactor,
@@ -126,9 +160,11 @@ class _MessageListItemState extends State<MessageListItem> {
   }
 }
 
+/// Draw of the triangle attached to the container of the first message sent by one of the users.
 class Clip extends CustomPainter {
   final Color bgColor;
 
+  /// Draw of the triangle attached to the container of the first message sent by one of the users.
   Clip(this.bgColor);
 
   @override

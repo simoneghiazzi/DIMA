@@ -6,6 +6,7 @@ import 'package:sApport/Views/Report/components/reports_list_body.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/components/empty_landscape_body.dart';
 import 'package:sApport/Views/components/vertical_split_view.dart';
+import 'package:sizer/sizer.dart';
 
 class ReportsListScreen extends StatefulWidget {
   static const route = '/reportListScreen';
@@ -31,7 +32,7 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: MediaQuery.of(context).orientation == Orientation.portrait
+      body: SizerUtil.orientation == Orientation.portrait
           ? ReportsListBody()
           : VerticalSplitView(
               left: ReportsListBody(),

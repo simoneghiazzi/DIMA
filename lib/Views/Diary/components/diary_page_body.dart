@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:sizer/sizer.dart';
 
 class DiaryPageBody extends StatefulWidget {
   const DiaryPageBody({Key? key}) : super(key: key);
@@ -57,8 +58,6 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
     return Stack(
       children: <Widget>[
         Column(
@@ -137,13 +136,13 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
             ),
             Container(
               transform: Matrix4.translationValues(0.0, -5.0, 0.0),
-              height: size.height / 2,
+              height: 50.h,
               color: kPrimaryColor,
             ),
           ],
         ),
         Padding(
-          padding: EdgeInsets.only(top: size.height / 8),
+          padding: EdgeInsets.only(top: 12.5.h),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -189,7 +188,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                 ),
                 Center(
                   child: Container(
-                    width: size.width * 0.9,
+                    width: 90.w,
                     child: Row(
                       children: <Widget>[
                         Expanded(

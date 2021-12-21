@@ -13,6 +13,7 @@ import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:sizer/sizer.dart';
 
 class ExpertsInfoBody extends StatefulWidget {
   @override
@@ -37,14 +38,13 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Background(
       child: SingleChildScrollView(
           child: Padding(
         padding: EdgeInsets.only(left: 40, right: 40),
         child: Column(
           children: <Widget>[
-            SizedBox(height: size.height * 0.1),
+            SizedBox(height: 10.h),
             Text(
               "sApport",
               style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
@@ -54,9 +54,9 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
               textAlign: TextAlign.center,
               style: TextStyle(color: kPrimaryDarkColorTrasparent, fontWeight: FontWeight.bold, fontSize: 15),
             ),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: 3.h),
             Divider(),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: 3.h),
             GestureDetector(
               onTap: () {
                 getImage();
@@ -89,7 +89,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                 ),
               ),
             ),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: 3.h),
             Container(
               constraints: BoxConstraints(maxWidth: 500),
               child: BlocProvider(
@@ -244,7 +244,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                 ),
               ),
             ),
-            SizedBox(height: size.height * 0.04),
+            SizedBox(height: 4.h),
             RoundedButton(
               text: "NEXT",
               press: () {
@@ -253,7 +253,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
               },
               enabled: nextEnabled,
             ),
-            SizedBox(height: size.height * 0.1),
+            SizedBox(height: 1.h),
           ],
         ),
       )),

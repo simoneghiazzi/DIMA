@@ -45,8 +45,10 @@ class ChatTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // View Models
-    AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     ChatViewModel chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+
+    // Router Delegate
+    AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
 
     return Container(
       color: kPrimaryColor,
@@ -62,7 +64,7 @@ class ChatTopBar extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     // If the orientation is portrait, show the back button
-                    if (MediaQuery.of(context).orientation == Orientation.portrait) ...[
+                    if (SizerUtil.orientation == Orientation.portrait) ...[
                       SizedBox(width: 1.w),
                       IconButton(
                         icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),

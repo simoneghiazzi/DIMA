@@ -6,6 +6,7 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Diary/components/diary_body.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/constants.dart';
+import 'package:sizer/sizer.dart';
 
 class DiaryScreen extends StatefulWidget {
   static const route = '/diaryScreen';
@@ -31,7 +32,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: MediaQuery.of(context).orientation == Orientation.portrait
+      body: SizerUtil.orientation == Orientation.portrait
           ? DiaryBody()
           : Consumer<DiaryViewModel>(
               builder: (context, diaryViewModel, child) {

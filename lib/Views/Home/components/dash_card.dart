@@ -1,6 +1,7 @@
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class DashCard extends StatelessWidget {
   final String? imagePath;
@@ -11,10 +12,9 @@ class DashCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Container(
       padding: Device.get().isTablet
-          ? (MediaQuery.of(context).orientation == Orientation.landscape)
+          ? (SizerUtil.orientation == Orientation.landscape)
               ? EdgeInsets.only(right: 25, left: 25, top: 20, bottom: 20)
               : EdgeInsets.only(right: 20, left: 20, top: 15, bottom: 15)
           : EdgeInsets.only(right: 5, left: 5, top: 15, bottom: 15),
@@ -24,7 +24,7 @@ class DashCard extends StatelessWidget {
         highlightColor: Colors.transparent,
         onTap: press as void Function()?,
         child: Container(
-          height: size.height / 3.3,
+          height: 30.h,
           child: Card(
             elevation: 3,
             shadowColor: kPrimaryColor,
@@ -33,10 +33,10 @@ class DashCard extends StatelessWidget {
               child: Center(
                 child: Column(
                   children: <Widget>[
-                    SizedBox(height: size.height / 25),
+                    SizedBox(height: 4.h),
                     Image.asset(
                       imagePath!,
-                      height: size.height * 0.13,
+                      height: 13.h,
                     ),
                     SizedBox(height: 16),
                     Text(

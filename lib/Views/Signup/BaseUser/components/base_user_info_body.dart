@@ -8,13 +8,13 @@ import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 
 class BaseUserInfoBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserViewModel userViewModel = Provider.of<UserViewModel>(context, listen: false);
     AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    Size size = MediaQuery.of(context).size;
 
     return Background(
         child: SingleChildScrollView(
@@ -30,9 +30,9 @@ class BaseUserInfoBody extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(color: kPrimaryDarkColorTrasparent, fontWeight: FontWeight.bold, fontSize: 15),
         ),
-        SizedBox(height: size.height * 0.03),
+        SizedBox(height:3.h),
         Divider(),
-        SizedBox(height: size.height * 0.03),
+        SizedBox(height: 3.h),
         Container(
           constraints: BoxConstraints(maxWidth: 500),
           child: BlocProvider(
@@ -104,7 +104,7 @@ class BaseUserInfoBody extends StatelessWidget {
                                   color: kPrimaryColor,
                                 )),
                           ),
-                          SizedBox(height: size.height * 0.04),
+                          SizedBox(height: 4.h),
                           RoundedButton(
                             press: () {
                               FocusScope.of(context).unfocus();

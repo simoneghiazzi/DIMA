@@ -39,7 +39,6 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return SizedBox.expand(
       child: Stack(
         alignment: Alignment.topCenter,
@@ -51,7 +50,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
               Container(
                 padding: EdgeInsets.only(top: 40, bottom: 10),
                 alignment: Alignment.center,
-                width: size.width,
+                width: 100.w,
                 color: kPrimaryColor,
                 child: Container(
                     child: userViewModel.loggedUser!.data["profilePhoto"] != null
@@ -69,14 +68,14 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                             ))),
               ),
               Container(
-                padding: EdgeInsets.only(left: size.width / 10, right: size.width / 10, top: 30),
+                padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 30),
                 color: Colors.white,
                 child: Center(
                   child: Column(
                     children: <Widget>[
                       Center(
                           child: Container(
-                              constraints: BoxConstraints(maxWidth: 500, minHeight: size.height / 25),
+                              constraints: BoxConstraints(maxWidth: 500, minHeight: 4.h),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
                                 color: kPrimaryLightColor,
@@ -91,7 +90,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                       Column(
                         children: <Widget>[
                           SizedBox(
-                            height: size.height * 0.05,
+                            height: 5.h,
                           ),
                           if (userViewModel.loggedUser!.data["address"] != null) ...[
                             Row(
@@ -101,7 +100,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   color: kPrimaryColor,
                                 ),
                                 SizedBox(
-                                  width: size.width * 0.05,
+                                  width: 5.w,
                                 ),
                                 Flexible(
                                   child: Text(userViewModel.loggedUser!.data["address"] as String,
@@ -113,7 +112,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               ],
                             ),
                             SizedBox(
-                              height: size.height * 0.04,
+                              height: 4.h,
                             ),
                           ],
                           if (userViewModel.loggedUser!.data["phoneNumber"] != null) ...[
@@ -124,7 +123,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   color: kPrimaryColor,
                                 ),
                                 SizedBox(
-                                  width: size.width * 0.05,
+                                  width: 5.h,
                                 ),
                                 Text(userViewModel.loggedUser!.data["phoneNumber"] as String,
                                     style: TextStyle(
@@ -133,9 +132,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                     ))
                               ],
                             ),
-                            SizedBox(
-                              height: size.height * 0.04,
-                            ),
+                            SizedBox(height: 4.h),
                           ],
                           if (userViewModel.loggedUser!.email != null) ...[
                             Row(
@@ -144,9 +141,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   Icons.mail,
                                   color: kPrimaryColor,
                                 ),
-                                SizedBox(
-                                  width: size.width * 0.05,
-                                ),
+                                SizedBox(width: 5.h),
                                 Flexible(
                                     child: Text(userViewModel.loggedUser!.email,
                                         style: TextStyle(
@@ -155,9 +150,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                         ))),
                               ],
                             ),
-                            SizedBox(
-                              height: size.height * 0.04,
-                            ),
+                            SizedBox(height: 4.h),
                           ],
                           FutureBuilder(
                               future: _hasPasswordAuthenticationFuture,
@@ -170,9 +163,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                           Icons.lock,
                                           color: kPrimaryColor,
                                         ),
-                                        SizedBox(
-                                          width: size.width * 0.05,
-                                        ),
+                                        SizedBox(width: 5.h),
                                         Flexible(
                                           child: GestureDetector(
                                             child: Text(
@@ -192,9 +183,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                         )
                                       ],
                                     ),
-                                    SizedBox(
-                                      height: size.height * 0.04,
-                                    ),
+                                    SizedBox(height: 4.h),
                                   ]);
                                 } else {
                                   return Container();
@@ -208,9 +197,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   height: 25,
                                   width: 25,
                                 ),
-                                SizedBox(
-                                  width: size.width * 0.05,
-                                ),
+                                SizedBox(width: 5.h),
                                 Flexible(
                                     child: Text("Your Google account is linked with this profile",
                                         style: TextStyle(
@@ -219,9 +206,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                         ))),
                               ],
                             ),
-                            SizedBox(
-                              height: size.height * 0.05,
-                            ),
+                            SizedBox(height: 5.h),
                           ],
                           if (authViewModel.authProvider() == "facebook.com") ...[
                             Row(
@@ -231,9 +216,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   height: 25,
                                   width: 25,
                                 ),
-                                SizedBox(
-                                  width: size.width * 0.05,
-                                ),
+                                SizedBox(width: 5.h),
                                 Flexible(
                                     child: Text("Your Facebook account is linked with this profile",
                                         style: TextStyle(
@@ -242,17 +225,13 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                         ))),
                               ],
                             ),
-                            SizedBox(
-                              height: size.height * 0.05,
-                            ),
+                            SizedBox(height: 5.h),
                           ],
                           if (authViewModel.authProvider() == "password" && userViewModel.loggedUser is BaseUser) ...[
                             Divider(
                               color: kPrimaryLightColor,
                             ),
-                            SizedBox(
-                              height: size.height * 0.02,
-                            ),
+                            SizedBox(height: 2.h),
                             Text(
                               "Link your social accounts:",
                               style: TextStyle(
@@ -261,9 +240,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                 fontSize: 12.sp,
                               ),
                             ),
-                            SizedBox(
-                              height: size.height * 0.02,
-                            ),
+                            SizedBox(height: 2.h),
                             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                               SocialIcon(
                                   iconSrc: "assets/icons/facebook.png",
@@ -282,17 +259,13 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                     });
                                   }),
                             ]),
-                            SizedBox(
-                              height: size.height * 0.03,
-                            ),
+                            SizedBox(height: 3.h),
                           ],
                           Divider(
                             color: kPrimaryColor,
                             height: 1.5,
                           ),
-                          SizedBox(
-                            height: size.height * 0.04,
-                          ),
+                          SizedBox(height: 4.h),
                         ],
                       ),
                       Center(
@@ -300,8 +273,8 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                           child: Container(
                             constraints: BoxConstraints(maxWidth: 300),
                             padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                            height: size.height * 0.05,
-                            width: size.width * 0.5,
+                            height: 5.h,
+                            width: 50.w,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
                               color: kPrimaryColor,
@@ -330,15 +303,15 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                         ),
                       ),
                       SizedBox(
-                        height: size.height * 0.03,
+                        height: 3.h,
                       ),
                       Center(
                         child: InkWell(
                           child: Container(
                             constraints: BoxConstraints(maxWidth: 300),
                             padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                            height: size.height * 0.05,
-                            width: size.width * 0.5,
+                            height: 5.h,
+                            width: 50.w,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
                               color: Colors.red,
@@ -367,7 +340,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                         ),
                       ),
                       SizedBox(
-                        height: size.height * 0.03,
+                        height: 3.h,
                       ),
                     ],
                   ),

@@ -1,65 +1,76 @@
 import 'package:intl/intl.dart';
-import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
-import 'package:sApport/Model/Chat/chat.dart';
-import 'package:sApport/Model/DBItems/Expert/expert.dart';
-import 'package:sApport/Model/DBItems/user.dart';
-import 'package:sApport/Model/utils.dart';
-import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:sApport/Views/components/network_avatar.dart';
-import 'package:sApport/constants.dart';
+import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:sApport/constants.dart';
+import 'package:sApport/Model/utils.dart';
+import 'package:sApport/Model/Chat/chat.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
+import 'package:sApport/Views/components/network_avatar.dart';
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
+import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
 
+/// Chat item of the [ChatListConstructor].
+///
+/// It takes the [chatItem] from the ListView builder that represents a chat of the user.
+/// It contains the avatar, the name, the last message, the last message date time and the not read messages.
+///
+/// It also checks if the [chatItem] is equal to the current chat in order to automatically set the messages has read.
+///
+/// If the item is pressed and the current chat is different from the [chatItem], it sets the new current chat
+/// equals to the [chatItem], it calls the [selectedItemCallback] and finally if the orientation of the device is
+/// portrait, it push the [ChatPageScreen].
 class ChatListItem extends StatefulWidget {
   final Chat chatItem;
-  final bool isSelected;
   final Function selectedItemCallback;
 
-  ChatListItem({Key? key, required this.chatItem, required this.isSelected, required this.selectedItemCallback}) : super(key: key);
+  /// Chat item of the [ChatListConstructor].
+  ///
+  /// It takes the [chatItem] from the ListView builder that represents a chat of the user.
+  /// It contains the avatar, the name, the last message, the last message date time and the not read messages.
+  ///
+  /// It also checks if the [chatItem] is equal to the current chat in order to automatically set the messages has read.
+  ///
+  /// If the item is pressed and the current chat is different from the [chatItem], it sets the new current chat
+  /// equals to the [chatItem], it calls the [selectedItemCallback] and finally if the orientation of the device is
+  /// portrait, it push the [ChatPageScreen].
+  const ChatListItem({Key? key, required this.chatItem, required this.selectedItemCallback}) : super(key: key);
 
   @override
   _ChatListItemState createState() => _ChatListItemState();
 }
 
-class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClientMixin {
+class _ChatListItemState extends State<ChatListItem> {
+  // View Models
   late UserViewModel userViewModel;
   late ChatViewModel chatViewModel;
-  late AppRouterDelegate routerDelegate;
-  late Size size;
 
-  var _getPeerUserDocFuture;
-  late Chat _chatItem;
-  late User _peerUserItem;
-  bool _isLoaded = false;
+  // Router Delegate
+  late AppRouterDelegate routerDelegate;
+
+  late bool isSelected;
 
   @override
   void initState() {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    _getPeerUserDocFuture = chatViewModel.getPeerUserDoc(widget.chatItem.peerUser!.collection, widget.chatItem.peerUser!.id);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    size = MediaQuery.of(context).size;
-    super.build(context);
-    _chatItem = widget.chatItem;
-    _peerUserItem = _chatItem.peerUser!;
-    // Check if there are not read messages and the chat is not the current chat
-    if (_chatItem.notReadMessages > 0 && _chatItem.peerUser == chatViewModel.currentChat.value?.peerUser) {
-      _chatItem.notReadMessages = 0;
+    isSelected = chatViewModel.currentChat.value?.peerUser?.id == widget.chatItem.peerUser!.id;
+    // If the chat is the same as the currentChat (the peerUser is the same) and the not read messages are > 0,
+    // set the messages has read
+    if (widget.chatItem.notReadMessages > 0 && widget.chatItem.peerUser == chatViewModel.currentChat.value?.peerUser) {
+      widget.chatItem.notReadMessages = 0;
       chatViewModel.setMessagesHasRead();
     }
-    return listItem();
-  }
-
-  Widget listItem() {
     return Container(
       child: TextButton(
         child: Row(
@@ -69,46 +80,35 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
               child: Row(
                 children: <Widget>[
                   // Avatar
-                  _peerUserItem is BaseUser
-                      ? CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          radius: 25.0,
-                          child: Image.asset(
-                            "assets/icons/logo.png",
-                            height: size.height * 0.05,
-                          ),
-                        )
-                      : NetworkAvatar(
-                          img: _peerUserItem.data['profilePhoto'] as String?,
-                          radius: 25.0,
-                        ),
-                  SizedBox(
-                    width: 15,
-                  ),
+                  widget.chatItem.peerUser is BaseUser
+                      ?
+                      // If the peer user is a BaseUser, show the logo circle avatar
+                      CircleAvatar(backgroundColor: Colors.transparent, radius: 25.0, child: Image.asset("assets/icons/logo.png", scale: 10))
+                      :
+                      // If the peer user is an Expert, show the network avatar with the user profile photo
+                      NetworkAvatar(img: widget.chatItem.peerUser!.data['profilePhoto'] as String?, radius: 25.0),
+                  SizedBox(width: 15),
                   // Profile info and lastMessage
                   Flexible(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _peerUserItem is BaseUser
-                            ? Text(
-                                _peerUserItem.name + (userViewModel.loggedUser is Expert ? " " + _peerUserItem.surname : ""),
-                                textAlign: TextAlign.left,
-                                maxLines: 1,
-                                style: TextStyle(color: kPrimaryColor, fontSize: 18, fontWeight: FontWeight.bold),
-                              )
-                            : Text(
-                                _peerUserItem.name + " " + _peerUserItem.surname,
-                                textAlign: TextAlign.left,
-                                maxLines: 1,
-                                style: TextStyle(color: kPrimaryColor, fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                        SizedBox(
-                          height: size.height * 0.005,
-                        ),
                         Text(
-                          _chatItem.lastMessage,
+                          userViewModel.loggedUser is Expert || widget.chatItem.peerUser is Expert
+                              ?
+                              // If the logged user or the peer user is an Expert, show the full name of the peer user
+                              "${widget.chatItem.peerUser!.fullName}"
+                              :
+                              // Otherwise, show only the name of the peer user
+                              "${widget.chatItem.peerUser!.name}",
+                          textAlign: TextAlign.left,
+                          maxLines: 1,
+                          style: TextStyle(color: kPrimaryColor, fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 0.5.h),
+                        Text(
+                          widget.chatItem.lastMessage,
                           textAlign: TextAlign.left,
                           maxLines: 1,
                           style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 12.0, overflow: TextOverflow.ellipsis),
@@ -119,28 +119,30 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
                 ],
               ),
             ),
-            // Time and lastMessageDatetime
+            // lastMessageDateTime and number of notReadMessages
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    Utils.isToday(_chatItem.lastMessageDateTime!)
-                        ? DateFormat("kk:mm").format(_chatItem.lastMessageDateTime!)
-                        : DateFormat("MM/dd/yyyy").format(_chatItem.lastMessageDateTime!),
+                    Utils.isToday(widget.chatItem.lastMessageDateTime!)
+                        ?
+                        // If the message date time is today, show the clock time
+                        DateFormat("HH:mm").format(widget.chatItem.lastMessageDateTime!)
+                        :
+                        // Otherwise, show the date
+                        DateFormat("MM/dd/yyyy").format(widget.chatItem.lastMessageDateTime!),
                     style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 12.0, fontStyle: FontStyle.italic),
                   ),
                   // Check if there are not read messages
-                  if (_chatItem.notReadMessages > 0) ...[
-                    SizedBox(
-                      height: size.height * 0.01,
-                    ),
+                  if (widget.chatItem.notReadMessages > 0) ...[
+                    SizedBox(height: 1.h),
                     Container(
                       height: 20,
                       width: 20,
                       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.red[600]),
-                      child: Center(child: Text(_chatItem.notReadMessages.toString(), style: TextStyle(fontSize: 10.0, color: Colors.white))),
+                      child: Center(child: Text(widget.chatItem.notReadMessages.toString(), style: TextStyle(fontSize: 10.0, color: Colors.white))),
                     ),
                   ],
                 ],
@@ -149,62 +151,25 @@ class _ChatListItemState extends State<ChatListItem> with AutomaticKeepAliveClie
           ],
         ),
         onPressed: () {
-          if (chatViewModel.currentChat.value?.peerUser?.id != _chatItem.peerUser?.id) {
-            chatViewModel.setCurrentChat(_chatItem);
+          // If the chat is different from the current chat, set the new current chat and call the selected item callback
+          if (chatViewModel.currentChat.value?.peerUser?.id != widget.chatItem.peerUser?.id) {
+            chatViewModel.setCurrentChat(widget.chatItem);
             widget.selectedItemCallback();
-            if (MediaQuery.of(context).orientation == Orientation.portrait) {
+            // If the orientation of the device is portrait, push the ChatPageScreen
+            if (SizerUtil.orientation == Orientation.portrait) {
               routerDelegate.pushPage(name: ChatPageScreen.route);
             }
           }
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(
-              widget.isSelected && MediaQuery.of(context).orientation == Orientation.landscape ? kPrimaryButtonColor : kPrimaryLightColor),
+              isSelected && SizerUtil.orientation == Orientation.landscape ? kPrimaryButtonColor : kPrimaryLightColor),
           shape: MaterialStateProperty.all<OutlinedBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(25)),
-            ),
+            RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
           ),
         ),
       ),
       margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
     );
   }
-
-  Widget buildListItemShimmer() {
-    return Shimmer.fromColors(
-        baseColor: kPrimaryLightColor,
-        highlightColor: Colors.grey[100]!,
-        period: Duration(seconds: 1),
-        child: Container(
-          child: TextButton(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  radius: 25.0,
-                  child: Image.asset(
-                    "assets/icons/logo.png",
-                    height: size.height * 0.05,
-                  ),
-                ),
-              ],
-            ),
-            onPressed: () {},
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(kPrimaryLightColor),
-              shape: MaterialStateProperty.all<OutlinedBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                ),
-              ),
-            ),
-          ),
-          margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
-        ));
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }

@@ -8,6 +8,7 @@ import 'package:sApport/Views/Chat/Expert/ActiveChatsList/components/active_chat
 import 'package:sApport/Views/components/empty_landscape_body.dart';
 import 'package:sApport/Views/components/vertical_split_view.dart';
 import 'package:sApport/constants.dart';
+import 'package:sizer/sizer.dart';
 
 class ActiveChatsListScreen extends StatefulWidget {
   static const route = '/activeChatsListScreen';
@@ -32,7 +33,7 @@ class _ActiveChatsListScreenState extends State<ActiveChatsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: MediaQuery.of(context).orientation == Orientation.portrait
+      body: SizerUtil.orientation == Orientation.portrait
           ? ActiveChatsListBody()
           : VerticalSplitView(
               left: ActiveChatsListBody(),

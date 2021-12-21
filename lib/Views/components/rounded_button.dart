@@ -1,3 +1,4 @@
+import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
 
@@ -20,17 +21,14 @@ class RoundedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Container(
       constraints: BoxConstraints(maxWidth: 300, minHeight: 40),
-      width: size.width * 0.5,
+      width: 50.w,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(29),
         child: ElevatedButton(
           style: ButtonStyle(
-            fixedSize: MaterialStateProperty.all<Size>(
-              Size(size.width / 2, size.height / 20),
-            ),
+            fixedSize: MaterialStateProperty.all<Size>(Size(50.w, 5.h)),
             backgroundColor: MaterialStateProperty.all<Color>(
               enabled ? color : Color(0xFFD3D3D3),
             ),

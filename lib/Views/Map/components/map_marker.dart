@@ -5,6 +5,7 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
 import 'package:sApport/constants.dart';
+import 'package:sizer/sizer.dart';
 
 class MapMarker extends StatelessWidget {
   final Expert expert;
@@ -13,7 +14,6 @@ class MapMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     return GestureDetector(
       child: Column(
@@ -53,7 +53,7 @@ class MapMarker extends StatelessWidget {
                             ],
                           ),
                           SizedBox(
-                            height: size.height * 0.003,
+                            height: 0.3.h,
                           ),
                           Row(
                             children: <Widget>[

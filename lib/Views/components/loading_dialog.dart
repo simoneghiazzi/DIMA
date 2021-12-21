@@ -2,18 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
 
 class LoadingDialog {
-  Widget widget(BuildContext context, {String? text}) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height / 1.3,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
-    );
-  }
-
   static Future<void> show(BuildContext context, {String? text}) async {
     return showDialog<void>(
         context: context,

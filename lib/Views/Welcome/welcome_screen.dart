@@ -8,6 +8,7 @@ import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/Views/Welcome/components/welcome_body.dart';
+import 'package:sizer/sizer.dart';
 
 class WelcomeScreen extends StatefulWidget {
   static const route = '/welcomeScreen';
@@ -54,8 +55,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
     String lastRoute = routerDelegate.getLastRoute();
     if (lastRoute == ChatPageScreen.route || lastRoute == ReportDetailsScreen.route || lastRoute == DiaryPageScreen.route) {
       routerDelegate.pop();
-    } else if (MediaQuery.of(context).orientation == Orientation.landscape) {
-      if (chatViewModel.currentChat != null) {
+    } else if (SizerUtil.orientation == Orientation.landscape) {
+      if (chatViewModel.currentChat.value != null) {
         routerDelegate.pushPage(name: ChatPageScreen.route);
       } else if (reportViewModel.currentReport != null) {
         routerDelegate.pushPage(name: ReportDetailsScreen.route);
