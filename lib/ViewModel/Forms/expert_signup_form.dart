@@ -53,7 +53,7 @@ class ExpertSignUpForm extends BaseUserSignUpForm {
       latitude: expertAddress.lat!,
       longitude: expertAddress.lng!,
       address: expertAddress.address!,
-      email: email,
+      email: email!,
       phoneNumber: phoneNumber.value,
       profilePhoto: profilePhoto!,
     );

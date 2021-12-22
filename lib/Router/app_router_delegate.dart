@@ -117,7 +117,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
     }
     return MaterialPage(
       child: child,
-      key: Key(routeSettings.name!) as LocalKey?,
+      key: Key(routeSettings.name! + routeSettings.arguments.toString()) as LocalKey?,
       name: routeSettings.name,
       arguments: routeSettings.arguments,
     );
@@ -125,7 +125,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
 
   /// Push the page specified by the [name] of the route on top of the navigator stack.
   void pushPage({required String name, dynamic arguments}) {
-    if (_pages.isEmpty || _pages.last.name != name) {
+    if (_pages.isEmpty || _pages.last.name != name || _pages.last.arguments != arguments) {
       _pages.add(_createPage(RouteSettings(name: name, arguments: arguments)));
       notifyListeners();
     }

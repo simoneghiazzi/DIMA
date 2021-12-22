@@ -27,7 +27,9 @@ class MapViewModel {
     // Set the position permission status on the location of the device
     Permission.location.status.then((status) {
       positionPermission = status;
-    }).catchError((e) => print("Error in getting the position permission status: $e"));
+    }).catchError((error) {
+      print("Error in getting the position permission status: $error");
+    });
   }
 
   /// Request the user for access to the location [Permission].

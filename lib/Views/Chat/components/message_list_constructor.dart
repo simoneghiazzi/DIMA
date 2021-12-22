@@ -39,7 +39,6 @@ class _MessageListConstructorState extends State<MessageListConstructor> {
   late UserViewModel userViewModel;
   late ChatViewModel chatViewModel;
   final dataKey = new GlobalKey();
-  late Size size;
 
   var _loadMessagesStream;
   var _notReadMessages;
@@ -78,15 +77,15 @@ class _MessageListConstructorState extends State<MessageListConstructor> {
                       WidgetsBinding.instance!.addPostFrameCallback((_) {
                         Scrollable.ensureVisible(dataKey.currentContext!, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart);
                         _datakeyUsed = true;
-                        if (widget.scrollController.position.pixels + size.height / 3 <= maxValue) {
-                          widget.scrollController.jumpTo(widget.scrollController.position.pixels - size.height / 3);
+                        if (widget.scrollController.position.pixels + 33.h <= maxValue) {
+                          widget.scrollController.jumpTo(widget.scrollController.position.pixels - 33.h);
                         }
                       });
                     } else {
                       Scrollable.ensureVisible(dataKey.currentContext!, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd);
                       _datakeyUsed = true;
                       if (widget.scrollController.position.pixels != 0) {
-                        widget.scrollController.jumpTo(widget.scrollController.position.pixels + size.height / 3);
+                        widget.scrollController.jumpTo(widget.scrollController.position.pixels + 33.h);
                       }
                     }
                   }
@@ -110,15 +109,15 @@ class _MessageListConstructorState extends State<MessageListConstructor> {
                 });
               } else if (_previousSnapshotHashCode != snapshot.hashCode) {
                 // If the user is inside the chat and there are new messages, docChanges != docs
-                if (snapshot.data.docs.length != snapshot.data.docChanges.length) {
+                //if (snapshot.data.docs.length != snapshot.data.docChanges.length) {
                   // If the new message is from the logged user, reset the _notReadMessages
-                  if (snapshot.data.docs[0].get("idFrom") == userViewModel.loggedUser!.id) {
-                    _notReadMessages = 0;
-                  } else if (_notReadMessages != snapshot.data.docChanges.length && _notReadMessages > 0) {
+                //  if (snapshot.data.docs[0].get("idFrom") == userViewModel.loggedUser!.id) {
+                 //   _notReadMessages = 0;
+                 // } else if (_notReadMessages != snapshot.data.docChanges.length && _notReadMessages > 0) {
                     // If the new message is from the peer user, increment the _notReadMessages
-                    _notReadMessages += snapshot.data.docChanges.length;
-                  }
-                }
+                //    _notReadMessages += snapshot.data.docChanges.length;
+               //   }
+                //}
               }
               _previousSnapshotHashCode = snapshot.hashCode;
               return ListView.custom(

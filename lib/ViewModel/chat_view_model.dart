@@ -27,10 +27,10 @@ class ChatViewModel extends ChangeNotifier {
   var _newRandomUserCtrl = StreamController<bool>.broadcast();
 
   // Stream Subscriptions
-  late StreamSubscription? _anonymousChatsSubscriber;
-  late StreamSubscription? _pendingChatsSubscriber;
-  late StreamSubscription? _expertsChatsSubscriber;
-  late StreamSubscription? _activeChatsSubscriber;
+  StreamSubscription? _anonymousChatsSubscriber;
+  StreamSubscription? _pendingChatsSubscriber;
+  StreamSubscription? _expertsChatsSubscriber;
+  StreamSubscription? _activeChatsSubscriber;
 
   // Current chat of the user
   ValueNotifier<Chat?> _currentChat = ValueNotifier(null);

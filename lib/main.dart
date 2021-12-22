@@ -115,6 +115,7 @@ class _MyAppState extends State<MyApp> {
             theme: ThemeData(
               primaryColor: kPrimaryColor,
               scaffoldBackgroundColor: Colors.white,
+              fontFamily: "Lato",
             ),
             home: Router(
               routerDelegate: routerDelegate,

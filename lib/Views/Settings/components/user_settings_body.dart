@@ -83,7 +83,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
                                 Text(
                                   userViewModel.loggedUser!.name.toUpperCase() + " " + userViewModel.loggedUser!.surname.toUpperCase(),
-                                  style: TextStyle(color: kPrimaryColor, fontSize: 14.sp, fontWeight: FontWeight.bold),
+                                  style: TextStyle(color: kPrimaryColor, fontSize: 15.sp, fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.center,
                                 )
                               ]))),
@@ -146,7 +146,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                     child: Text(userViewModel.loggedUser!.email,
                                         style: TextStyle(
                                           color: kPrimaryColor,
-                                          fontSize: 12.sp,
+                                          fontSize: 13.sp,
                                         ))),
                               ],
                             ),
@@ -171,7 +171,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                               style: TextStyle(
                                                 color: kPrimaryColor,
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 12.sp,
+                                                fontSize: 13.sp,
                                               ),
                                             ),
                                             onTap: () {
@@ -237,7 +237,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                               style: TextStyle(
                                 color: kPrimaryColor,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12.sp,
+                                fontSize: 13.sp,
                               ),
                             ),
                             SizedBox(height: 2.h),

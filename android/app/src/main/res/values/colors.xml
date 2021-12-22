@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <color name="kPrimaryColor">#212c8c</color>
+	<color name="ic_launcher_background">#212C8C</color>
 </resources>

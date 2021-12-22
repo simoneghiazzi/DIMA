@@ -1,8 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
-import 'package:sApport/Views/Chat/ChatList/components/pending_chat_list_body.dart';
-import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/constants.dart';
@@ -12,7 +9,9 @@ import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
 import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
+import 'package:sApport/Views/Chat/ChatList/components/pending_chat_list_body.dart';
 
 /// It contains the [TopBar] with the [ValueListenableBuilder] in order to listen for new requests,
 /// the [ChatListConstructor] of the anonymous chats and the button for searching new random users.

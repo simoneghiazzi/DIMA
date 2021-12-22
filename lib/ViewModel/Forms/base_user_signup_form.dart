@@ -3,7 +3,7 @@ import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/DBItems/user.dart';
 
 class BaseUserSignUpForm extends FormBloc<String, String> {
-  late String email;
+  String? email;
 
   BaseUserSignUpForm() {
     // Add the field blocs to the base user signup form
@@ -32,7 +32,7 @@ class BaseUserSignUpForm extends FormBloc<String, String> {
       name: nameText.value,
       surname: surnameText.value,
       birthDate: birthDate.value,
-      email: email,
+      email: email ?? "",
     );
   }
 

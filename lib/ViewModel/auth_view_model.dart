@@ -78,7 +78,7 @@ class AuthViewModel {
         _authMessageCtrl.add("The password is too weak.\nIt has to be at least 6 chars.");
       } else {
         _authMessageCtrl.add("Error in signing up the user. Please try again later.");
-        print("Error in signing up the user.");
+        print("Error in signing up the user: $error");
       }
     }
   }

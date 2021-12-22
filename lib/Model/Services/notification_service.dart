@@ -20,7 +20,7 @@ class NotificationService {
 
   /// Configuration of the notification for Android and IOS and register the notification listeners.
   void configNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid = new AndroidInitializationSettings("@mipmap/ic_notification");
+    AndroidInitializationSettings initializationSettingsAndroid = new AndroidInitializationSettings("@drawable/ic_notification");
     IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
     InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     _flutterLocalNotificationsPlugin.initialize(initializationSettings);

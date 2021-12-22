@@ -12,8 +12,12 @@
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
 
+        <meta-data 
+         android:name="com.google.firebase.messaging.default_notification_icon"
+         android:resource="@drawable/ic_notification" />
+
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBXlprVbsWSgH3tD-53m608jL0uaoZjH1o"/>
+            android:value="AIzaSyB94URFmQK5KlsNWL_mjV3c7GONo0MpRI8"/>
 
         <activity
             android:name=".MainActivity"
