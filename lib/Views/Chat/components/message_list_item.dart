@@ -109,10 +109,10 @@ class _MessageListItemState extends State<MessageListItem> {
           // Content
           Flexible(
             child: Container(
-              padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+              padding: EdgeInsets.only(left: 15.0, top: 10.0, bottom: 10.0),
               child: Text(
                 widget.messageItem.content,
-                style: TextStyle(fontFamily: "UbuntuCondensed", color: peerMessage ? Colors.white : kPrimaryColor),
+                style: TextStyle(color: peerMessage ? Colors.white : kPrimaryColor, fontSize: 12.2.sp),
               ),
             ),
           ),
@@ -121,7 +121,7 @@ class _MessageListItemState extends State<MessageListItem> {
             padding: EdgeInsets.only(right: 8, bottom: 5),
             child: Text(
               Date.DateFormat("kk:mm").format(widget.messageItem.timestamp),
-              style: TextStyle(color: kPrimaryGreyColor, fontSize: 11, fontStyle: FontStyle.italic),
+              style: TextStyle(color: kPrimaryGreyColor, fontSize: 9.sp, fontStyle: FontStyle.italic),
             ),
           ),
         ],

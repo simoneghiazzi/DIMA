@@ -30,15 +30,15 @@ class ChatAcceptDenyInput extends StatelessWidget {
             children: <Widget>[
               InkWell(
                 child: Container(
-                  constraints: BoxConstraints(maxWidth: 25.w, minHeight: 20.h),
-                  padding: EdgeInsets.only(top: 2, bottom: 2),
+                  constraints: BoxConstraints(maxWidth: 30.w, maxHeight: 20.h),
+                  padding: EdgeInsets.only(top: 8, bottom: 8, right: 10, left: 4),
                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), color: Colors.green),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(Icons.check, color: Colors.white, size: 25),
                       SizedBox(width: 5),
-                      Text("Accept", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
+                      Text("Accept", style: TextStyle(fontSize: 12.5.sp, fontWeight: FontWeight.bold, color: Colors.white)),
                     ],
                   ),
                 ),
@@ -54,18 +54,18 @@ class ChatAcceptDenyInput extends StatelessWidget {
                   }
                 },
               ),
-              SizedBox(width: 10.w),
+              SizedBox(width: 15.w),
               InkWell(
                 child: Container(
-                  constraints: BoxConstraints(maxWidth: 25.w, minHeight: 20.h),
-                  padding: EdgeInsets.only(top: 2, bottom: 2),
+                  constraints: BoxConstraints(maxWidth: 30.w, maxHeight: 20.h),
+                  padding: EdgeInsets.only(top: 8, bottom: 8, right: 10, left: 4),
                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), color: Colors.red),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(Icons.delete, color: Colors.white, size: 25),
                       SizedBox(width: 5),
-                      Text("Refuse", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
+                      Text("Refuse", style: TextStyle(fontSize: 12.5.sp, fontWeight: FontWeight.bold, color: Colors.white)),
                     ],
                   ),
                 ),

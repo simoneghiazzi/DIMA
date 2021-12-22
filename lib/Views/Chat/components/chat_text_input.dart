@@ -42,12 +42,12 @@ class ChatTextInput extends StatelessWidget {
                 boxShadow: [BoxShadow(color: kPrimaryColor.withOpacity(0.1), spreadRadius: 4, blurRadius: 6, offset: Offset(0, 3))],
                 border: Border.all(color: kPrimaryDarkColor.withOpacity(0.2)),
               ),
-              padding: EdgeInsets.only(left: 20),
+              padding: EdgeInsets.only(left: 20, right: 10),
               child: TextField(
                 textCapitalization: TextCapitalization.sentences,
+                textAlignVertical: TextAlignVertical.top,
                 maxLines: 5,
                 minLines: 1,
-                style: TextStyle(fontFamily: "UbuntuCondensed"),
                 controller: chatViewModel.contentTextCtrl,
                 decoration: InputDecoration(
                   fillColor: kPrimaryColor,

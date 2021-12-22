@@ -1,3 +1,4 @@
+import 'package:sApport/constants.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Chat/components/message_list_constructor.dart';
@@ -19,15 +20,16 @@ class NewMessagesItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          margin: EdgeInsets.only(bottom: 10.0, top: 20.0),
+          margin: EdgeInsets.only(top: 20.0),
+          padding: EdgeInsets.only(left: 15, right: 15),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.arrow_drop_down, color: Colors.white),
               SizedBox(width: 3.w),
               Text(
-                "$counter NEW MESSAGES",
-                style: TextStyle(color: Colors.white, fontSize: 13.0, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                "$counter  NEW MESSAGE${counter > 1 ? "S" : ""} ",
+                style: TextStyle(color: Colors.white, fontSize: 11.sp, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               SizedBox(width: 3.w),
@@ -35,9 +37,8 @@ class NewMessagesItem extends StatelessWidget {
             ],
           ),
           decoration: BoxDecoration(
-            color: Colors.green.shade200,
+            color: kPrimaryDarkColorTrasparent,
             borderRadius: BorderRadius.circular(8.0),
-            boxShadow: [BoxShadow(color: Colors.green.shade100, blurRadius: 4, offset: Offset(1, 3))],
           ),
         ),
       ],

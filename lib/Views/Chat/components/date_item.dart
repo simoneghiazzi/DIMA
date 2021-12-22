@@ -1,3 +1,4 @@
+import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
@@ -21,15 +22,15 @@ class DateItem extends StatelessWidget {
       children: [
         Container(
           margin: EdgeInsets.only(bottom: 5.0, top: 25.0),
-          padding: EdgeInsets.only(right: 8, bottom: 5, top: 5, left: 8),
+          padding: EdgeInsets.only(right: 10, bottom: 5, top: 5, left: 10),
           child: Text(
             DateFormat().add_yMMMd().format(date),
-            style: TextStyle(color: Colors.white, fontSize: 11.0, fontStyle: FontStyle.italic),
+            style: TextStyle(color: Colors.white, fontSize: 10.sp, fontStyle: FontStyle.italic),
             textAlign: TextAlign.center,
           ),
           decoration: BoxDecoration(
             color: kPrimaryDarkColorTrasparent.withOpacity(0.65),
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(10.0),
             boxShadow: [
               BoxShadow(
                 color: kPrimaryLightColor,

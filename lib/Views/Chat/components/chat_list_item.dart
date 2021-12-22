@@ -72,6 +72,7 @@ class _ChatListItemState extends State<ChatListItem> {
       chatViewModel.setMessagesHasRead();
     }
     return Container(
+      margin: EdgeInsets.only(bottom: 10.0),
       child: TextButton(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -79,15 +80,16 @@ class _ChatListItemState extends State<ChatListItem> {
             Flexible(
               child: Row(
                 children: <Widget>[
+                  SizedBox(width: 1.w),
                   // Avatar
                   widget.chatItem.peerUser is BaseUser
                       ?
                       // If the peer user is a BaseUser, show the logo circle avatar
-                      CircleAvatar(backgroundColor: Colors.transparent, radius: 25.0, child: Image.asset("assets/icons/logo.png", scale: 10))
+                      CircleAvatar(backgroundColor: Colors.transparent, radius: 25.0, child: Image.asset("assets/icons/logo.png", scale: 11))
                       :
                       // If the peer user is an Expert, show the network avatar with the user profile photo
                       NetworkAvatar(img: widget.chatItem.peerUser!.data['profilePhoto'] as String?, radius: 25.0),
-                  SizedBox(width: 15),
+                  SizedBox(width: 3.w),
                   // Profile info and lastMessage
                   Flexible(
                     child: Column(
@@ -104,14 +106,14 @@ class _ChatListItemState extends State<ChatListItem> {
                               "${widget.chatItem.peerUser!.name}",
                           textAlign: TextAlign.left,
                           maxLines: 1,
-                          style: TextStyle(color: kPrimaryColor, fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(color: kPrimaryColor, fontSize: 15.sp, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 0.5.h),
                         Text(
                           widget.chatItem.lastMessage,
                           textAlign: TextAlign.left,
                           maxLines: 1,
-                          style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 12.0, overflow: TextOverflow.ellipsis),
+                          style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 11.sp, overflow: TextOverflow.ellipsis),
                         ),
                       ],
                     ),
@@ -133,16 +135,20 @@ class _ChatListItemState extends State<ChatListItem> {
                         :
                         // Otherwise, show the date
                         DateFormat("MM/dd/yyyy").format(widget.chatItem.lastMessageDateTime!),
-                    style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 12.0, fontStyle: FontStyle.italic),
+                    style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 10.sp, fontStyle: FontStyle.italic),
                   ),
                   // Check if there are not read messages
                   if (widget.chatItem.notReadMessages > 0) ...[
                     SizedBox(height: 1.h),
                     Container(
-                      height: 20,
-                      width: 20,
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.red[600]),
-                      child: Center(child: Text(widget.chatItem.notReadMessages.toString(), style: TextStyle(fontSize: 10.0, color: Colors.white))),
+                      constraints: BoxConstraints(maxHeight: 22, maxWidth: 22),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.red[600]),
+                      child: Center(
+                        child: Text(
+                          widget.chatItem.notReadMessages.toString(),
+                          style: TextStyle(fontSize: 9.3.sp, color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
                   ],
                 ],
@@ -169,7 +175,6 @@ class _ChatListItemState extends State<ChatListItem> {
           ),
         ),
       ),
-      margin: EdgeInsets.only(bottom: 10.0, left: 5.0, right: 5.0),
     );
   }
 }
