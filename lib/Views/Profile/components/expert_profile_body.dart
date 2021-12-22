@@ -2,7 +2,8 @@ import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chat_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/components/expert_chat_list_body.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
 import 'package:sApport/constants.dart';
@@ -232,13 +233,14 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                           ),
                           onTap: () {
                             chatViewModel.setCurrentChat(ExpertChat(peerUser: widget.expert!));
-                            if (SizerUtil.orientation == Orientation.portrait) {
+                            if (MediaQuery.of(context).orientation == Orientation.portrait) {
                               routerDelegate.replaceAllButNumber(2, routeSettingsList: [
-                                RouteSettings(name: ExpertChatsListScreen.route),
+                                RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
                                 RouteSettings(name: ChatPageScreen.route),
                               ]);
                             } else {
-                              routerDelegate.replaceAllButNumber(2, routeSettingsList: [RouteSettings(name: ExpertChatsListScreen.route)]);
+                              routerDelegate.replaceAllButNumber(2,
+                                  routeSettingsList: [RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody())]);
                             }
                           },
                         ),

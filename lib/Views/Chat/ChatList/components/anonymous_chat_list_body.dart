@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
+import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/components/pending_chat_list_body.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +13,6 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
-import 'package:sApport/Views/Chat/BaseUser/PendingChatsList/pending_chat_list_screen.dart';
 
 /// It contains the [TopBar] with the [ValueListenableBuilder] in order to listen for new requests,
 /// the [ChatListConstructor] of the anonymous chats and the button for searching new random users.
@@ -71,7 +72,7 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
                             Text("Requests", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)),
                           ]),
                         ),
-                        onTap: () => routerDelegate.pushPage(name: PendingChatListScreen.route),
+                        onTap: () => routerDelegate.pushPage(name: ChatListScreen.route, arguments: PendingChatListBody()),
                       );
                     } else
                       return Container();
@@ -107,7 +108,7 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
     return chatViewModel.newRandomUser.listen((isNewRandomUser) {
       LoadingDialog.hide(context);
       if (isNewRandomUser) {
-        if (SizerUtil.orientation == Orientation.portrait) {
+        if (MediaQuery.of(context).orientation == Orientation.portrait) {
           routerDelegate.pushPage(name: ChatPageScreen.route);
         }
       } else {

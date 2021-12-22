@@ -156,14 +156,14 @@ class _ChatListItemState extends State<ChatListItem> {
             chatViewModel.setCurrentChat(widget.chatItem);
             widget.selectedItemCallback();
             // If the orientation of the device is portrait, push the ChatPageScreen
-            if (SizerUtil.orientation == Orientation.portrait) {
+            if (MediaQuery.of(context).orientation == Orientation.portrait) {
               routerDelegate.pushPage(name: ChatPageScreen.route);
             }
           }
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(
-              isSelected && SizerUtil.orientation == Orientation.landscape ? kPrimaryButtonColor : kPrimaryLightColor),
+              isSelected && MediaQuery.of(context).orientation == Orientation.landscape ? kPrimaryButtonColor : kPrimaryLightColor),
           shape: MaterialStateProperty.all<OutlinedBorder>(
             RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
           ),

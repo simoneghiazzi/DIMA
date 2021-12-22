@@ -1,10 +1,11 @@
+import 'package:sApport/Views/Chat/ChatList/components/anonymous_chat_list_body.dart';
+import 'package:sApport/Views/Chat/ChatList/components/expert_chat_list_body.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/anonymous_chat_list_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chat_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Report/create_report_screen.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class _BaseUserGridState extends State<BaseUserGrid> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-          constraints: (SizerUtil.orientation == Orientation.landscape) ? BoxConstraints(maxWidth: 800) : BoxConstraints(maxWidth: 700),
+          constraints: (MediaQuery.of(context).orientation == Orientation.landscape) ? BoxConstraints(maxWidth: 800) : BoxConstraints(maxWidth: 700),
           padding: EdgeInsets.only(left: 5, right: 5),
           child: Table(
             // columnWidths: {
@@ -48,14 +49,14 @@ class _BaseUserGridState extends State<BaseUserGrid> {
                   imagePath: "assets/icons/psychologist.png",
                   text: "Experts\nchats",
                   press: () {
-                    routerDelegate.pushPage(name: ExpertChatsListScreen.route);
+                    routerDelegate.pushPage(name: ChatListScreen.route, arguments: ExpertChatListBody());
                   },
                 ),
                 DashCard(
                   imagePath: "assets/icons/anonymous.png",
                   text: "Anonymous\nchats",
                   press: () {
-                    routerDelegate.pushPage(name: AnonymousChatListScreen.route);
+                    routerDelegate.pushPage(name: ChatListScreen.route, arguments: AnonymousChatListBody());
                   },
                 ),
               ]),

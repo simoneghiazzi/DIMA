@@ -27,10 +27,10 @@ class ChatViewModel extends ChangeNotifier {
   var _newRandomUserCtrl = StreamController<bool>.broadcast();
 
   // Stream Subscriptions
-  late StreamSubscription _anonymousChatsSubscriber;
-  late StreamSubscription _pendingChatsSubscriber;
-  late StreamSubscription _expertsChatsSubscriber;
-  late StreamSubscription _activeChatsSubscriber;
+  late StreamSubscription? _anonymousChatsSubscriber;
+  late StreamSubscription? _pendingChatsSubscriber;
+  late StreamSubscription? _expertsChatsSubscriber;
+  late StreamSubscription? _activeChatsSubscriber;
 
   // Current chat of the user
   ValueNotifier<Chat?> _currentChat = ValueNotifier(null);
@@ -266,10 +266,10 @@ class ChatViewModel extends ChangeNotifier {
   }
 
   void resetViewModel() {
-    _anonymousChatsSubscriber.cancel();
-    _pendingChatsSubscriber.cancel();
-    _expertsChatsSubscriber.cancel();
-    _activeChatsSubscriber.cancel();
+    _anonymousChatsSubscriber?.cancel();
+    _pendingChatsSubscriber?.cancel();
+    _expertsChatsSubscriber?.cancel();
+    _activeChatsSubscriber?.cancel();
     _anonymousChats = ValueNotifier<LinkedHashMap<String, AnonymousChat>>(LinkedHashMap<String, AnonymousChat>());
     _pendingChats = ValueNotifier<LinkedHashMap<String, PendingChat>>(LinkedHashMap<String, PendingChat>());
     _expertsChats = ValueNotifier<LinkedHashMap<String, ExpertChat>>(LinkedHashMap<String, ExpertChat>());
@@ -277,17 +277,20 @@ class ChatViewModel extends ChangeNotifier {
     _currentChat = ValueNotifier(null);
   }
 
-  /// Get the [_currentChat] instance.
+  /// Get the [_currentChat] value notifier.
   ValueNotifier<Chat?> get currentChat => _currentChat;
 
-  /// Get the [_currentChat] instance.
+  /// Get the [_anonymousChats] value notifier.
   ValueNotifier<LinkedHashMap<String, Chat>> get anonymousChats => _anonymousChats;
 
-  /// Get the [_currentChat] instance.
+  /// Get the [_pendingChats] value notifier.
   ValueNotifier<LinkedHashMap<String, Chat>> get pendingChats => _pendingChats;
 
-  /// Get the [_currentChat] instance.
+  /// Get the [_expertsChats] value notifier.
   ValueNotifier<LinkedHashMap<String, Chat>> get expertChats => _expertsChats;
+
+  /// Get the [_activeChats] value notifier.
+  ValueNotifier<LinkedHashMap<String, Chat>> get activeChats => _activeChats;
 
   /// Stream of the new random user controller.
   Stream<bool> get newRandomUser => _newRandomUserCtrl.stream;

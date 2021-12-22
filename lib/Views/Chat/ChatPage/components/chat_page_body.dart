@@ -1,4 +1,3 @@
-import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
@@ -13,7 +12,6 @@ import 'package:sApport/Views/Chat/components/chat_text_input.dart';
 import 'package:sApport/Views/Chat/components/chat_accept_deny.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_top_bar.dart';
 import 'package:sApport/Views/Chat/components/message_list_constructor.dart';
-import 'package:sApport/constants.dart';
 
 /// It contains the [ChatTopBar] that differs based on the type of the peer user ([BaseUser] or [Expert]),
 /// the [MessageListConstructor] of the messages between the 2 users and the [ChatTextInput] or the

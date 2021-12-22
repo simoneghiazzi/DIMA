@@ -44,7 +44,7 @@ class ChatAcceptDenyInput extends StatelessWidget {
                 ),
                 onTap: () {
                   chatViewModel.acceptPendingChat();
-                  if (SizerUtil.orientation == Orientation.portrait) {
+                  if (MediaQuery.of(context).orientation == Orientation.portrait) {
                     // If the orientation is portrait, replace the PendingChatListScreen and the chat page with the new ChatPageScreen
                     routerDelegate.replaceAllButNumber(3, routeSettingsList: [RouteSettings(name: ChatPageScreen.route)]);
                   } else {

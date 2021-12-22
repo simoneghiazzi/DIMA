@@ -12,21 +12,22 @@ import 'package:sApport/Views/Chat/components/message_list_constructor.dart';
 /// It takes the [scrollController] of the [MessageListConstructor] in order to scroll down the list
 /// when a new message is sent.
 class ChatTextInput extends StatelessWidget {
-  final ScrollController? scrollController;
+  final ScrollController scrollController;
 
   /// It is used into the [ChatPageScreen] for sending new messages.
   /// It contains the text input field and the send message button.
   ///
   /// It takes the [scrollController] of the [MessageListConstructor] in order to scroll down the list
   /// when a new message is sent.
-  const ChatTextInput({Key? key, this.scrollController}) : super(key: key);
+  const ChatTextInput({Key? key, required this.scrollController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // View Models
     ChatViewModel chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
 
-    return Padding(
+    return Container(
+      color: Colors.transparent,
       padding: EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 5.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -61,7 +62,6 @@ class ChatTextInput extends StatelessWidget {
             child: Container(
               width: 50,
               height: 50,
-              margin: EdgeInsets.only(bottom: 1),
               decoration: BoxDecoration(color: kPrimaryColor, borderRadius: BorderRadius.circular(40.0)),
               child: Container(
                 padding: EdgeInsets.only(left: 3),
@@ -71,8 +71,8 @@ class ChatTextInput extends StatelessWidget {
             onTap: () {
               // Send message and scroll down the message list view
               chatViewModel.sendMessage();
-              if (scrollController!.hasClients) {
-                scrollController!.jumpTo(scrollController!.position.minScrollExtent);
+              if (scrollController.hasClients) {
+                scrollController.jumpTo(scrollController.position.minScrollExtent);
               }
             },
           ),

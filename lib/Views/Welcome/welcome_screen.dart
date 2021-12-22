@@ -55,7 +55,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
     String lastRoute = routerDelegate.getLastRoute();
     if (lastRoute == ChatPageScreen.route || lastRoute == ReportDetailsScreen.route || lastRoute == DiaryPageScreen.route) {
       routerDelegate.pop();
-    } else if (SizerUtil.orientation == Orientation.landscape) {
+    } else if (MediaQuery.of(context).orientation == Orientation.landscape) {
       if (chatViewModel.currentChat.value != null) {
         routerDelegate.pushPage(name: ChatPageScreen.route);
       } else if (reportViewModel.currentReport != null) {

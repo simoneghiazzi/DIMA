@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/Model/Chat/active_chat.dart';
-import 'package:sApport/Model/Chat/anonymous_chat.dart';
-import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/anonymous_chat_list_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chat_list_screen.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/Views/Diary/diary_screen.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';

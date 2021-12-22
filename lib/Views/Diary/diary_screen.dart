@@ -32,7 +32,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: SizerUtil.orientation == Orientation.portrait
+      body: MediaQuery.of(context).orientation == Orientation.portrait
           ? DiaryBody()
           : Consumer<DiaryViewModel>(
               builder: (context, diaryViewModel, child) {

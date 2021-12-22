@@ -114,7 +114,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                       child: FloatingActionButton(
                         onPressed: () {
                           diaryViewModel!.setCurrentDiaryPage(DiaryPage());
-                          if (SizerUtil.orientation == Orientation.portrait) {
+                          if (MediaQuery.of(context).orientation == Orientation.portrait) {
                             routerDelegate.pushPage(name: DiaryPageScreen.route);
                           }
                         },
@@ -140,7 +140,7 @@ class _DiaryBodyState extends State<DiaryBody> {
     if (details.appointments != null) {
       if (details.appointments!.isNotEmpty && details.targetElement == CalendarElement.appointment) {
         diaryViewModel!.setCurrentDiaryPage(details.appointments![0]);
-        if (SizerUtil.orientation == Orientation.portrait) {
+        if (MediaQuery.of(context).orientation == Orientation.portrait) {
           routerDelegate.pushPage(name: DiaryPageScreen.route);
         }
       }

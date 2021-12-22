@@ -32,7 +32,7 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: SizerUtil.orientation == Orientation.portrait
+      body: MediaQuery.of(context).orientation == Orientation.portrait
           ? ReportsListBody()
           : VerticalSplitView(
               left: ReportsListBody(),

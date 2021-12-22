@@ -13,13 +13,11 @@ import 'package:sApport/Views/Login/forgot_password_screen.dart';
 import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
 import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
 import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chat_list_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/PendingChatsList/pending_chat_list_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/anonymous_chat_list_screen.dart';
 
 class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<RouteSettings>> {
   // Stack of pages
@@ -107,14 +105,8 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
       case ChatPageScreen.route:
         child = ChatPageScreen();
         break;
-      case ExpertChatsListScreen.route:
-        child = ExpertChatsListScreen();
-        break;
-      case PendingChatListScreen.route:
-        child = PendingChatListScreen();
-        break;
-      case AnonymousChatListScreen.route:
-        child = AnonymousChatListScreen();
+      case ChatListScreen.route:
+        child = ChatListScreen(chatListBody: routeSettings.arguments as Widget);
         break;
       case DiaryScreen.route:
         child = DiaryScreen();

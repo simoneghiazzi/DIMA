@@ -44,9 +44,7 @@ class _MessageListItemState extends State<MessageListItem> {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
 
     // Calculate the width of the container for the message
-    _containerWidth = calcTextSize(widget.messageItem.content, TextStyle(fontFamily: "UbuntuCondensed")).width;
-    // Apply a constant value to the container width based on the orientatio of the device
-    _containerWidth += SizerUtil.orientation == Orientation.portrait ? 18.w : 10.w;
+    _containerWidth = calcTextSize(widget.messageItem.content, TextStyle(fontFamily: "UbuntuCondensed")).width + 19.w;
 
     super.initState();
   }
@@ -102,7 +100,7 @@ class _MessageListItemState extends State<MessageListItem> {
   /// It also sets the container constraints based on the orientation of the device.
   Widget buildMessageBubble(bool peerMessage) {
     return Container(
-      constraints: BoxConstraints(maxWidth: SizerUtil.orientation == Orientation.portrait ? 66.7.w : 40.w),
+      constraints: BoxConstraints(maxWidth: 70.w),
       width: _containerWidth,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -123,7 +121,7 @@ class _MessageListItemState extends State<MessageListItem> {
             padding: EdgeInsets.only(right: 8, bottom: 5),
             child: Text(
               Date.DateFormat("kk:mm").format(widget.messageItem.timestamp),
-              style: TextStyle(color: kPrimaryGreyColor, fontSize: 10.5, fontStyle: FontStyle.italic),
+              style: TextStyle(color: kPrimaryGreyColor, fontSize: 11, fontStyle: FontStyle.italic),
             ),
           ),
         ],

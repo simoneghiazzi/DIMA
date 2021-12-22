@@ -11,10 +11,10 @@
         android:label="sApport"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
-        <meta-data 
-          android:name="com.google.android.geo.API_KEY"
-          android:value="AIzaSyC0qoobHhQWbXbSVK_AalY6R7h3mf4rlkQ"
-        />
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBXlprVbsWSgH3tD-53m608jL0uaoZjH1o"/>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

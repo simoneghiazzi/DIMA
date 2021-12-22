@@ -1,4 +1,5 @@
-import 'package:sApport/Views/Chat/Expert/ActiveChatsList/active_chats_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/components/active_chats_list_body.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
@@ -24,10 +25,10 @@ class _ExpertHomePageScreenState extends State<ExpertHomePageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages = const [
-      ActiveChatsListScreen(),
+    final List<Widget> _pages = [
+      ChatListScreen(chatListBody: ActiveChatsListBody()),
       //Calendar(),
-      UserSettingsScreen()
+      const UserSettingsScreen()
     ];
     return WillPopScope(
         onWillPop: () async => false,

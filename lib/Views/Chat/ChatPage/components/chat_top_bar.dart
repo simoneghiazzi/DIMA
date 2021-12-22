@@ -64,7 +64,7 @@ class ChatTopBar extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     // If the orientation is portrait, show the back button
-                    if (SizerUtil.orientation == Orientation.portrait) ...[
+                    if (MediaQuery.of(context).orientation == Orientation.portrait) ...[
                       SizedBox(width: 1.w),
                       IconButton(
                         icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),

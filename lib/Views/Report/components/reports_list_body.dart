@@ -95,7 +95,7 @@ class _ReportsListBodyState extends State<ReportsListBody> {
           ]),
           onPressed: () {
             reportViewModel.setCurrentReport(report);
-            if (SizerUtil.orientation == Orientation.portrait) {
+            if (MediaQuery.of(context).orientation == Orientation.portrait) {
               routerDelegate.pushPage(name: ReportDetailsScreen.route);
             }
           },

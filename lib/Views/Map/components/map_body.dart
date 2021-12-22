@@ -170,11 +170,11 @@ class _MapBodyState extends State<MapBody> {
         controller: _customInfoWindowController,
         height: 15.h,
         width: Device.get().isTablet
-            ? (SizerUtil.orientation == Orientation.portrait)
+            ? (MediaQuery.of(context).orientation == Orientation.portrait)
                 ? 5.w
                 : 35.w
             : 65.w,
-        offset: (SizerUtil.orientation == Orientation.portrait) ? 10 : 30,
+        offset: (MediaQuery.of(context).orientation == Orientation.portrait) ? 10 : 30,
       ),
     ]);
   }
