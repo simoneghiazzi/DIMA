@@ -88,7 +88,7 @@ class _ChatListItemState extends State<ChatListItem> {
                       CircleAvatar(backgroundColor: Colors.transparent, radius: 25.0, child: Image.asset("assets/icons/logo.png", scale: 11))
                       :
                       // If the peer user is an Expert, show the network avatar with the user profile photo
-                      NetworkAvatar(img: widget.chatItem.peerUser!.data['profilePhoto'] as String?, radius: 25.0),
+                      NetworkAvatar(img: widget.chatItem.peerUser!.data['profilePhoto'].toString(), radius: 25.0),
                   SizedBox(width: 3.w),
                   // Profile info and lastMessage
                   Flexible(

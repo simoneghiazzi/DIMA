@@ -227,8 +227,9 @@ class FirestoreService {
     int? counter;
     doc.data() != null ? counter = doc.get("notReadMessages") + 1 : counter = 1;
 
-    // If the chat is a Request it means that it is new and so call increment conversation counter
-    if (chat is Request) {
+    // If the chat is a Request and the counter is 1 it means that it is a new chat and it is the first message,
+    // so call increment conversation counter
+    if (chat is Request && counter == 1) {
       _incrementConversationCounter(senderUser, chat, 1);
     }
     WriteBatch batch = FirebaseFirestore.instance.batch();

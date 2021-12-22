@@ -1,3 +1,4 @@
+import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,20 +29,11 @@ class ChatAcceptDenyInput extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              InkWell(
-                child: Container(
-                  constraints: BoxConstraints(maxWidth: 30.w, maxHeight: 20.h),
-                  padding: EdgeInsets.only(top: 8, bottom: 8, right: 10, left: 4),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), color: Colors.green),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(Icons.check, color: Colors.white, size: 25),
-                      SizedBox(width: 5),
-                      Text("Accept", style: TextStyle(fontSize: 12.5.sp, fontWeight: FontWeight.bold, color: Colors.white)),
-                    ],
-                  ),
-                ),
+              RoundedButton(
+                text: "Accept",
+                prefixIcon: Icon(Icons.check, color: Colors.white, size: 25),
+                color: Colors.green,
+                width: 35.w,
                 onTap: () {
                   chatViewModel.acceptPendingChat();
                   if (MediaQuery.of(context).orientation == Orientation.portrait) {
@@ -55,26 +47,17 @@ class ChatAcceptDenyInput extends StatelessWidget {
                 },
               ),
               SizedBox(width: 15.w),
-              InkWell(
-                child: Container(
-                  constraints: BoxConstraints(maxWidth: 30.w, maxHeight: 20.h),
-                  padding: EdgeInsets.only(top: 8, bottom: 8, right: 10, left: 4),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), color: Colors.red),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(Icons.delete, color: Colors.white, size: 25),
-                      SizedBox(width: 5),
-                      Text("Refuse", style: TextStyle(fontSize: 12.5.sp, fontWeight: FontWeight.bold, color: Colors.white)),
-                    ],
-                  ),
-                ),
+              RoundedButton(
+                text: "Deny",
+                prefixIcon: Icon(Icons.delete, color: Colors.white, size: 25),
+                color: Colors.red,
+                width: 35.w,
                 onTap: () {
                   chatViewModel.denyPendingChat();
                   // If deny, returns to the PendingChatListScreen
                   routerDelegate.pop();
                 },
-              )
+              ),
             ],
           ),
         ),

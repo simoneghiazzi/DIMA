@@ -64,7 +64,8 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TopBar(
-              text: title,
+              text: title!,
+              backIcon: Icons.close_rounded,
               back: resetDiaryPage,
               buttons: [
                 if (_diaryPageItem!.id.isEmpty && !modifiable && Utils.isToday(_diaryPageItem!.dateTime!))

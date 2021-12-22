@@ -36,10 +36,10 @@ class ChatViewModel extends ChangeNotifier {
   ValueNotifier<Chat?> _currentChat = ValueNotifier(null);
 
   // List of the chats of the user saved as Linked Hash Map
-  var _anonymousChats = ValueNotifier<LinkedHashMap<String, AnonymousChat>>(LinkedHashMap<String, AnonymousChat>());
-  var _pendingChats = ValueNotifier<LinkedHashMap<String, PendingChat>>(LinkedHashMap<String, PendingChat>());
-  var _expertsChats = ValueNotifier<LinkedHashMap<String, ExpertChat>>(LinkedHashMap<String, ExpertChat>());
-  var _activeChats = ValueNotifier<LinkedHashMap<String, ActiveChat>>(LinkedHashMap<String, ActiveChat>());
+  ValueNotifier<LinkedHashMap<String, AnonymousChat>>? _anonymousChats;
+  ValueNotifier<LinkedHashMap<String, PendingChat>>? _pendingChats;
+  ValueNotifier<LinkedHashMap<String, ExpertChat>>? _expertsChats;
+  ValueNotifier<LinkedHashMap<String, ActiveChat>>? _activeChats;
 
   /// Update the ChattingWith field of the [senderUser] inside the DB.
   ///
@@ -98,6 +98,7 @@ class ChatViewModel extends ChangeNotifier {
   /// Finally it calls the [notifyListeners] on the [_anonymousChats] value notifier to notify the changes
   /// to all the listeners.
   void loadAnonymousChats() async {
+    _anonymousChats = ValueNotifier<LinkedHashMap<String, AnonymousChat>>(LinkedHashMap<String, AnonymousChat>());
     _anonymousChatsSubscriber = _firestoreService.getChatsFromDB(_userService.loggedUser!, AnonymousChat.COLLECTION).listen(
       (snapshot) async {
         for (var docChange in snapshot.docChanges) {
@@ -106,14 +107,14 @@ class ChatViewModel extends ChangeNotifier {
           if (docChange.oldIndex == -1) {
             getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {
               chat.peerUser!.setFromDocument(value.docs[0]);
-              _anonymousChats.value[docChange.doc.id] = chat;
-              _anonymousChats.notifyListeners();
+              _anonymousChats!.value[docChange.doc.id] = chat;
+              _anonymousChats!.notifyListeners();
             });
           } else {
             // Otherwise, copy the peer user info from the old chat
-            chat.peerUser = _anonymousChats.value.remove(docChange.doc.id)!.peerUser;
-            _anonymousChats.value[docChange.doc.id] = chat;
-            _anonymousChats.notifyListeners();
+            chat.peerUser = _anonymousChats!.value.remove(docChange.doc.id)!.peerUser;
+            _anonymousChats!.value[docChange.doc.id] = chat;
+            _anonymousChats!.notifyListeners();
           }
         }
       },
@@ -129,6 +130,7 @@ class ChatViewModel extends ChangeNotifier {
   /// Finally it calls the [notifyListeners] on the [_pendingChats] value notifier to notify the changes
   /// to all the listeners.
   void loadPendingChats() async {
+    _pendingChats = ValueNotifier<LinkedHashMap<String, PendingChat>>(LinkedHashMap<String, PendingChat>());
     _pendingChatsSubscriber = _firestoreService.getChatsFromDB(_userService.loggedUser!, PendingChat.COLLECTION).listen(
       (snapshot) async {
         for (var docChange in snapshot.docChanges) {
@@ -137,8 +139,8 @@ class ChatViewModel extends ChangeNotifier {
             var chat = PendingChat.fromDocument(docChange.doc);
             getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {
               chat.peerUser!.setFromDocument(value.docs[0]);
-              _pendingChats.value[docChange.doc.id] = chat;
-              _pendingChats.notifyListeners();
+              _pendingChats!.value[docChange.doc.id] = chat;
+              _pendingChats!.notifyListeners();
             });
           }
         }
@@ -155,6 +157,7 @@ class ChatViewModel extends ChangeNotifier {
   /// Finally it calls the [notifyListeners] on the [_expertChats] value notifier to notify the changes
   /// to all the listeners.
   void loadExpertsChats() async {
+    _expertsChats = ValueNotifier<LinkedHashMap<String, ExpertChat>>(LinkedHashMap<String, ExpertChat>());
     _expertsChatsSubscriber = _firestoreService.getChatsFromDB(_userService.loggedUser!, ExpertChat.COLLECTION).listen(
       (snapshot) async {
         for (var docChange in snapshot.docChanges) {
@@ -163,14 +166,14 @@ class ChatViewModel extends ChangeNotifier {
           if (docChange.oldIndex == -1) {
             getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {
               chat.peerUser!.setFromDocument(value.docs[0]);
-              _expertsChats.value[docChange.doc.id] = chat;
-              _expertsChats.notifyListeners();
+              _expertsChats!.value[docChange.doc.id] = chat;
+              _expertsChats!.notifyListeners();
             });
           } else {
             // Otherwise, copy the peer user info from the old chat
-            chat.peerUser = _expertsChats.value.remove(docChange.doc.id)!.peerUser;
-            _expertsChats.value[docChange.doc.id] = chat;
-            _expertsChats.notifyListeners();
+            chat.peerUser = _expertsChats!.value.remove(docChange.doc.id)!.peerUser;
+            _expertsChats!.value[docChange.doc.id] = chat;
+            _expertsChats!.notifyListeners();
           }
         }
       },
@@ -186,6 +189,7 @@ class ChatViewModel extends ChangeNotifier {
   /// Finally it calls the [notifyListeners] on the [_activeChats] value notifier to notify the changes
   /// to all the listeners.
   void loadActiveChats() async {
+    _activeChats = ValueNotifier<LinkedHashMap<String, ActiveChat>>(LinkedHashMap<String, ActiveChat>());
     _activeChatsSubscriber = _firestoreService.getChatsFromDB(_userService.loggedUser!, ActiveChat.COLLECTION).listen(
       (snapshot) async {
         for (var docChange in snapshot.docChanges) {
@@ -194,14 +198,14 @@ class ChatViewModel extends ChangeNotifier {
           if (docChange.oldIndex == -1) {
             getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {
               chat.peerUser!.setFromDocument(value.docs[0]);
-              _activeChats.value[docChange.doc.id] = chat;
-              _activeChats.notifyListeners();
+              _activeChats!.value[docChange.doc.id] = chat;
+              _activeChats!.notifyListeners();
             });
           } else {
             // Otherwise, copy the peer user info from the old chat
-            chat.peerUser = _activeChats.value.remove(docChange.doc.id)!.peerUser;
-            _activeChats.value[docChange.doc.id] = chat;
-            _activeChats.notifyListeners();
+            chat.peerUser = _activeChats!.value.remove(docChange.doc.id)!.peerUser;
+            _activeChats!.value[docChange.doc.id] = chat;
+            _activeChats!.notifyListeners();
           }
         }
       },
@@ -233,21 +237,21 @@ class ChatViewModel extends ChangeNotifier {
 
   /// Accept a new pending chat request.
   void acceptPendingChat() {
-    _pendingChats.value.remove(_currentChat.value!.peerUser!.id);
+    _pendingChats!.value.remove(_currentChat.value!.peerUser!.id);
     _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser!, _currentChat.value!);
     setCurrentChat(AnonymousChat(peerUser: _currentChat.value!.peerUser as BaseUser));
-    _pendingChats.notifyListeners();
+    _pendingChats!.notifyListeners();
   }
 
   /// Deny a pending chat.
   ///
   /// It deletes the chat between the 2 users and all the messages.
   void denyPendingChat() {
-    _pendingChats.value.remove(_currentChat.value!.peerUser!.id);
+    _pendingChats!.value.remove(_currentChat.value!.peerUser!.id);
     _firestoreService.removeChatFromDB(_userService.loggedUser!, _currentChat.value!);
     _firestoreService.removeMessagesFromDB(Utils.pairChatId(_userService.loggedUser!.id, _currentChat.value!.peerUser!.id));
     resetCurrentChat();
-    _pendingChats.notifyListeners();
+    _pendingChats!.notifyListeners();
   }
 
   /// Set the [chat] as the [_currentChat].
@@ -265,15 +269,19 @@ class ChatViewModel extends ChangeNotifier {
     print("Current chat resetted");
   }
 
-  void resetViewModel() {
+  void closeListeners() {
     _anonymousChatsSubscriber?.cancel();
     _pendingChatsSubscriber?.cancel();
     _expertsChatsSubscriber?.cancel();
     _activeChatsSubscriber?.cancel();
-    _anonymousChats = ValueNotifier<LinkedHashMap<String, AnonymousChat>>(LinkedHashMap<String, AnonymousChat>());
-    _pendingChats = ValueNotifier<LinkedHashMap<String, PendingChat>>(LinkedHashMap<String, PendingChat>());
-    _expertsChats = ValueNotifier<LinkedHashMap<String, ExpertChat>>(LinkedHashMap<String, ExpertChat>());
-    _activeChats = ValueNotifier<LinkedHashMap<String, ActiveChat>>(LinkedHashMap<String, ActiveChat>());
+    _anonymousChats?.value.clear();
+    _anonymousChats?.dispose();
+    _pendingChats?.value.clear();
+    _pendingChats?.dispose();
+    _expertsChats?.value.clear();
+    _expertsChats?.dispose();
+    _activeChats?.value.clear();
+    _activeChats?.dispose();
     _currentChat = ValueNotifier(null);
   }
 
@@ -281,16 +289,16 @@ class ChatViewModel extends ChangeNotifier {
   ValueNotifier<Chat?> get currentChat => _currentChat;
 
   /// Get the [_anonymousChats] value notifier.
-  ValueNotifier<LinkedHashMap<String, Chat>> get anonymousChats => _anonymousChats;
+  ValueNotifier<LinkedHashMap<String, Chat>>? get anonymousChats => _anonymousChats;
 
   /// Get the [_pendingChats] value notifier.
-  ValueNotifier<LinkedHashMap<String, Chat>> get pendingChats => _pendingChats;
+  ValueNotifier<LinkedHashMap<String, Chat>>? get pendingChats => _pendingChats;
 
   /// Get the [_expertsChats] value notifier.
-  ValueNotifier<LinkedHashMap<String, Chat>> get expertChats => _expertsChats;
+  ValueNotifier<LinkedHashMap<String, Chat>>? get expertChats => _expertsChats;
 
   /// Get the [_activeChats] value notifier.
-  ValueNotifier<LinkedHashMap<String, Chat>> get activeChats => _activeChats;
+  ValueNotifier<LinkedHashMap<String, Chat>>? get activeChats => _activeChats;
 
   /// Stream of the new random user controller.
   Stream<bool> get newRandomUser => _newRandomUserCtrl.stream;

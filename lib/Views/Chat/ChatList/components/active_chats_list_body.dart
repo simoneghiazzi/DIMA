@@ -30,7 +30,7 @@ class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Header(),
-          ChatListConstructor(valueNotifier: chatViewModel.activeChats),
+          ChatListConstructor(valueNotifier: chatViewModel.activeChats!),
         ],
       ),
     );

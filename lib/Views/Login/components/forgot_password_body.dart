@@ -44,7 +44,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                 stream: authViewModel.loginForm.errorEmailText,
                 builder: (context, snapshot) {
                   return RoundedInputField(
-                    hintText: "Your Email",
+                    hintText: "Email",
                     controller: authViewModel.emailTextCtrl,
                     errorText: snapshot.data,
                   );
@@ -60,7 +60,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                 builder: (context, AsyncSnapshot snapshot) {
                   return RoundedButton(
                     text: "Send link",
-                    press: () async {
+                    onTap: () async {
                       _errorTextController.add(null);
                       FocusScope.of(context).unfocus();
                       if (await authViewModel.hasPasswordAuthentication(authViewModel.emailTextCtrl.text)) {

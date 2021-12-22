@@ -161,7 +161,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                     ),
                                     RoundedButton(
                                       text: "SUBMIT",
-                                      press: () {
+                                      onTap: () {
                                         FocusScope.of(context).unfocus();
                                         reportForm.submit();
                                       },

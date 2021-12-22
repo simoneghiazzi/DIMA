@@ -56,53 +56,48 @@ class ChatTopBar extends StatelessWidget {
         child: Container(
           height: 10.h,
           decoration: BoxDecoration(color: kPrimaryColor),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Row(
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  // If the orientation is portrait, show the back button
-                  if (MediaQuery.of(context).orientation == Orientation.portrait) ...[
-                    SizedBox(width: 1.w),
-                    IconButton(
-                      icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-                      onPressed: () async {
-                        FocusScope.of(context).unfocus();
-                        chatViewModel.resetChattingWith();
-                        chatViewModel.resetCurrentChat();
-                        routerDelegate.pop();
-                      },
-                    ),
-                  ] else
-                    SizedBox(width: 4.w),
-                  Flexible(
-                    child: GestureDetector(
-                      child: Row(
-                        children: [
-                          // Show the circle avatar if it is not null, else show the network avatar
-                          if (circleAvatar != null) ...[
-                            circleAvatar!,
-                            SizedBox(width: 3.w),
-                          ] else ...[
-                            networkAvatar!,
-                            SizedBox(width: 3.w),
-                          ],
-                          Text(
-                            text,
-                            style: TextStyle(fontSize: 18.5.sp, fontWeight: FontWeight.bold, color: Colors.white),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+              // If the orientation is portrait, show the back button
+              if (MediaQuery.of(context).orientation == Orientation.portrait) ...[
+                SizedBox(width: 1.w),
+                IconButton(
+                  icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                  onPressed: () async {
+                    FocusScope.of(context).unfocus();
+                    chatViewModel.resetChattingWith();
+                    chatViewModel.resetCurrentChat();
+                    routerDelegate.pop();
+                  },
+                ),
+              ] else
+                SizedBox(width: 4.w),
+              Flexible(
+                child: GestureDetector(
+                  child: Row(
+                    children: [
+                      // Show the circle avatar if it is not null, else show the network avatar
+                      if (circleAvatar != null) ...[
+                        circleAvatar!,
+                        SizedBox(width: 3.w),
+                      ] else ...[
+                        networkAvatar!,
+                        SizedBox(width: 3.w),
+                      ],
+                      Text(
+                        text,
+                        style: TextStyle(fontSize: 18.5.sp, fontWeight: FontWeight.bold, color: Colors.white),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      onTap: () {
-                        // If the network avatar is not null (the user is an Expert) push the EpertProfileScreen
-                        if (networkAvatar != null) {
-                          routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: chatViewModel.currentChat.value!.peerUser as Expert);
-                        }
-                      },
-                    ),
+                    ],
                   ),
-                ],
+                  onTap: () {
+                    // If the network avatar is not null (the user is an Expert) push the EpertProfileScreen
+                    if (networkAvatar != null) {
+                      routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: chatViewModel.currentChat.value!.peerUser as Expert);
+                    }
+                  },
+                ),
               ),
             ],
           ),

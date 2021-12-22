@@ -1,18 +1,44 @@
 import 'package:flutter/material.dart';
 
+/// Vertical split view used for the landscape visualization in tablet devices.
+///
+/// It divides the screen into 2 parts where it shows the [left] widget
+/// and the [rigth] widget.
+///
+/// The [ratio] indicates the portion of the screen that the left part will take:
+/// it must be between `0` and `1`.
+///
+/// The [dividerWidth] and [dividerColor] are properties of the line that is drawn
+/// between the two halves of the screen and the [resizable] flag indicates if the user
+/// can resize the ratio between the 2 parts.
 class VerticalSplitView extends StatefulWidget {
   final Widget left;
   final Widget right;
   final double ratio;
   final bool resizable;
   final double dividerWidth;
-  final Color? dividerColor;
+  final Color dividerColor;
 
+  /// Vertical split view used for the landscape visualization in tablet devices.
+  ///
+  /// It divides the screen into 2 parts where it shows the [left] widget
+  /// and the [rigth] widget.
+  ///
+  /// The [ratio] indicates the portion of the screen that the left part will take:
+  /// it must be between `0` and `1`.
+  ///
+  /// The [dividerWidth] and [dividerColor] are properties of the line that is drawn
+  /// between the two halves of the screen and the [resizable] flag indicates if the user
+  /// can resize the ratio between the 2 parts.
   const VerticalSplitView(
-      {Key? key, required this.left, required this.right, this.ratio = 0.5, this.resizable = false, this.dividerWidth = 0, this.dividerColor})
-      : assert(left != null),
-        assert(right != null),
-        assert(ratio >= 0),
+      {Key? key,
+      required this.left,
+      required this.right,
+      this.ratio = 0.5,
+      this.resizable = false,
+      this.dividerWidth = 0,
+      this.dividerColor = Colors.black})
+      : assert(ratio >= 0),
         assert(ratio <= 1),
         super(key: key);
 
@@ -21,13 +47,8 @@ class VerticalSplitView extends StatefulWidget {
 }
 
 class _VerticalSplitViewState extends State<VerticalSplitView> {
-  //from 0-1
   late double _ratio;
   double? _maxWidth;
-
-  get _width1 => _ratio * _maxWidth!;
-
-  get _width2 => (1 - _ratio) * _maxWidth!;
 
   @override
   void initState() {
@@ -39,21 +60,16 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
   Widget build(BuildContext context) {
     _ratio = widget.ratio;
     return LayoutBuilder(builder: (context, BoxConstraints constraints) {
-      assert(_ratio <= 1);
-      assert(_ratio >= 0);
-      if (_maxWidth == null) _maxWidth = constraints.maxWidth - widget.dividerWidth;
-      if (_maxWidth != constraints.maxWidth) {
+      if (_ratio != 0 && _ratio != 1) {
         _maxWidth = constraints.maxWidth - widget.dividerWidth;
+      } else {
+        _maxWidth = constraints.maxWidth;
       }
-
       return SizedBox(
         width: constraints.maxWidth,
         child: Row(
           children: <Widget>[
-            SizedBox(
-              width: _width1,
-              child: widget.left,
-            ),
+            SizedBox(width: _width1, child: widget.left),
             if (widget.resizable) ...[
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -74,22 +90,21 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
                   });
                 },
               ),
-            ] else ...[
+            ] else if (_ratio != 0 && _ratio != 1) ...[
               Container(
                 width: widget.dividerWidth,
                 height: constraints.maxHeight,
                 color: widget.dividerColor,
               )
             ],
-            Expanded(
-              child: SizedBox(
-                width: _width2,
-                child: widget.right,
-              ),
-            ),
+            Expanded(child: SizedBox(width: _width2, child: widget.right)),
           ],
         ),
       );
     });
   }
+
+  get _width1 => _ratio * _maxWidth!;
+
+  get _width2 => (1 - _ratio) * _maxWidth!;
 }

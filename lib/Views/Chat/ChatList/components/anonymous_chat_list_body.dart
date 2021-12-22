@@ -56,7 +56,7 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
               buttons: [
                 // Listener for new pending chats
                 ValueListenableBuilder(
-                  valueListenable: chatViewModel.pendingChats,
+                  valueListenable: chatViewModel.pendingChats!,
                   builder: (context, LinkedHashMap<String, Chat> pendingChats, child) {
                     if (pendingChats.length != 0) {
                       // If there are pending chats, show the "Requests" button
@@ -79,7 +79,7 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
                 ),
               ],
             ),
-            ChatListConstructor(valueNotifier: chatViewModel.anonymousChats),
+            ChatListConstructor(valueNotifier: chatViewModel.anonymousChats!),
           ],
         ),
         // "+" button used to look for new random users

@@ -55,7 +55,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                 child: Container(
                     child: userViewModel.loggedUser!.data["profilePhoto"] != null
                         ? NetworkAvatar(
-                            img: userViewModel.loggedUser!.data["profilePhoto"] as String?,
+                            img: userViewModel.loggedUser!.data["profilePhoto"] as String,
                             radius: 50.0,
                           )
                         : CircleAvatar(
