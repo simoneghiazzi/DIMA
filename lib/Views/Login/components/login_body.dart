@@ -4,7 +4,6 @@ import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Login/forgot_password_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
-import 'package:sApport/Views/components/forgot_password.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
@@ -60,12 +59,16 @@ class _LoginBodyState extends State<LoginBody> {
               controller: authViewModel.pswTextCtrl,
             ),
             SizedBox(height: 1.h),
-            ForgotPassword(
-              press: () {
+            GestureDetector(
+              onTap: () {
                 FocusScope.of(context).unfocus();
                 authViewModel.clearControllers();
                 routerDelegate.pushPage(name: ForgotPasswordScreen.route);
               },
+              child: Text(
+                "Forgot Password?",
+                style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold),
+              ),
             ),
             SizedBox(height: 4.h),
             StreamBuilder(
@@ -73,7 +76,7 @@ class _LoginBodyState extends State<LoginBody> {
                 builder: (context, AsyncSnapshot snapshot) {
                   return RoundedButton(
                     text: "LOGIN",
-                    press: () {
+                    onTap: () {
                       FocusScope.of(context).unfocus();
                       LoadingDialog.show(context);
                       authViewModel.logIn();

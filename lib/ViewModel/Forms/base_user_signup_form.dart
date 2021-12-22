@@ -1,6 +1,7 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/DBItems/user.dart';
+import 'package:sApport/ViewModel/Forms/field_bloc_validators.dart';
 
 class BaseUserSignUpForm extends FormBloc<String, String> {
   String? email;
@@ -23,7 +24,7 @@ class BaseUserSignUpForm extends FormBloc<String, String> {
   /// Define the birthdate field bloc and add the required and underage validators
   final birthDate = InputFieldBloc<DateTime, Object>(validators: [
     FieldBlocValidators.required,
-    FieldBlocValidators.underage,
+    BlocValidators.underage,
   ], initialValue: DateTime.now());
 
   /// Get the user from the data of the signup form.

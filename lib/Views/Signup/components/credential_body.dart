@@ -55,7 +55,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                 stream: authViewModel.loginForm.errorEmailText,
                 builder: (context, snapshot) {
                   return RoundedInputField(
-                    hintText: "Your Email",
+                    hintText: "Email",
                     controller: authViewModel.emailTextCtrl,
                     errorText: snapshot.data,
                   );
@@ -75,7 +75,7 @@ class _CredentialBodyState extends State<CredentialBody> {
               builder: (context, AsyncSnapshot snapshot) {
                 return RoundedButton(
                   text: "SIGN UP",
-                  press: () async {
+                  onTap: () async {
                     FocusScope.of(context).unfocus();
                     LoadingDialog.show(context);
                     userViewModel.loggedUser!.email = authViewModel.emailTextCtrl.text;

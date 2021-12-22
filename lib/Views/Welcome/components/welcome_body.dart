@@ -67,14 +67,14 @@ class _WelcomeBodyState extends State<WelcomeBody> {
             ),
             SizedBox(height: 5.h),
             RoundedButton(
-              press: () {
+              onTap: () {
                 routerDelegate.pushPage(name: LoginScreen.route);
               },
               text: "LOGIN",
             ),
             SizedBox(height: 2.h),
             RoundedButton(
-              press: () {
+              onTap: () {
                 routerDelegate.pushPage(name: BaseUsersSignUpScreen.route);
               },
               text: "SIGNUP",
@@ -152,7 +152,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
         }
       } else {
         // Called on sign out
-        chatViewModel.resetViewModel();
+        chatViewModel.closeListeners();
         routerDelegate.replaceAll(name: WelcomeScreen.route);
       }
     });

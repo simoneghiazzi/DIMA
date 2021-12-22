@@ -1,19 +1,19 @@
 import 'dart:io';
+import 'package:sizer/sizer.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/Forms/expert_signup_form.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:sApport/constants.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Signup/components/background.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
-import 'package:sApport/constants.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:sizer/sizer.dart';
+import 'package:sApport/ViewModel/Forms/expert_signup_form.dart';
+import 'package:sApport/Views/Signup/components/background.dart';
 
 class ExpertsInfoBody extends StatefulWidget {
   @override
@@ -21,12 +21,20 @@ class ExpertsInfoBody extends StatefulWidget {
 }
 
 class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
+  // View Models
   late UserViewModel userViewModel;
-  late ExpertSignUpForm expertSignUpForm;
+
+  // Router Delegate
   late AppRouterDelegate routerDelegate;
-  bool nextEnabled = false;
+
+  // Alerts
   late Alert errorAlert;
-  late Alert addressConfirmationAlert;
+  Alert? addressConfirmationAlert;
+
+  // Expert Form
+  ExpertSignUpForm expertSignUpForm = ExpertSignUpForm();
+
+  bool nextEnabled = false;
 
   @override
   void initState() {
@@ -93,10 +101,9 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
             Container(
               constraints: BoxConstraints(maxWidth: 500),
               child: BlocProvider(
-                create: (context) => ExpertSignUpForm(),
+                create: (context) => expertSignUpForm,
                 child: Builder(
                   builder: (context) {
-                    expertSignUpForm = BlocProvider.of<ExpertSignUpForm>(context, listen: false);
                     return Theme(
                         data: Theme.of(context).copyWith(
                           primaryColor: kPrimaryColor,
@@ -113,7 +120,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                           onSuccess: (context, state) {
                             LoadingDialog.hide(context);
                             addressConfirmationAlert = createAddressConfirmationAlert();
-                            addressConfirmationAlert.show();
+                            addressConfirmationAlert!.show();
                           },
                           onFailure: (context, state) {
                             LoadingDialog.hide(context);
@@ -247,7 +254,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
             SizedBox(height: 4.h),
             RoundedButton(
               text: "NEXT",
-              press: () {
+              onTap: () {
                 FocusScope.of(context).unfocus();
                 expertSignUpForm.submit();
               },
@@ -332,7 +339,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
           ),
           onPressed: () {
             userViewModel.createUser(expertSignUpForm);
-            addressConfirmationAlert.dismiss();
+            addressConfirmationAlert!.dismiss();
             routerDelegate.pushPage(name: CredentialScreen.route);
           },
           color: Colors.transparent,
@@ -343,7 +350,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
             style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           onPressed: () {
-            addressConfirmationAlert.dismiss();
+            addressConfirmationAlert!.dismiss();
             LoadingDialog.hide(context);
           },
           color: Colors.transparent,
