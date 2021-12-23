@@ -1,6 +1,6 @@
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
-import 'package:sApport/ViewModel/Forms/report_form.dart';
+import 'package:sApport/ViewModel/Forms/Report/report_form.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/top_bar.dart';

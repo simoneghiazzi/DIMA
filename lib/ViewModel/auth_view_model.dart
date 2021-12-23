@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'package:get_it/get_it.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Firebase;
 import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
-import 'package:sApport/ViewModel/Forms/auth_form.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/notification_service.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
@@ -15,34 +13,19 @@ class AuthViewModel {
   final FirestoreService _firestoreService = GetIt.I();
   final NotificationService _notificationService = NotificationService();
 
-  // Text Controllers
-  final TextEditingController emailTextCtrl = TextEditingController();
-  final TextEditingController pswTextCtrl = TextEditingController();
-  final TextEditingController repeatPswTextCtrl = TextEditingController();
-
   // Stream Controllers
   var _isUserLoggedCtrl = StreamController<bool>.broadcast();
   var _isUserCreatedCtrl = StreamController<bool>.broadcast();
   var _authMessageCtrl = StreamController<String?>.broadcast();
-
-  // Login Form
-  final LoginForm loginForm = LoginForm();
-
-  AuthViewModel() {
-    // Register the listeners for the input text field
-    emailTextCtrl.addListener(() => loginForm.email.add(emailTextCtrl.text));
-    pswTextCtrl.addListener(() => loginForm.psw.add(pswTextCtrl.text));
-    repeatPswTextCtrl.addListener(() => loginForm.repeatPsw.add(repeatPswTextCtrl.text));
-  }
 
   /// Log the user in with email and password.
   ///
   /// If the login process is successful, it adds the value to the [isUserLogged] stream controller.
   ///
   /// In case the login is **not successful**, it adds the error message to the [authMessage] stream controller.
-  Future<void> logIn() async {
+  Future<void> logIn(String email, String password) async {
     try {
-      await _firebaseAuthService.signInWithEmailAndPassword(emailTextCtrl.text, pswTextCtrl.text);
+      await _firebaseAuthService.signInWithEmailAndPassword(email, password);
       if (_firebaseAuthService.isUserEmailVerified()) {
         _authMessageCtrl.add("");
         _isUserLoggedCtrl.add(true);
@@ -64,9 +47,9 @@ class AuthViewModel {
   /// It adds the result of the signup process to the [isUserCreated] stream controller.
   ///
   /// In case the login is **not successful**, it adds the error message to the [authMessage] stream controller.
-  Future<void> signUpUser(User newUser) async {
+  Future<void> signUpUser(String email, String password, User newUser) async {
     try {
-      await _firebaseAuthService.createUserWithEmailAndPassword(emailTextCtrl.text, pswTextCtrl.text);
+      await _firebaseAuthService.createUserWithEmailAndPassword(email, password);
       newUser.id = _firebaseAuthService.currentUser!.uid;
       _firestoreService.addUserIntoDB(newUser);
       _authMessageCtrl.add("");
@@ -178,30 +161,10 @@ class AuthViewModel {
     return false;
   }
 
-  /// Get the data from the text controllers and add them to the login form sinks.
-  void getData() {
-    if (emailTextCtrl.text.isNotEmpty) {
-      loginForm.email.add(emailTextCtrl.text);
-    }
-    if (pswTextCtrl.text.isNotEmpty) {
-      loginForm.psw.add(emailTextCtrl.text);
-    }
-  }
-
   /// Log out the user from the app, updates the [isUserLogged] stream controller and call [clearControllers].
   Future<void> logOut() async {
     _isUserLoggedCtrl.add(false);
     _firebaseAuthService.signOut();
-    clearControllers();
-  }
-
-  /// Clear all the text and stream controllers and reset the login form.
-  void clearControllers() {
-    emailTextCtrl.clear();
-    pswTextCtrl.clear();
-    repeatPswTextCtrl.clear();
-    _authMessageCtrl.add(null);
-    loginForm.resetControllers();
   }
 
   /// Register the notification service for the device of the [loggedUser].

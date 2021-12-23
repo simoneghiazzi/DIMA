@@ -31,17 +31,16 @@ class FirestoreService {
   ///
   /// It takes the [user] and based on the type it adds him/her to the list of experts or to the list
   /// of base users (in this case it also increments the collection counter).
-  Future<void> addUserIntoDB(User user) {
+  Future<void> addUserIntoDB(User user) async {
     var userReference = _firestore.collection(user.collection).doc(user.id);
-    // If the user is a base user, increment the base user counter
     if (user is BaseUser) {
+      // If the user is a base user, increment the base user counter
       _incrementBaseUsersCounter(1);
+    } else {
+      // Otherwise, update the profile photo into the FirebaseStorage
+      await uploadProfilePhoto(user as Expert);
     }
     return userReference.set(user.data).then((_) {
-      // If the user has a profile photo, update it into the FirebaseStorage
-      if (user.data["profilePhoto"] != null) {
-        uploadProfilePhoto(user, File(user.data["profilePhoto"] as String));
-      }
       print("User added");
     }).catchError((error) {
       print("Failed to add user: $error");
@@ -139,12 +138,13 @@ class FirestoreService {
     return null;
   }
 
-  /// Upload the [profilePhoto] of the [user] into the FirebaseStorage and add the url into the user doc in the DB
-  void uploadProfilePhoto(User user, File profilePhoto) {
-    var firebaseStorageRef = FirebaseStorage.instance.ref().child(user.id + "/profilePhoto");
-    UploadTask uploadTask = firebaseStorageRef.putFile(profilePhoto);
-    uploadTask.whenComplete(() async {
-      updateUserFieldIntoDB(user, "profilePhoto", await firebaseStorageRef.getDownloadURL());
+  /// Upload the [profilePhoto] of the [expert] into the FirebaseStorage and add the url into the user doc in the DB
+  Future<void> uploadProfilePhoto(Expert expert) async {
+    var firebaseStorageRef = FirebaseStorage.instance.ref().child(expert.id + "/profilePhoto");
+    UploadTask uploadTask = firebaseStorageRef.putFile(File(expert.profilePhoto));
+    await uploadTask.whenComplete(() async {
+      print("Profile Photo uploaded");
+      expert.profilePhoto = await firebaseStorageRef.getDownloadURL();
     });
   }
 

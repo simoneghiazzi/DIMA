@@ -6,8 +6,8 @@ import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class NoteDataSource extends CalendarDataSource {
-  NoteDataSource(List<DocumentSnapshot> docs, DiaryViewModel? diaryViewModel) {
+class DiaryPageDataSource extends CalendarDataSource {
+  DiaryPageDataSource(List<DocumentSnapshot> docs, DiaryViewModel? diaryViewModel) {
     List<DiaryPage> source = List.from([]);
     for (DocumentSnapshot doc in docs) {
       DiaryPage n = DiaryPage.fromDocument(doc);

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:sizer/sizer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,6 @@ import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
-import 'package:sizer/sizer.dart';
 
 Future<void> main() async {
   // Flutter initialization

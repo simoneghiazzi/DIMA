@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/Forms/Authentication/credential_form.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
@@ -9,8 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/Views/Login/components/background.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
-import 'package:sApport/Views/components/rounded_input_field.dart';
-import 'package:sApport/Views/components/rounded_password_field.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -35,7 +35,7 @@ class _CredentialBodyState extends State<CredentialBody> {
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     subscriber = subscribeToUserCreatedStream();
     BackButtonInterceptor.add(backButtonInterceptor);
-    WidgetsBinding.instance!.addPostFrameCallback((_) => authViewModel.getData());
+    //WidgetsBinding.instance!.addPostFrameCallback((_) => authViewModel.getData());
     super.initState();
   }
 
@@ -50,40 +50,86 @@ class _CredentialBodyState extends State<CredentialBody> {
               "sApport",
               style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
             ),
-            SizedBox(height: 2.h),
-            StreamBuilder<String>(
-                stream: authViewModel.loginForm.errorEmailText,
-                builder: (context, snapshot) {
-                  return RoundedInputField(
-                    hintText: "Email",
-                    controller: authViewModel.emailTextCtrl,
-                    errorText: snapshot.data,
-                  );
-                }),
-            RoundedPasswordField(
-              controller: authViewModel.pswTextCtrl,
-            ),
-            StreamBuilder<String>(
-              stream: authViewModel.loginForm.errorRepeatPasswordText,
-              builder: (context, snapshot) {
-                return RoundedPasswordField(controller: authViewModel.repeatPswTextCtrl, hintText: "Confirm Password", errorText: snapshot.data);
-              },
-            ),
-            SizedBox(height: 4.h),
-            StreamBuilder(
-              stream: authViewModel.loginForm.isSignUpEnabled,
-              builder: (context, AsyncSnapshot snapshot) {
-                return RoundedButton(
-                  text: "SIGN UP",
-                  onTap: () async {
-                    FocusScope.of(context).unfocus();
-                    LoadingDialog.show(context);
-                    userViewModel.loggedUser!.email = authViewModel.emailTextCtrl.text;
-                    authViewModel.signUpUser(userViewModel.loggedUser!);
-                  },
-                  enabled: snapshot.data ?? false,
-                );
-              },
+            Padding(
+              padding: EdgeInsets.only(left: 40, right: 40),
+              child: Container(
+                constraints: BoxConstraints(maxWidth: 500),
+                child: BlocProvider(
+                  create: (context) => CredentialForm(),
+                  child: Builder(
+                    builder: (context) {
+                      final credentialForm = BlocProvider.of<CredentialForm>(context, listen: false);
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          primaryColor: kPrimaryColor,
+                          inputDecorationTheme: InputDecorationTheme(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                          ),
+                        ),
+                        child: FormBlocListener<CredentialForm, String, String>(
+                          onSuccess: (context, state) {
+                            FocusScope.of(context).unfocus();
+                            LoadingDialog.show(context);
+                            userViewModel.loggedUser!.email = credentialForm.emailText.value;
+                            authViewModel.signUpUser(credentialForm.emailText.value, credentialForm.passwordText.value, userViewModel.loggedUser!);
+                          },
+                          child: Column(
+                            children: <Widget>[
+                              TextFieldBlocBuilder(
+                                textFieldBloc: credentialForm.emailText,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: kPrimaryLightColor.withAlpha(100),
+                                  labelText: "Email",
+                                  labelStyle: TextStyle(color: kPrimaryDarkColor),
+                                  prefixIcon: Icon(Icons.email, color: kPrimaryColor),
+                                ),
+                              ),
+                              TextFieldBlocBuilder(
+                                onChanged: (value) {
+                                  if (credentialForm.confirmPasswordText.value.isNotEmpty) {
+                                    credentialForm.confirmPasswordText.validate();
+                                  }
+                                },
+                                textFieldBloc: credentialForm.passwordText,
+                                suffixButton: SuffixButton.obscureText,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: kPrimaryLightColor.withAlpha(100),
+                                  labelText: "Password",
+                                  labelStyle: TextStyle(color: kPrimaryColor),
+                                  prefixIcon: Icon(Icons.lock, color: kPrimaryColor),
+                                ),
+                              ),
+                              TextFieldBlocBuilder(
+                                textFieldBloc: credentialForm.confirmPasswordText,
+                                suffixButton: SuffixButton.obscureText,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: kPrimaryLightColor.withAlpha(100),
+                                  labelText: "Confirm Password",
+                                  labelStyle: TextStyle(color: kPrimaryColor),
+                                  prefixIcon: Icon(Icons.lock, color: kPrimaryColor),
+                                ),
+                              ),
+                              SizedBox(height: 5.h),
+                              RoundedButton(
+                                onTap: () {
+                                  FocusScope.of(context).unfocus();
+                                  credentialForm.submit();
+                                },
+                                text: "SIGNUP",
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
             ),
             SizedBox(height: 5.h),
             StreamBuilder<String?>(
@@ -132,7 +178,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                 ],
               ),
               onTap: () {
-                authViewModel.clearControllers();
+                //authViewModel.clearControllers();
                 routerDelegate.replaceAllButNumber(1, routeSettingsList: [RouteSettings(name: LoginScreen.route)]);
               },
             ),
@@ -160,7 +206,7 @@ class _CredentialBodyState extends State<CredentialBody> {
   }
 
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    authViewModel.clearControllers();
+    //authViewModel.clearControllers();
     routerDelegate.pop();
     return true;
   }

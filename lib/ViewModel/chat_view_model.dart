@@ -275,14 +275,11 @@ class ChatViewModel extends ChangeNotifier {
     _expertsChatsSubscriber?.cancel();
     _activeChatsSubscriber?.cancel();
     _anonymousChats?.value.clear();
-    _anonymousChats?.dispose();
     _pendingChats?.value.clear();
-    _pendingChats?.dispose();
     _expertsChats?.value.clear();
-    _expertsChats?.dispose();
     _activeChats?.value.clear();
-    _activeChats?.dispose();
     _currentChat = ValueNotifier(null);
+    print("Chat listeners closed");
   }
 
   /// Get the [_currentChat] value notifier.

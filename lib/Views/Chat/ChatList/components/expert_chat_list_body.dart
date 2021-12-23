@@ -26,6 +26,7 @@ class _ExpertChatListBodyState extends State<ExpertChatListBody> {
   @override
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     super.initState();
   }
 

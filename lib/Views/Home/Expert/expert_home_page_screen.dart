@@ -1,3 +1,5 @@
+import 'package:provider/provider.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
 import 'package:sApport/Views/Chat/ChatList/components/active_chats_list_body.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
@@ -15,10 +17,17 @@ class ExpertHomePageScreen extends StatefulWidget {
 }
 
 class _ExpertHomePageScreenState extends State<ExpertHomePageScreen> {
+  // View Models
+  late ChatViewModel chatViewModel;
+
   int? _currentIndex;
 
   @override
   void initState() {
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+
+    chatViewModel.loadActiveChats();
+
     _currentIndex = widget.pageIndex ?? 0;
     super.initState();
   }

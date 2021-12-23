@@ -4,13 +4,6 @@ import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/ViewModel/Forms/field_bloc_validators.dart';
 
 class BaseUserSignUpForm extends FormBloc<String, String> {
-  String? email;
-
-  BaseUserSignUpForm() {
-    // Add the field blocs to the base user signup form
-    addFieldBlocs(fieldBlocs: [nameText, surnameText, birthDate]);
-  }
-
   /// Define the name text field bloc and add the required validator
   final nameText = TextFieldBloc(validators: [
     FieldBlocValidators.required,
@@ -22,10 +15,15 @@ class BaseUserSignUpForm extends FormBloc<String, String> {
   ]);
 
   /// Define the birthdate field bloc and add the required and underage validators
-  final birthDate = InputFieldBloc<DateTime, Object>(validators: [
+  final birthDate = InputFieldBloc<DateTime?, Object>(validators: [
     FieldBlocValidators.required,
     BlocValidators.underage,
-  ], initialValue: DateTime.now());
+  ], initialValue: null);
+
+  BaseUserSignUpForm() {
+    // Add the field blocs to the base user signup form
+    addFieldBlocs(fieldBlocs: [nameText, surnameText, birthDate]);
+  }
 
   /// Get the user from the data of the signup form.
   User get user {
@@ -33,7 +31,6 @@ class BaseUserSignUpForm extends FormBloc<String, String> {
       name: nameText.value,
       surname: surnameText.value,
       birthDate: birthDate.value,
-      email: email ?? "",
     );
   }
 
