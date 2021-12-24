@@ -3,7 +3,7 @@ import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Welcome/components/social_icon.dart';
+import 'package:sApport/Views/components/social_icon.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
 import 'package:sApport/constants.dart';
@@ -244,7 +244,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                               SocialIcon(
                                   iconSrc: "assets/icons/facebook.png",
-                                  press: () {
+                                  onTap: () {
                                     LoadingDialog.show(context);
                                     authViewModel.logInWithFacebook(link: true).then((value) {
                                       setState(() {});
@@ -252,7 +252,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                                   }),
                               SocialIcon(
                                   iconSrc: "assets/icons/google.png",
-                                  press: () {
+                                  onTap: () {
                                     LoadingDialog.show(context);
                                     authViewModel.logInWithGoogle(link: true).then((value) {
                                       setState(() {});

@@ -2,7 +2,7 @@ import 'package:sApport/Views/Login/components/background.dart';
 import 'package:sApport/Views/Welcome/components/welcome_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sApport/Views/Welcome/components/social_icon.dart';
+import 'package:sApport/Views/components/social_icon.dart';
 
 void main() {
   //FAI DEBUG RIGA 10 E RIGA 16 CHE SONO QUELLE TRA CUI VIENE ALZATA L'EXCEPTION
