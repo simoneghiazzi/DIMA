@@ -6,12 +6,10 @@ class DiaryPage extends DbItem {
 
   String title;
   String content;
-  DateTime? dateTime;
+  DateTime dateTime;
   bool favourite;
 
-  DiaryPage({String id = "", this.title = "", this.content = "", this.dateTime, this.favourite = false}) : super(COLLECTION, id: id) {
-    this.dateTime = dateTime ?? DateTime.now();
-  }
+  DiaryPage({String id = "", this.title = "", this.content = "", required this.dateTime, this.favourite = false}) : super(COLLECTION, id: id);
 
   /// Create an instance of the [DiaryPage] form the [doc] fields retrieved from the FireBase DB.
   factory DiaryPage.fromDocument(DocumentSnapshot doc) {
@@ -30,7 +28,7 @@ class DiaryPage extends DbItem {
       "id": id,
       "title": title,
       "content": content,
-      "dateTime": dateTime!,
+      "dateTime": dateTime,
       "favourite": favourite,
     };
   }

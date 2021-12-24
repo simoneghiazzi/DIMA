@@ -11,3 +11,4 @@ final kPrimaryMediumColor = Colors.blue.shade600;
 final kPrimaryGoldenColor = Colors.amber.shade600;
 final kPrimaryGreyColor = Color(0xffaeaeae);
 final kPrimaryLightGreyColor = Color(0x79F3EFEF);
+final kBackgroundColor = Color(0xfffafbff);

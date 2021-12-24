@@ -22,8 +22,8 @@ class DiaryViewModel with ChangeNotifier {
   // Stream Controllers
   var _isPageAddedCtrl = StreamController<bool>.broadcast();
 
-  var hasNoteToday = false;
-
+  var hasDiaryPageToday = false;
+  var isEditing = false;
   DiaryPage? _currentDiaryPage;
 
   DiaryViewModel() {
@@ -35,13 +35,10 @@ class DiaryViewModel with ChangeNotifier {
   /// Add a new diary page into the DB
   Future<void> submitPage() {
     var now = DateTime.now();
-    _currentDiaryPage = DiaryPage(
-      id: now.millisecondsSinceEpoch.toString(),
-      title: titleTextCtrl.text,
-      content: contentTextCtrl.text,
-      dateTime: now,
-      favourite: false,
-    );
+    _currentDiaryPage!.id = now.millisecondsSinceEpoch.toString();
+    _currentDiaryPage!.title = titleTextCtrl.text.trim();
+    _currentDiaryPage!.content = contentTextCtrl.text.trim();
+    isEditing = false;
     return _firestoreService
         .addDiaryPageIntoDB(
           _userService.loggedUser!.id,
@@ -54,9 +51,10 @@ class DiaryViewModel with ChangeNotifier {
   /// Update the already existing [_currentDiaryPage] into the DB
   Future<void> updatePage() {
     var now = DateTime.now();
-    _currentDiaryPage!.title = titleTextCtrl.text;
-    _currentDiaryPage!.content = contentTextCtrl.text;
+    _currentDiaryPage!.title = titleTextCtrl.text.trim();
+    _currentDiaryPage!.content = contentTextCtrl.text.trim();
     _currentDiaryPage!.dateTime = now;
+    isEditing = false;
     return _firestoreService
         .updateDiaryPageIntoDB(
           _userService.loggedUser!.id,
@@ -98,9 +96,17 @@ class DiaryViewModel with ChangeNotifier {
     contentTextCtrl.text = content;
   }
 
+  /// Add a new diary page into the diary.
+  void addNewDiaryPage() {
+    setCurrentDiaryPage(DiaryPage(dateTime: DateTime.now()));
+    isEditing = true;
+  }
+
   /// Set the [diaryPage] as the [_currentDiaryPage].
   void setCurrentDiaryPage(DiaryPage diaryPage) {
     _currentDiaryPage = diaryPage;
+    titleTextCtrl.text = diaryPage.title;
+    contentTextCtrl.text = diaryPage.content;
     print("Current diary page setted");
     notifyListeners();
   }

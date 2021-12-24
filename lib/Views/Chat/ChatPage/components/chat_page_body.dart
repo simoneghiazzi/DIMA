@@ -12,6 +12,7 @@ import 'package:sApport/Views/Chat/components/chat_text_input.dart';
 import 'package:sApport/Views/Chat/components/chat_accept_deny.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_top_bar.dart';
 import 'package:sApport/Views/Chat/components/message_list_constructor.dart';
+import 'package:sApport/constants.dart';
 
 /// It contains the [ChatTopBar] that differs based on the type of the peer user ([BaseUser] or [Expert]),
 /// the [MessageListConstructor] of the messages between the 2 users and the [ChatTextInput] or the
@@ -82,7 +83,7 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
           child: Container(
             // Background image of the chat page
             decoration:
-                BoxDecoration(color: Color(0xfffafbff), image: DecorationImage(image: AssetImage("assets/icons/logo.png"), scale: 8, opacity: 0.1)),
+                BoxDecoration(color: kBackgroundColor, image: DecorationImage(image: AssetImage("assets/icons/logo.png"), scale: 8, opacity: 0.1)),
             child: Column(
               children: [
                 // List of messages

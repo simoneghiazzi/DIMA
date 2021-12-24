@@ -1,20 +1,36 @@
 import 'dart:async';
-import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:intl/intl.dart';
-import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
-import 'package:sApport/Model/utils.dart';
-import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:sApport/Views/components/top_bar.dart';
-import 'package:sApport/constants.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:sizer/sizer.dart';
+import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:sApport/constants.dart';
+import 'package:sApport/Model/utils.dart';
+import 'package:sApport/Views/components/top_bar.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
+import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 
+/// Body of the Diary Page.
+///
+/// It displays the [DiaryPage] title and the content. If it is a new diary page,
+/// it is modifiable and the [TopBar] will contain the confirm button that save the page into the Firebase DB,
+/// otherwise it shows the title and the content of the page with its date.
+///
+/// It contains also the 'heart' button for setting the diary page as favourite. If the page date is
+/// today, there is another button in order to modify the fields.
 class DiaryPageBody extends StatefulWidget {
+  /// Body of the Diary Page.
+  ///
+  /// It displays the [DiaryPage] title and the content. If it is a new diary page,
+  /// it is modifiable and the [TopBar] will contain the confirm button that save the page into the Firebase DB,
+  /// otherwise it shows the title and the content of the page with its date.
+  ///
+  /// It contains also the 'heart' button for setting the diary page as favourite. If the page date is
+  /// today, there is another button in order to modify the fields.
   const DiaryPageBody({Key? key}) : super(key: key);
 
   @override
@@ -22,123 +38,116 @@ class DiaryPageBody extends StatefulWidget {
 }
 
 class _DiaryPageBodyState extends State<DiaryPageBody> {
+  // View Models
   late DiaryViewModel diaryViewModel;
+
+  // Router Delegate
   late AppRouterDelegate routerDelegate;
+
+  // Alerts
   late Alert errorAlert;
   late Alert successAlert;
-  late StreamSubscription<bool> subscription;
-  bool modifiable = false;
-  bool hasFocus = true;
-  String? title;
-  DateFormat formatter = DateFormat('dd MMM yyyy');
 
-  DiaryPage? _diaryPageItem;
+  // Stream Subscribtion
+  late StreamSubscription<bool> subscription;
+
+  FocusNode titleFocusNode = FocusNode();
 
   @override
   void initState() {
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    _diaryPageItem = diaryViewModel.currentDiaryPage;
+
+    // Create the alerts
     errorAlert = createErrorAlert();
     successAlert = createSuccessAlert();
-    subscription = subscribeToSuccessViewModel();
+
+    // Subscribe to on submitting form of the view model
+    subscription = subscribeToOnSubmittingViewModel();
+
+    // Add a back button interceptor for listening to the OS back button
     BackButtonInterceptor.add(backButtonInterceptor);
 
-    if (_diaryPageItem!.id.isEmpty) {
-      modifiable = true;
-      title = formatter.format(DateTime.now());
-    } else {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
-        diaryViewModel.setTextContent(_diaryPageItem!.title, _diaryPageItem!.content);
-      });
-      title = formatter.format(_diaryPageItem!.dateTime!);
-    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Add post frame callback for requesting the focus on the title text field
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      if (diaryViewModel.isEditing) {
+        titleFocusNode.requestFocus();
+      }
+    });
     return Stack(
       children: <Widget>[
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TopBar(
-              text: title!,
+              text: DateFormat("dd MMM yyyy").format(diaryViewModel.currentDiaryPage!.dateTime),
+              textSize: 16.sp,
               backIcon: Icons.close_rounded,
               back: resetDiaryPage,
               buttons: [
-                if (_diaryPageItem!.id.isEmpty && !modifiable && Utils.isToday(_diaryPageItem!.dateTime!))
-                  InkWell(
-                      child: InkResponse(
-                    onTap: () {
-                      setState(() {
-                        hasFocus = true;
-                        modifiable = true;
-                      });
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white),
-                    ),
-                  )),
-                if (_diaryPageItem!.id != null && !modifiable)
+                if (!diaryViewModel.isEditing && Utils.isToday(diaryViewModel.currentDiaryPage!.dateTime)) ...[
+                  // If it is the diary page of today and isEditing is false, show the button for modifing the page
                   InkWell(
                     child: InkResponse(
                       onTap: () {
-                        _diaryPageItem!.favourite = !_diaryPageItem!.favourite;
-                        diaryViewModel.setFavourite(_diaryPageItem!.favourite);
+                        diaryViewModel.isEditing = true;
+                        setState(() {});
+                      },
+                      child: Container(padding: EdgeInsets.all(10), child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white)),
+                    ),
+                  ),
+                ],
+                if (!diaryViewModel.isEditing) ...[
+                  // If isEditing is false, show the button for setting the page as favourite or not
+                  InkWell(
+                    child: InkResponse(
+                      onTap: () {
+                        diaryViewModel.currentDiaryPage!.favourite = !diaryViewModel.currentDiaryPage!.favourite;
+                        diaryViewModel.setFavourite(diaryViewModel.currentDiaryPage!.favourite);
                         setState(() {});
                       },
                       child: Container(
                         padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: _diaryPageItem!.favourite
+                        child: diaryViewModel.currentDiaryPage!.favourite
                             ? Icon(CupertinoIcons.heart_fill, color: Colors.white)
                             : Icon(CupertinoIcons.heart, color: Colors.white),
                       ),
                     ),
                   ),
-                if (modifiable)
+                ] else ...[
+                  // Otherwise, if isEditing is true, show the button for submitting the page if the button
+                  // is enabled by the text controllers
                   InkWell(
                     child: StreamBuilder(
-                        stream: diaryViewModel.diaryForm.isButtonEnabled,
-                        builder: (context, AsyncSnapshot snapshot) {
-                          if (snapshot.data ?? false || _diaryPageItem != null) {
-                            return InkResponse(
-                              onTap: () {
-                                if (_diaryPageItem!.id != null) {
-                                  diaryViewModel.updatePage();
-                                } else {
-                                  diaryViewModel.submitPage();
-                                }
-                                setState(() {
-                                  modifiable = false;
-                                });
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                ),
-                                child: Icon(Icons.check, color: Colors.white),
-                              ),
-                            );
-                          }
-                          return Container();
-                        }),
-                  )
+                      stream: diaryViewModel.diaryForm.isButtonEnabled,
+                      builder: (context, AsyncSnapshot snapshot) {
+                        if (snapshot.data ?? false || (diaryViewModel.currentDiaryPage?.id.isNotEmpty ?? true)) {
+                          return InkResponse(
+                            onTap: () {
+                              if (diaryViewModel.currentDiaryPage?.id.isNotEmpty ?? false) {
+                                diaryViewModel.updatePage();
+                              } else {
+                                diaryViewModel.submitPage();
+                              }
+                              setState(() {});
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              child: Icon(Icons.check, color: Colors.white),
+                            ),
+                          );
+                        }
+                        return Container();
+                      },
+                    ),
+                  ),
+                ],
               ],
-            ),
-            Container(
-              transform: Matrix4.translationValues(0.0, -5.0, 0.0),
-              height: 50.h,
-              color: kPrimaryColor,
             ),
           ],
         ),
@@ -148,82 +157,55 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: Colors.black12),
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(10),
-                topLeft: Radius.circular(10),
-              ),
-              boxShadow: [
-                BoxShadow(color: kPrimaryColor.withOpacity(.5), blurRadius: 10.0),
-              ],
+              borderRadius: BorderRadius.only(topRight: Radius.circular(10), topLeft: Radius.circular(10)),
             ),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: TextField(
-                    autofocus: hasFocus,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+              child: Column(
+                children: [
+                  // Diary Page Title
+                  TextField(
                     textCapitalization: TextCapitalization.sentences,
-                    enabled: modifiable,
+                    textInputAction: TextInputAction.done,
+                    enabled: diaryViewModel.isEditing,
+                    focusNode: titleFocusNode,
+                    minLines: 1,
+                    maxLines: 2,
                     controller: diaryViewModel.titleTextCtrl,
                     cursorColor: kPrimaryColor,
-                    style: TextStyle(
-                      color: kPrimaryColor,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(color: kPrimaryColor, fontSize: 20.sp, fontWeight: FontWeight.bold),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: "What's out topic of discussion?",
-                      hintStyle: TextStyle(
-                        color: kPrimaryDarkColorTrasparent,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      hintStyle: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 20.sp, fontWeight: FontWeight.bold),
                     ),
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(50),
-                    ],
+                    inputFormatters: [LengthLimitingTextInputFormatter(50)],
                   ),
-                ),
-                Center(
-                  child: Container(
-                    width: 90.w,
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Divider(
-                            color: kPrimaryColor,
-                            height: 3,
+                  Divider(color: kPrimaryDarkColorTrasparent, height: 5, thickness: 0.5),
+                  // Diary Page Content
+                  Flexible(
+                    child: Container(
+                      padding: EdgeInsets.only(top: 16.0),
+                      child: SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: TextField(
+                          textCapitalization: TextCapitalization.sentences,
+                          enabled: diaryViewModel.isEditing,
+                          controller: diaryViewModel.contentTextCtrl,
+                          cursorColor: kPrimaryColor,
+                          style: TextStyle(color: kPrimaryColor, fontSize: 15.5.sp),
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          decoration: InputDecoration.collapsed(
+                            hintText: "Tell me something about it...",
+                            hintStyle: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 15.5.sp),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: TextField(
-                        textCapitalization: TextCapitalization.sentences,
-                        enabled: modifiable,
-                        controller: diaryViewModel.contentTextCtrl,
-                        cursorColor: kPrimaryColor,
-                        style: TextStyle(color: kPrimaryColor, fontSize: 18),
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        decoration: InputDecoration.collapsed(
-                          hintText: 'Tell me about it...',
-                          hintStyle: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 18),
-                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -231,7 +213,9 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     );
   }
 
-  StreamSubscription<bool> subscribeToSuccessViewModel() {
+  /// Listen to the [isPageAdded] stream in order to show the success or error alert
+  /// to the user.
+  StreamSubscription<bool> subscribeToOnSubmittingViewModel() {
     return diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
       if (isSuccessfulAdd) {
         successAlert.show();
@@ -241,6 +225,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     });
   }
 
+  /// Create the [Alert] that inform the users that the submission of the [DiaryPage] was successful.
   Alert createSuccessAlert() {
     return Alert(
       closeIcon: null,
@@ -266,6 +251,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     );
   }
 
+  /// Create the [Alert] that inform the users that there was an error in submitting the [DiaryPage].
   Alert createErrorAlert() {
     return Alert(
       closeIcon: null,
@@ -291,11 +277,17 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     );
   }
 
+  /// Reset the current diary page, clear the controllers and sets the [isEditing]
+  /// flag to `false`.
   void resetDiaryPage() {
+    diaryViewModel.isEditing = false;
     diaryViewModel.resetCurrentDiaryPage();
     diaryViewModel.clearControllers();
   }
 
+  /// Function called by the back button interceptor.
+  ///
+  /// It calls the [resetDiaryPage] and then pop the page.
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     resetDiaryPage();
     routerDelegate.pop();

@@ -8,7 +8,6 @@ import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/Views/Welcome/components/welcome_body.dart';
-import 'package:sizer/sizer.dart';
 
 class WelcomeScreen extends StatefulWidget {
   static const route = '/welcomeScreen';

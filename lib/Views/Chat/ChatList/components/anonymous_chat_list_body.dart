@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
+import 'package:sizer/sizer.dart';
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/constants.dart';
@@ -39,6 +41,10 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     subscriberNewRandomUser = subscribeToNewRandomUser();
+
+    // Add a back button interceptor for listening to the OS back button
+    BackButtonInterceptor.add(backButtonInterceptor);
+
     super.initState();
   }
 
@@ -51,7 +57,10 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TopBar(
-              back: chatViewModel.resetCurrentChat,
+              back: () {
+                chatViewModel.resetCurrentChat();
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+              },
               text: "Anonymous",
               buttons: [
                 // Listener for new pending chats
@@ -68,7 +77,7 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
                           child: Row(children: <Widget>[
                             Icon(Icons.notification_add, color: kPrimaryGoldenColor, size: 20),
                             SizedBox(width: 2),
-                            Text("Requests", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)),
+                            Text("Requests", style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold, color: Colors.white)),
                           ]),
                         ),
                         onTap: () => routerDelegate.pushPage(name: ChatListScreen.route, arguments: PendingChatListBody()),
@@ -116,9 +125,19 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
     });
   }
 
+  /// Function called by the back button interceptor.
+  ///
+  /// It remove the current snack bar if it is present and then pop the page.
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    routerDelegate.pop();
+    return true;
+  }
+
   @override
   void dispose() {
     subscriberNewRandomUser.cancel();
+    BackButtonInterceptor.remove(backButtonInterceptor);
     super.dispose();
   }
 }

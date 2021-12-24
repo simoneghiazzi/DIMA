@@ -59,33 +59,35 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: OrientationBuilder(builder: (context, orientation) {
-        if (orientation == Orientation.portrait) {
-          // If the orientation is protrait, shows the chatListBody
-          return widget.chatListBody;
-        } else {
-          // If the orientation is landscape, shows the VerticalSplitView with the chatListBody on the left
-          // and the ValueListenableBuilder listener on the right that builds the ChatPageBody
-          // or the EmptyLandscapeBody depending on the value of the currentChat
-          return VerticalSplitView(
-            left: widget.chatListBody,
-            right: ValueListenableBuilder(
-              valueListenable: chatViewModel.currentChat,
-              builder: (context, Chat? chat, child) {
-                // Check if the current chat is null
-                if (chat != null) {
-                  return ChatPageBody(key: ValueKey(chat.peerUser!.id));
-                } else {
-                  return EmptyLandscapeBody();
-                }
-              },
-            ),
-            ratio: 0.35,
-            dividerWidth: 0.3,
-            dividerColor: kPrimaryGreyColor,
-          );
-        }
-      }),
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          if (orientation == Orientation.portrait) {
+            // If the orientation is protrait, shows the chatListBody
+            return widget.chatListBody;
+          } else {
+            // If the orientation is landscape, shows the VerticalSplitView with the chatListBody on the left
+            // and the ValueListenableBuilder listener on the right that builds the ChatPageBody
+            // or the EmptyLandscapeBody depending on the value of the currentChat
+            return VerticalSplitView(
+              left: widget.chatListBody,
+              right: ValueListenableBuilder(
+                valueListenable: chatViewModel.currentChat,
+                builder: (context, Chat? chat, child) {
+                  // Check if the current chat is null
+                  if (chat != null) {
+                    return ChatPageBody(key: ValueKey(chat.peerUser!.id));
+                  } else {
+                    return EmptyLandscapeBody();
+                  }
+                },
+              ),
+              ratio: 0.35,
+              dividerWidth: 0.3,
+              dividerColor: kPrimaryGreyColor,
+            );
+          }
+        },
+      ),
     );
   }
 }

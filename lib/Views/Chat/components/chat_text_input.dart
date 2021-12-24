@@ -58,23 +58,23 @@ class ChatTextInput extends StatelessWidget {
             ),
           ),
           SizedBox(width: 2.w),
-          GestureDetector(
-            child: Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(color: kPrimaryColor, borderRadius: BorderRadius.circular(40.0)),
-              child: Container(
-                padding: EdgeInsets.only(left: 3),
-                child: Icon(Icons.send, size: 22.0, color: Colors.white),
-              ),
+          Container(
+            width: 50,
+            height: 50,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(kPrimaryColor),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),
+                  shadowColor: MaterialStateProperty.all<Color>(kPrimaryLightColor)),
+              onPressed: () {
+                // Send message and scroll down the message list view
+                chatViewModel.sendMessage();
+                if (scrollController.hasClients) {
+                  scrollController.jumpTo(scrollController.position.minScrollExtent);
+                }
+              },
+              child: Icon(Icons.send, size: 22.0, color: Colors.white),
             ),
-            onTap: () {
-              // Send message and scroll down the message list view
-              chatViewModel.sendMessage();
-              if (scrollController.hasClients) {
-                scrollController.jumpTo(scrollController.position.minScrollExtent);
-              }
-            },
           ),
         ],
       ),

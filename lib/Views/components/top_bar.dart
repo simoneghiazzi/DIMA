@@ -10,6 +10,7 @@ import 'package:sApport/Router/app_router_delegate.dart';
 /// on the right and a [back] function that is called when the back button is pressed.
 class TopBar extends StatelessWidget {
   final String text;
+  final double? textSize;
   final IconData backIcon;
   final List<Widget>? buttons;
   final Function? back;
@@ -18,7 +19,8 @@ class TopBar extends StatelessWidget {
   ///
   /// It takes a [text], a list of [buttons] that are displayed on the right and a
   /// [back] function that is called when the back button is pressed.
-  const TopBar({Key? key, required this.text, this.backIcon = Icons.arrow_back_ios_new_rounded, this.buttons, this.back}) : super(key: key);
+  const TopBar({Key? key, required this.text, this.textSize, this.backIcon = Icons.arrow_back_ios_new_rounded, this.buttons, this.back})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,20 +39,28 @@ class TopBar extends StatelessWidget {
                 icon: Icon(backIcon, color: Colors.white),
                 onPressed: () {
                   FocusScope.of(context).unfocus();
+                  routerDelegate.pop();
                   if (back != null) {
                     back!();
                   }
-                  routerDelegate.pop();
                 },
               ),
               SizedBox(width: 1.w),
-              Text(
-                text,
-                style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold, color: Colors.white),
-                maxLines: 1,
+              Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  text,
+                  style: TextStyle(fontSize: textSize ?? 20.sp, fontWeight: FontWeight.bold, color: Colors.white),
+                  maxLines: 1,
+                ),
               ),
               Spacer(),
-              ...?buttons,
+              Container(
+                padding: EdgeInsets.only(right: 10),
+                child: Row(
+                  children: [...?buttons],
+                ),
+              ),
             ],
           ),
         ),
