@@ -1,23 +1,40 @@
 import 'dart:async';
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/Forms/Authentication/forgot_password_form.dart';
-import 'package:sApport/ViewModel/auth_view_model.dart';
-import 'package:sApport/constants.dart';
-import 'package:flutter/material.dart';
-import 'package:sApport/Views/Login/components/background.dart';
-import 'package:sApport/Views/components/rounded_button.dart';
-import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sApport/constants.dart';
+import 'package:sApport/ViewModel/auth_view_model.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:sApport/Views/components/rounded_button.dart';
+import 'package:sApport/Views/components/form_text_field.dart';
+import 'package:sApport/Views/Login/components/background.dart';
+import 'package:sApport/Views/Login/forgot_password_screen.dart';
+import 'package:sApport/ViewModel/Forms/Authentication/forgot_password_form.dart';
 
+/// Body of the [ForgotPasswordScreen].
+///
+/// It contains the [ForgotPasswordForm] with the [FormTextField] for sending
+/// the email with the reset password link.
 class ForgotPasswordBody extends StatefulWidget {
+  /// Body of the [ForgotPasswordScreen].
+  ///
+  /// It contains the [ForgotPasswordForm] with the [FormTextField] for sending
+  /// the email with the reset password link.
+  const ForgotPasswordBody({Key? key}) : super(key: key);
+
   @override
   _ForgotPasswordBodyState createState() => _ForgotPasswordBodyState();
 }
 
 class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
+  // View Models
   late AuthViewModel authViewModel;
+
+  // Router Delegate
   late AppRouterDelegate routerDelegate;
+
+  // Stream Controller
   var _errorTextController = StreamController<String?>.broadcast();
 
   @override
@@ -36,11 +53,13 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              // Title
               Text(
                 "sApport",
                 style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
               ),
               SizedBox(height: 3.h),
+              // Form
               Container(
                 constraints: BoxConstraints(maxWidth: 500),
                 child: BlocProvider(
@@ -51,19 +70,19 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                       return Theme(
                         data: Theme.of(context).copyWith(
                           primaryColor: kPrimaryColor,
-                          inputDecorationTheme: InputDecorationTheme(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                          ),
+                          inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
                         ),
                         child: FormBlocListener<ForgotPasswordForm, String, String>(
                           onSuccess: (context, state) async {
                             _errorTextController.add(null);
                             FocusScope.of(context).unfocus();
+                            // Check if the user has the email/password as authentication method
                             if (await authViewModel.hasPasswordAuthentication(forgotPasswordForm.emailText.value)) {
                               authViewModel.resetPassword(forgotPasswordForm.emailText.value);
-                              showSnackBar();
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: const Text("Please check your email for the password reset link."),
+                                duration: const Duration(seconds: 10),
+                              ));
                               routerDelegate.pop();
                             } else {
                               _errorTextController.add("No account found with this email.");
@@ -71,17 +90,10 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                           },
                           child: Column(
                             children: <Widget>[
-                              TextFieldBlocBuilder(
-                                textFieldBloc: forgotPasswordForm.emailText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: "Email",
-                                  labelStyle: TextStyle(color: kPrimaryDarkColor),
-                                  prefixIcon: Icon(Icons.email, color: kPrimaryColor),
-                                ),
-                              ),
+                              // Email Text Field
+                              FormTextField(textFieldBloc: forgotPasswordForm.emailText, hintText: "Email", prefixIconData: Icons.email),
                               SizedBox(height: 5.h),
+                              // Button
                               RoundedButton(
                                 onTap: () {
                                   FocusScope.of(context).unfocus();
@@ -97,11 +109,10 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                   ),
                 ),
               ),
+              // Stream of the _errorText
               StreamBuilder<String?>(
                 stream: errorText,
-                builder: (context, snapshot) {
-                  return RichText(text: TextSpan(text: snapshot.data, style: TextStyle(color: Colors.red, fontSize: 15)));
-                },
+                builder: (context, snapshot) => RichText(text: TextSpan(text: snapshot.data, style: TextStyle(color: Colors.red, fontSize: 15))),
               ),
             ],
           ),
@@ -110,12 +121,6 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
     );
   }
 
-  void showSnackBar() {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Text('Please check your email for the password reset link.'),
-      duration: const Duration(seconds: 20),
-    ));
-  }
-
+  /// Stream of the [_errorTextController].
   Stream<String?> get errorText => _errorTextController.stream;
 }

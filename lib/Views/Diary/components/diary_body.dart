@@ -71,7 +71,7 @@ class _DiaryBodyState extends State<DiaryBody> {
       children: <Widget>[
         Header(),
         Padding(
-          padding: EdgeInsets.only(top: 12.5.h),
+          padding: EdgeInsets.only(top: 13.h),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,

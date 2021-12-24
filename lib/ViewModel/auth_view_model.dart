@@ -185,6 +185,11 @@ class AuthViewModel {
     _isUserLoggedCtrl.add(false);
   }
 
+  /// Clear the [_authMessageCtrl].
+  void clearAuthMessage() {
+    _authMessageCtrl.add("");
+  }
+
   /// Stream of the user logged controller.
   Stream<bool> get isUserLogged => _isUserLoggedCtrl.stream;
 
