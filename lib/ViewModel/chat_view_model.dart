@@ -83,7 +83,7 @@ class ChatViewModel extends ChangeNotifier {
   /// Get the stream of messages between the 2 users.
   Stream<QuerySnapshot>? loadMessages() {
     try {
-      return _firestoreService.getStreamMessagesFromDB(Utils.pairChatId(_userService.loggedUser!.id, _currentChat.value!.peerUser!.id));
+      return _firestoreService.getMessagesStreamFromDB(Utils.pairChatId(_userService.loggedUser!.id, _currentChat.value!.peerUser!.id));
     } catch (e) {
       print("Failed to get the stream of messages: $e");
       return null;
@@ -99,7 +99,7 @@ class ChatViewModel extends ChangeNotifier {
   /// to all the listeners.
   void loadAnonymousChats() async {
     _anonymousChats = ValueNotifier<LinkedHashMap<String, AnonymousChat>>(LinkedHashMap<String, AnonymousChat>());
-    _anonymousChatsSubscriber = _firestoreService.getChatsFromDB(_userService.loggedUser!, AnonymousChat.COLLECTION).listen(
+    _anonymousChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, AnonymousChat.COLLECTION).listen(
       (snapshot) async {
         for (var docChange in snapshot.docChanges) {
           var chat = AnonymousChat.fromDocument(docChange.doc);
@@ -131,7 +131,7 @@ class ChatViewModel extends ChangeNotifier {
   /// to all the listeners.
   void loadPendingChats() async {
     _pendingChats = ValueNotifier<LinkedHashMap<String, PendingChat>>(LinkedHashMap<String, PendingChat>());
-    _pendingChatsSubscriber = _firestoreService.getChatsFromDB(_userService.loggedUser!, PendingChat.COLLECTION).listen(
+    _pendingChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, PendingChat.COLLECTION).listen(
       (snapshot) async {
         for (var docChange in snapshot.docChanges) {
           // If oldIndex == -1, the document is added, so its new and it has to retrieve the peer user from the DB
@@ -158,7 +158,7 @@ class ChatViewModel extends ChangeNotifier {
   /// to all the listeners.
   void loadExpertsChats() async {
     _expertsChats = ValueNotifier<LinkedHashMap<String, ExpertChat>>(LinkedHashMap<String, ExpertChat>());
-    _expertsChatsSubscriber = _firestoreService.getChatsFromDB(_userService.loggedUser!, ExpertChat.COLLECTION).listen(
+    _expertsChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, ExpertChat.COLLECTION).listen(
       (snapshot) async {
         for (var docChange in snapshot.docChanges) {
           var chat = ExpertChat.fromDocument(docChange.doc);
@@ -190,7 +190,7 @@ class ChatViewModel extends ChangeNotifier {
   /// to all the listeners.
   void loadActiveChats() async {
     _activeChats = ValueNotifier<LinkedHashMap<String, ActiveChat>>(LinkedHashMap<String, ActiveChat>());
-    _activeChatsSubscriber = _firestoreService.getChatsFromDB(_userService.loggedUser!, ActiveChat.COLLECTION).listen(
+    _activeChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, ActiveChat.COLLECTION).listen(
       (snapshot) async {
         for (var docChange in snapshot.docChanges) {
           var chat = ActiveChat.fromDocument(docChange.doc);
@@ -269,6 +269,7 @@ class ChatViewModel extends ChangeNotifier {
     print("Current chat resetted");
   }
 
+  /// Cancel all the value listeners and clear their contents.
   void closeListeners() {
     _anonymousChatsSubscriber?.cancel();
     _pendingChatsSubscriber?.cancel();

@@ -59,7 +59,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
         routerDelegate.pushPage(name: ChatPageScreen.route);
       } else if (reportViewModel.currentReport != null) {
         routerDelegate.pushPage(name: ReportDetailsScreen.route);
-      } else if (diaryViewModel.currentDiaryPage != null) {
+      } else if (diaryViewModel.currentDiaryPage.value != null) {
         routerDelegate.pushPage(name: DiaryPageScreen.route);
       }
     }

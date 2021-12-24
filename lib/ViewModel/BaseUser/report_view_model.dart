@@ -16,7 +16,7 @@ class ReportViewModel extends ChangeNotifier {
   /// Get the stream of reports.
   Stream<QuerySnapshot>? loadReports() {
     try {
-      return _firestoreService.getReportsFromDB(_userService.loggedUser!.id);
+      return _firestoreService.getReportsStreamFromDB(_userService.loggedUser!.id);
     } catch (e) {
       print("Failed to get the stream of reports: $e");
       return null;

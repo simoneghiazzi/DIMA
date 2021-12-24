@@ -50,7 +50,6 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
 
   @override
   Widget build(BuildContext context) {
-    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     return Stack(
       children: <Widget>[
         Column(

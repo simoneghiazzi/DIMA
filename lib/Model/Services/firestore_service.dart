@@ -185,7 +185,7 @@ class FirestoreService {
 
   /// It takes the [pairChatId] that is the composite id of the 2 users and returns
   /// the stream of all the messages between the 2 users oredered by timestamp from the DB.
-  Stream<QuerySnapshot> getStreamMessagesFromDB(String pairChatId) {
+  Stream<QuerySnapshot> getMessagesStreamFromDB(String pairChatId) {
     return _firestore.collection(Message.COLLECTION).doc(pairChatId).collection(pairChatId).orderBy("timestamp", descending: true).snapshots();
   }
 
@@ -279,7 +279,7 @@ class FirestoreService {
 
   /// It takes the [user] and returns the list of all the chat of the
   /// user based on the [chatCollection] ordered by lastMessageTimestamp.
-  Stream<QuerySnapshot> getChatsFromDB(User user, String chatCollection) {
+  Stream<QuerySnapshot> getChatsStreamFromDB(User user, String chatCollection) {
     return _firestore.collection(user.collection).doc(user.id).collection(chatCollection).orderBy("lastMessageTimestamp").limit(_limit).snapshots();
   }
 
@@ -339,7 +339,7 @@ class FirestoreService {
 
   /// It takes the [id] of an user and return the stream of all the
   /// reports of the user oredered in descending by date from the DB
-  Stream<QuerySnapshot> getReportsFromDB(String id) {
+  Stream<QuerySnapshot> getReportsStreamFromDB(String id) {
     return _firestore.collection(Report.COLLECTION).doc(id).collection("reportList").orderBy("id", descending: true).snapshots();
   }
 
@@ -392,6 +392,6 @@ class FirestoreService {
   /// It takes the [id] of an user and return the stream of
   /// all the diaryPages of the user oredered by date from the DB
   Stream<QuerySnapshot> getDiaryPagesStreamFromDB(String id) {
-    return _firestore.collection(DiaryPage.COLLECTION).doc(id).collection("diaryPages").orderBy("id", descending: true).snapshots();
+    return _firestore.collection(DiaryPage.COLLECTION).doc(id).collection("diaryPages").orderBy(FieldPath.documentId).snapshots();
   }
 }

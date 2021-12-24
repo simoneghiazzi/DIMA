@@ -43,61 +43,67 @@ class _DiaryBodyState extends State<DiaryBody> {
   final CalendarController _controller = CalendarController();
   CalendarTapDetails? _selectedDayDetails;
 
-  var _loadDiaryPagesStream;
-
   @override
   void initState() {
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    _loadDiaryPagesStream = diaryViewModel.loadDiaryPages();
-    //_selectedDayDetails = CalendarTapDetails(appointments, DateTime.now(), CalendarElement.calendarCell, null);
+    if (diaryViewModel.currentDiaryPage.value != null) {
+      _selectedDayDetails = CalendarTapDetails(
+        [diaryViewModel.currentDiaryPage.value],
+        diaryViewModel.currentDiaryPage.value!.dateTime,
+        CalendarElement.calendarCell,
+        null,
+      );
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: _loadDiaryPagesStream,
-      builder: (context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          return Stack(
-            children: <Widget>[
-              Header(),
-              Padding(
-                padding: EdgeInsets.only(top: 12.5.h),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(topRight: Radius.circular(10), topLeft: Radius.circular(10)),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Column(
-                      children: [
-                        // Calendar
-                        Expanded(
-                          child: SfCalendar(
-                            monthCellBuilder: monthCellBuilder,
-                            initialSelectedDate: DateTime.now(),
-                            controller: _controller,
-                            todayHighlightColor: kPrimaryDarkColorTrasparent,
-                            dataSource: DiaryPageDataSource(snapshot.data.docs, diaryViewModel),
-                            headerStyle: CalendarHeaderStyle(
-                              textStyle: TextStyle(color: kPrimaryColor, fontSize: 22.sp, fontWeight: FontWeight.bold),
-                            ),
-                            headerHeight: 7.5.h,
-                            headerDateFormat: " MMM yyyy",
-                            showDatePickerButton: true,
-                            viewHeaderStyle: ViewHeaderStyle(dayTextStyle: TextStyle(color: kPrimaryColor)),
-                            view: CalendarView.month,
-                            onTap: (details) => setState(() {
+    return Stack(
+      children: <Widget>[
+        Header(),
+        Padding(
+          padding: EdgeInsets.only(top: 12.5.h),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(topRight: Radius.circular(10), topLeft: Radius.circular(10)),
+            ),
+            child: ValueListenableBuilder(
+              valueListenable: diaryViewModel.diaryPages!,
+              builder: (context, List<DiaryPage> diaryPages, child) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Column(
+                    children: [
+                      // Calendar
+                      Expanded(
+                        child: SfCalendar(
+                          monthCellBuilder: monthCellBuilder,
+                          controller: _controller,
+                          initialSelectedDate: _selectedDayDetails?.date,
+                          todayHighlightColor: kPrimaryDarkColorTrasparent,
+                          dataSource: DiaryPageDataSource(diaryPages),
+                          // onViewChanged: (viewChangedDetails) {},
+                          headerStyle: CalendarHeaderStyle(textStyle: TextStyle(color: kPrimaryColor, fontSize: 22.sp, fontWeight: FontWeight.bold)),
+                          headerHeight: 7.5.h,
+                          headerDateFormat: " MMM yyyy",
+                          showDatePickerButton: true,
+                          viewHeaderStyle: ViewHeaderStyle(dayTextStyle: TextStyle(color: kPrimaryColor)),
+                          view: CalendarView.month,
+                          onTap: (details) {
+                            setState(() {
                               _selectedDayDetails = details;
-                            }),
-                            monthViewSettings: MonthViewSettings(appointmentDisplayMode: MonthAppointmentDisplayMode.none),
-                          ),
+                            });
+                          },
+                          monthViewSettings: MonthViewSettings(appointmentDisplayMode: MonthAppointmentDisplayMode.none),
                         ),
-                        // Agenda
+                      ),
+
+                      // If the _selected day details is not null, show the Agenda
+                      if (_selectedDayDetails != null) ...[
                         Container(
                           decoration: BoxDecoration(
                             border: Border(top: BorderSide(color: kPrimaryDarkColorTrasparent, width: 0.5)),
@@ -116,21 +122,33 @@ class _DiaryBodyState extends State<DiaryBody> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
-                                        DateFormat("EEE").format(_selectedDayDetails?.date ?? DateTime.now()).toUpperCase(),
+                                        DateFormat("EEE").format(_selectedDayDetails!.date!).toUpperCase(),
                                         style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 8.sp),
                                       ),
                                       Text(
-                                        DateFormat("dd").format(_selectedDayDetails?.date ?? DateTime.now()),
+                                        DateFormat("dd").format(_selectedDayDetails!.date!),
                                         style: TextStyle(color: kPrimaryColor, fontSize: 18.sp),
                                       ),
                                     ],
                                   ),
                                 ),
-                                if (_selectedDayDetails?.appointments != null && _selectedDayDetails!.appointments!.isNotEmpty) ...[
-                                  Expanded(
-                                    child: appointmentBuilder(),
-                                  ),
+                                // If the selected day has a diary page, show the appointment builder
+                                if (_selectedDayDetails!.appointments!.isNotEmpty) ...[
+                                  // If today there is a note, the "+" button is not shown and so expand the
+                                  // appointment builder
+                                  if (Utils.isToday(diaryViewModel.diaryPages!.value.last.dateTime)) ...[
+                                    Expanded(
+                                      child: appointmentBuilder(),
+                                    ),
+                                  ] else ...[
+                                    // Otherwise sets a max width in order to have the space for showing the "+" button
+                                    Container(
+                                      constraints: BoxConstraints(maxWidth: 70.w),
+                                      child: appointmentBuilder(),
+                                    )
+                                  ]
                                 ] else ...[
+                                  // Otherwise show the "No diary page" text
                                   Expanded(
                                     child: Container(
                                       padding: EdgeInsets.only(left: 15, top: 5),
@@ -141,44 +159,38 @@ class _DiaryBodyState extends State<DiaryBody> {
                                     ),
                                   ),
                                 ],
-                                if (!diaryViewModel.hasDiaryPageToday) ...[
-                                  // If today there isn't a diary page, show the '+' button
-                                  Container(
-                                    padding: EdgeInsets.only(left: 10, bottom: 10),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        FloatingActionButton(
-                                          onPressed: () {
-                                            // Add a new diary page
-                                            diaryViewModel.addNewDiaryPage();
-                                            if (MediaQuery.of(context).orientation == Orientation.portrait) {
-                                              // If the device orientation is portrait, push the DiaryPageScreen
-                                              routerDelegate.pushPage(name: DiaryPageScreen.route);
-                                            }
-                                          },
-                                          materialTapTargetSize: MaterialTapTargetSize.padded,
-                                          backgroundColor: kPrimaryColor,
-                                          child: const Icon(Icons.add, size: 40.0, color: Colors.white),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
                               ],
                             ),
                           ),
                         ),
                       ],
-                    ),
+                    ],
                   ),
-                ),
-              ),
-            ],
-          );
-        }
-        return Container();
-      },
+                );
+              },
+            ),
+          ),
+        ),
+        // If today there isn't a diary page, show the '+' button
+        if (diaryViewModel.diaryPages!.value.isNotEmpty && !Utils.isToday(diaryViewModel.diaryPages!.value.last.dateTime)) ...[
+          Align(
+            alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1)!,
+            child: FloatingActionButton(
+              onPressed: () {
+                // Add a new diary page
+                diaryViewModel.addNewDiaryPage();
+                if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                  // If the device orientation is portrait, push the DiaryPageScreen
+                  routerDelegate.pushPage(name: DiaryPageScreen.route);
+                }
+              },
+              materialTapTargetSize: MaterialTapTargetSize.padded,
+              backgroundColor: kPrimaryColor,
+              child: const Icon(Icons.add, size: 40.0, color: Colors.white),
+            ),
+          )
+        ],
+      ],
     );
   }
 

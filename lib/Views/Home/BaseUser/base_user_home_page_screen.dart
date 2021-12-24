@@ -41,6 +41,8 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
     chatViewModel.loadPendingChats();
     chatViewModel.loadExpertsChats();
 
+    diaryViewModel.loadDiaryPages();
+
     // Register the notification service
     authViewModel.setNotification(userViewModel.loggedUser!);
 

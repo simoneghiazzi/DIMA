@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/Views/Diary/components/diary_body.dart';
@@ -69,19 +70,25 @@ class _DiaryScreenState extends State<DiaryScreen> {
             // with the DiaryBody on the left and, if the current diary page is not null, the DiaryPage on the right,
             // otherwise sets the ration = 1 (it shows only the left widget).
             // If isEditing is true, set the ratio = 0 (shows only the right widget)
-            return Consumer<DiaryViewModel>(
-              builder: (context, diaryViewModel, child) {
-                var _ratio = diaryViewModel.currentDiaryPage != null
-                    ? diaryViewModel.isEditing
-                        ? 0.0
-                        : 0.50
-                    : 1.0;
-                return VerticalSplitView(
-                  left: DiaryBody(),
-                  right: diaryViewModel.currentDiaryPage != null ? DiaryPageBody() : Container(),
-                  ratio: _ratio,
-                  dividerWidth: 2.0,
-                  dividerColor: kPrimaryColor,
+            return ValueListenableBuilder(
+              valueListenable: diaryViewModel.currentDiaryPage,
+              builder: (context, DiaryPage? currentDiaryPage, child) {
+                return ValueListenableBuilder(
+                  valueListenable: diaryViewModel.isEditing,
+                  builder: (context, bool isEditing, child) {
+                    var _ratio = diaryViewModel.currentDiaryPage.value != null
+                        ? isEditing
+                            ? 0.0
+                            : 0.50
+                        : 1.0;
+                    return VerticalSplitView(
+                      left: DiaryBody(),
+                      right: diaryViewModel.currentDiaryPage.value != null ? DiaryPageBody() : Container(),
+                      ratio: _ratio,
+                      dividerWidth: 2.0,
+                      dividerColor: kPrimaryColor,
+                    );
+                  },
                 );
               },
             );
