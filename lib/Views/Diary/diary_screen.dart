@@ -17,8 +17,8 @@ import 'package:sApport/Views/Diary/components/diary_page_body.dart';
 /// - portrait: it displays the [DiaryBody].
 /// - landscape: it uses the [VerticalSplitView] for displayng the [DiaryBody] on the left and the
 /// [DiaryPageBody] (if it is not null) on the right, otherwise it sets the ratio = 1 and it shows
-/// only the [DiaryBody]. It also checks the [isEditing] flag: if it is true, it sets the ratio = 0
-/// and it shows only the [DiaryPageBody].
+/// only the [DiaryBody]. It contains also the [ValueListenableBuilder] in order to listen for the
+/// [isEditing] flag: if it is true, it sets the ratio = 0 and it shows only the [DiaryPageBody].
 ///
 /// It subscribes to the diary view model currentDiaryPage value notifier in order to rebuild the right hand side of the page
 /// when a new current diary page is selected.
@@ -35,8 +35,8 @@ class DiaryScreen extends StatefulWidget {
   /// - portrait: it displays the [DiaryBody].
   /// - landscape: it uses the [VerticalSplitView] for displayng the [DiaryBody] on the left and the
   /// [DiaryPageBody] (if it is not null) on the right, otherwise it sets the ratio = 1 and it shows
-  /// only the [DiaryBody]. It also checks the [isEditing] flag: if it is true, it sets the ratio = 0
-  /// and it shows only the [DiaryPageBody].
+  /// only the [DiaryBody]. It contains also the [ValueListenableBuilder] in order to listen for the
+  /// [isEditing] flag: if it is true, it sets the ratio = 0 and it shows only the [DiaryPageBody].
   ///
   /// It subscribes to the diary view model currentDiaryPage value notifier in order to rebuild the right hand side of the page
   /// when a new current diary page is selected.

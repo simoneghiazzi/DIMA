@@ -18,12 +18,18 @@ import 'package:sApport/Views/Diary/components/diary_page_data_source.dart';
 /// It contains the [SfCalendar] with the [DiaryPage] provided from the [DiaryPageDataSource]
 /// and retrieved from the Firebase DB.
 ///
+/// It also contains the [ValueListenableBuilder] in order to listen for new diary pages and
+/// updates the calendar.
+///
 /// If today there is not any diary page, it shows the button for adding a new diary page.
 class DiaryBody extends StatefulWidget {
   /// Body of the Diary.
   ///
   /// It contains the [SfCalendar] with the [DiaryPage] provided from the [DiaryPageDataSource]
   /// and retrieved from the Firebase DB.
+  ///
+  /// It also contains the [ValueListenableBuilder] in order to listen for new diary pages and
+  /// updates the calendar.
   ///
   /// If today there is not any diary page, it shows the button for adding a new diary page.
   const DiaryBody({Key? key}) : super(key: key);
