@@ -1,19 +1,17 @@
-import 'package:sApport/Views/Home/components/header.dart';
-import 'package:flutter/cupertino.dart';
 import 'background.dart';
-import 'base_user_grid.dart';
+import 'home_page_grid.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:sApport/Views/Home/components/header.dart';
+import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
 
-class BaseUserHomePageBody extends StatefulWidget {
+/// Body of the [BaseUserHomePageScreen].
+///
+/// It contains the [Header] and the [HomePageGrid].
+class BaseUserHomePageBody extends StatelessWidget {
+  /// Body of the [BaseUserHomePageScreen].
+  ///
+  /// It contains the [Header] and the [HomePageGrid].
   const BaseUserHomePageBody({Key? key}) : super(key: key);
-  @override
-  _BaseUserHomePageBodyState createState() => _BaseUserHomePageBodyState();
-}
-
-class _BaseUserHomePageBodyState extends State<BaseUserHomePageBody> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +23,7 @@ class _BaseUserHomePageBodyState extends State<BaseUserHomePageBody> {
           Expanded(
             child: Background(
               child: Column(
-                children: [Spacer(), BaseUserGrid(), Spacer()],
+                children: [Spacer(), HomePageGrid(), Spacer()],
               ),
             ),
           ),

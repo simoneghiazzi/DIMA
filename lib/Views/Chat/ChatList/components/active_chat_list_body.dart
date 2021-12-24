@@ -5,15 +5,15 @@ import 'package:sApport/Views/Home/components/header.dart';
 import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
 
 /// It contains the [Header] and the [ChatListConstructor] of the active chats of the expert user.
-class ActiveChatsListBody extends StatefulWidget {
+class ActiveChatListBody extends StatefulWidget {
   /// It contains the [Header] and the [ChatListConstructor] of the active chats of the expert user.
-  const ActiveChatsListBody({Key? key}) : super(key: key);
+  const ActiveChatListBody({Key? key}) : super(key: key);
 
   @override
-  _ActiveChatsListBodyState createState() => _ActiveChatsListBodyState();
+  _ActiveChatListBodyState createState() => _ActiveChatListBodyState();
 }
 
-class _ActiveChatsListBodyState extends State<ActiveChatsListBody> {
+class _ActiveChatListBodyState extends State<ActiveChatListBody> {
   // View Models
   late ChatViewModel chatViewModel;
 
