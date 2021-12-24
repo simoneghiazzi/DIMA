@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:sApport/ViewModel/Forms/Authentication/expert_signup_form.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,12 +9,26 @@ import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
+import 'package:sApport/Views/components/form_text_field.dart';
 import 'package:sApport/Views/Signup/components/background.dart';
+import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
+import 'package:sApport/ViewModel/Forms/Authentication/expert_signup_form.dart';
 
+/// Body of the [ExpertsSignUpScreen].
+///
+/// It contains the [ExpertSignUpForm] with the [FormTextField]s for gathering the
+/// [Expert] profile information.
 class ExpertsInfoBody extends StatefulWidget {
+  /// Body of the [ExpertsSignUpScreen].
+  ///
+  /// It contains the [ExpertSignUpForm] with the [FormTextField]s for gathering the
+  /// [Expert] profile information.
+  const ExpertsInfoBody({Key? key}) : super(key: key);
+
   @override
   _ExpertsInfoBodyState createState() => _ExpertsInfoBodyState();
 }
@@ -40,7 +53,10 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
   void initState() {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+
+    // Create the Error Alert
     errorAlert = createErrorAlert();
+
     super.initState();
   }
 
@@ -53,22 +69,23 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
         child: Column(
           children: <Widget>[
             SizedBox(height: 10.h),
+            // Title
             Text(
               "sApport",
-              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
+              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 50.sp, fontFamily: "Gabriola"),
             ),
+            // Subtitle
             Text(
               "Sign up to increase your visibility and seize the opportunity for professional and personal growth.",
               textAlign: TextAlign.center,
-              style: TextStyle(color: kPrimaryDarkColorTrasparent, fontWeight: FontWeight.bold, fontSize: 15),
+              style: TextStyle(color: kPrimaryDarkColorTrasparent, fontWeight: FontWeight.bold, fontSize: 12.5.sp),
             ),
             SizedBox(height: 3.h),
             Divider(),
             SizedBox(height: 3.h),
+            // Profile Image Picker
             GestureDetector(
-              onTap: () {
-                getImage();
-              },
+              onTap: () => getImage(),
               child: CircleAvatar(
                 radius: 70,
                 backgroundColor: kPrimaryColor,
@@ -76,28 +93,24 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                   radius: 67,
                   backgroundColor: kPrimaryLightColor,
                   child: ClipOval(
-                      child: (expertSignUpForm.profilePhoto != null)
-                          ? Image.file(
-                              File(expertSignUpForm.profilePhoto!),
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage("assets/icons/logo_circular.png"),
-                                  scale: 4,
-                                  opacity: 0.1,
-                                ),
-                              ),
-                              child: Center(
-                                  child: Icon(
-                                Icons.add_a_photo,
-                                size: 40,
-                                color: kPrimaryColor,
-                              )))),
+                    child: (expertSignUpForm.profilePhoto != null)
+                        ?
+                        // If the profile photo is setted, show the image
+                        Image.file(File(expertSignUpForm.profilePhoto!))
+                        :
+                        // Otherwise show the add a photo icon with the logo
+                        Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(image: AssetImage("assets/icons/logo_circular.png"), scale: 4, opacity: 0.1),
+                            ),
+                            child: Center(child: Icon(Icons.add_a_photo, size: 40, color: kPrimaryColor)),
+                          ),
+                  ),
                 ),
               ),
             ),
             SizedBox(height: 3.h),
+            // Form
             Container(
               constraints: BoxConstraints(maxWidth: 500),
               child: BlocProvider(
@@ -105,153 +118,75 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                 child: Builder(
                   builder: (context) {
                     return Theme(
-                        data: Theme.of(context).copyWith(
-                          primaryColor: kPrimaryColor,
-                          inputDecorationTheme: InputDecorationTheme(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25),
+                      data: Theme.of(context).copyWith(
+                        primaryColor: kPrimaryColor,
+                        inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
+                      ),
+                      child: FormBlocListener<ExpertSignUpForm, String, String>(
+                        onSubmitting: (context, state) => LoadingDialog.show(context),
+                        onSuccess: (context, state) {
+                          // If the address is found, create and show the address confirmation alert
+                          LoadingDialog.hide(context);
+                          addressConfirmationAlert = createAddressConfirmationAlert();
+                          addressConfirmationAlert!.show();
+                        },
+                        onFailure: (context, state) {
+                          // If the address is not found, show the error alert
+                          LoadingDialog.hide(context);
+                          errorAlert.show();
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            FormTextField(textFieldBloc: expertSignUpForm.nameText, hintText: "First name", prefixIconData: Icons.text_fields),
+                            FormTextField(textFieldBloc: expertSignUpForm.surnameText, hintText: "Last name", prefixIconData: Icons.text_fields),
+                            DateTimeFieldBlocBuilder(
+                              dateTimeFieldBloc: expertSignUpForm.birthDate,
+                              format: DateFormat.yMEd(),
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1920),
+                              lastDate: DateTime.now(),
+                              decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: kPrimaryLightColor.withAlpha(100),
+                                  labelText: "Birth date",
+                                  labelStyle: TextStyle(color: kPrimaryColor),
+                                  prefixIcon: Icon(Icons.date_range, color: kPrimaryColor)),
                             ),
-                          ),
+                            FormTextField(
+                              textFieldBloc: expertSignUpForm.countryText,
+                              hintText: "Office country",
+                              prefixIconData: Icons.streetview,
+                            ),
+                            FormTextField(textFieldBloc: expertSignUpForm.cityText, hintText: "Office city", prefixIconData: Icons.location_city),
+                            FormTextField(
+                              textFieldBloc: expertSignUpForm.streetText,
+                              hintText: "Office street",
+                              prefixIconData: Icons.location_city,
+                            ),
+                            FormTextField(
+                              textFieldBloc: expertSignUpForm.houseNumber,
+                              hintText: "Office house number",
+                              prefixIconData: Icons.house,
+                              keyboardType: TextInputType.number,
+                            ),
+                            FormTextField(
+                              textFieldBloc: expertSignUpForm.phoneNumber,
+                              hintText: "Phone number",
+                              prefixIconData: Icons.phone,
+                              keyboardType: TextInputType.phone,
+                            ),
+                          ],
                         ),
-                        child: FormBlocListener<ExpertSignUpForm, String, String>(
-                          onSubmitting: (context, state) {
-                            LoadingDialog.show(context);
-                          },
-                          onSuccess: (context, state) {
-                            LoadingDialog.hide(context);
-                            addressConfirmationAlert = createAddressConfirmationAlert();
-                            addressConfirmationAlert!.show();
-                          },
-                          onFailure: (context, state) {
-                            LoadingDialog.hide(context);
-                            errorAlert.show();
-                          },
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              TextFieldBlocBuilder(
-                                textCapitalization: TextCapitalization.sentences,
-                                textFieldBloc: expertSignUpForm.nameText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: "First name",
-                                  labelStyle: TextStyle(color: kPrimaryColor),
-                                  prefixIcon: Icon(
-                                    Icons.text_fields,
-                                    color: kPrimaryColor,
-                                  ),
-                                ),
-                              ),
-                              TextFieldBlocBuilder(
-                                textCapitalization: TextCapitalization.sentences,
-                                textFieldBloc: expertSignUpForm.surnameText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: "Last name",
-                                  labelStyle: TextStyle(color: kPrimaryColor),
-                                  prefixIcon: Icon(
-                                    Icons.text_fields,
-                                    color: kPrimaryColor,
-                                  ),
-                                ),
-                              ),
-                              DateTimeFieldBlocBuilder(
-                                dateTimeFieldBloc: expertSignUpForm.birthDate,
-                                format: DateFormat.yMEd(),
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(1920),
-                                lastDate: DateTime.now(),
-                                decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: kPrimaryLightColor.withAlpha(100),
-                                    labelText: "Birth date",
-                                    labelStyle: TextStyle(color: kPrimaryColor),
-                                    prefixIcon: Icon(
-                                      Icons.date_range,
-                                      color: kPrimaryColor,
-                                    )),
-                              ),
-                              TextFieldBlocBuilder(
-                                textCapitalization: TextCapitalization.sentences,
-                                textFieldBloc: expertSignUpForm.countryText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: "Office country",
-                                  labelStyle: TextStyle(color: kPrimaryColor),
-                                  prefixIcon: Icon(
-                                    Icons.streetview,
-                                    color: kPrimaryColor,
-                                  ),
-                                ),
-                              ),
-                              TextFieldBlocBuilder(
-                                textCapitalization: TextCapitalization.sentences,
-                                textFieldBloc: expertSignUpForm.cityText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: "Office city",
-                                  labelStyle: TextStyle(color: kPrimaryColor),
-                                  prefixIcon: Icon(
-                                    Icons.location_city,
-                                    color: kPrimaryColor,
-                                  ),
-                                ),
-                              ),
-                              TextFieldBlocBuilder(
-                                textCapitalization: TextCapitalization.sentences,
-                                textFieldBloc: expertSignUpForm.streetText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: "Office street",
-                                  labelStyle: TextStyle(color: kPrimaryColor),
-                                  prefixIcon: Icon(
-                                    Icons.location_city,
-                                    color: kPrimaryColor,
-                                  ),
-                                ),
-                              ),
-                              TextFieldBlocBuilder(
-                                textFieldBloc: expertSignUpForm.houseNumber,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: "Office house number",
-                                  labelStyle: TextStyle(color: kPrimaryColor),
-                                  prefixIcon: Icon(
-                                    Icons.house,
-                                    color: kPrimaryColor,
-                                  ),
-                                ),
-                              ),
-                              TextFieldBlocBuilder(
-                                textFieldBloc: expertSignUpForm.phoneNumber,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: "Phone number",
-                                  labelStyle: TextStyle(color: kPrimaryColor),
-                                  prefixIcon: Icon(
-                                    Icons.phone,
-                                    color: kPrimaryColor,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ));
+                      ),
+                    );
                   },
                 ),
               ),
             ),
             SizedBox(height: 4.h),
+            // Next Button
             RoundedButton(
               text: "NEXT",
               onTap: () {
@@ -267,30 +202,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
     );
   }
 
-  Alert createErrorAlert() {
-    return Alert(
-      closeIcon: null,
-      context: context,
-      title: "NO ADDRESS FOUND",
-      type: AlertType.error,
-      style: AlertStyle(
-        isCloseButton: false,
-      ),
-      buttons: [
-        DialogButton(
-          child: Text(
-            "RETRY",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          onPressed: () {
-            errorAlert.dismiss();
-          },
-          color: kPrimaryColor,
-        )
-      ],
-    );
-  }
-
+  /// Get the image from the user gallery.
   Future getImage() async {
     ImagePicker _picker = ImagePicker();
     var image = await _picker.pickImage(source: ImageSource.gallery);
@@ -299,6 +211,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
     }
   }
 
+  /// Crop the selected image with a circular cropper for the profile image.
   Future _cropImage(String imagePath) async {
     File? croppedFile = await ImageCropper.cropImage(
         sourcePath: imagePath,
@@ -322,21 +235,18 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
     }
   }
 
+  /// Alert with the found address by the GoogleMap service.
+  ///
+  /// It has the buttons for confirming the correctness of the address
+  /// or to look for another address.
   Alert createAddressConfirmationAlert() {
     return Alert(
-      closeIcon: null,
       context: context,
-      title: "Found address: " + expertSignUpForm.expertAddress.address!,
-      style: AlertStyle(
-        animationDuration: Duration(milliseconds: 0),
-        isCloseButton: false,
-      ),
+      title: "Found address: ${expertSignUpForm.expertAddress.address!}",
+      style: AlertStyle(animationDuration: Duration(milliseconds: 0), isCloseButton: false),
       buttons: [
         DialogButton(
-          child: Text(
-            "CONFIRM",
-            style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+          child: Text("CONFIRM", style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold)),
           onPressed: () {
             userViewModel.createUser(expertSignUpForm);
             addressConfirmationAlert!.dismiss();
@@ -345,15 +255,29 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
           color: Colors.transparent,
         ),
         DialogButton(
-          child: Text(
-            "RETRY",
-            style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+          child: Text("RETRY", style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold)),
           onPressed: () {
             addressConfirmationAlert!.dismiss();
             LoadingDialog.hide(context);
           },
           color: Colors.transparent,
+        )
+      ],
+    );
+  }
+
+  /// Error alert that is shown when the address is not found by the GoogleMap service.
+  Alert createErrorAlert() {
+    return Alert(
+      context: context,
+      title: "No address found",
+      type: AlertType.error,
+      style: AlertStyle(isCloseButton: false),
+      buttons: [
+        DialogButton(
+          child: Text("RETRY", style: TextStyle(color: Colors.white, fontSize: 20)),
+          onPressed: () => errorAlert.dismiss(),
+          color: kPrimaryColor,
         )
       ],
     );

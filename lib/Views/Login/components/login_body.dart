@@ -60,7 +60,7 @@ class _LoginBodyState extends State<LoginBody> {
               // Title
               Text(
                 "sApport",
-                style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
+                style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 50.sp, fontFamily: "Gabriola"),
               ),
               SizedBox(height: 3.h),
               // Form
@@ -83,12 +83,19 @@ class _LoginBodyState extends State<LoginBody> {
                           },
                           child: Column(
                             children: <Widget>[
-                              FormTextField(textFieldBloc: loginForm.emailText, hintText: "Email", prefixIconData: Icons.email),
+                              FormTextField(
+                                textFieldBloc: loginForm.emailText,
+                                hintText: "Email",
+                                prefixIconData: Icons.email,
+                                textCapitalization: TextCapitalization.none,
+                                keyboardType: TextInputType.emailAddress,
+                              ),
                               FormTextField(
                                 textFieldBloc: loginForm.passwordText,
                                 hintText: "Password",
                                 prefixIconData: Icons.lock,
                                 suffixButton: SuffixButton.obscureText,
+                                textCapitalization: TextCapitalization.none,
                               ),
                               SizedBox(height: 2.h),
                               // Forgot Password Button
@@ -148,7 +155,10 @@ class _LoginBodyState extends State<LoginBody> {
                     Text("Sign Up", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 12.5.sp)),
                   ],
                 ),
-                onTap: () => routerDelegate.replace(name: BaseUsersSignUpScreen.route),
+                onTap: () {
+                  authViewModel.clearAuthMessage();
+                  routerDelegate.replace(name: BaseUsersSignUpScreen.route);
+                },
               ),
             ],
           ),

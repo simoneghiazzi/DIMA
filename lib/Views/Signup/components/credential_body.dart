@@ -5,6 +5,8 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/Forms/Authentication/credential_form.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
+import 'package:sApport/Views/Signup/credential_screen.dart';
+import 'package:sApport/Views/components/form_text_field.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/constants.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +16,15 @@ import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
+/// Body of the [CredentialScreen].
+///
+/// It contains the [CredentialForm] with the [FormTextField]s for signing up the user.
 class CredentialBody extends StatefulWidget {
+  /// Body of the [CredentialScreen].
+  ///
+  /// It contains the [CredentialForm] with the [FormTextField]s for signing up the user.
+  const CredentialBody({Key? key}) : super(key: key);
+
   @override
   _CredentialBodyState createState() => _CredentialBodyState();
 }
@@ -34,8 +44,10 @@ class _CredentialBodyState extends State<CredentialBody> {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     subscriber = subscribeToUserCreatedStream();
+
+    // Add a back button interceptor for listening to the OS back button
     BackButtonInterceptor.add(backButtonInterceptor);
-    //WidgetsBinding.instance!.addPostFrameCallback((_) => authViewModel.getData());
+
     super.initState();
   }
 
@@ -46,10 +58,12 @@ class _CredentialBodyState extends State<CredentialBody> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // Title
             Text(
               "sApport",
-              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
+              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 50.sp, fontFamily: "Gabriola"),
             ),
+            // Form
             Padding(
               padding: EdgeInsets.only(left: 40, right: 40),
               child: Container(
@@ -62,59 +76,46 @@ class _CredentialBodyState extends State<CredentialBody> {
                       return Theme(
                         data: Theme.of(context).copyWith(
                           primaryColor: kPrimaryColor,
-                          inputDecorationTheme: InputDecorationTheme(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                          ),
+                          inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
                         ),
                         child: FormBlocListener<CredentialForm, String, String>(
                           onSuccess: (context, state) {
                             FocusScope.of(context).unfocus();
                             LoadingDialog.show(context);
+                            // Set the email and sign up the new user
                             userViewModel.loggedUser!.email = credentialForm.emailText.value;
                             authViewModel.signUpUser(credentialForm.emailText.value, credentialForm.passwordText.value, userViewModel.loggedUser!);
                           },
                           child: Column(
                             children: <Widget>[
-                              TextFieldBlocBuilder(
+                              FormTextField(
                                 textFieldBloc: credentialForm.emailText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: "Email",
-                                  labelStyle: TextStyle(color: kPrimaryDarkColor),
-                                  prefixIcon: Icon(Icons.email, color: kPrimaryColor),
-                                ),
+                                hintText: "Email",
+                                prefixIconData: Icons.email,
+                                textCapitalization: TextCapitalization.none,
+                                keyboardType: TextInputType.emailAddress,
                               ),
-                              TextFieldBlocBuilder(
+                              FormTextField(
+                                textFieldBloc: credentialForm.passwordText,
+                                hintText: "Password",
+                                prefixIconData: Icons.lock,
+                                suffixButton: SuffixButton.obscureText,
+                                textCapitalization: TextCapitalization.none,
                                 onChanged: (value) {
                                   if (credentialForm.confirmPasswordText.value.isNotEmpty) {
                                     credentialForm.confirmPasswordText.validate();
                                   }
                                 },
-                                textFieldBloc: credentialForm.passwordText,
-                                suffixButton: SuffixButton.obscureText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: "Password",
-                                  labelStyle: TextStyle(color: kPrimaryColor),
-                                  prefixIcon: Icon(Icons.lock, color: kPrimaryColor),
-                                ),
                               ),
-                              TextFieldBlocBuilder(
+                              FormTextField(
                                 textFieldBloc: credentialForm.confirmPasswordText,
+                                hintText: "Confirm Password",
+                                prefixIconData: Icons.lock,
                                 suffixButton: SuffixButton.obscureText,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: kPrimaryLightColor.withAlpha(100),
-                                  labelText: "Confirm Password",
-                                  labelStyle: TextStyle(color: kPrimaryColor),
-                                  prefixIcon: Icon(Icons.lock, color: kPrimaryColor),
-                                ),
+                                textCapitalization: TextCapitalization.none,
                               ),
                               SizedBox(height: 5.h),
+                              // SignUp Button
                               RoundedButton(
                                 onTap: () {
                                   FocusScope.of(context).unfocus();
@@ -132,6 +133,7 @@ class _CredentialBodyState extends State<CredentialBody> {
               ),
             ),
             SizedBox(height: 5.h),
+            // Stream of the authMessage
             StreamBuilder<String?>(
               stream: authViewModel.authMessage,
               builder: (context, snapshot) {
@@ -142,10 +144,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                         padding: EdgeInsets.only(right: 10, left: 10),
                         child: RichText(
                           textAlign: TextAlign.center,
-                          text: TextSpan(
-                            text: snapshot.data,
-                            style: TextStyle(color: Colors.red, fontSize: 17, fontWeight: FontWeight.bold),
-                          ),
+                          text: TextSpan(text: snapshot.data, style: TextStyle(color: Colors.red, fontSize: 14.5.sp, fontWeight: FontWeight.bold)),
                         ),
                       ),
                       SizedBox(height: 5.h),
@@ -156,29 +155,17 @@ class _CredentialBodyState extends State<CredentialBody> {
                 }
               },
             ),
+            // Go to SignIn Button
             GestureDetector(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "Already have an account? ",
-                    style: TextStyle(
-                      color: kPrimaryColor,
-                      fontSize: 15,
-                    ),
-                  ),
-                  Text(
-                    "Sign In",
-                    style: TextStyle(
-                      color: kPrimaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
+                  Text("Already have an account? ", style: TextStyle(color: kPrimaryColor, fontSize: 12.sp)),
+                  Text("Sign In", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 12.5.sp)),
                 ],
               ),
               onTap: () {
-                //authViewModel.clearControllers();
+                authViewModel.clearAuthMessage();
                 routerDelegate.replaceAllButNumber(1, routeSettingsList: [RouteSettings(name: LoginScreen.route)]);
               },
             ),
@@ -188,25 +175,27 @@ class _CredentialBodyState extends State<CredentialBody> {
     );
   }
 
+  /// Subscriber to the stream of user created. It returns a [StreamSubscription].
+  ///
+  /// If the user is created, it shows the snack bar and push the login page.
   StreamSubscription<bool> subscribeToUserCreatedStream() {
     return authViewModel.isUserCreated.listen((isUserCreated) {
       LoadingDialog.hide(context);
       if (isUserCreated) {
-        showSnackBar();
-        routerDelegate.pushPage(name: LoginScreen.route);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text("Please check your email for the verification link."),
+          duration: const Duration(seconds: 10),
+        ));
+        routerDelegate.replaceAllButNumber(1, routeSettingsList: [RouteSettings(name: LoginScreen.route)]);
       }
     });
   }
 
-  void showSnackBar() {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: const Text("Please check your email for the verification link."),
-      duration: const Duration(seconds: 10),
-    ));
-  }
-
+  /// Function called by the back button interceptor.
+  ///
+  /// It remove the current auth message if it is present and then pop the page.
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    //authViewModel.clearControllers();
+    authViewModel.clearAuthMessage();
     routerDelegate.pop();
     return true;
   }

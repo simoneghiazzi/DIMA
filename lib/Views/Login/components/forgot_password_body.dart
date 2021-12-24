@@ -56,7 +56,7 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
               // Title
               Text(
                 "sApport",
-                style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 60, fontFamily: "Gabriola"),
+                style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 50.sp, fontFamily: "Gabriola"),
               ),
               SizedBox(height: 3.h),
               // Form
@@ -91,7 +91,13 @@ class _ForgotPasswordBodyState extends State<ForgotPasswordBody> {
                           child: Column(
                             children: <Widget>[
                               // Email Text Field
-                              FormTextField(textFieldBloc: forgotPasswordForm.emailText, hintText: "Email", prefixIconData: Icons.email),
+                              FormTextField(
+                                textFieldBloc: forgotPasswordForm.emailText,
+                                hintText: "Email",
+                                prefixIconData: Icons.email,
+                                textCapitalization: TextCapitalization.none,
+                                keyboardType: TextInputType.emailAddress,
+                              ),
                               SizedBox(height: 5.h),
                               // Button
                               RoundedButton(
