@@ -139,7 +139,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                                   ),
                                 ),
                                 // If the selected day has a diary page, show the appointment builder
-                                if (_selectedDayDetails!.appointments!.isNotEmpty) ...[
+                                if (diaryViewModel.diaryPages!.value.isNotEmpty && _selectedDayDetails!.appointments!.isNotEmpty) ...[
                                   // If today there is a note, the "+" button is not shown and so expand the
                                   // appointment builder
                                   if (Utils.isToday(diaryViewModel.diaryPages!.value.last.dateTime)) ...[
@@ -178,7 +178,7 @@ class _DiaryBodyState extends State<DiaryBody> {
           ),
         ),
         // If today there isn't a diary page, show the '+' button
-        if (diaryViewModel.diaryPages!.value.isNotEmpty && !Utils.isToday(diaryViewModel.diaryPages!.value.last.dateTime)) ...[
+        if (diaryViewModel.diaryPages!.value.isEmpty || !Utils.isToday(diaryViewModel.diaryPages!.value.last.dateTime)) ...[
           Align(
             alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1)!,
             child: FloatingActionButton(

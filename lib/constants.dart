@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// Colors used into the application
+// Colors palette of the application
 const kPrimaryColor = Color(0xFF212C8C);
 final kPrimaryLightColor = Color(0xFFC9E9FF);
 final kPrimaryButtonColor = Color(0xFF6FFFFF);

@@ -106,10 +106,12 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
     );
   }
 
-  /// Function called when the user change the current page from the the bottom navigation bar.
+  /// Function called when the user change the current page from the bottom navigation bar.
   ///
-  /// It sets the new [_currentIndex] of the [IndexedStack].
+  /// It sets the new [_currentIndex] of the [IndexedStack] and remove the current snack bar
+  /// if one exists.
   void _onBottomNavTapped(int index) {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
     setState(() {
       FocusScope.of(context).unfocus();
       _currentIndex = index;
