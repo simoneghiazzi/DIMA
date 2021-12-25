@@ -149,7 +149,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                     Flexible(child: Text(userViewModel.loggedUser!.email, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))),
                   ],
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 4.5.h),
                 // Reset Password
                 FutureBuilder(
                   future: _hasPasswordAuthenticationFuture,

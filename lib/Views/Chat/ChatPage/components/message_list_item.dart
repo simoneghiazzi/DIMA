@@ -163,7 +163,7 @@ class Clip extends CustomPainter {
   final Color bgColor;
 
   /// Draw of the triangle attached to the container of the first message sent by one of the users.
-  Clip(this.bgColor);
+  const Clip(this.bgColor);
 
   @override
   void paint(Canvas canvas, Size size) {
