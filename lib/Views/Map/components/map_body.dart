@@ -180,7 +180,7 @@ class _MapBodyState extends State<MapBody> {
                         // List item
                         return ListTile(
                           contentPadding: EdgeInsets.only(top: 2, bottom: 2, left: 15, right: 5),
-                          title: Text(snapshot.data[index].address, style: TextStyle(color: kPrimaryColor)),
+                          title: Text(snapshot.data[index].address, style: TextStyle(color: kPrimaryColor, fontSize: 14.sp)),
                           onTap: () {
                             isPositionSearched = true;
                             mapViewModel.searchPlace(snapshot.data[index].placeId);
@@ -332,6 +332,7 @@ class _MapBodyState extends State<MapBody> {
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.go,
                     controller: mapViewModel.searchTextCtrl,
+                    style: TextStyle(fontSize: 14.sp),
                     decoration: InputDecoration(
                       fillColor: kPrimaryColor,
                       border: InputBorder.none,
