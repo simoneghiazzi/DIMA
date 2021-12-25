@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:sApport/Views/Chat/components/message_list_constructor.dart';
+import 'package:sApport/Views/Chat/ChatPage/components/message_list_constructor.dart';
 
 /// It is used into the [ChatPageScreen] for sending new messages.
 /// It contains the text input field and the send message button.

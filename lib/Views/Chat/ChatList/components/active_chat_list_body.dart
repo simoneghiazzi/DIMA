@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Home/components/header.dart';
-import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
+import 'package:sApport/Views/Chat/ChatList/components/chat_list_constructor.dart';
 
 /// It contains the [Header] and the [ChatListConstructor] of the active chats of the expert user.
 class ActiveChatListBody extends StatefulWidget {

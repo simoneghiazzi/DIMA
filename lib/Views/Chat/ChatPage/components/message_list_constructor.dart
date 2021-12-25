@@ -6,9 +6,9 @@ import 'package:sApport/constants.dart';
 import 'package:sApport/Model/DBItems/message.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Chat/components/date_item.dart';
-import 'package:sApport/Views/Chat/components/message_list_item.dart';
-import 'package:sApport/Views/Chat/components/new_messages_item.dart';
+import 'package:sApport/Views/Chat/ChatPage/components/date_item.dart';
+import 'package:sApport/Views/Chat/ChatPage/components/message_list_item.dart';
+import 'package:sApport/Views/Chat/ChatPage/components/new_messages_item.dart';
 
 /// Constructor of the message list of a chat between 2 users.
 ///

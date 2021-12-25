@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/Views/Chat/components/chat_list_item.dart';
+import 'package:sApport/Views/Chat/ChatList/components/chat_list_item.dart';
 
 /// Constructor of the user chat list.
 ///

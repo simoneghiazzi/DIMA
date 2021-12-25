@@ -5,7 +5,7 @@ import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
+import 'package:sApport/Views/Chat/ChatList/components/chat_list_constructor.dart';
 
 /// It contains the [TopBar], the [ChatListConstructor] of the experts chats and the button for searching new random users.
 class ExpertChatListBody extends StatefulWidget {

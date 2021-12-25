@@ -7,7 +7,7 @@ import 'package:sApport/constants.dart';
 import 'package:sApport/Model/DBItems/message.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
-import 'package:sApport/Views/Chat/components/message_list_constructor.dart';
+import 'package:sApport/Views/Chat/ChatPage/components/message_list_constructor.dart';
 
 /// Message list item of the [MessageListConstructor].
 ///

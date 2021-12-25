@@ -12,7 +12,7 @@ import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
+import 'package:sApport/Views/Chat/ChatList/components/chat_list_constructor.dart';
 
 /// Chat item of the [ChatListConstructor].
 ///

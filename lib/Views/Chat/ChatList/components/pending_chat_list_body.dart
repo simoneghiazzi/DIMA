@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/Views/Chat/components/chat_list_constructor.dart';
+import 'package:sApport/Views/Chat/ChatList/components/chat_list_constructor.dart';
 
 /// It contains the [TopBar] and the [ChatListConstructor] of the pending chats.
 class PendingChatListBody extends StatefulWidget {
