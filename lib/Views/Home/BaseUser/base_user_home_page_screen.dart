@@ -73,7 +73,7 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
     diaryViewModel.loadDiaryPages();
 
     // Report View Model stream initialization
-    //reportViewModel.loadReports();
+    reportViewModel.loadReports();
 
     // Register the notification service
     authViewModel.setNotification(userViewModel.loggedUser!);

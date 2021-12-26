@@ -29,7 +29,7 @@ class _PendingChatListBodyState extends State<PendingChatListBody> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          TopBar(back: chatViewModel.resetCurrentChat, text: "Requests"),
+          TopBar(onBack: chatViewModel.resetCurrentChat, text: "Requests"),
           ChatListConstructor(valueNotifier: chatViewModel.pendingChats!),
         ],
       ),

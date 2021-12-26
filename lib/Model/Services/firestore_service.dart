@@ -339,8 +339,8 @@ class FirestoreService {
 
   /// It takes the [id] of an user and return the stream of all the
   /// reports of the user oredered in descending by date from the DB
-  Stream<QuerySnapshot> getReportsStreamFromDB(String id) {
-    return _firestore.collection(Report.COLLECTION).doc(id).collection("reportList").orderBy("id", descending: true).snapshots();
+  Future<QuerySnapshot> getReportsFromDB(String id) {
+    return _firestore.collection(Report.COLLECTION).doc(id).collection("reportList").orderBy(FieldPath.documentId).get();
   }
 
   /**************************************** DIARY ********************************************/

@@ -88,7 +88,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
               text: DateFormat("dd MMM yyyy").format(diaryViewModel.currentDiaryPage.value!.dateTime),
               textSize: 16.sp,
               backIcon: Icons.close_rounded,
-              back: diaryViewModel.resetCurrentDiaryPage,
+              onBack: diaryViewModel.resetCurrentDiaryPage,
               buttons: [
                 if (!diaryViewModel.isEditing.value) ...[
                   if (Utils.isToday(diaryViewModel.currentDiaryPage.value!.dateTime)) ...[

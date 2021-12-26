@@ -56,7 +56,7 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TopBar(
-              back: () {
+              onBack: () {
                 chatViewModel.resetCurrentChat();
                 ScaffoldMessenger.of(context).removeCurrentSnackBar();
               },

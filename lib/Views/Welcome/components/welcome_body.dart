@@ -188,7 +188,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
         routerDelegate.replaceAll(name: WelcomeScreen.route);
         chatViewModel.closeListeners();
         diaryViewModel.closeListeners();
-        //reportViewModel.closeListeners();
+        reportViewModel.closeListeners();
       }
     });
   }

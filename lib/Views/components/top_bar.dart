@@ -7,20 +7,32 @@ import 'package:sApport/Router/app_router_delegate.dart';
 /// Top bar of the base pages.
 ///
 /// It takes the [text], the [backIcon], a list of [buttons] that are displayed
-/// on the right and a [back] function that is called when the back button is pressed.
+/// on the right and a [onBack] function that is called when the back button is pressed.
+///
+/// The [back] flag specifies if the back icon button has to be displayed or not.
 class TopBar extends StatelessWidget {
   final String text;
   final double? textSize;
   final IconData backIcon;
   final List<Widget>? buttons;
-  final Function? back;
+  final Function? onBack;
+  final bool back;
 
   /// Top bar of the base pages.
   ///
-  /// It takes a [text], a list of [buttons] that are displayed on the right and a
-  /// [back] function that is called when the back button is pressed.
-  const TopBar({Key? key, required this.text, this.textSize, this.backIcon = Icons.arrow_back_ios_new_rounded, this.buttons, this.back})
-      : super(key: key);
+  /// It takes the [text], the [backIcon], a list of [buttons] that are displayed
+  /// on the right and a [onBack] function that is called when the back button is pressed.
+  ///
+  /// The [back] flag specifies if the back icon button has to be displayed or not.
+  const TopBar({
+    Key? key,
+    required this.text,
+    this.textSize,
+    this.backIcon = Icons.arrow_back_ios_new_rounded,
+    this.buttons,
+    this.onBack,
+    this.back = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,17 +46,21 @@ class TopBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              SizedBox(width: 1.w),
-              IconButton(
-                icon: Icon(backIcon, color: Colors.white),
-                onPressed: () {
-                  FocusScope.of(context).unfocus();
-                  routerDelegate.pop();
-                  if (back != null) {
-                    back!();
-                  }
-                },
-              ),
+              if (back) ...[
+                SizedBox(width: 1.w),
+                IconButton(
+                  icon: Icon(backIcon, color: Colors.white),
+                  onPressed: () {
+                    FocusScope.of(context).unfocus();
+                    routerDelegate.pop();
+                    if (onBack != null) {
+                      onBack!();
+                    }
+                  },
+                ),
+              ] else ...[
+                SizedBox(width: 4.w),
+              ],
               SizedBox(width: 1.w),
               Container(
                 alignment: Alignment.centerLeft,
