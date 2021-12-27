@@ -209,7 +209,9 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   StreamSubscription<bool> subscribeToOnSubmittingViewModel() {
     return diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
       if (isSuccessfulAdd) {
-        InfoDialog.show(context, infoType: InfoDialogType.success, content: "Diary page correctly submitted.", buttonType: ButtonType.ok);
+        if (!routerDelegate.hasDialog) {
+          InfoDialog.show(context, infoType: InfoDialogType.success, content: "Diary page correctly submitted.", buttonType: ButtonType.ok);
+        }
       } else {
         InfoDialog.show(context, infoType: InfoDialogType.error, content: "Error in submitting the diary page.", buttonType: ButtonType.ok);
       }
