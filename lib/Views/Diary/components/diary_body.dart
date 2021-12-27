@@ -252,44 +252,83 @@ class _DiaryBodyState extends State<DiaryBody> {
       ),
       child: Padding(
         padding: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.only(left: 3, right: 3) : EdgeInsets.only(top: 6.0),
-        child: Column(
-          children: [
-            Container(
-              width: 8.w,
-              padding: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.all(3) : EdgeInsets.all(0),
-              margin: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.only(top: 3) : EdgeInsets.all(0),
-              decoration: BoxDecoration(
-                color: Utils.isToday(details.date) && details.date.month == midDate.month ? kPrimaryDarkColorTrasparent : Colors.transparent,
-                borderRadius: BorderRadius.circular(20),
+        child: (MediaQuery.of(context).orientation == Orientation.portrait)
+            ? Column(
+                children: [
+                  Container(
+                    width: 8.w,
+                    padding: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.all(3) : EdgeInsets.all(0),
+                    margin: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.only(top: 3) : EdgeInsets.all(0),
+                    decoration: BoxDecoration(
+                      color: Utils.isToday(details.date) && details.date.month == midDate.month ? kPrimaryDarkColorTrasparent : Colors.transparent,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      details.date.day.toString(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: details.date.month == midDate.month
+                              ? Utils.isToday(details.date)
+                                  ? Colors.white
+                                  : kPrimaryColor
+                              : kPrimaryGreyColor,
+                          fontSize: 10.sp),
+                    ),
+                  ),
+                  if (details.appointments.isNotEmpty) ...[
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4.0),
+                      child: Container(
+                        transform: Utils.isToday(details.date) && details.date.month == midDate.month
+                            ? Matrix4.translationValues(0.0, -1.5, 0.0)
+                            : Matrix4.translationValues(0.0, 0, 0.0),
+                        child: Icon(Icons.menu_book,
+                            color: (details.appointments.first as DiaryPage).favourite ? kPrimaryGoldenColor : kPrimaryColor, size: 4.h),
+                      ),
+                    ),
+                    Spacer(),
+                  ]
+                ],
+              )
+            : Row(
+                children: [
+                  Container(
+                    width: 8.w,
+                    padding: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.all(3) : EdgeInsets.all(0),
+                    margin: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.only(top: 3) : EdgeInsets.all(0),
+                    decoration: BoxDecoration(
+                      color: Utils.isToday(details.date) && details.date.month == midDate.month ? kPrimaryDarkColorTrasparent : Colors.transparent,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      details.date.day.toString(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: details.date.month == midDate.month
+                              ? Utils.isToday(details.date)
+                                  ? Colors.white
+                                  : kPrimaryColor
+                              : kPrimaryGreyColor,
+                          fontSize: 10.sp),
+                    ),
+                  ),
+                  if (details.appointments.isNotEmpty) ...[
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4.0),
+                      child: Container(
+                        transform: Utils.isToday(details.date) && details.date.month == midDate.month
+                            ? Matrix4.translationValues(0.0, -1.5, 0.0)
+                            : Matrix4.translationValues(0.0, 0, 0.0),
+                        child: Icon(Icons.menu_book,
+                            color: (details.appointments.first as DiaryPage).favourite ? kPrimaryGoldenColor : kPrimaryColor, size: 4.h),
+                      ),
+                    ),
+                    Spacer(),
+                  ]
+                ],
               ),
-              child: Text(
-                details.date.day.toString(),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: details.date.month == midDate.month
-                        ? Utils.isToday(details.date)
-                            ? Colors.white
-                            : kPrimaryColor
-                        : kPrimaryGreyColor,
-                    fontSize: 10.sp),
-              ),
-            ),
-            if (details.appointments.isNotEmpty) ...[
-              Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4.0),
-                child: Container(
-                  transform: Utils.isToday(details.date) && details.date.month == midDate.month
-                      ? Matrix4.translationValues(0.0, -1.5, 0.0)
-                      : Matrix4.translationValues(0.0, 0, 0.0),
-                  child: Icon(Icons.menu_book,
-                      color: (details.appointments.first as DiaryPage).favourite ? kPrimaryGoldenColor : kPrimaryColor, size: 4.h),
-                ),
-              ),
-              Spacer(),
-            ]
-          ],
-        ),
       ),
     );
   }
