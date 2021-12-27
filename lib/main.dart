@@ -8,7 +8,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -26,13 +25,6 @@ import 'package:sApport/Model/Services/firebase_auth_service.dart';
 Future<void> main() async {
   // Flutter initialization
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Check the device type and disable the landscape orientation if it is not a tablet
-
-  /*************************** RIGA DA DECOMMENTARE IN DEPLOY ***************************/
-  if (!Device.get().isTablet) {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  }
 
   // Firebase initialization and functional checks
   await Firebase.initializeApp().then((_) => print("Firebase initialization completed")).catchError((e) {
@@ -109,6 +101,13 @@ class _MyAppState extends State<MyApp> {
       ],
       child: Sizer(
         builder: (context, orientation, deviceType) {
+          // Check the device type and disable the landscape orientation if it is not a tablet
+
+          /*************************** RIGA DA DECOMMENTARE IN DEPLOY ***************************/
+          if (!(deviceType == DeviceType.tablet)) {
+            SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+          }
+
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: "sApport",

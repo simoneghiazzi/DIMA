@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Utils/constants.dart';
-import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:sApport/Views/Home/BaseUser/components/home_page_grid.dart';
+import 'package:sizer/sizer.dart';
 
 /// Card that composes the [HomePageGrid].
 ///
@@ -22,7 +22,7 @@ class DashCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: Device.get().isTablet
+      padding: SizerUtil.deviceType == DeviceType.tablet
           ? (MediaQuery.of(context).orientation == Orientation.landscape)
               ? EdgeInsets.only(right: 25, left: 25, top: 20, bottom: 20)
               : EdgeInsets.only(right: 20, left: 20, top: 15, bottom: 15)
@@ -33,7 +33,7 @@ class DashCard extends StatelessWidget {
         highlightColor: Colors.transparent,
         onTap: () => onTap(),
         child: Container(
-          height: 30.h,
+          height: CustomSizer(30).h,
           child: Card(
             elevation: 3,
             shadowColor: kPrimaryColor,
@@ -42,11 +42,11 @@ class DashCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset(imagePath, scale: 5.5),
-                SizedBox(height: 2.h),
+                SizedBox(height: CustomSizer(2).h),
                 Text(
                   text,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 15.sp),
+                  style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: CustomSizer(15).sp),
                 ),
               ],
             ),

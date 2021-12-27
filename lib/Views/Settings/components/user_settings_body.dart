@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';

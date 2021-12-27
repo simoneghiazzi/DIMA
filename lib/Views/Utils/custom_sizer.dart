@@ -1,6 +1,6 @@
 import 'package:sizer/sizer.dart';
 
-extension SizerExt on num {
+extension CustomSizer on num {
   /// Calculates the height depending on the device's screen size
   ///
   /// Eg: 20.h -> will take 20% of the screen's height

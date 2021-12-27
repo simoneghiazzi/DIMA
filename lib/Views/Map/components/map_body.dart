@@ -5,16 +5,16 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sApport/Model/Map/place.dart';
-import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/Map/components/map_info_window.dart';
+import 'package:sizer/sizer.dart';
 
 /// Body of the [MapScreen].
 ///
@@ -180,7 +180,7 @@ class _MapBodyState extends State<MapBody> {
                         // List item
                         return ListTile(
                           contentPadding: EdgeInsets.only(top: 2, bottom: 2, left: 15, right: 5),
-                          title: Text(snapshot.data[index].address, style: TextStyle(color: kPrimaryColor, fontSize: 14.sp)),
+                          title: Text(snapshot.data[index].address, style: TextStyle(color: kPrimaryColor, fontSize: CustomSizer(14).sp)),
                           onTap: () {
                             isPositionSearched = true;
                             mapViewModel.searchPlace(snapshot.data[index].placeId);
@@ -200,12 +200,12 @@ class _MapBodyState extends State<MapBody> {
         // Custom Info Window of the Expert
         CustomInfoWindow(
           controller: _customInfoWindowController,
-          height: 15.h,
-          width: Device.get().isTablet
+          height: CustomSizer(15).h,
+          width: SizerUtil.deviceType == DeviceType.tablet
               ? (MediaQuery.of(context).orientation == Orientation.portrait)
-                  ? 5.w
-                  : 35.w
-              : 65.w,
+                  ? CustomSizer(5).w
+                  : CustomSizer(35).w
+              : CustomSizer(65).w,
           offset: (MediaQuery.of(context).orientation == Orientation.portrait) ? 20 : 30,
         ),
       ],
@@ -332,7 +332,7 @@ class _MapBodyState extends State<MapBody> {
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.go,
                     controller: mapViewModel.searchTextCtrl,
-                    style: TextStyle(fontSize: 14.sp),
+                    style: TextStyle(fontSize: CustomSizer(14).sp),
                     decoration: InputDecoration(
                       fillColor: kPrimaryColor,
                       border: InputBorder.none,

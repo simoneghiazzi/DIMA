@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/components/social_icon.dart';
 import 'package:sApport/Views/Welcome/components/welcome_body.dart';

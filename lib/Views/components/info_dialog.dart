@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Utils/constants.dart';
-import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 
 /// It shows an info dialog of type [infoType] with a [title], a [content] and a button
 /// of type [buttonType].

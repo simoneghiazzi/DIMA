@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:sApport/Model/utils.dart';
-import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/components/info_dialog.dart';
 import 'package:sApport/Views/components/top_bar.dart';
