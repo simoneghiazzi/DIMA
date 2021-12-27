@@ -97,10 +97,10 @@ class AuthViewModel {
         _authMessageCtrl.add("An account already exists with the same email address but different sign-in credentials.");
       } else if (error.code == "email-already-in-use" || error.code == "credential-already-in-use") {
         _authMessageCtrl.add("This social account is already linked with another profile or the email is already registered.");
-      } else {
-        _authMessageCtrl.add("Error in signing in with the Google account. Please try again later.");
-        print("Error in signing in with the Google account");
       }
+    } catch (error) {
+      _authMessageCtrl.add("Error in signing in with the Google account. Please try again later.");
+      print("Error in signing in with the Google account");
     }
   }
 
@@ -135,10 +135,10 @@ class AuthViewModel {
         _authMessageCtrl.add("An account already exists with the same email address but different sign-in credentials.");
       } else if (error.code == "email-already-in-use" || error.code == "credential-already-in-use") {
         _authMessageCtrl.add("This social account is already linked with another profile or the email is already registered.");
-      } else {
-        _authMessageCtrl.add("Error in signing in with the Facebook account. Please try again later.");
-        print("Error in signing in with the Facebook account");
       }
+    } catch (error) {
+      _authMessageCtrl.add("Error in signing in with the Facebook account. Please try again later.");
+      print("Error in signing in with the Facebook account");
     }
   }
 

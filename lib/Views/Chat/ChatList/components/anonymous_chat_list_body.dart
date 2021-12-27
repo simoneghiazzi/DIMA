@@ -3,7 +3,6 @@ import 'dart:collection';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Views/components/top_bar.dart';
@@ -41,10 +40,6 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     subscriberNewRandomUser = subscribeToNewRandomUser();
-
-    // Add a back button interceptor for listening to the OS back button
-    BackButtonInterceptor.add(backButtonInterceptor);
-
     super.initState();
   }
 
@@ -124,19 +119,9 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
     });
   }
 
-  /// Function called by the back button interceptor.
-  ///
-  /// It remove the current snack bar if it is present and then pop the page.
-  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    routerDelegate.pop();
-    return true;
-  }
-
   @override
   void dispose() {
     subscriberNewRandomUser.cancel();
-    BackButtonInterceptor.remove(backButtonInterceptor);
     super.dispose();
   }
 }

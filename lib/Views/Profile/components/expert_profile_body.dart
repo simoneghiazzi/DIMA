@@ -178,7 +178,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                   child: RoundedButton(
                     text: "Get In Touch ",
                     onTap: () {
-                      chatViewModel.setCurrentChat(ExpertChat(peerUser: widget.expert));
+                      chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
                       if (MediaQuery.of(context).orientation == Orientation.portrait) {
                         // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
                         routerDelegate.replaceAllButNumber(2, routeSettingsList: [

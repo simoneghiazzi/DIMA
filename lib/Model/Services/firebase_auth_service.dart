@@ -104,7 +104,7 @@ class FirebaseAuthService {
         }
       }
     }
-    return {};
+    throw FirebaseException(plugin: "Error");
   }
 
   /// Attempts to sign in a user with the Facebook account.
@@ -126,27 +126,29 @@ class FirebaseAuthService {
   ///    among your users, or is already linked to a Firebase User.
   Future<Map> signInWithFacebook(bool link) async {
     LoginResult result = await FacebookAuth.instance.login(permissions: ["email", "public_profile", "user_birthday"]);
-    AccessToken accessToken = result.accessToken!;
-    var facebookCredential = FacebookAuthProvider.credential(accessToken.token);
+    if (result.accessToken != null) {
+      AccessToken accessToken = result.accessToken!;
+      var facebookCredential = FacebookAuthProvider.credential(accessToken.token);
 
-    // If link is true, it links the Facebook account to the logged user
-    if (link) {
-      await currentUser!.linkWithCredential(facebookCredential);
-    } else {
-      // Sign in with Facebook credential
-      await _firebaseAuth.signInWithCredential(facebookCredential);
-      final userData = await FacebookAuth.instance.getUserData(fields: "name, birthday");
+      // If link is true, it links the Facebook account to the logged user
+      if (link) {
+        await currentUser!.linkWithCredential(facebookCredential);
+      } else {
+        // Sign in with Facebook credential
+        await _firebaseAuth.signInWithCredential(facebookCredential);
+        final userData = await FacebookAuth.instance.getUserData(fields: "name, birthday");
 
-      // Format the user birthdate info from the Facebook account
-      var birthDate = userData["birthday"].split("/");
-      return {
-        "name": userData["name"].split(" ")[0],
-        "surname": userData["name"].split(" ")[1],
-        "email": currentUser?.email,
-        "birthDate": DateTime.parse("${birthDate[2]}-${birthDate[0]}-${birthDate[1]}")
-      };
+        // Format the user birthdate info from the Facebook account
+        var birthDate = userData["birthday"].split("/");
+        return {
+          "name": userData["name"].split(" ")[0],
+          "surname": userData["name"].split(" ")[1],
+          "email": currentUser?.email,
+          "birthDate": DateTime.parse("${birthDate[2]}-${birthDate[0]}-${birthDate[1]}")
+        };
+      }
     }
-    return {};
+    throw FirebaseException(plugin: "Error");
   }
 
   /// Sends a password reset email to the given [email] address.

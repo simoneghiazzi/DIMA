@@ -144,9 +144,11 @@ class _DiaryBodyState extends State<DiaryBody> {
                                       ),
                                     ] else ...[
                                       // Otherwise sets a max width in order to have the space for showing the "+" button
-                                      Container(
-                                        constraints: BoxConstraints(maxWidth: 70.w),
-                                        child: appointmentBuilder(),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(right: 80),
+                                          child: appointmentBuilder(),
+                                        ),
                                       )
                                     ]
                                   ] else ...[

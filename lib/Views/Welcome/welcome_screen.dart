@@ -76,7 +76,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
     } else if (MediaQuery.of(context).orientation == Orientation.landscape) {
       if (chatViewModel.currentChat.value != null) {
         routerDelegate.pushPage(name: ChatPageScreen.route);
-      } else if (reportViewModel.currentReport != null) {
+      } else if (reportViewModel.currentReport.value != null) {
         routerDelegate.pushPage(name: ReportDetailsScreen.route);
       } else if (diaryViewModel.currentDiaryPage.value != null) {
         routerDelegate.pushPage(name: DiaryPageScreen.route);
