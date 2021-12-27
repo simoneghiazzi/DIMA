@@ -1,4 +1,4 @@
-import 'package:sizer/sizer.dart';
+import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
 
@@ -14,26 +14,25 @@ class Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: kPrimaryColor,
-      child: SafeArea(
-        child: Container(
-          color: kPrimaryColor,
-          height: 10.h,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0),
-                child: Text(
-                  "sApport",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 33.sp, fontFamily: "Gabriola"),
+        color: kPrimaryColor,
+        child: SafeArea(
+          child: Container(
+            color: kPrimaryColor,
+            height: 10.h,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 3.0.w),
+                  child: Text(
+                    "sApport",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30.sp, fontFamily: "Gabriola"),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

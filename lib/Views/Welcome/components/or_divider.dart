@@ -1,4 +1,4 @@
-import 'package:sizer/sizer.dart';
+import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/Views/components/social_icon.dart';
@@ -19,7 +19,7 @@ class OrDivider extends StatelessWidget {
           Expanded(child: Divider(color: Color(0xFFD9D9D9), height: 1.5)),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Text("OR", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.w600)),
+            child: Text("OR", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.w600, fontSize: 10.sp)),
           ),
           Expanded(child: Divider(color: Color(0xFFD9D9D9), height: 1.5)),
         ],

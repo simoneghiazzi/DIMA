@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:sizer/sizer.dart';
+import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/constants.dart';

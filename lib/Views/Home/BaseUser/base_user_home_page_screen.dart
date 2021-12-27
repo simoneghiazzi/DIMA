@@ -11,6 +11,7 @@ import 'package:sApport/Views/Settings/user_settings_screen.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Views/Home/BaseUser/components/base_user_home_page_body.dart';
+import 'package:sApport/sizer.dart';
 
 /// Home page of the [BaseUser].
 ///
@@ -91,6 +92,8 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
+        iconSize: 15.sp,
+        selectedFontSize: 10.sp,
         currentIndex: _currentIndex,
         showSelectedLabels: true,
         showUnselectedLabels: false,

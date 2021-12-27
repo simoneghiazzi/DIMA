@@ -1,4 +1,4 @@
-import 'package:sizer/sizer.dart';
+import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/Views/components/vertical_split_view.dart';

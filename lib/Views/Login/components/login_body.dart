@@ -1,4 +1,4 @@
-import 'package:sizer/sizer.dart';
+import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
@@ -104,7 +104,7 @@ class _LoginBodyState extends State<LoginBody> {
                                   FocusScope.of(context).unfocus();
                                   routerDelegate.pushPage(name: ForgotPasswordScreen.route);
                                 },
-                                child: Text("Forgot Password?", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold)),
+                                child: Text("Forgot Password?", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 10.sp)),
                               ),
                               SizedBox(height: 5.h),
                               // Login Button

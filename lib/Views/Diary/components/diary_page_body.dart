@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:intl/intl.dart';
-import 'package:sizer/sizer.dart';
+import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';

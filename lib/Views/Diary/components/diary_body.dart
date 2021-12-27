@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:sizer/sizer.dart';
+import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -251,11 +251,11 @@ class _DiaryBodyState extends State<DiaryBody> {
         color: details.date.month != midDate.month ? kPrimaryLightColor : Colors.transparent,
       ),
       child: Padding(
-        padding: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.all(0) : EdgeInsets.only(top: 6.0),
+        padding: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.only(left: 3) : EdgeInsets.only(top: 6.0),
         child: Column(
           children: [
             Container(
-              width: 22,
+              width: 22.sp,
               padding: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.all(3) : EdgeInsets.all(0),
               margin: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.only(top: 3) : EdgeInsets.all(0),
               decoration: BoxDecoration(
@@ -271,7 +271,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                             ? Colors.white
                             : kPrimaryColor
                         : kPrimaryGreyColor,
-                    fontSize: 11.sp),
+                    fontSize: 10.sp),
               ),
             ),
             if (details.appointments.isNotEmpty) ...[

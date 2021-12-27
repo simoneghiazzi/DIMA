@@ -14,7 +14,7 @@ import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/Views/Login/components/background.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:provider/provider.dart';
-import 'package:sizer/sizer.dart';
+import 'package:sApport/sizer.dart';
 
 /// Body of the [CredentialScreen].
 ///
