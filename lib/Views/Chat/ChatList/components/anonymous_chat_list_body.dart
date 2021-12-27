@@ -70,7 +70,7 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
                           child: Row(children: <Widget>[
                             Icon(Icons.notification_add, color: kPrimaryGoldenColor, size: 20),
-                            SizedBox(width: 2),
+                            SizedBox(width: 2.w),
                             Text("Requests", style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold, color: Colors.white)),
                           ]),
                         ),

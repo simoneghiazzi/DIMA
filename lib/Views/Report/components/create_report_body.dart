@@ -58,7 +58,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                 child: Row(
                   children: <Widget>[
                     Icon(Icons.list_rounded, color: Colors.white, size: 30),
-                    SizedBox(width: 2),
+                    SizedBox(width: 2.w),
                     Text("List", style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.bold)),
                   ],
                 ),
