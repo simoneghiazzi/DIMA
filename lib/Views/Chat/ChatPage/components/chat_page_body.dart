@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/constants.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
@@ -109,8 +110,10 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
   /// It resets the `chatting with` field into the DB and the current chat of the [ChatViewModel]
   /// and finally pop the page.
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    chatViewModel.resetChattingWith();
-    chatViewModel.resetCurrentChat();
+    if (routerDelegate.getLastRoute() != ExpertProfileScreen.route) {
+      chatViewModel.resetChattingWith();
+      chatViewModel.resetCurrentChat();
+    }
     routerDelegate.pop();
     return true;
   }

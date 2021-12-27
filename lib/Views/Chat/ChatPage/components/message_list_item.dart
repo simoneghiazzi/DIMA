@@ -42,15 +42,14 @@ class _MessageListItemState extends State<MessageListItem> {
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
-
-    // Calculate the width of the container for the message
-    _containerWidth = calcTextSize(widget.messageItem.content, TextStyle(fontFamily: "UbuntuCondensed")).width + 19.w;
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Calculate the width of the container for the message
+    _containerWidth = calcTextSize(widget.messageItem.content, TextStyle(fontFamily: "Lato")).width + 19.w;
+
     // Check if the message is sent or received by the logged user
     if (widget.messageItem.idFrom == userViewModel.loggedUser!.id) {
       // Logged user message (rigth)

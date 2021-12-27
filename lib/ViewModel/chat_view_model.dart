@@ -80,16 +80,6 @@ class ChatViewModel extends ChangeNotifier {
     return _firestoreService.setMessagesHasRead(_userService.loggedUser!, _currentChat.value!);
   }
 
-  /// Get the stream of messages between the 2 users.
-  Stream<QuerySnapshot>? loadMessages() {
-    try {
-      return _firestoreService.getMessagesStreamFromDB(Utils.pairChatId(_userService.loggedUser!.id, _currentChat.value!.peerUser!.id));
-    } catch (e) {
-      print("Failed to get the stream of messages: $e");
-      return null;
-    }
-  }
-
   /// Subscribe to the anomymous chats stream of the [loggedUser] from the Firebase DB and
   /// update the [_anonymousChats] linked hash map with the chats.
   ///
@@ -104,16 +94,21 @@ class ChatViewModel extends ChangeNotifier {
         for (var docChange in snapshot.docChanges) {
           var chat = AnonymousChat.fromDocument(docChange.doc);
           // If oldIndex == -1, the document is added, so its new and it has to retrieve the peer user from the DB
+          // and load the messages
           if (docChange.oldIndex == -1) {
             getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {
               chat.peerUser!.setFromDocument(value.docs[0]);
+              chat.loadMessages();
               _anonymousChats!.value[docChange.doc.id] = chat;
               _anonymousChats!.notifyListeners();
             });
           } else {
-            // Otherwise, copy the peer user info from the old chat
-            chat.peerUser = _anonymousChats!.value.remove(docChange.doc.id)!.peerUser;
-            _anonymousChats!.value[docChange.doc.id] = chat;
+            // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields
+            var removedChat = _anonymousChats!.value.remove(docChange.doc.id);
+            removedChat?.lastMessage = chat.lastMessage;
+            removedChat?.lastMessageDateTime = chat.lastMessageDateTime;
+            removedChat?.notReadMessages = chat.notReadMessages;
+            _anonymousChats!.value[docChange.doc.id] = removedChat!;
             _anonymousChats!.notifyListeners();
           }
         }
@@ -139,6 +134,7 @@ class ChatViewModel extends ChangeNotifier {
             var chat = PendingChat.fromDocument(docChange.doc);
             getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {
               chat.peerUser!.setFromDocument(value.docs[0]);
+              chat.loadMessages();
               _pendingChats!.value[docChange.doc.id] = chat;
               _pendingChats!.notifyListeners();
             });
@@ -166,13 +162,17 @@ class ChatViewModel extends ChangeNotifier {
           if (docChange.oldIndex == -1) {
             getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {
               chat.peerUser!.setFromDocument(value.docs[0]);
+              chat.loadMessages();
               _expertsChats!.value[docChange.doc.id] = chat;
               _expertsChats!.notifyListeners();
             });
           } else {
-            // Otherwise, copy the peer user info from the old chat
-            chat.peerUser = _expertsChats!.value.remove(docChange.doc.id)!.peerUser;
-            _expertsChats!.value[docChange.doc.id] = chat;
+            // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields
+            var removedChat = _expertsChats!.value.remove(docChange.doc.id);
+            removedChat?.lastMessage = chat.lastMessage;
+            removedChat?.lastMessageDateTime = chat.lastMessageDateTime;
+            removedChat?.notReadMessages = chat.notReadMessages;
+            _expertsChats!.value[docChange.doc.id] = removedChat!;
             _expertsChats!.notifyListeners();
           }
         }
@@ -198,13 +198,17 @@ class ChatViewModel extends ChangeNotifier {
           if (docChange.oldIndex == -1) {
             getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {
               chat.peerUser!.setFromDocument(value.docs[0]);
+              chat.loadMessages();
               _activeChats!.value[docChange.doc.id] = chat;
               _activeChats!.notifyListeners();
             });
           } else {
-            // Otherwise, copy the peer user info from the old chat
-            chat.peerUser = _activeChats!.value.remove(docChange.doc.id)!.peerUser;
-            _activeChats!.value[docChange.doc.id] = chat;
+            // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields
+            var removedChat = _activeChats!.value.remove(docChange.doc.id);
+            removedChat?.lastMessage = chat.lastMessage;
+            removedChat?.lastMessageDateTime = chat.lastMessageDateTime;
+            removedChat?.notReadMessages = chat.notReadMessages;
+            _activeChats!.value[docChange.doc.id] = removedChat!;
             _activeChats!.notifyListeners();
           }
         }
@@ -225,7 +229,8 @@ class ChatViewModel extends ChangeNotifier {
       if (doc != null) {
         // Create the random user and update the chat
         var randomUser = BaseUser.fromDocument(doc);
-        setCurrentChat(Request(peerUser: randomUser));
+        // Add the listeners for new messages
+        addNewChat(Request(peerUser: randomUser));
         // Add the "true" value to the new random user stream controller
         _newRandomUserCtrl.add(true);
       } else {
@@ -239,7 +244,7 @@ class ChatViewModel extends ChangeNotifier {
   void acceptPendingChat() {
     _pendingChats!.value.remove(_currentChat.value!.peerUser!.id);
     _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser!, _currentChat.value!);
-    setCurrentChat(AnonymousChat(peerUser: _currentChat.value!.peerUser as BaseUser));
+    addNewChat(AnonymousChat(peerUser: _currentChat.value!.peerUser as BaseUser));
     _pendingChats!.notifyListeners();
   }
 
@@ -254,8 +259,14 @@ class ChatViewModel extends ChangeNotifier {
     _pendingChats!.notifyListeners();
   }
 
+  /// Set the [chat] as the [_currentChat] and add the listener for new messages.
+  void addNewChat(Chat chat) {
+    chat.loadMessages();
+    setCurrentChat(chat);
+  }
+
   /// Set the [chat] as the [_currentChat].
-  void setCurrentChat(Chat? chat) {
+  void setCurrentChat(Chat chat) {
     _currentChat.value = chat;
     print("Current chat setted");
   }
