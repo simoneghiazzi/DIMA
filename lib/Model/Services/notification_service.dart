@@ -14,13 +14,13 @@ class NotificationService {
   }
 
   /// Returns the default FCM token for this device.
-  Future<String> getDeviceToken() {
+  Future<String?> getDeviceToken() {
     return _firebaseMessaging.getToken();
   }
 
   /// Configuration of the notification for Android and IOS and register the notification listeners.
   void configNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid = new AndroidInitializationSettings("@mipmap/ic_splash");
+    AndroidInitializationSettings initializationSettingsAndroid = new AndroidInitializationSettings("@drawable/ic_notification");
     IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
     InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     _flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -32,7 +32,7 @@ class NotificationService {
     // Handle notification messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
-        _showNotification(message.notification);
+        _showNotification(message.notification!);
         FlutterAppBadger.updateBadgeCount(1);
       }
       return;

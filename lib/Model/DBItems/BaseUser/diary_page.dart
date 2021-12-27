@@ -9,22 +9,17 @@ class DiaryPage extends DbItem {
   DateTime dateTime;
   bool favourite;
 
-  DiaryPage({String id, this.title, this.content, this.dateTime, this.favourite}) : super(COLLECTION, id: id);
+  DiaryPage({String id = "", this.title = "", this.content = "", required this.dateTime, this.favourite = false}) : super(COLLECTION, id: id);
 
   /// Create an instance of the [DiaryPage] form the [doc] fields retrieved from the FireBase DB.
   factory DiaryPage.fromDocument(DocumentSnapshot doc) {
-    try {
-      return DiaryPage(
-        id: doc.id,
-        title: doc.get("title"),
-        content: doc.get("content"),
-        dateTime: doc.get("dateTime").toDate(),
-        favourite: doc.get("favourite"),
-      );
-    } catch (e) {
-      print("Error in creating the diary page from the document snapshot: $e");
-      return null;
-    }
+    return DiaryPage(
+      id: doc.id,
+      title: doc.get("title"),
+      content: doc.get("content"),
+      dateTime: doc.get("dateTime").toDate(),
+      favourite: doc.get("favourite"),
+    );
   }
 
   @override

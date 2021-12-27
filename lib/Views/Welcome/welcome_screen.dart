@@ -9,8 +9,19 @@ import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/Views/Welcome/components/welcome_body.dart';
 
+/// It contains the [WelcomeBody] that is used as the first screen for non-signed in users.
+///
+/// **It handles the device orientation changes by subscribing to the [didChangeMetrics].
+/// This listener is active in the entire application since this page is always at the bottom of the stack.**
 class WelcomeScreen extends StatefulWidget {
-  static const route = '/welcomeScreen';
+  /// Route of the page used by the Navigator.
+  static const route = "/welcomeScreen";
+
+  /// It contains the [WelcomeBody] that is used as the first screen for non-signed in users.
+  ///
+  /// **It handles the device orientation changes by subscribing to the [didChangeMetrics].
+  /// This listener is active in the entire application since this page is always at the bottom of the stack.**
+  const WelcomeScreen({Key? key}) : super(key: key);
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
@@ -18,15 +29,14 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserver {
   // Router
-  AppRouterDelegate routerDelegate;
+  late AppRouterDelegate routerDelegate;
 
   // View Models
-  ChatViewModel chatViewModel;
-  ReportViewModel reportViewModel;
-  DiaryViewModel diaryViewModel;
+  late ChatViewModel chatViewModel;
+  late ReportViewModel reportViewModel;
+  late DiaryViewModel diaryViewModel;
 
-  bool _first = true;
-  var _width;
+  late double _width;
 
   @override
   void initState() {
@@ -34,32 +44,41 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
-    _width = WidgetsBinding.instance.window.physicalSize.width;
-    WidgetsBinding.instance.addObserver(this);
+
+    // Add a the interceptor for listening to the did change metrics
+    WidgetsBinding.instance!.addObserver(this);
+
+    // Get the width because the did change metrics is triggered also when the keyboard is opened
+    _width = WidgetsBinding.instance!.window.physicalSize.width;
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WelcomeBody(),
+      body: const WelcomeBody(),
     );
   }
 
   /// Handle the orientation changes of the device.
+  /// It is triggered by the [onChangeMetrics] listener.
   ///
-  /// The _previosKeyboardState contains the value of the state of the keyboard before the rebuild
+  /// - If the last route is the one between the [ChatPageScreen], the [ReportDetailsScreen]
+  /// or the [DiaryPageScreen], when the function is triggered, it pop the page.
+  /// - If the orientation change from landscape to portrait and the current value of one of
+  /// the view models is not null, it pushes the relative page.
   void handleOrientationChanges() {
     print("handleOrientationChanges");
     String lastRoute = routerDelegate.getLastRoute();
     if (lastRoute == ChatPageScreen.route || lastRoute == ReportDetailsScreen.route || lastRoute == DiaryPageScreen.route) {
       routerDelegate.pop();
     } else if (MediaQuery.of(context).orientation == Orientation.landscape) {
-      if (chatViewModel.currentChat != null) {
+      if (chatViewModel.currentChat.value != null) {
         routerDelegate.pushPage(name: ChatPageScreen.route);
-      } else if (reportViewModel.currentReport != null) {
+      } else if (reportViewModel.currentReport.value != null) {
         routerDelegate.pushPage(name: ReportDetailsScreen.route);
-      } else if (diaryViewModel.currentDiaryPage != null) {
+      } else if (diaryViewModel.currentDiaryPage.value != null) {
         routerDelegate.pushPage(name: DiaryPageScreen.route);
       }
     }
@@ -67,19 +86,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
 
   @override
   void didChangeMetrics() {
-    if (_width != WidgetsBinding.instance.window.physicalSize.width) {
-      if (_first) {
-        handleOrientationChanges();
-      }
-      _width = WidgetsBinding.instance.window.physicalSize.width;
-      _first = true;
+    // Check if the callback is not triggered by the keyboard
+    if (_width != WidgetsBinding.instance!.window.physicalSize.width) {
+      handleOrientationChanges();
+      _width = WidgetsBinding.instance!.window.physicalSize.width;
     }
     super.didChangeMetrics();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 }

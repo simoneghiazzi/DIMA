@@ -1,28 +1,49 @@
-import 'package:sApport/Model/Chat/expert_chat.dart';
-import 'package:sApport/Model/DBItems/Expert/expert.dart';
-import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
-import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
-import 'package:sApport/Views/components/network_avatar.dart';
-import 'package:sApport/constants.dart';
+import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
-import 'package:open_mail_app/open_mail_app.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:open_mail_app/open_mail_app.dart';
+import 'package:sApport/constants.dart';
+import 'package:sApport/Model/Chat/expert_chat.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
+import 'package:sApport/Views/components/network_avatar.dart';
+import 'package:sApport/Views/components/rounded_button.dart';
+import 'package:sApport/Views/Profile/expert_profile_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/components/expert_chat_list_body.dart';
 
+/// Body of the [ExpertProfileScreen].
+///
+/// It contains all the base information of the [expert] and the
+/// "Get in touch" button for opening a new chat with that expert.
+///
+/// It manages the opening of the navigator, the phone and the email
+/// apps when the user clicks the relative information.
 class ExpertProfileBody extends StatefulWidget {
   final Expert expert;
 
-  ExpertProfileBody({Key key, @required this.expert}) : super(key: key);
+  /// Body of the [ExpertProfileScreen].
+  ///
+  /// It contains all the base information of the [expert] and the
+  /// "Get in touch" button for opening a new chat with that expert.
+  ///
+  /// It manages the opening of the navigator, the phone and the email
+  /// apps when the user clicks the relative information.
+  const ExpertProfileBody({Key? key, required this.expert}) : super(key: key);
 
   @override
   _ExpertProfileBodyState createState() => _ExpertProfileBodyState();
 }
 
 class _ExpertProfileBodyState extends State<ExpertProfileBody> {
-  ChatViewModel chatViewModel;
-  AppRouterDelegate routerDelegate;
+  // View Models
+  late ChatViewModel chatViewModel;
+
+  // Router Delegate
+  late AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
@@ -33,226 +54,157 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return SizedBox.expand(
-      child: Stack(
-        alignment: Alignment.topCenter,
-        children: <Widget>[
-          // background image and bottom contents
-          SingleChildScrollView(
-              child: Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(top: 40, bottom: 10),
-                child: Padding(
-                  padding: EdgeInsets.only(left: 20),
-                  child: FloatingActionButton(
-                    mini: true,
-                    onPressed: () {
-                      routerDelegate.pop();
-                    },
-                    materialTapTargetSize: MaterialTapTargetSize.padded,
-                    backgroundColor: Colors.transparent,
-                    child: const Icon(Icons.arrow_back_ios_new_rounded, size: 40.0),
-                  ),
-                ),
-                alignment: Alignment.topLeft,
-                height: 150.0,
-                width: size.width,
+    return Column(
+      children: <Widget>[
+        // Top Bar with Image
+        Row(
+          children: [
+            Expanded(
+              child: Container(
                 color: kPrimaryColor,
-              ),
-              Container(
-                  transform: Matrix4.translationValues(0.0, -75.0, 0.0),
-                  child: NetworkAvatar(
-                    img: widget.expert.profilePhoto,
-                    radius: 75.0,
-                  )),
-              Container(
-                transform: Matrix4.translationValues(0.0, -50.0, 0.0),
-                padding: EdgeInsets.only(left: size.width / 10, right: size.width / 10),
-                color: Colors.white,
-                child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: kPrimaryLightColor,
+                child: SafeArea(
+                  child: Container(
+                    height: 18.h,
+                    color: kPrimaryColor,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Back Button
+                        Padding(
+                          padding: EdgeInsets.only(top: 15.0, left: 10.0),
+                          child: IconButton(
+                            icon: Icon(Icons.close, size: 35.0, color: Colors.white),
+                            onPressed: () => routerDelegate.pop(),
+                          ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                widget.expert.name.toUpperCase() + " " + widget.expert.surname.toUpperCase(),
-                                style: TextStyle(color: kPrimaryColor, fontSize: 22, fontWeight: FontWeight.bold),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: size.height * 0.07,
-                          ),
-                          // Phone number
-                          Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.phone,
-                                color: kPrimaryColor,
-                              ),
-                              SizedBox(
-                                width: size.width * 0.05,
-                              ),
-                              GestureDetector(
-                                child: Text(widget.expert.phoneNumber,
-                                    style: TextStyle(color: kPrimaryColor, fontSize: 22, fontWeight: FontWeight.bold)),
-                                onTap: () {
-                                  launch('tel://' + widget.expert.phoneNumber);
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: size.height * 0.05,
-                          ),
-                          // Email
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.mail,
-                                color: kPrimaryColor,
-                              ),
-                              SizedBox(
-                                width: size.width * 0.05,
-                              ),
-                              Flexible(
-                                child: GestureDetector(
-                                  child: Text(widget.expert.email, style: TextStyle(color: kPrimaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
-                                  onTap: () async {
-                                    EmailContent email = EmailContent(
-                                      to: [
-                                        widget.expert.email,
-                                      ],
-                                    );
-
-                                    // Android: Will open mail app or show native picker.
-                                    // iOS: Will open mail app if single mail app found.
-                                    OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(
-                                        nativePickerTitle: 'Select email app to compose', emailContent: email);
-
-                                    // If no mail apps found, show error
-                                    if (!result.didOpen && !result.canOpen) {
-                                      showNoMailAppsDialog(context);
-
-                                      // iOS: if multiple mail apps found, show dialog to select.
-                                      // There is no native intent/default app system in iOS so
-                                      // you have to do it yourself.
-                                    } else if (!result.didOpen && result.canOpen) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (_) {
-                                          return MailAppPickerDialog(
-                                            mailApps: result.options,
-                                          );
-                                        },
-                                      );
-                                    }
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: size.height * 0.05,
-                          ),
-                          // Address
-                          Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.house,
-                                color: kPrimaryColor,
-                              ),
-                              SizedBox(
-                                width: size.width * 0.05,
-                              ),
-                              Flexible(
-                                child: GestureDetector(
-                                  child:
-                                      Text(widget.expert.address, style: TextStyle(color: kPrimaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
-                                  onTap: () {
-                                    openMaps();
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: size.height * 0.07,
-                          ),
-                          Divider(
-                            color: kPrimaryColor,
-                            height: 1.5,
-                          ),
-                          SizedBox(
-                            height: size.height * 0.08,
-                          ),
-                        ],
-                      ),
-                      Center(
-                        child: InkWell(
-                          child: Container(
-                            padding: EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                            height: size.height * 0.05,
-                            width: size.width * 0.5,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: kPrimaryColor,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  "Get in Touch",
-                                  style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Icon(
-                                  Icons.chat,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ],
-                            ),
-                          ),
-                          onTap: () {
-                            chatViewModel.setCurrentChat(ExpertChat(peerUser: widget.expert));
-                            if (MediaQuery.of(context).orientation == Orientation.portrait) {
-                              routerDelegate.replaceAllButNumber(2, routeSettingsList: [
-                                RouteSettings(name: ExpertChatsListScreen.route),
-                                RouteSettings(name: ChatPageScreen.route),
-                              ]);
-                            } else {
-                              routerDelegate.replaceAllButNumber(2, routeSettingsList: [RouteSettings(name: ExpertChatsListScreen.route)]);
-                            }
-                          },
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ],
-          )),
-        ],
-      ),
+            ),
+          ],
+        ),
+        // Profile photo
+        Container(
+          transform: Matrix4.translationValues(0.0, -75.0, 0.0),
+          child: NetworkAvatar(img: widget.expert.profilePhoto, radius: 75.0),
+        ),
+        Expanded(
+          child: Container(
+            transform: Matrix4.translationValues(0.0, -55.0, 0.0),
+            padding: EdgeInsets.only(left: 10.w, right: 10.w),
+            child: Column(
+              children: [
+                // Full Name
+                Container(
+                  width: 70.w,
+                  padding: EdgeInsets.only(top: 2.5, bottom: 2.5),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: kPrimaryLightColor),
+                  child: Text(
+                    widget.expert.fullName.toUpperCase(),
+                    style: TextStyle(color: kPrimaryColor, fontSize: 17.sp, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(height: 6.h),
+                // Email
+                Row(
+                  children: [
+                    Icon(Icons.mail, color: kPrimaryColor),
+                    SizedBox(width: 5.w),
+                    Flexible(
+                      child: GestureDetector(
+                        child: Text(widget.expert.email, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
+                        onTap: () async {
+                          EmailContent email = EmailContent(to: [widget.expert.email]);
+                          // Android: Will open mail app or show native picker.
+                          // iOS: Will open mail app if single mail app found.
+                          OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(
+                            nativePickerTitle: "Select email app to compose",
+                            emailContent: email,
+                          );
+                          // If no mail apps found, show error
+                          if (!result.didOpen && !result.canOpen) {
+                            showNoMailAppsDialog(context);
+                            // iOS: if multiple mail apps found, show dialog to select.
+                            // There is no native intent/default app system in iOS so
+                            // you have to do it yourself.
+                          } else if (!result.didOpen && result.canOpen) {
+                            showDialog(
+                              context: context,
+                              builder: (_) => MailAppPickerDialog(mailApps: result.options),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 5.5.h),
+                // Phone Number
+                Row(
+                  children: <Widget>[
+                    Icon(Icons.phone, color: kPrimaryColor),
+                    SizedBox(width: 5.w),
+                    GestureDetector(
+                      child: Text(widget.expert.phoneNumber, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
+                      onTap: () {
+                        launch("tel:// + ${widget.expert.phoneNumber}");
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(height: 5.h),
+                // Address
+                Row(
+                  children: <Widget>[
+                    Icon(Icons.house, color: kPrimaryColor),
+                    SizedBox(width: 5.w),
+                    Flexible(
+                      child: GestureDetector(
+                        child: Text(widget.expert.address, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
+                        onTap: () => openMaps(),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 5.h),
+                Divider(color: kPrimaryColor, height: 1.5),
+                Spacer(),
+                // Get In Touch Button
+                Container(
+                  transform: Matrix4.translationValues(0.0, 22.5, 0.0),
+                  child: RoundedButton(
+                    text: "Get In Touch ",
+                    onTap: () {
+                      chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
+                      if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                        // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
+                        routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                          RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                          RouteSettings(name: ChatPageScreen.route),
+                        ]);
+                      } else {
+                        // Otherwise, above the home page push only the ChatListScreen with the experts
+                        routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                          RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                        ]);
+                      }
+                    },
+                    suffixIcon: Icon(Icons.chat, color: Colors.white, size: 20),
+                  ),
+                ),
+                Spacer(),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
+  /// Show the dialog for selecting the mail app.
   void showNoMailAppsDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -260,18 +212,13 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
         return AlertDialog(
           title: Text("Open Mail App"),
           content: Text("No mail apps installed"),
-          actions: <Widget>[
-            ElevatedButton(
-                onPressed: () {
-                  routerDelegate.pop();
-                },
-                child: Text("OK"))
-          ],
+          actions: <Widget>[ElevatedButton(onPressed: () => routerDelegate.pop(), child: Text("OK"))],
         );
       },
     );
   }
 
+  /// Open the map with the information of the destination address.
   void openMaps() async {
     var lat = widget.expert.latitude;
     var lng = widget.expert.longitude;
@@ -279,7 +226,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
     if (await canLaunch(uri.toString())) {
       await launch(uri.toString());
     } else {
-      throw 'Could not launch ${uri.toString()}';
+      throw "Could not launch ${uri.toString()}";
     }
   }
 }

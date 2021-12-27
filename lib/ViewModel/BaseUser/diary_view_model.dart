@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/ViewModel/Forms/diary_form.dart';
+import 'package:sApport/ViewModel/Forms/Diary/diary_form.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
@@ -22,9 +21,16 @@ class DiaryViewModel with ChangeNotifier {
   // Stream Controllers
   var _isPageAddedCtrl = StreamController<bool>.broadcast();
 
-  var hasNoteToday = false;
+  // Stream Subscriptions
+  StreamSubscription? _diaryPagesSubscriber;
 
-  DiaryPage _currentDiaryPage;
+  // Current opened diary page of the user
+  ValueNotifier<DiaryPage?> _currentDiaryPage = ValueNotifier(null);
+
+  // List of the diary pages of the user
+  ValueNotifier<List<DiaryPage>>? _diaryPages;
+
+  ValueNotifier<bool> _isEditing = ValueNotifier(false);
 
   DiaryViewModel() {
     // Register the listeners for the input text field
@@ -32,20 +38,17 @@ class DiaryViewModel with ChangeNotifier {
     contentTextCtrl.addListener(() => diaryForm.content.add(contentTextCtrl.text));
   }
 
-  /// Add a new diary page into the DB
+  /// Add a new [DiaryPage] into the DB
   Future<void> submitPage() {
     var now = DateTime.now();
-    _currentDiaryPage = DiaryPage(
-      id: now.millisecondsSinceEpoch.toString(),
-      title: titleTextCtrl.text,
-      content: contentTextCtrl.text,
-      dateTime: now,
-      favourite: false,
-    );
+    _currentDiaryPage.value!.id = now.millisecondsSinceEpoch.toString();
+    _currentDiaryPage.value!.title = titleTextCtrl.text.trim();
+    _currentDiaryPage.value!.content = contentTextCtrl.text.trim();
+    isEditing.value = false;
     return _firestoreService
         .addDiaryPageIntoDB(
-          _userService.loggedUser.id,
-          _currentDiaryPage,
+          _userService.loggedUser!.id,
+          _currentDiaryPage.value!,
         )
         .then((value) => _isPageAddedCtrl.add(true))
         .catchError((error) => _isPageAddedCtrl.add(false));
@@ -54,13 +57,14 @@ class DiaryViewModel with ChangeNotifier {
   /// Update the already existing [_currentDiaryPage] into the DB
   Future<void> updatePage() {
     var now = DateTime.now();
-    _currentDiaryPage.title = titleTextCtrl.text;
-    _currentDiaryPage.content = contentTextCtrl.text;
-    _currentDiaryPage.dateTime = now;
+    _currentDiaryPage.value!.title = titleTextCtrl.text.trim();
+    _currentDiaryPage.value!.content = contentTextCtrl.text.trim();
+    _currentDiaryPage.value!.dateTime = now;
+    isEditing.value = false;
     return _firestoreService
         .updateDiaryPageIntoDB(
-          _userService.loggedUser.id,
-          _currentDiaryPage,
+          _userService.loggedUser!.id,
+          _currentDiaryPage.value!,
         )
         .then((value) => _isPageAddedCtrl.add(true))
         .catchError((error) => _isPageAddedCtrl.add(false));
@@ -68,52 +72,86 @@ class DiaryViewModel with ChangeNotifier {
 
   /// Set the [isFavourite] parameter of the [_currentDiaryPage] into the DB.
   Future<void> setFavourite(bool isFavourite) {
-    _currentDiaryPage.favourite = isFavourite;
+    _currentDiaryPage.value!.favourite = isFavourite;
     return _firestoreService.setFavouriteDiaryNotesIntoDB(
-      _userService.loggedUser.id,
-      _currentDiaryPage,
+      _userService.loggedUser!.id,
+      _currentDiaryPage.value!,
     );
   }
 
-  /// Get the stream of diary pages from the DB
-  Stream<QuerySnapshot> loadDiaryPages() {
-    try {
-      return _firestoreService.getDiaryPagesStreamFromDB(_userService.loggedUser.id);
-    } catch (e) {
-      print("Failed to get the stream of diary pages: $e");
-      return null;
-    }
+  /// Subscribe to the diary pages stream of the [loggedUser] from the Firebase DB and
+  /// update the [_diaryPages] list with the diary pages.
+  ///
+  /// Finally it calls the [notifyListeners] on the [_diaryPages] value notifier to notify the changes
+  /// to all the listeners.
+  void loadDiaryPages() async {
+    _diaryPages = ValueNotifier<List<DiaryPage>>(List<DiaryPage>.from([]));
+    _diaryPagesSubscriber = _firestoreService.getDiaryPagesStreamFromDB(_userService.loggedUser!.id).listen(
+      (snapshot) {
+        for (var docChange in snapshot.docChanges) {
+          var _diaryPage = DiaryPage.fromDocument(docChange.doc);
+          // If oldIndex == -1, the document is added, so its new and it has to be added to the list
+          if (docChange.oldIndex == -1) {
+            _diaryPages!.value.add(_diaryPage);
+            _diaryPages!.notifyListeners();
+          } else {
+            // Otherwise, update the diary page at the oldIndex position
+            _diaryPages!.value[docChange.oldIndex] = _diaryPage;
+            _diaryPages!.notifyListeners();
+          }
+        }
+      },
+      onError: (error) => print("Failed to get the stream of diary pages: $error"),
+    );
   }
 
-  /// Clear all the text and stream controllers and reset the diary form
-  void clearControllers() {
-    titleTextCtrl.clear();
-    contentTextCtrl.clear();
-    diaryForm.resetControllers();
-  }
-
-  /// Set the text controllers data
-  void setTextContent(String title, String content) {
-    titleTextCtrl.text = title;
-    contentTextCtrl.text = content;
+  /// Add a new diary page into the diary.
+  void addNewDiaryPage() {
+    setCurrentDiaryPage(DiaryPage(dateTime: DateTime.now()));
+    isEditing.value = true;
   }
 
   /// Set the [diaryPage] as the [_currentDiaryPage].
+  ///
+  /// It also sets the [titleTextController] and the [contentTextController]
+  /// with the title and the content of the [diaryPage].
   void setCurrentDiaryPage(DiaryPage diaryPage) {
-    _currentDiaryPage = diaryPage;
+    _currentDiaryPage.value = diaryPage;
+    titleTextCtrl.text = diaryPage.title;
+    contentTextCtrl.text = diaryPage.content;
     print("Current diary page setted");
-    notifyListeners();
   }
 
-  /// Reset the [_currentDiaryPage].
+  /// Reset the [_currentDiaryPage], clear the [titleTextController] and
+  /// the [contentTextController], reset the [diaryForm] and sets the
+  /// [isEditing] flag to `false`.
+  ///
+  /// It must be called after all the other reset methods.
   void resetCurrentDiaryPage() {
-    _currentDiaryPage = null;
+    _currentDiaryPage.value = null;
+    titleTextCtrl.clear();
+    contentTextCtrl.clear();
+    diaryForm.resetControllers();
+    isEditing.value = false;
     print("Current diary page resetted");
-    notifyListeners();
+  }
+
+  /// Cancel all the value listeners and clear their contents.
+  void closeListeners() {
+    _diaryPagesSubscriber?.cancel();
+    _diaryPages?.value.clear();
+    _currentDiaryPage = ValueNotifier(null);
+    print("Diary Page listeners closed");
   }
 
   /// Get the [_currentDiaryPage] instance.
-  DiaryPage get currentDiaryPage => _currentDiaryPage;
+  ValueNotifier<DiaryPage?> get currentDiaryPage => _currentDiaryPage;
+
+  /// Get the [_diaryPages] value notifier.
+  ValueNotifier<List<DiaryPage>>? get diaryPages => _diaryPages;
+
+  /// Get the [_isEditing] flag.
+  ValueNotifier<bool> get isEditing => _isEditing;
 
   /// Stream of the succesfully addition of the diary page
   Stream<bool> get isPageAdded => _isPageAddedCtrl.stream;

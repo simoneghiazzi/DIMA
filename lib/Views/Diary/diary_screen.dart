@@ -1,28 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/Views/Diary/components/diary_page_body.dart';
-import 'package:sApport/Views/components/vertical_split_view.dart';
-import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:sApport/constants.dart';
 import 'package:sApport/Views/Diary/components/diary_body.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/components/vertical_split_view.dart';
+import 'package:sApport/Views/Diary/components/diary_page_body.dart';
 
+/// Page of the diary of the user.
+///
+/// It shows the [SfCalendar] that contains all the diary pages of the user.
+///
+/// It contains the [OrientationBuilder] that checks the orientation of the device and
+/// rebuilds the page when the orientation changes. If it is:
+/// - portrait: it displays the [DiaryBody].
+/// - landscape: it uses the [VerticalSplitView] for displayng the [DiaryBody] on the left and the
+/// [DiaryPageBody] (if it is not null) on the right, otherwise it sets the ratio = 1 and it shows
+/// only the [DiaryBody]. It contains also the [ValueListenableBuilder] in order to listen for the
+/// [isEditing] flag: if it is true, it sets the ratio = 0 and it shows only the [DiaryPageBody].
+///
+/// It subscribes to the diary view model currentDiaryPage value notifier in order to rebuild the right hand side of the page
+/// when a new current diary page is selected.
 class DiaryScreen extends StatefulWidget {
-  static const route = '/diaryScreen';
+  /// Route of the page used by the Navigator.
+  static const route = "/diaryScreen";
 
-  const DiaryScreen({Key key}) : super(key: key);
+  /// Page of the diary of the user.
+  ///
+  /// It shows the [SfCalendar] that contains all the diary pages of the user.
+  ///
+  /// It contains the [OrientationBuilder] that checks the orientation of the device and
+  /// rebuilds the page when the orientation changes. If it is:
+  /// - portrait: it displays the [DiaryBody].
+  /// - landscape: it uses the [VerticalSplitView] for displayng the [DiaryBody] on the left and the
+  /// [DiaryPageBody] (if it is not null) on the right, otherwise it sets the ratio = 1 and it shows
+  /// only the [DiaryBody]. It contains also the [ValueListenableBuilder] in order to listen for the
+  /// [isEditing] flag: if it is true, it sets the ratio = 0 and it shows only the [DiaryPageBody].
+  ///
+  /// It subscribes to the diary view model currentDiaryPage value notifier in order to rebuild the right hand side of the page
+  /// when a new current diary page is selected.
+  const DiaryScreen({Key? key}) : super(key: key);
 
   @override
   State<DiaryScreen> createState() => _DiaryScreenState();
 }
 
 class _DiaryScreenState extends State<DiaryScreen> {
-  DiaryViewModel diaryViewModel;
-  AppRouterDelegate routerDelegate;
+  // View Models
+  late DiaryViewModel diaryViewModel;
 
   @override
   void initState() {
-    routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     super.initState();
   }
@@ -30,21 +59,42 @@ class _DiaryScreenState extends State<DiaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: MediaQuery.of(context).orientation == Orientation.portrait
-          ? DiaryBody()
-          : Consumer<DiaryViewModel>(
-              builder: (context, diaryViewModel, child) {
-                var _ratio = diaryViewModel.currentDiaryPage != null ? 0.50 : 1.0;
-                return VerticalSplitView(
-                  left: DiaryBody(),
-                  right: diaryViewModel.currentDiaryPage != null ? DiaryPageBody(key: ValueKey(diaryViewModel.currentDiaryPage.id)) : Container(),
-                  ratio: _ratio,
-                  dividerWidth: 2.0,
-                  dividerColor: kPrimaryColor,
+      backgroundColor: kPrimaryColor,
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          if (orientation == Orientation.portrait) {
+            // If the orientation is protrait, shows the DiaryBody
+            return DiaryBody();
+          } else {
+            // If the orientation is landscape, shows the ValueListenableBuilder listener that builds the VerticalSplitView
+            // with the DiaryBody on the left and, if the current diary page is not null, the DiaryPage on the right,
+            // otherwise sets the ration = 1 (it shows only the left widget).
+            // If isEditing is true, set the ratio = 0 (shows only the right widget)
+            return ValueListenableBuilder(
+              valueListenable: diaryViewModel.currentDiaryPage,
+              builder: (context, DiaryPage? currentDiaryPage, child) {
+                return ValueListenableBuilder(
+                  valueListenable: diaryViewModel.isEditing,
+                  builder: (context, bool isEditing, child) {
+                    var _ratio = diaryViewModel.currentDiaryPage.value != null
+                        ? isEditing
+                            ? 0.0
+                            : 0.50
+                        : 1.0;
+                    return VerticalSplitView(
+                      left: DiaryBody(),
+                      right: diaryViewModel.currentDiaryPage.value != null ? DiaryPageBody() : Container(),
+                      ratio: _ratio,
+                      dividerWidth: 2.0,
+                      dividerColor: kPrimaryColor,
+                    );
+                  },
                 );
               },
-            ),
+            );
+          }
+        },
+      ),
     );
   }
 }

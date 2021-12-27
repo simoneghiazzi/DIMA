@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 
@@ -11,10 +12,23 @@ class AnonymousChat extends Chat {
   /// Anonymous chat of the base user with another base user.
   ///
   /// The peer collection of an [AnonymousChat] is another [AnonymousChat].
-  AnonymousChat({BaseUser peerUser}) : super(COLLECTION, PEER_COLLECTION, peerUser: peerUser);
+  AnonymousChat({BaseUser? peerUser, String lastMessage = "", DateTime? lastMessageDateTime, int notReadMessages = 0})
+      : super(
+          COLLECTION,
+          PEER_COLLECTION,
+          peerUser: peerUser,
+          lastMessage: lastMessage,
+          lastMessageDateTime: lastMessageDateTime,
+          notReadMessages: notReadMessages,
+        );
 
-  /// Factory that returns the instance of the [AnonymousChat] with the correct [peerUser] instance.
-  factory AnonymousChat.fromId(String id) {
-    return AnonymousChat(peerUser: BaseUser(id: id));
+  /// Create an instance of [AnonymousChat] form the [doc] fields retrieved from the FireBase DB.
+  factory AnonymousChat.fromDocument(DocumentSnapshot doc) {
+    int milli = doc.get("lastMessageTimestamp");
+    return AnonymousChat(
+        lastMessage: doc.get("lastMessage"),
+        lastMessageDateTime: DateTime.fromMillisecondsSinceEpoch(milli),
+        notReadMessages: doc.get("notReadMessages"),
+        peerUser: BaseUser(id: doc.id));
   }
 }

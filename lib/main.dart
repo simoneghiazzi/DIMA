@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:sizer/sizer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,6 @@ import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
-import 'package:sizer/sizer.dart';
 
 Future<void> main() async {
   // Flutter initialization
@@ -30,9 +30,9 @@ Future<void> main() async {
   // Check the device type and disable the landscape orientation if it is not a tablet
 
   /*************************** RIGA DA DECOMMENTARE IN DEPLOY ***************************/
-  // if (!Device.get().isTablet) {
-  //   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  // }
+  if (!Device.get().isTablet) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  }
 
   // Firebase initialization and functional checks
   await Firebase.initializeApp().then((_) => print("Firebase initialization completed")).catchError((e) {
@@ -56,9 +56,9 @@ Future<void> main() async {
   // fetch the correct user data from the DB and load the relative homePage.
   //
   // If the user is not already logged or the email has not been verified, load the welcome page.
-  if (_firebaseAuthService.isUserSignedIn() && _firebaseAuthService.isUserEmailVerified()) {
-    await _userService.loadLoggedUserFromDB().then((_) => print("User of category ${_userService.loggedUser.collection} logged"));
-    runApp(MyApp(homePage: _userService.loggedUser.homePageRoute));
+  if (_firebaseAuthService.currentUser != null && _firebaseAuthService.isUserEmailVerified()) {
+    await _userService.loadLoggedUserFromDB().then((_) => print("User of category ${_userService.loggedUser!.collection} logged"));
+    runApp(MyApp(homePage: _userService.loggedUser!.homePageRoute));
   } else {
     runApp(MyApp());
   }
@@ -74,9 +74,9 @@ void setupServices() {
 }
 
 class MyApp extends StatefulWidget {
-  final String homePage;
+  final String? homePage;
 
-  MyApp({Key key, this.homePage}) : super(key: key);
+  MyApp({Key? key, this.homePage}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -100,9 +100,9 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
-        ChangeNotifierProvider<ReportViewModel>(create: (_) => ReportViewModel()),
         ChangeNotifierProvider<ChatViewModel>(create: (_) => ChatViewModel()),
         ChangeNotifierProvider<DiaryViewModel>(create: (_) => DiaryViewModel()),
+        Provider(create: (context) => ReportViewModel()),
         Provider(create: (context) => AuthViewModel()),
         Provider(create: (context) => UserViewModel()),
         Provider(create: (context) => MapViewModel(), lazy: false),
@@ -115,6 +115,7 @@ class _MyAppState extends State<MyApp> {
             theme: ThemeData(
               primaryColor: kPrimaryColor,
               scaffoldBackgroundColor: Colors.white,
+              fontFamily: "Lato",
             ),
             home: Router(
               routerDelegate: routerDelegate,

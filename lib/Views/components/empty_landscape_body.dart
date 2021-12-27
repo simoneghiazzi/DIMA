@@ -1,20 +1,21 @@
+import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
+import 'package:sApport/Views/components/vertical_split_view.dart';
 
+/// Background body that is used in the rigth hand side of the [VerticalSplitView] when no item is selected.
 class EmptyLandscapeBody extends StatelessWidget {
-  const EmptyLandscapeBody({Key key}) : super(key: key);
+  /// Background body that is used in the rigth hand side of the [VerticalSplitView] when no item is selected.
+  const EmptyLandscapeBody({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Column(
       children: [
         Container(
           color: kPrimaryColor,
           child: SafeArea(
-            child: Container(
-              color: kPrimaryColor,
-              height: size.height / 10,
-            ),
+            child: Container(color: kPrimaryColor, height: 10.h),
           ),
         ),
         Expanded(

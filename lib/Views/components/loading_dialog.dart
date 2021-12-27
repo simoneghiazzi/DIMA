@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sApport/constants.dart';
 
+/// It is used during loading and it shows and hide a dialog with a circular progress indicator and
+/// a [text] if it is provided.
 class LoadingDialog {
-  Widget widget(BuildContext context, {String text}) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height / 1.3,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
-    );
-  }
-
-  static Future<void> show(BuildContext context, {String text}) async {
+  /// Shows a dialog with a circular progress indicator and a [text].
+  static Future<void> show(BuildContext context, {String text = "Loading..."}) async {
     return showDialog<void>(
         context: context,
         barrierDismissible: false,
@@ -33,7 +24,7 @@ class LoadingDialog {
                         width: 20,
                       ),
                       Text(
-                        text ?? "Loading....",
+                        text,
                         style: TextStyle(color: kPrimaryColor),
                       )
                     ],
@@ -45,6 +36,7 @@ class LoadingDialog {
         });
   }
 
+  /// Hide the previously opened loading dialog.
   static void hide(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pop();
   }

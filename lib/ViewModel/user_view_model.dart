@@ -1,7 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/DBItems/user.dart';
-import 'package:sApport/ViewModel/Forms/base_user_signup_form.dart';
+import 'package:sApport/ViewModel/Forms/Authentication/base_user_signup_form.dart';
 
 class UserViewModel {
   // Services
@@ -10,7 +10,7 @@ class UserViewModel {
   /// It load the signed in user with all the retrieved information from the DB.
   ///
   /// If the user is not signed in, it throws an exception.
-  Future<void> loadUser() {
+  Future<void> loadLoggedUser() {
     return _userService.loadLoggedUserFromDB();
   }
 
@@ -20,5 +20,5 @@ class UserViewModel {
   }
 
   /// Returns the currently logged user.
-  User get loggedUser => _userService.loggedUser;
+  User? get loggedUser => _userService.loggedUser;
 }

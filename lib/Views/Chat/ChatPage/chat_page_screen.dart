@@ -1,13 +1,18 @@
-import 'package:sApport/Views/Chat/ChatPage/components/chat_page_body.dart';
 import 'package:flutter/material.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/Views/Chat/ChatPage/components/chat_page_body.dart';
 
+/// Page of the chat with another User.
+///
+/// The chat contained into the chat page is the one setted as [currentChat] into the [ChatViewModel].
 class ChatPageScreen extends StatelessWidget {
-  //To check which is the orientation when the page is first opened
-  final bool startOrientation;
+  /// Route of the page used by the Navigator.
+  static const route = "/chatPageScreen";
 
-  static const route = '/chatPageScreen';
-
-  const ChatPageScreen({Key key, this.startOrientation = false}) : super(key: key);
+  /// Page of the chat with another User.
+  ///
+  /// The chat contained into the chat page is the one setted as [currentChat] into the [ChatViewModel].
+  const ChatPageScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

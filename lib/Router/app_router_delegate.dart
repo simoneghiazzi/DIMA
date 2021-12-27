@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Diary/diary_screen.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
@@ -12,17 +13,16 @@ import 'package:sApport/Views/Login/forgot_password_screen.dart';
 import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
 import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
 import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/ChatWithExperts/expert_chats_list_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/PendingChatsList/pending_chats_list_screen.dart';
-import 'package:sApport/Views/Chat/BaseUser/AnonymousChatsList/anonymous_chats_list_screen.dart';
 
 class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeNotifier, PopNavigatorRouterDelegateMixin<List<RouteSettings>> {
   // Stack of pages
   final _pages = <Page>[];
+
   @override
   final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -58,7 +58,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
   ///
   /// If [routeSettings.arguments] are present, it passes them to the material page.
   MaterialPage _createPage(RouteSettings routeSettings) {
-    Widget child;
+    late Widget child;
     switch (routeSettings.name) {
       case WelcomeScreen.route:
         child = WelcomeScreen();
@@ -82,7 +82,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = CreateReportScreen();
         break;
       case ExpertProfileScreen.route:
-        child = ExpertProfileScreen(expert: routeSettings.arguments);
+        child = ExpertProfileScreen(expert: routeSettings.arguments as Expert);
         break;
       case MapScreen.route:
         child = MapScreen();
@@ -97,22 +97,16 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = UserSettingsScreen();
         break;
       case ExpertHomePageScreen.route:
-        child = ExpertHomePageScreen(pageIndex: routeSettings.arguments);
+        child = ExpertHomePageScreen(pageIndex: routeSettings.arguments as int?);
         break;
       case BaseUserHomePageScreen.route:
-        child = BaseUserHomePageScreen(pageIndex: routeSettings.arguments);
+        child = BaseUserHomePageScreen(pageIndex: routeSettings.arguments as int?);
         break;
       case ChatPageScreen.route:
         child = ChatPageScreen();
         break;
-      case ExpertChatsListScreen.route:
-        child = ExpertChatsListScreen();
-        break;
-      case PendingChatsListScreen.route:
-        child = PendingChatsListScreen();
-        break;
-      case AnonymousChatsListScreen.route:
-        child = AnonymousChatsListScreen();
+      case ChatListScreen.route:
+        child = ChatListScreen(chatListBody: routeSettings.arguments as Widget);
         break;
       case DiaryScreen.route:
         child = DiaryScreen();
@@ -123,15 +117,15 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
     }
     return MaterialPage(
       child: child,
-      key: Key(routeSettings.name),
+      key: Key(routeSettings.name! + routeSettings.arguments.toString()) as LocalKey?,
       name: routeSettings.name,
       arguments: routeSettings.arguments,
     );
   }
 
   /// Push the page specified by the [name] of the route on top of the navigator stack.
-  void pushPage({@required String name, dynamic arguments}) {
-    if (_pages.isEmpty || _pages.last.name != name) {
+  void pushPage({required String name, dynamic arguments}) {
+    if (_pages.isEmpty || _pages.last.name != name || _pages.last.arguments != arguments) {
       _pages.add(_createPage(RouteSettings(name: name, arguments: arguments)));
       notifyListeners();
     }
@@ -144,11 +138,11 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
 
   /// Get the top-most route of the navigator stack.
   String getLastRoute() {
-    return _pages.last.name;
+    return _pages.last.name!;
   }
 
   /// Replace the top-most page of the navigator stack with the page specified by the [name] of the route.
-  void replace({@required String name, dynamic arguments}) {
+  void replace({required String name, dynamic arguments}) {
     if (_pages.isNotEmpty) {
       _pages.removeLast();
     }
@@ -157,7 +151,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
   }
 
   /// Replace all the navigator stack with the page specified by the [name] of the route.
-  void replaceAll({@required String name, dynamic arguments}) {
+  void replaceAll({required String name, dynamic arguments}) {
     if (_pages.isNotEmpty) {
       _pages.clear();
     }
