@@ -110,161 +110,166 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
         Flexible(
           child: Container(
             padding: EdgeInsets.only(left: 10.w, right: 10.w),
-            child: Column(
-              children: [
-                // Address
-                if (userViewModel.loggedUser!.data["address"] != null) ...[
-                  Row(
-                    children: <Widget>[
-                      Icon(Icons.house, color: kPrimaryColor),
-                      SizedBox(width: 5.w),
-                      Flexible(
-                          child: Text(userViewModel.loggedUser!.data["address"].toString(), style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))),
-                    ],
-                  ),
-                  SizedBox(height: 4.h),
-                ],
-                // Phone Number
-                if (userViewModel.loggedUser!.data["phoneNumber"] != null) ...[
-                  Row(
-                    children: <Widget>[
-                      Icon(Icons.phone, color: kPrimaryColor),
-                      SizedBox(width: 5.w),
-                      Text(userViewModel.loggedUser!.data["phoneNumber"].toString(), style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))
-                    ],
-                  ),
-                  SizedBox(height: 4.h),
-                ],
-                // Email
-                Row(
-                  children: [
-                    Icon(Icons.mail, color: kPrimaryColor),
-                    SizedBox(width: 5.w),
-                    Flexible(child: Text(userViewModel.loggedUser!.email, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))),
+            child: ScrollConfiguration(
+              behavior: MyBehavior(),
+              child: ListView(
+                children: [
+                  // Address
+                  if (userViewModel.loggedUser!.data["address"] != null) ...[
+                    Row(
+                      children: <Widget>[
+                        Icon(Icons.house, color: kPrimaryColor),
+                        SizedBox(width: 5.w),
+                        Flexible(
+                            child:
+                                Text(userViewModel.loggedUser!.data["address"].toString(), style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))),
+                      ],
+                    ),
+                    SizedBox(height: 4.h),
                   ],
-                ),
-                SizedBox(height: 4.5.h),
-                // Reset Password
-                FutureBuilder(
-                  future: _hasPasswordAuthenticationFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Column(
-                        children: [
-                          Row(
-                            children: <Widget>[
-                              Icon(Icons.lock, color: kPrimaryColor),
-                              SizedBox(width: 5.w),
-                              GestureDetector(
-                                child: Text(
-                                  "Reset password",
-                                  style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 13.sp),
+                  // Phone Number
+                  if (userViewModel.loggedUser!.data["phoneNumber"] != null) ...[
+                    Row(
+                      children: <Widget>[
+                        Icon(Icons.phone, color: kPrimaryColor),
+                        SizedBox(width: 5.w),
+                        Text(userViewModel.loggedUser!.data["phoneNumber"].toString(), style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))
+                      ],
+                    ),
+                    SizedBox(height: 4.h),
+                  ],
+                  // Email
+                  Row(
+                    children: [
+                      Icon(Icons.mail, color: kPrimaryColor),
+                      SizedBox(width: 5.w),
+                      Flexible(child: Text(userViewModel.loggedUser!.email, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))),
+                    ],
+                  ),
+                  SizedBox(height: 4.5.h),
+                  // Reset Password
+                  FutureBuilder(
+                    future: _hasPasswordAuthenticationFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Column(
+                          children: [
+                            Row(
+                              children: <Widget>[
+                                Icon(Icons.lock, color: kPrimaryColor),
+                                SizedBox(width: 5.w),
+                                GestureDetector(
+                                  child: Text(
+                                    "Reset password",
+                                    style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 13.sp),
+                                  ),
+                                  onTap: () {
+                                    authViewModel.resetPassword(userViewModel.loggedUser!.email);
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                      content: Text("Please check your email for the password reset link."),
+                                      duration: const Duration(seconds: 10),
+                                    ));
+                                    authViewModel.logOut();
+                                  },
                                 ),
-                                onTap: () {
-                                  authViewModel.resetPassword(userViewModel.loggedUser!.email);
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                    content: Text("Please check your email for the password reset link."),
-                                    duration: const Duration(seconds: 10),
-                                  ));
-                                  authViewModel.logOut();
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 5.h),
-                        ],
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
-                // Google Account
-                if (authViewModel.authProvider().contains("google.com")) ...[
-                  Row(
-                    children: [
-                      Image.asset("assets/icons/google.png", height: 25, width: 25),
-                      SizedBox(width: 5.w),
-                      Flexible(
-                          child: Text("Your Google account is linked with this profile", style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))),
-                    ],
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                          ],
+                        );
+                      } else {
+                        return Container();
+                      }
+                    },
                   ),
-                  SizedBox(height: 5.h),
-                ],
-                // Facebook Account
-                if (authViewModel.authProvider().contains("facebook.com")) ...[
-                  Row(
-                    children: [
-                      Image.asset("assets/icons/facebook.png", height: 25, width: 25),
-                      SizedBox(width: 5.w),
-                      Flexible(
-                          child: Text("Your Facebook account is linked with this profile", style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))),
-                    ],
+                  // Google Account
+                  if (authViewModel.authProvider().contains("google.com")) ...[
+                    Row(
+                      children: [
+                        Image.asset("assets/icons/google.png", height: 25, width: 25),
+                        SizedBox(width: 5.w),
+                        Flexible(
+                            child: Text("Your Google account is linked with this profile", style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))),
+                      ],
+                    ),
+                    SizedBox(height: 5.h),
+                  ],
+                  // Facebook Account
+                  if (authViewModel.authProvider().contains("facebook.com")) ...[
+                    Row(
+                      children: [
+                        Image.asset("assets/icons/facebook.png", height: 25, width: 25),
+                        SizedBox(width: 5.w),
+                        Flexible(
+                            child:
+                                Text("Your Facebook account is linked with this profile", style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))),
+                      ],
+                    ),
+                    SizedBox(height: 5.h),
+                  ],
+                  // Link Social Accounts
+                  if (authViewModel.authProvider().contains("password") && userViewModel.loggedUser is BaseUser) ...[
+                    // If the user has the password as auth provider and it is a base user,
+                    // show the link your social accounts option
+                    Divider(color: kPrimaryLightColor),
+                    SizedBox(height: 2.h),
+                    Text(
+                      "Link your social accounts:",
+                      style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 13.sp),
+                    ),
+                    SizedBox(height: 2.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        // Facebook
+                        SocialIcon(
+                          iconSrc: "assets/icons/facebook.png",
+                          onTap: () {
+                            LoadingDialog.show(context);
+                            authViewModel.logInWithFacebook(link: true).then((value) => setState(() {}));
+                          },
+                        ),
+                        // Google
+                        SocialIcon(
+                          iconSrc: "assets/icons/google.png",
+                          onTap: () {
+                            LoadingDialog.show(context);
+                            authViewModel.logInWithGoogle(link: true).then((value) => setState(() {}));
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 3.h),
+                  ],
+                  Divider(color: kPrimaryColor, height: 1.5),
+                  Spacer(),
+                  // Logout Button
+                  RoundedButton(
+                    text: "Logout ",
+                    onTap: () => authViewModel.logOut(),
+                    suffixIcon: Icon(Icons.logout, color: Colors.white, size: 20),
                   ),
-                  SizedBox(height: 5.h),
-                ],
-                // Link Social Accounts
-                if (authViewModel.authProvider().contains("password") && userViewModel.loggedUser is BaseUser) ...[
-                  // If the user has the password as auth provider and it is a base user,
-                  // show the link your social accounts option
-                  Divider(color: kPrimaryLightColor),
                   SizedBox(height: 2.h),
-                  Text(
-                    "Link your social accounts:",
-                    style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 13.sp),
-                  ),
-                  SizedBox(height: 2.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      // Facebook
-                      SocialIcon(
-                        iconSrc: "assets/icons/facebook.png",
-                        onTap: () {
-                          LoadingDialog.show(context);
-                          authViewModel.logInWithFacebook(link: true).then((value) => setState(() {}));
-                        },
-                      ),
-                      // Google
-                      SocialIcon(
-                        iconSrc: "assets/icons/google.png",
-                        onTap: () {
-                          LoadingDialog.show(context);
-                          authViewModel.logInWithGoogle(link: true).then((value) => setState(() {}));
-                        },
-                      ),
-                    ],
+                  // Delete Account Button
+                  RoundedButton(
+                    text: "Delete Account",
+                    color: Colors.red,
+                    onTap: () => InfoDialog.show(context,
+                        infoType: InfoDialogType.warning,
+                        title: "Delete account",
+                        content: "Insert the password to confirm:",
+                        buttonType: ButtonType.confirm,
+                        closeButton: true,
+                        onTap: () => authViewModel.logOut(),
+                        body: TextField(
+                          obscureText: true,
+                          decoration: InputDecoration(icon: Icon(Icons.lock, color: kPrimaryColor), hintText: "Password"),
+                        )),
+                    suffixIcon: Icon(Icons.delete, color: Colors.white, size: 20),
                   ),
                   SizedBox(height: 3.h),
                 ],
-                Divider(color: kPrimaryColor, height: 1.5),
-                Spacer(),
-                // Logout Button
-                RoundedButton(
-                  text: "Logout ",
-                  onTap: () => authViewModel.logOut(),
-                  suffixIcon: Icon(Icons.logout, color: Colors.white, size: 20),
-                ),
-                SizedBox(height: 2.h),
-                // Delete Account Button
-                RoundedButton(
-                  text: "Delete Account",
-                  color: Colors.red,
-                  onTap: () => InfoDialog.show(context,
-                      infoType: InfoDialogType.warning,
-                      title: "Delete account",
-                      content: "Insert the password to confirm:",
-                      buttonType: ButtonType.confirm,
-                      closeButton: true,
-                      onTap: () => authViewModel.logOut(),
-                      body: TextField(
-                        obscureText: true,
-                        decoration: InputDecoration(icon: Icon(Icons.lock, color: kPrimaryColor), hintText: "Password"),
-                      )),
-                  suffixIcon: Icon(Icons.delete, color: Colors.white, size: 20),
-                ),
-                SizedBox(height: 3.h),
-              ],
+              ),
             ),
           ),
         ),
@@ -292,5 +297,12 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
   void dispose() {
     subscriber.cancel();
     super.dispose();
+  }
+}
+
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }

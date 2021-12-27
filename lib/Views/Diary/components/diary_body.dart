@@ -294,7 +294,7 @@ class _DiaryBodyState extends State<DiaryBody> {
             : Row(
                 children: [
                   Container(
-                    width: 8.w,
+                    width: 5.w,
                     padding: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.all(3) : EdgeInsets.all(0),
                     margin: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.only(top: 3) : EdgeInsets.all(0),
                     decoration: BoxDecoration(
