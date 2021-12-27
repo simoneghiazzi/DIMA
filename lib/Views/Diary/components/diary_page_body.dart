@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'package:intl/intl.dart';
-import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:sApport/constants.dart';
 import 'package:sApport/Model/utils.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/constants.dart';
+import 'package:sApport/Views/components/info_dialog.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
@@ -44,10 +44,6 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   // Router Delegate
   late AppRouterDelegate routerDelegate;
 
-  // Alerts
-  late Alert errorAlert;
-  late Alert successAlert;
-
   // Stream Subscribtion
   late StreamSubscription<bool> subscription;
 
@@ -57,10 +53,6 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   void initState() {
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-
-    // Create the alerts
-    errorAlert = createErrorAlert();
-    successAlert = createSuccessAlert();
 
     // Subscribe to on submitting form of the view model
     subscription = subscribeToOnSubmittingViewModel();
@@ -213,76 +205,25 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     );
   }
 
-  /// Listen to the [isPageAdded] stream in order to show the success or error alert
-  /// to the user.
+  /// Listen to the [isPageAdded] stream in order to show the correct [InfoDialog] to the user.
   StreamSubscription<bool> subscribeToOnSubmittingViewModel() {
     return diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
       if (isSuccessfulAdd) {
-        successAlert.show();
+        InfoDialog.show(context, infoType: InfoDialogType.success, content: "Diary page correctly submitted.", buttonType: ButtonType.ok);
       } else {
-        errorAlert.show();
+        InfoDialog.show(context, infoType: InfoDialogType.error, content: "Error in submitting the diary page.", buttonType: ButtonType.ok);
       }
     });
-  }
-
-  /// Create the [Alert] that inform the users that the submission of the [DiaryPage] was successful.
-  Alert createSuccessAlert() {
-    return Alert(
-      closeIcon: null,
-      context: context,
-      title: "Page submitted!",
-      type: AlertType.success,
-      style: AlertStyle(
-        animationDuration: Duration(milliseconds: 0),
-        isCloseButton: false,
-      ),
-      buttons: [
-        DialogButton(
-          child: Text(
-            "OK",
-            style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          onPressed: () {
-            successAlert.dismiss();
-          },
-          color: Colors.transparent,
-        )
-      ],
-    );
-  }
-
-  /// Create the [Alert] that inform the users that there was an error in submitting the [DiaryPage].
-  Alert createErrorAlert() {
-    return Alert(
-      closeIcon: null,
-      context: context,
-      title: "AN ERROR OCCURED",
-      type: AlertType.error,
-      style: AlertStyle(
-        animationDuration: Duration(milliseconds: 0),
-        isCloseButton: false,
-      ),
-      buttons: [
-        DialogButton(
-          child: Text(
-            "RETRY",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          onPressed: () {
-            errorAlert.dismiss();
-          },
-          color: kPrimaryColor,
-        )
-      ],
-    );
   }
 
   /// Function called by the back button interceptor.
   ///
   /// It resets the current diary page and the controllers and then pops the page.
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    diaryViewModel.resetCurrentDiaryPage();
-    routerDelegate.pop();
+    if (!routerDelegate.hasDialog) {
+      diaryViewModel.resetCurrentDiaryPage();
+      routerDelegate.pop();
+    }
     return true;
   }
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,9 +7,10 @@ import 'package:custom_info_window/custom_info_window.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sApport/constants.dart';
 import 'package:sApport/Model/Map/place.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';

@@ -1,6 +1,6 @@
-import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/components/vertical_split_view.dart';
 
 /// Background body that is used in the rigth hand side of the [VerticalSplitView] when no item is selected.

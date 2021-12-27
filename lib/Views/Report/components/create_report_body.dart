@@ -1,9 +1,9 @@
-import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/constants.dart';
+import 'package:sApport/Views/components/info_dialog.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
@@ -35,16 +35,10 @@ class _CreateReportBodyState extends State<CreateReportBody> {
   // Router Delegate
   late AppRouterDelegate routerDelegate;
 
-  // Alerts
-  late Alert errorAlert;
-  late Alert successAlert;
-
   @override
   void initState() {
     reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-    errorAlert = createErrorAlert();
-    successAlert = createSuccessAlert();
     super.initState();
   }
 
@@ -101,11 +95,16 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                               onSuccess: (context, state) {
                                 reportViewModel.loadReports();
                                 LoadingDialog.hide(context);
-                                successAlert.show();
+                                InfoDialog.show(context,
+                                    infoType: InfoDialogType.success,
+                                    content: "Report correctly submitted.",
+                                    buttonType: ButtonType.ok,
+                                    onTap: () => routerDelegate.pushPage(name: ReportsListScreen.route));
                               },
                               onFailure: (context, state) {
                                 LoadingDialog.hide(context);
-                                errorAlert.show();
+                                InfoDialog.show(context,
+                                    infoType: InfoDialogType.error, content: "Error in submitting the report.", buttonType: ButtonType.ok);
                               },
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -162,49 +161,6 @@ class _CreateReportBodyState extends State<CreateReportBody> {
             ),
           ),
         ),
-      ],
-    );
-  }
-
-  /// Alert that is shown on submission success.
-  Alert createSuccessAlert() {
-    return Alert(
-      context: context,
-      title: "Report submitted",
-      type: AlertType.success,
-      style: AlertStyle(animationDuration: Duration(milliseconds: 0), isCloseButton: false),
-      buttons: [
-        DialogButton(
-          child: Text("OK", style: TextStyle(color: kPrimaryColor, fontSize: 18.sp, fontWeight: FontWeight.bold)),
-          onPressed: () {
-            routerDelegate.pushPage(name: ReportsListScreen.route);
-            successAlert.dismiss();
-          },
-          color: Colors.transparent,
-        )
-      ],
-    );
-  }
-
-  /// Alert that is shown on submission failure.
-  Alert createErrorAlert() {
-    return Alert(
-      context: context,
-      title: "AN ERROR OCCURED",
-      type: AlertType.error,
-      style: AlertStyle(animationDuration: Duration(milliseconds: 0), isCloseButton: false),
-      buttons: [
-        DialogButton(
-          child: Text(
-            "RETRY",
-            style: TextStyle(color: Colors.white, fontSize: 18.sp),
-          ),
-          onPressed: () {
-            routerDelegate.replace(name: CreateReportScreen.route);
-            errorAlert.dismiss();
-          },
-          color: kPrimaryColor,
-        )
       ],
     );
   }

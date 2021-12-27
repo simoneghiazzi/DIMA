@@ -1,7 +1,7 @@
-import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/message_list_constructor.dart';

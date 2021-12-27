@@ -1,6 +1,6 @@
-import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 
 /// Button component used in the entire application.
 ///

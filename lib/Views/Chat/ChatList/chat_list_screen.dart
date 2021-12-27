@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/constants.dart';
 import 'package:sApport/Model/Chat/chat.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/components/vertical_split_view.dart';
 import 'package:sApport/Views/components/empty_landscape_body.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/Welcome/components/welcome_body.dart';
 
 /// Social Icon used in the [WelcomeBody] and in the [UserSettingsBody].

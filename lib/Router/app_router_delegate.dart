@@ -23,6 +23,9 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
   // Stack of pages
   final _pages = <Page>[];
 
+  // Flag that indicates if a dialog is open
+  bool hasDialog = false;
+
   @override
   final navigatorKey = GlobalKey<NavigatorState>();
 

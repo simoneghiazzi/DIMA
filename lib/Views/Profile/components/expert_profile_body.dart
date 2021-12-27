@@ -1,9 +1,10 @@
-import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/Views/components/info_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:open_mail_app/open_mail_app.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -126,7 +127,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                           );
                           // If no mail apps found, show error
                           if (!result.didOpen && !result.canOpen) {
-                            showNoMailAppsDialog(context);
+                            InfoDialog.show(context, infoType: InfoDialogType.error, content: "No mail apps installed.", buttonType: ButtonType.ok);
                             // iOS: if multiple mail apps found, show dialog to select.
                             // There is no native intent/default app system in iOS so
                             // you have to do it yourself.
@@ -201,20 +202,6 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
           ),
         ),
       ],
-    );
-  }
-
-  /// Show the dialog for selecting the mail app.
-  void showNoMailAppsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Open Mail App"),
-          content: Text("No mail apps installed"),
-          actions: <Widget>[ElevatedButton(onPressed: () => routerDelegate.pop(), child: Text("OK"))],
-        );
-      },
     );
   }
 

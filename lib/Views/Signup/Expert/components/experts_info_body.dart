@@ -1,16 +1,16 @@
 import 'dart:io';
-import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
+import 'package:sApport/Views/components/info_dialog.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/form_text_field.dart';
@@ -40,10 +40,6 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
   // Router Delegate
   late AppRouterDelegate routerDelegate;
 
-  // Alerts
-  late Alert errorAlert;
-  Alert? addressConfirmationAlert;
-
   // Expert Form
   ExpertSignUpForm expertSignUpForm = ExpertSignUpForm();
 
@@ -53,10 +49,6 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
   void initState() {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-
-    // Create the Error Alert
-    errorAlert = createErrorAlert();
-
     super.initState();
   }
 
@@ -125,15 +117,25 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                       child: FormBlocListener<ExpertSignUpForm, String, String>(
                         onSubmitting: (context, state) => LoadingDialog.show(context),
                         onSuccess: (context, state) {
-                          // If the address is found, create and show the address confirmation alert
+                          // If the address is found, show the InfoDialog for address confirmation
                           LoadingDialog.hide(context);
-                          addressConfirmationAlert = createAddressConfirmationAlert();
-                          addressConfirmationAlert!.show();
+                          InfoDialog.show(
+                            context,
+                            infoType: InfoDialogType.success,
+                            title: "Address found",
+                            content: "${expertSignUpForm.expertAddress.address!}",
+                            buttonType: ButtonType.confirm,
+                            onTap: () {
+                              userViewModel.createUser(expertSignUpForm);
+                              routerDelegate.pushPage(name: CredentialScreen.route);
+                            },
+                            closeButton: true,
+                          );
                         },
                         onFailure: (context, state) {
-                          // If the address is not found, show the error alert
+                          // If the address is not found, show the error InfoDialog
                           LoadingDialog.hide(context);
-                          errorAlert.show();
+                          InfoDialog.show(context, infoType: InfoDialogType.error, content: "No address found.", buttonType: ButtonType.ok);
                         },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -233,53 +235,5 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
         nextEnabled = true;
       });
     }
-  }
-
-  /// Alert with the found address by the GoogleMap service.
-  ///
-  /// It has the buttons for confirming the correctness of the address
-  /// or to look for another address.
-  Alert createAddressConfirmationAlert() {
-    return Alert(
-      context: context,
-      title: "Found address: ${expertSignUpForm.expertAddress.address!}",
-      style: AlertStyle(animationDuration: Duration(milliseconds: 0), isCloseButton: false),
-      buttons: [
-        DialogButton(
-          child: Text("CONFIRM", style: TextStyle(color: kPrimaryColor, fontSize: 20, fontWeight: FontWeight.bold)),
-          onPressed: () {
-            userViewModel.createUser(expertSignUpForm);
-            addressConfirmationAlert!.dismiss();
-            routerDelegate.pushPage(name: CredentialScreen.route);
-          },
-          color: Colors.transparent,
-        ),
-        DialogButton(
-          child: Text("RETRY", style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold)),
-          onPressed: () {
-            addressConfirmationAlert!.dismiss();
-            LoadingDialog.hide(context);
-          },
-          color: Colors.transparent,
-        )
-      ],
-    );
-  }
-
-  /// Error alert that is shown when the address is not found by the GoogleMap service.
-  Alert createErrorAlert() {
-    return Alert(
-      context: context,
-      title: "No address found",
-      type: AlertType.error,
-      style: AlertStyle(isCloseButton: false),
-      buttons: [
-        DialogButton(
-          child: Text("RETRY", style: TextStyle(color: Colors.white, fontSize: 20)),
-          onPressed: () => errorAlert.dismiss(),
-          color: kPrimaryColor,
-        )
-      ],
-    );
   }
 }

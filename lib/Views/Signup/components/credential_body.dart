@@ -1,20 +1,20 @@
 import 'dart:async';
-import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/Forms/Authentication/credential_form.dart';
+import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/constants.dart';
+import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
+import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
-import 'package:sApport/Views/components/form_text_field.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
-import 'package:sApport/constants.dart';
-import 'package:flutter/material.dart';
-import 'package:sApport/Views/Login/login_screen.dart';
-import 'package:sApport/Views/Login/components/background.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
-import 'package:provider/provider.dart';
-import 'package:sApport/sizer.dart';
+import 'package:sApport/Views/components/form_text_field.dart';
+import 'package:sApport/Views/Login/components/background.dart';
+import 'package:sApport/ViewModel/Forms/Authentication/credential_form.dart';
 
 /// Body of the [CredentialScreen].
 ///

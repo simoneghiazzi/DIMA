@@ -1,11 +1,11 @@
-import 'package:sApport/Views/components/rounded_button.dart';
-import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 
 /// It is used for new [PendingChat] and it contains the accept/deny buttons.

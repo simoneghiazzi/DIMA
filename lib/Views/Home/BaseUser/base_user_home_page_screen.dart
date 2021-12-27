@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/Diary/diary_screen.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -11,7 +12,6 @@ import 'package:sApport/Views/Settings/user_settings_screen.dart';
 import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Views/Home/BaseUser/components/base_user_home_page_body.dart';
-import 'package:sApport/sizer.dart';
 
 /// Home page of the [BaseUser].
 ///

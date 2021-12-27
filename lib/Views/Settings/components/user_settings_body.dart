@@ -1,13 +1,13 @@
 import 'dart:async';
-import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
 import 'package:sApport/Model/DBItems/user.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/Views/components/info_dialog.dart';
 import 'package:sApport/Views/components/social_icon.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
@@ -50,9 +50,6 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
   // Router Delegate
   late AppRouterDelegate routerDelegate;
 
-  // Alert
-  late Alert confirmPswAlert;
-
   late StreamSubscription<String?> subscriber;
   var _hasPasswordAuthenticationFuture;
 
@@ -65,9 +62,6 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
 
     // Registering the future for the has password auth method
     _hasPasswordAuthenticationFuture = authViewModel.hasPasswordAuthentication(userViewModel.loggedUser!.email);
-
-    // Create the confirm password alert
-    confirmPswAlert = createConfirmPswAlert();
 
     super.initState();
   }
@@ -113,7 +107,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
           ),
         ),
         SizedBox(height: 5.h),
-        Expanded(
+        Flexible(
           child: Container(
             padding: EdgeInsets.only(left: 10.w, right: 10.w),
             child: Column(
@@ -256,37 +250,23 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                 RoundedButton(
                   text: "Delete Account",
                   color: Colors.red,
-                  onTap: () => confirmPswAlert.show(),
+                  onTap: () => InfoDialog.show(context,
+                      infoType: InfoDialogType.warning,
+                      title: "Delete account",
+                      content: "Insert the password to confirm:",
+                      buttonType: ButtonType.confirm,
+                      closeButton: true,
+                      onTap: () => authViewModel.logOut(),
+                      body: TextField(
+                        obscureText: true,
+                        decoration: InputDecoration(icon: Icon(Icons.lock, color: kPrimaryColor), hintText: "Password"),
+                      )),
                   suffixIcon: Icon(Icons.delete, color: Colors.white, size: 20),
                 ),
                 SizedBox(height: 3.h),
               ],
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  /// Create the confirm password [Alert] for deleting the account.
-  Alert createConfirmPswAlert() {
-    return Alert(
-      context: context,
-      title: "Insert password to confirm:",
-      type: AlertType.warning,
-      style: AlertStyle(animationDuration: Duration(milliseconds: 0), isCloseButton: false),
-      content: TextField(
-        obscureText: true,
-        decoration: InputDecoration(icon: Icon(Icons.lock, color: kPrimaryColor), labelText: "Password"),
-      ),
-      buttons: [
-        DialogButton(
-          child: Text("DELETE", style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold)),
-          onPressed: () {
-            authViewModel.logOut();
-            confirmPswAlert.dismiss();
-          },
-          color: Colors.transparent,
         ),
       ],
     );

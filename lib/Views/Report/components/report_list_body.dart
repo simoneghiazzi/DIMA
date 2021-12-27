@@ -1,11 +1,11 @@
 import 'package:intl/intl.dart';
-import 'package:sApport/Model/DBItems/BaseUser/report.dart';
-import 'package:sApport/sizer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/constants.dart';
+import 'package:sApport/Views/Utils/sizer.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/Model/DBItems/BaseUser/report.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 
