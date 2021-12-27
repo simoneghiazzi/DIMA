@@ -251,11 +251,11 @@ class _DiaryBodyState extends State<DiaryBody> {
         color: details.date.month != midDate.month ? kPrimaryLightColor : Colors.transparent,
       ),
       child: Padding(
-        padding: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.only(left: 3) : EdgeInsets.only(top: 6.0),
+        padding: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.only(left: 3, right: 3) : EdgeInsets.only(top: 6.0),
         child: Column(
           children: [
             Container(
-              width: 22.sp,
+              width: 8.w,
               padding: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.all(3) : EdgeInsets.all(0),
               margin: Utils.isToday(details.date) && details.date.month == midDate.month ? EdgeInsets.only(top: 3) : EdgeInsets.all(0),
               decoration: BoxDecoration(
@@ -278,8 +278,13 @@ class _DiaryBodyState extends State<DiaryBody> {
               Spacer(),
               Padding(
                 padding: const EdgeInsets.only(bottom: 4.0),
-                child: Icon(Icons.menu_book,
-                    color: (details.appointments.first as DiaryPage).favourite ? kPrimaryGoldenColor : kPrimaryColor, size: 4.h),
+                child: Container(
+                  transform: Utils.isToday(details.date) && details.date.month == midDate.month
+                      ? Matrix4.translationValues(0.0, -1.5, 0.0)
+                      : Matrix4.translationValues(0.0, 0, 0.0),
+                  child: Icon(Icons.menu_book,
+                      color: (details.appointments.first as DiaryPage).favourite ? kPrimaryGoldenColor : kPrimaryColor, size: 4.h),
+                ),
               ),
               Spacer(),
             ]
