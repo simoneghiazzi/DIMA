@@ -241,7 +241,6 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                     ),
                     SizedBox(height: 3.h),
                   ],
-                  Divider(color: kPrimaryColor, height: 1.5),
                   Spacer(),
                   // Logout Button
                   RoundedButton(
