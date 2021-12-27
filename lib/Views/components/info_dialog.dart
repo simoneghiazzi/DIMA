@@ -48,11 +48,13 @@ class InfoDialog {
                       SizedBox(width: 2.w),
                       Icon(Icons.verified, color: Colors.green, size: 30),
                     ] else if (infoType == InfoDialogType.error) ...[
+                      Text("Error", style: TextStyle(color: Colors.red, fontSize: 15.sp, fontWeight: FontWeight.bold)),
+                      SizedBox(width: 2.w),
                       Icon(Icons.error, color: Colors.red, size: 30),
-                      Text("Error", style: TextStyle(color: Colors.red, fontSize: 15.sp, fontWeight: FontWeight.bold))
                     ] else if (infoType == InfoDialogType.warning) ...[
+                      Text("Warning", style: TextStyle(color: Colors.orange, fontSize: 15.sp, fontWeight: FontWeight.bold)),
+                      SizedBox(width: 2.w),
                       Icon(Icons.warning, color: Colors.orange, size: 30),
-                      Text("Warning", style: TextStyle(color: Colors.orange, fontSize: 15.sp, fontWeight: FontWeight.bold))
                     ],
                   ],
                 ),
