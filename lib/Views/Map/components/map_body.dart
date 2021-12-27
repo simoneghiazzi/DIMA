@@ -203,7 +203,7 @@ class _MapBodyState extends State<MapBody> {
           height: CustomSizer(15).h,
           width: SizerUtil.deviceType == DeviceType.tablet
               ? (MediaQuery.of(context).orientation == Orientation.portrait)
-                  ? CustomSizer(5).w
+                  ? CustomSizer(45).w
                   : CustomSizer(35).w
               : CustomSizer(65).w,
           offset: (MediaQuery.of(context).orientation == Orientation.portrait) ? 20 : 30,
