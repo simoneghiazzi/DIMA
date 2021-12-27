@@ -92,8 +92,8 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
-        iconSize: 15.sp,
-        selectedFontSize: 10.sp,
+        iconSize: 20.sp,
+        selectedFontSize: 11.sp,
         currentIndex: _currentIndex,
         showSelectedLabels: true,
         showUnselectedLabels: false,

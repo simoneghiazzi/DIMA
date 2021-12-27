@@ -25,7 +25,7 @@ class HomePageGrid extends StatelessWidget {
 
     return Center(
       child: Container(
-          constraints: (MediaQuery.of(context).orientation == Orientation.landscape) ? BoxConstraints(maxWidth: 800) : BoxConstraints(maxWidth: 700),
+          constraints: BoxConstraints(maxWidth: 800),
           padding: EdgeInsets.only(left: 5, right: 5),
           child: Table(
             children: [
