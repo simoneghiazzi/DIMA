@@ -135,7 +135,7 @@ class _ChatListItemState extends State<ChatListItem> {
                         :
                         // Otherwise, show the date
                         DateFormat("MM/dd/yyyy").format(widget.chatItem.lastMessageDateTime!),
-                    style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 10.sp, fontStyle: FontStyle.italic),
+                    style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 9.sp, fontStyle: FontStyle.italic),
                   ),
                   // Check if there are not read messages
                   if (widget.chatItem.notReadMessages > 0) ...[

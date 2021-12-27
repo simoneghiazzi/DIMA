@@ -55,21 +55,21 @@ class _ReportListBodyState extends State<ReportListBody> {
                 child: TextButton(
                   child: Row(
                     children: <Widget>[
-                      CircleAvatar(backgroundColor: Colors.transparent, radius: 25.0, child: Image.asset("assets/icons/logo.png", scale: 11)),
-                      SizedBox(width: 2.w),
+                      CircleAvatar(backgroundColor: Colors.transparent, radius: 25.0, child: Image.asset("assets/icons/logo.png", scale: 12)),
+                      SizedBox(width: 1.5.w),
                       // Title
                       Text(
                         _reportItem.category,
-                        style: TextStyle(color: kPrimaryColor, fontSize: 15.sp, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold),
                       ),
                       // DateTime
                       Spacer(),
                       Column(
                         children: <Widget>[
-                          Text(date.split(" ")[0], style: TextStyle(color: kPrimaryColor, fontSize: 10.sp)),
+                          Text(date.split(" ")[0], style: TextStyle(color: kPrimaryColor, fontSize: 8.5.sp)),
                           Text(
                             date.split(" ")[1].split(".")[0].split(":")[0] + ":" + date.split(" ")[1].split(".")[0].split(":")[1],
-                            style: TextStyle(color: kPrimaryColor, fontSize: 10.sp),
+                            style: TextStyle(color: kPrimaryColor, fontSize: 8.5.sp),
                           )
                         ],
                       )

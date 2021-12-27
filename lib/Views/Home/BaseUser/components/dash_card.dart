@@ -24,7 +24,7 @@ class DashCard extends StatelessWidget {
     return Container(
       padding: SizerUtil.deviceType == DeviceType.tablet
           ? (MediaQuery.of(context).orientation == Orientation.landscape)
-              ? EdgeInsets.only(right: 25, left: 25, top: 20, bottom: 20)
+              ? EdgeInsets.only(right: 25, left: 25, top: 15, bottom: 15)
               : EdgeInsets.only(right: 20, left: 20, top: 15, bottom: 15)
           : EdgeInsets.only(right: 5, left: 5, top: 15, bottom: 15),
       child: InkWell(

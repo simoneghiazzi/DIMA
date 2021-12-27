@@ -75,7 +75,7 @@ class _ReportsListScreenState extends State<ReportsListScreen> {
                   }
                 },
               ),
-              ratio: 0.35,
+              ratio: 0.4,
               dividerWidth: 0.3,
               dividerColor: kPrimaryGreyColor,
             );
