@@ -282,14 +282,25 @@ class ChatViewModel extends ChangeNotifier {
 
   /// Cancel all the value listeners and clear their contents.
   void closeListeners() {
+    // Cancel chat list subscribers
     _anonymousChatsSubscriber?.cancel();
     _pendingChatsSubscriber?.cancel();
     _expertsChatsSubscriber?.cancel();
     _activeChatsSubscriber?.cancel();
+
+    // Cancel chat subscribers and clear theri values
+    _anonymousChats?.value.values.forEach((chat) => chat.closeListeners());
+    _pendingChats?.value.values.forEach((chat) => chat.closeListeners());
+    _expertsChats?.value.values.forEach((chat) => chat.closeListeners());
+    _activeChats?.value.values.forEach((chat) => chat.closeListeners());
+
+    // Clear chat list values
     _anonymousChats?.value.clear();
     _pendingChats?.value.clear();
     _expertsChats?.value.clear();
     _activeChats?.value.clear();
+
+    // Reset current chat
     _currentChat = ValueNotifier(null);
     print("Chat listeners closed");
   }
