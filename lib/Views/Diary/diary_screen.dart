@@ -59,6 +59,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: kPrimaryColor,
       body: OrientationBuilder(
         builder: (context, orientation) {

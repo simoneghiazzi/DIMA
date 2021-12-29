@@ -24,7 +24,7 @@ class DashCard extends StatelessWidget {
     return Container(
       padding: SizerUtil.deviceType == DeviceType.tablet
           ? (MediaQuery.of(context).orientation == Orientation.landscape)
-              ? EdgeInsets.only(right: 25, left: 25, top: 15, bottom: 15)
+              ? EdgeInsets.only(right: 25, left: 25, top: 5, bottom: 5)
               : EdgeInsets.only(right: 20, left: 20, top: 15, bottom: 15)
           : EdgeInsets.only(right: 5, left: 5, top: 15, bottom: 15),
       child: InkWell(
@@ -33,7 +33,7 @@ class DashCard extends StatelessWidget {
         highlightColor: Colors.transparent,
         onTap: () => onTap(),
         child: Container(
-          height: CustomSizer(30).h,
+          height: (MediaQuery.of(context).orientation == Orientation.landscape) ? CustomSizer(25).h : CustomSizer(30).h,
           child: Card(
             elevation: 3,
             shadowColor: kPrimaryColor,

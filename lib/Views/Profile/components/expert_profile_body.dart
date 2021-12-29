@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/Views/Settings/components/user_settings_body.dart';
 import 'package:sApport/Views/components/info_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:open_mail_app/open_mail_app.dart';
@@ -91,116 +92,144 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
           transform: Matrix4.translationValues(0.0, -75.0, 0.0),
           child: NetworkAvatar(img: widget.expert.profilePhoto, radius: 75.0),
         ),
+        // Full Name
+        Container(
+          transform: Matrix4.translationValues(0.0, -30.0, 0.0),
+          width: 70.w,
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: kPrimaryLightColor),
+          child: Text(
+            widget.expert.fullName.toUpperCase(),
+            style: TextStyle(color: kPrimaryColor, fontSize: 17.sp, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+        ),
         Expanded(
           child: Container(
-            transform: Matrix4.translationValues(0.0, -55.0, 0.0),
-            padding: EdgeInsets.only(left: 10.w, right: 10.w),
-            child: Column(
-              children: [
-                // Full Name
-                Container(
-                  width: 70.w,
-                  padding: EdgeInsets.only(top: 2.5, bottom: 2.5),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: kPrimaryLightColor),
-                  child: Text(
-                    widget.expert.fullName.toUpperCase(),
-                    style: TextStyle(color: kPrimaryColor, fontSize: 17.sp, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                SizedBox(height: 6.h),
-                // Email
-                Row(
-                  children: [
-                    Icon(Icons.mail, color: kPrimaryColor),
-                    SizedBox(width: 5.w),
-                    Flexible(
-                      child: GestureDetector(
-                        child: Text(widget.expert.email, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
-                        onTap: () async {
-                          EmailContent email = EmailContent(to: [widget.expert.email]);
-                          // Android: Will open mail app or show native picker.
-                          // iOS: Will open mail app if single mail app found.
-                          OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(
-                            nativePickerTitle: "Select email app to compose",
-                            emailContent: email,
-                          );
-                          // If no mail apps found, show error
-                          if (!result.didOpen && !result.canOpen) {
-                            InfoDialog.show(context, infoType: InfoDialogType.error, content: "No mail apps installed.", buttonType: ButtonType.ok);
-                            // iOS: if multiple mail apps found, show dialog to select.
-                            // There is no native intent/default app system in iOS so
-                            // you have to do it yourself.
-                          } else if (!result.didOpen && result.canOpen) {
-                            showDialog(
-                              context: context,
-                              builder: (_) => MailAppPickerDialog(mailApps: result.options),
+            padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 3.w),
+            child: ScrollConfiguration(
+              behavior: MyBehavior(),
+              child: ListView(
+                children: [
+                  // Email
+                  Row(
+                    children: [
+                      Icon(Icons.mail, color: kPrimaryColor),
+                      SizedBox(width: 5.w),
+                      Flexible(
+                        child: GestureDetector(
+                          child: Text(widget.expert.email, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
+                          onTap: () async {
+                            EmailContent email = EmailContent(to: [widget.expert.email]);
+                            // Android: Will open mail app or show native picker.
+                            // iOS: Will open mail app if single mail app found.
+                            OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(
+                              nativePickerTitle: "Select email app to compose",
+                              emailContent: email,
                             );
-                          }
+                            // If no mail apps found, show error
+                            if (!result.didOpen && !result.canOpen) {
+                              InfoDialog.show(context, infoType: InfoDialogType.error, content: "No mail apps installed.", buttonType: ButtonType.ok);
+                              // iOS: if multiple mail apps found, show dialog to select.
+                              // There is no native intent/default app system in iOS so
+                              // you have to do it yourself.
+                            } else if (!result.didOpen && result.canOpen) {
+                              showDialog(
+                                context: context,
+                                builder: (_) => MailAppPickerDialog(mailApps: result.options),
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5.5.h),
+                  // Phone Number
+                  Row(
+                    children: <Widget>[
+                      Icon(Icons.phone, color: kPrimaryColor),
+                      SizedBox(width: 5.w),
+                      GestureDetector(
+                        child: Text(widget.expert.phoneNumber, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
+                        onTap: () {
+                          launch("tel:// + ${widget.expert.phoneNumber}");
                         },
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 5.5.h),
-                // Phone Number
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.phone, color: kPrimaryColor),
-                    SizedBox(width: 5.w),
-                    GestureDetector(
-                      child: Text(widget.expert.phoneNumber, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
-                      onTap: () {
-                        launch("tel:// + ${widget.expert.phoneNumber}");
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(height: 5.h),
-                // Address
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.house, color: kPrimaryColor),
-                    SizedBox(width: 5.w),
-                    Flexible(
-                      child: GestureDetector(
-                        child: Text(widget.expert.address, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
-                        onTap: () => openMaps(),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 5.h),
-                Divider(color: kPrimaryColor, height: 1.5),
-                Spacer(),
-                // Get In Touch Button
-                Container(
-                  transform: Matrix4.translationValues(0.0, 22.5, 0.0),
-                  child: RoundedButton(
-                    text: "Get In Touch ",
-                    onTap: () {
-                      chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
-                      if (MediaQuery.of(context).orientation == Orientation.portrait) {
-                        // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
-                        routerDelegate.replaceAllButNumber(2, routeSettingsList: [
-                          RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
-                          RouteSettings(name: ChatPageScreen.route),
-                        ]);
-                      } else {
-                        // Otherwise, above the home page push only the ChatListScreen with the experts
-                        routerDelegate.replaceAllButNumber(2, routeSettingsList: [
-                          RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
-                        ]);
-                      }
-                    },
-                    suffixIcon: Icon(Icons.chat, color: Colors.white, size: 20),
+                    ],
                   ),
-                ),
-                Spacer(),
-              ],
+                  SizedBox(height: 5.h),
+                  // Address
+                  Row(
+                    children: <Widget>[
+                      Icon(Icons.house, color: kPrimaryColor),
+                      SizedBox(width: 5.w),
+                      Flexible(
+                        child: GestureDetector(
+                          child: Text(widget.expert.address, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
+                          onTap: () => openMaps(),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5.h),
+                  Divider(color: kPrimaryColor, height: 1.5),
+                  (MediaQuery.of(context).orientation == Orientation.landscape)
+                      // Get In Touch Button
+                      ? Container(
+                          transform: Matrix4.translationValues(0.0, 22.5, 0.0),
+                          child: RoundedButton(
+                            text: "Get In Touch ",
+                            onTap: () {
+                              chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
+                              if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                                // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
+                                routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                                  RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                                  RouteSettings(name: ChatPageScreen.route),
+                                ]);
+                              } else {
+                                // Otherwise, above the home page push only the ChatListScreen with the experts
+                                routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                                  RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                                ]);
+                              }
+                            },
+                            suffixIcon: Icon(Icons.chat, color: Colors.white, size: 20),
+                          ),
+                        )
+                      : Container(),
+                  SizedBox(height: 5.h),
+                ],
+              ),
             ),
           ),
         ),
+        (MediaQuery.of(context).orientation == Orientation.portrait)
+            // Get In Touch Button
+            ? Container(
+                transform: Matrix4.translationValues(0.0, 22.5, 0.0),
+                child: RoundedButton(
+                  text: "Get In Touch ",
+                  onTap: () {
+                    chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
+                    if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                      // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
+                      routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                        RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                        RouteSettings(name: ChatPageScreen.route),
+                      ]);
+                    } else {
+                      // Otherwise, above the home page push only the ChatListScreen with the experts
+                      routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                        RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                      ]);
+                    }
+                  },
+                  suffixIcon: Icon(Icons.chat, color: Colors.white, size: 20),
+                ),
+              )
+            : Container(),
+        SizedBox(height: 10.h),
       ],
     );
   }

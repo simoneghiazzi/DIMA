@@ -20,6 +20,7 @@ class DiaryPageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: kPrimaryColor,
       body: DiaryPageBody(),
     );

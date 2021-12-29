@@ -107,7 +107,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
           ),
         ),
         SizedBox(height: 5.h),
-        Flexible(
+        Expanded(
           child: Container(
             padding: EdgeInsets.only(left: 10.w, right: 10.w),
             child: ScrollConfiguration(
@@ -241,7 +241,47 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                     ),
                     SizedBox(height: 3.h),
                   ],
-                  Spacer(),
+                  (MediaQuery.of(context).orientation == Orientation.landscape)
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            // Logout Button
+                            RoundedButton(
+                              text: "Logout ",
+                              onTap: () => authViewModel.logOut(),
+                              suffixIcon: Icon(Icons.logout, color: Colors.white, size: 20),
+                            ),
+                            SizedBox(height: 2.h),
+                            // Delete Account Button
+                            RoundedButton(
+                              text: "Delete Account",
+                              color: Colors.red,
+                              onTap: () => InfoDialog.show(context,
+                                  infoType: InfoDialogType.warning,
+                                  title: "Delete account",
+                                  content: "Insert the password to confirm:",
+                                  buttonType: ButtonType.confirm,
+                                  closeButton: true,
+                                  onTap: () => authViewModel.logOut(),
+                                  body: TextField(
+                                    obscureText: true,
+                                    decoration: InputDecoration(icon: Icon(Icons.lock, color: kPrimaryColor), hintText: "Password"),
+                                  )),
+                              suffixIcon: Icon(Icons.delete, color: Colors.white, size: 20),
+                            ),
+                            SizedBox(height: 3.h),
+                          ],
+                        )
+                      : Container(),
+                ],
+              ),
+            ),
+          ),
+        ),
+        (MediaQuery.of(context).orientation == Orientation.portrait)
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
                   // Logout Button
                   RoundedButton(
                     text: "Logout ",
@@ -268,10 +308,8 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                   ),
                   SizedBox(height: 3.h),
                 ],
-              ),
-            ),
-          ),
-        ),
+              )
+            : Container(),
       ],
     );
   }
@@ -299,6 +337,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
   }
 }
 
+//Used to avoid shadows in the scrollable widgets like ListView
 class MyBehavior extends ScrollBehavior {
   @override
   Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
