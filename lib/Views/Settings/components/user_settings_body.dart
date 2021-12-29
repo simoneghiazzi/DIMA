@@ -339,7 +339,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
   }
 }
 
-//Used to avoid shadows in the scrollable widgets like ListView
+/// Used to avoid shadows in the scrollable widgets like ListView
 class MyBehavior extends ScrollBehavior {
   @override
   Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {

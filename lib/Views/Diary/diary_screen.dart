@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/Diary/components/diary_body.dart';
@@ -77,18 +78,18 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 return ValueListenableBuilder(
                   valueListenable: diaryViewModel.isEditing,
                   builder: (context, bool isEditing, child) {
-                    var _ratio = diaryViewModel.currentDiaryPage.value != null
-                        ? isEditing
-                            ? 0.0
-                            : 0.50
-                        : 1.0;
-                    return VerticalSplitView(
-                      left: DiaryBody(),
-                      right: diaryViewModel.currentDiaryPage.value != null ? DiaryPageBody() : Container(),
-                      ratio: _ratio,
-                      dividerWidth: 2.0,
-                      dividerColor: kPrimaryColor,
-                    );
+                    if (isEditing) {
+                      return DiaryPageScreen();
+                    } else {
+                      var _ratio = diaryViewModel.currentDiaryPage.value != null ? 0.50 : 1.0;
+                      return VerticalSplitView(
+                        left: DiaryBody(),
+                        right: diaryViewModel.currentDiaryPage.value != null ? DiaryPageScreen() : Container(),
+                        ratio: _ratio,
+                        dividerWidth: 2.0,
+                        dividerColor: kPrimaryColor,
+                      );
+                    }
                   },
                 );
               },
