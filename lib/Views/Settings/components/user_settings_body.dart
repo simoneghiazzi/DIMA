@@ -241,8 +241,8 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                       ],
                     ),
                     SizedBox(height: 3.h),
-                    Divider(color: kPrimaryColor, height: 1.5),
                   ],
+                  Divider(color: kPrimaryColor, height: 1.5),
                   (MediaQuery.of(context).orientation == Orientation.landscape)
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.end,
