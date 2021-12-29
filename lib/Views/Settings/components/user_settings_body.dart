@@ -113,6 +113,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
             child: ScrollConfiguration(
               behavior: MyBehavior(),
               child: ListView(
+                physics: (MediaQuery.of(context).orientation == Orientation.portrait) ? const NeverScrollableScrollPhysics() : null,
                 children: [
                   // Address
                   if (userViewModel.loggedUser!.data["address"] != null) ...[

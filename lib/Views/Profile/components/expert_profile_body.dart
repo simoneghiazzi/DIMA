@@ -109,6 +109,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
             child: ScrollConfiguration(
               behavior: MyBehavior(),
               child: ListView(
+                physics: (MediaQuery.of(context).orientation == Orientation.portrait) ? const NeverScrollableScrollPhysics() : null,
                 children: [
                   // Email
                   Row(
