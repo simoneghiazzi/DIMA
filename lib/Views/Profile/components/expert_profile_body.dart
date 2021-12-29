@@ -105,6 +105,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
         ),
         Expanded(
           child: Container(
+            transform: Matrix4.translationValues(0.0, -40.0, 0.0),
             padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 3.w),
             child: ScrollConfiguration(
               behavior: MyBehavior(),
