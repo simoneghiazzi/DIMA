@@ -94,7 +94,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
         ),
         // Full Name
         Container(
-          transform: Matrix4.translationValues(0.0, -30.0, 0.0),
+          transform: Matrix4.translationValues(0.0, -50.0, 0.0),
           width: 70.w,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: kPrimaryLightColor),
           child: Text(
