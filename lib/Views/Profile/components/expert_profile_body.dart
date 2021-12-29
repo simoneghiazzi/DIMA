@@ -178,7 +178,6 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                   (MediaQuery.of(context).orientation == Orientation.landscape)
                       // Get In Touch Button
                       ? Container(
-                          transform: Matrix4.translationValues(0.0, 22.5, 0.0),
                           child: RoundedButton(
                             text: "Get In Touch ",
                             onTap: () {
@@ -209,7 +208,6 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
         (MediaQuery.of(context).orientation == Orientation.portrait)
             // Get In Touch Button
             ? Container(
-                transform: Matrix4.translationValues(0.0, 22.5, 0.0),
                 child: RoundedButton(
                   text: "Get In Touch ",
                   onTap: () {
