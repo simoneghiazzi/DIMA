@@ -116,6 +116,7 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
   /// if one exists.
   void _onBottomNavTapped(int index) {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    if (index != 1) diaryViewModel.resetCurrentDiaryPage();
     setState(() {
       FocusScope.of(context).unfocus();
       _currentIndex = index;
