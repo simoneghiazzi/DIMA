@@ -34,6 +34,7 @@ class DashCard extends StatelessWidget {
         onTap: () => onTap(),
         child: Container(
           height: (MediaQuery.of(context).orientation == Orientation.landscape) ? CustomSizer(25).h : CustomSizer(30).h,
+          width: double.infinity,
           child: Card(
             elevation: 3,
             shadowColor: kPrimaryColor,
@@ -41,7 +42,7 @@ class DashCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Image.asset(imagePath, scale: 5.5),
+                Image.asset(imagePath, scale: (MediaQuery.of(context).orientation == Orientation.landscape) ? CustomSizer(1).h : CustomSizer(0.6).h),
                 SizedBox(height: CustomSizer(2).h),
                 Text(
                   text,
