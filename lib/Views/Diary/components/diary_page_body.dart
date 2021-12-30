@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:sApport/Model/utils.dart';
+import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/components/info_dialog.dart';
@@ -67,7 +68,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
   Widget build(BuildContext context) {
     // Add post frame callback for requesting the focus on the title text field
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      if (diaryViewModel.isEditing.value) {
+      if (diaryViewModel.isEditing) {
         titleFocusNode.requestFocus();
       }
     });
@@ -77,18 +78,21 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TopBar(
-              text: DateFormat("dd MMM yyyy").format(diaryViewModel.currentDiaryPage.value!.dateTime),
+              text: DateFormat("dd MMM yyyy").format(diaryViewModel.currentDiaryPage.value?.dateTime ?? DateTime.now()),
               textSize: 16.sp,
               backIcon: Icons.close_rounded,
               onBack: diaryViewModel.resetCurrentDiaryPage,
               buttons: [
-                if (!diaryViewModel.isEditing.value) ...[
+                if (!diaryViewModel.isEditing) ...[
                   if (Utils.isToday(diaryViewModel.currentDiaryPage.value!.dateTime)) ...[
                     // If it is the diary page of today and isEditing is false, show the button for modifing the page
                     InkWell(
                       child: InkResponse(
                         onTap: () {
-                          diaryViewModel.isEditing.value = true;
+                          diaryViewModel.editPage();
+                          if (MediaQuery.of(context).orientation == Orientation.landscape) {
+                            routerDelegate.pushPage(name: DiaryPageScreen.route);
+                          }
                           setState(() {});
                         },
                         child: Container(padding: EdgeInsets.all(10), child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white)),
@@ -118,10 +122,10 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                     child: StreamBuilder(
                       stream: diaryViewModel.diaryForm.isButtonEnabled,
                       builder: (context, AsyncSnapshot snapshot) {
-                        if (snapshot.data ?? false || (diaryViewModel.currentDiaryPage.value?.id.isNotEmpty ?? true)) {
+                        if (snapshot.data ?? false || (diaryViewModel.currentDiaryPage.value != null)) {
                           return InkResponse(
                             onTap: () {
-                              if (diaryViewModel.currentDiaryPage.value?.id.isNotEmpty ?? false) {
+                              if (diaryViewModel.currentDiaryPage.value != null) {
                                 diaryViewModel.updatePage();
                               } else {
                                 diaryViewModel.submitPage();
@@ -159,7 +163,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                   TextField(
                     textCapitalization: TextCapitalization.sentences,
                     textInputAction: TextInputAction.done,
-                    enabled: diaryViewModel.isEditing.value,
+                    enabled: diaryViewModel.isEditing,
                     focusNode: titleFocusNode,
                     minLines: 1,
                     maxLines: 2,
@@ -182,7 +186,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                         physics: BouncingScrollPhysics(),
                         child: TextField(
                           textCapitalization: TextCapitalization.sentences,
-                          enabled: diaryViewModel.isEditing.value,
+                          enabled: diaryViewModel.isEditing,
                           controller: diaryViewModel.contentTextCtrl,
                           cursorColor: kPrimaryColor,
                           style: TextStyle(color: kPrimaryColor, fontSize: 15.5.sp),
@@ -210,10 +214,22 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     return diaryViewModel.isPageAdded.listen((isSuccessfulAdd) {
       if (isSuccessfulAdd) {
         if (!routerDelegate.hasDialog) {
-          InfoDialog.show(context, infoType: InfoDialogType.success, content: "Diary page correctly submitted.", buttonType: ButtonType.ok);
+          InfoDialog.show(
+            context,
+            infoType: InfoDialogType.success,
+            content: "Diary page correctly submitted.",
+            buttonType: ButtonType.ok,
+            onTap: () => routerDelegate.pop(),
+          );
         }
       } else {
-        InfoDialog.show(context, infoType: InfoDialogType.error, content: "Error in submitting the diary page.", buttonType: ButtonType.ok);
+        InfoDialog.show(
+          context,
+          infoType: InfoDialogType.error,
+          content: "Error in submitting the diary page.",
+          buttonType: ButtonType.ok,
+          onTap: () => routerDelegate.pop(),
+        );
       }
     });
   }

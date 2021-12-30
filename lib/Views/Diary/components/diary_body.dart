@@ -179,12 +179,8 @@ class _DiaryBodyState extends State<DiaryBody> {
                   alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1)!,
                   child: FloatingActionButton(
                     onPressed: () {
-                      // Add a new diary page
-                      diaryViewModel.addNewDiaryPage();
-                      if (MediaQuery.of(context).orientation == Orientation.portrait) {
-                        // If the device orientation is portrait, push the DiaryPageScreen
-                        routerDelegate.pushPage(name: DiaryPageScreen.route);
-                      }
+                      diaryViewModel.editPage();
+                      routerDelegate.pushPage(name: DiaryPageScreen.route);
                     },
                     materialTapTargetSize: MaterialTapTargetSize.padded,
                     backgroundColor: kPrimaryColor,

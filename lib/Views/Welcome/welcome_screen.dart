@@ -64,16 +64,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
   /// Handle the orientation changes of the device.
   /// It is triggered by the [onChangeMetrics] listener.
   ///
-  /// - If the last route is the one between the [ChatPageScreen], the [ReportDetailsScreen]
-  /// or the [DiaryPageScreen], when the function is triggered, it pop the page.
+  /// - If the orientation change between portrait to landscape and the last route is the one between
+  ///  the [ChatPageScreen], the [ReportDetailsScreen] or the [DiaryPageScreen] and [isEditing] is false,
+  ///  when the function is triggered, it pops the page.
   /// - If the orientation change from landscape to portrait and the current value of one of
   /// the view models is not null, it pushes the relative page.
   void handleOrientationChanges() {
     print("handleOrientationChanges");
     String lastRoute = routerDelegate.getLastRoute();
-    if (lastRoute == ChatPageScreen.route || lastRoute == ReportDetailsScreen.route || lastRoute == DiaryPageScreen.route) {
-      routerDelegate.pop();
-    } else if (MediaQuery.of(context).orientation == Orientation.landscape) {
+    if (MediaQuery.of(context).orientation == Orientation.portrait) {
+      if (lastRoute == ChatPageScreen.route ||
+          lastRoute == ReportDetailsScreen.route ||
+          lastRoute == DiaryPageScreen.route && !diaryViewModel.isEditing) {
+        routerDelegate.pop();
+      }
+    } else {
       if (chatViewModel.currentChat.value != null) {
         routerDelegate.pushPage(name: ChatPageScreen.route);
       } else if (reportViewModel.currentReport.value != null) {

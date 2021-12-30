@@ -30,7 +30,7 @@ class DiaryViewModel with ChangeNotifier {
   // List of the diary pages of the user
   ValueNotifier<List<DiaryPage>>? _diaryPages;
 
-  ValueNotifier<bool> _isEditing = ValueNotifier(false);
+  bool _isEditing = false;
 
   DiaryViewModel() {
     // Register the listeners for the input text field
@@ -41,10 +41,13 @@ class DiaryViewModel with ChangeNotifier {
   /// Add a new [DiaryPage] into the DB
   Future<void> submitPage() {
     var now = DateTime.now();
-    _currentDiaryPage.value!.id = now.millisecondsSinceEpoch.toString();
-    _currentDiaryPage.value!.title = titleTextCtrl.text.trim();
-    _currentDiaryPage.value!.content = contentTextCtrl.text.trim();
-    isEditing.value = false;
+    _currentDiaryPage.value = DiaryPage(
+      id: now.millisecondsSinceEpoch.toString(),
+      title: titleTextCtrl.text.trim(),
+      content: contentTextCtrl.text.trim(),
+      dateTime: now,
+    );
+    _isEditing = false;
     return _firestoreService
         .addDiaryPageIntoDB(
           _userService.loggedUser!.id,
@@ -60,7 +63,7 @@ class DiaryViewModel with ChangeNotifier {
     _currentDiaryPage.value!.title = titleTextCtrl.text.trim();
     _currentDiaryPage.value!.content = contentTextCtrl.text.trim();
     _currentDiaryPage.value!.dateTime = now;
-    isEditing.value = false;
+    _isEditing = false;
     return _firestoreService
         .updateDiaryPageIntoDB(
           _userService.loggedUser!.id,
@@ -105,10 +108,9 @@ class DiaryViewModel with ChangeNotifier {
     );
   }
 
-  /// Add a new diary page into the diary.
-  void addNewDiaryPage() {
-    setCurrentDiaryPage(DiaryPage(dateTime: DateTime.now()));
-    isEditing.value = true;
+  /// Modify the [_currentDiaryPage] or edit a new [DiaryPage].
+  void editPage() {
+    _isEditing = true;
   }
 
   /// Set the [diaryPage] as the [_currentDiaryPage].
@@ -132,7 +134,7 @@ class DiaryViewModel with ChangeNotifier {
     titleTextCtrl.clear();
     contentTextCtrl.clear();
     diaryForm.resetControllers();
-    isEditing.value = false;
+    _isEditing = false;
     print("Current diary page resetted");
   }
 
@@ -151,7 +153,7 @@ class DiaryViewModel with ChangeNotifier {
   ValueNotifier<List<DiaryPage>>? get diaryPages => _diaryPages;
 
   /// Get the [_isEditing] flag.
-  ValueNotifier<bool> get isEditing => _isEditing;
+  bool get isEditing => _isEditing;
 
   /// Stream of the succesfully addition of the diary page
   Stream<bool> get isPageAdded => _isPageAddedCtrl.stream;

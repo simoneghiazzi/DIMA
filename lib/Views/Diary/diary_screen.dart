@@ -60,6 +60,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: kPrimaryColor,
       body: OrientationBuilder(
         builder: (context, orientation) {
@@ -67,30 +68,20 @@ class _DiaryScreenState extends State<DiaryScreen> {
             // If the orientation is protrait, shows the DiaryBody
             return DiaryBody();
           } else {
-            // If the orientation is landscape, shows the ValueListenableBuilder listener that builds the DiaryPageBody
-            // if isEditing is true, otherwise return another ValueListenableBuilder that builds the VerticalSplitView
+            // If the orientation is landscape, shows the ValueListenableBuilder listener that builds the VerticalSplitView
             // with the DiaryBody on the left and, if the current diary page is not null, the DiaryPage on the right,
             // otherwise sets the ration = 1 (it shows only the left widget).
             return ValueListenableBuilder(
-              valueListenable: diaryViewModel.isEditing,
-              builder: (context, bool isEditing, child) {
-                if (isEditing) {
-                  return DiaryPageBody();
-                } else {
-                  return ValueListenableBuilder(
-                    valueListenable: diaryViewModel.currentDiaryPage,
-                    builder: (context, DiaryPage? currentDiaryPage, child) {
-                      var _ratio = diaryViewModel.currentDiaryPage.value != null ? 0.50 : 1.0;
-                      return VerticalSplitView(
-                        left: DiaryBody(),
-                        right: diaryViewModel.currentDiaryPage.value != null ? DiaryPageBody() : Container(),
-                        ratio: _ratio,
-                        dividerWidth: 2.0,
-                        dividerColor: kPrimaryColor,
-                      );
-                    },
-                  );
-                }
+              valueListenable: diaryViewModel.currentDiaryPage,
+              builder: (context, DiaryPage? currentDiaryPage, child) {
+                var _ratio = diaryViewModel.currentDiaryPage.value != null ? 0.50 : 1.0;
+                return VerticalSplitView(
+                  left: DiaryBody(),
+                  right: diaryViewModel.currentDiaryPage.value != null ? DiaryPageBody() : Container(),
+                  ratio: _ratio,
+                  dividerWidth: 2.0,
+                  dividerColor: kPrimaryColor,
+                );
               },
             );
           }
