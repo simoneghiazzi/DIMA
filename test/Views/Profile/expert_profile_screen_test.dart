@@ -1,7 +1,10 @@
+// @dart=2.9
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:network_image_mock/network_image_mock.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
@@ -57,22 +60,24 @@ void main() {
       child: new MaterialApp(home: new ExpertProfileScreen(expert: expert)),
     );
 
-    await tester.pumpWidget(MultiProvider(
-      providers: [
-        ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
-        ChangeNotifierProvider<ChatViewModel>(create: (_) => ChatViewModel()),
-      ],
-      child: Sizer(builder: (context, orientation, deviceType) {
-        // Check the device type and disable the landscape orientation if it is not a tablet
+    await mockNetworkImagesFor(() async {
+      await tester.pumpWidget(MultiProvider(
+        providers: [
+          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
+          ChangeNotifierProvider<ChatViewModel>(create: (_) => ChatViewModel()),
+        ],
+        child: Sizer(builder: (context, orientation, deviceType) {
+          // Check the device type and disable the landscape orientation if it is not a tablet
 
-        /*************************** RIGA DA DECOMMENTARE IN DEPLOY ***************************/
-        if (!(deviceType == DeviceType.tablet)) {
-          SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-        }
+          /*************************** RIGA DA DECOMMENTARE IN DEPLOY ***************************/
+          if (!(deviceType == DeviceType.tablet)) {
+            SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+          }
 
-        return testWidget;
-      }),
-    ));
+          return testWidget;
+        }),
+      ));
+    });
 
     // final imageFinder =
     final nameFinder = find.text(expert.name.toUpperCase() + " " + expert.surname.toUpperCase());
