@@ -60,6 +60,7 @@ void main() {
       child: new MaterialApp(home: new ExpertProfileScreen(expert: expert)),
     );
 
+    //The mockNetwork is required because by default Flutter testing gives 404 as response to network requests
     await mockNetworkImagesFor(() async {
       await tester.pumpWidget(MultiProvider(
         providers: [
