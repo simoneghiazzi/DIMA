@@ -27,37 +27,39 @@ class HomePageGrid extends StatelessWidget {
       child: Container(
           constraints: BoxConstraints(maxWidth: 800),
           padding: EdgeInsets.only(left: 5, right: 5),
-          child: Table(
-            children: [
-              TableRow(children: <Widget>[
-                // Expert Chats
-                DashCard(
-                  imagePath: "assets/icons/psychologist.png",
-                  text: "Experts\nchats",
-                  onTap: () => routerDelegate.pushPage(name: ChatListScreen.route, arguments: ExpertChatListBody()),
-                ),
-                // Anonymous Chats
-                DashCard(
-                  imagePath: "assets/icons/anonymous.png",
-                  text: "Anonymous\nchats",
-                  onTap: () => routerDelegate.pushPage(name: ChatListScreen.route, arguments: AnonymousChatListBody()),
-                ),
-              ]),
-              TableRow(children: <Widget>[
-                // Map
-                DashCard(
-                  imagePath: "assets/icons/map.png",
-                  text: "Find an\nexpert",
-                  onTap: () => routerDelegate.pushPage(name: MapScreen.route),
-                ),
-                // Reports
-                DashCard(
-                  imagePath: "assets/icons/report.png",
-                  text: "Anonymous\nreports",
-                  onTap: () => routerDelegate.pushPage(name: CreateReportScreen.route),
-                ),
-              ])
-            ],
+          child: SingleChildScrollView(
+            child: Table(
+              children: [
+                TableRow(children: <Widget>[
+                  // Expert Chats
+                  DashCard(
+                    imagePath: "assets/icons/psychologist.png",
+                    text: "Experts\nchats",
+                    onTap: () => routerDelegate.pushPage(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                  ),
+                  // Anonymous Chats
+                  DashCard(
+                    imagePath: "assets/icons/anonymous.png",
+                    text: "Anonymous\nchats",
+                    onTap: () => routerDelegate.pushPage(name: ChatListScreen.route, arguments: AnonymousChatListBody()),
+                  ),
+                ]),
+                TableRow(children: <Widget>[
+                  // Map
+                  DashCard(
+                    imagePath: "assets/icons/map.png",
+                    text: "Find an\nexpert",
+                    onTap: () => routerDelegate.pushPage(name: MapScreen.route),
+                  ),
+                  // Reports
+                  DashCard(
+                    imagePath: "assets/icons/report.png",
+                    text: "Anonymous\nreports",
+                    onTap: () => routerDelegate.pushPage(name: CreateReportScreen.route),
+                  ),
+                ])
+              ],
+            ),
           )),
     );
   }

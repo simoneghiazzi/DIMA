@@ -179,7 +179,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                       // Get In Touch Button
                       ? Container(
                           child: RoundedButton(
-                            text: "Get In Touch ",
+                            text: "Get In Touch",
                             onTap: () {
                               chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
                               if (MediaQuery.of(context).orientation == Orientation.portrait) {
@@ -209,7 +209,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
             // Get In Touch Button
             ? Container(
                 child: RoundedButton(
-                  text: "Get In Touch ",
+                  text: "Get In Touch",
                   onTap: () {
                     chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
                     if (MediaQuery.of(context).orientation == Orientation.portrait) {

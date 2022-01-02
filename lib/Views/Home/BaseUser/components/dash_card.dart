@@ -27,29 +27,37 @@ class DashCard extends StatelessWidget {
               ? EdgeInsets.only(right: 25, left: 25, top: 5, bottom: 5)
               : EdgeInsets.only(right: 20, left: 20, top: 15, bottom: 15)
           : EdgeInsets.only(right: 5, left: 5, top: 15, bottom: 15),
-      child: InkWell(
-        customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        splashColor: kPrimaryColor.withAlpha(100),
-        highlightColor: Colors.transparent,
-        onTap: () => onTap(),
-        child: Container(
-          height: (MediaQuery.of(context).orientation == Orientation.landscape) ? CustomSizer(25).h : CustomSizer(30).h,
-          width: double.infinity,
-          child: Card(
-            elevation: 3,
-            shadowColor: kPrimaryColor,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(imagePath, scale: (MediaQuery.of(context).orientation == Orientation.landscape) ? CustomSizer(1).h : CustomSizer(0.6).h),
-                SizedBox(height: CustomSizer(2).h),
-                Text(
-                  text,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: CustomSizer(15).sp),
+      child: Material(
+        child: InkWell(
+          customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          splashColor: kPrimaryColor.withAlpha(100),
+          highlightColor: Colors.transparent,
+          onTap: () => onTap(),
+          child: Container(
+            height: (MediaQuery.of(context).orientation == Orientation.landscape) ? CustomSizer(25).h : CustomSizer(30).h,
+            width: double.infinity,
+            child: Card(
+              elevation: 3,
+              shadowColor: kPrimaryColor,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              child: FittedBox(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Image.asset(imagePath,
+                          scale: (MediaQuery.of(context).orientation == Orientation.landscape) ? CustomSizer(0.6).h : CustomSizer(0.6).h),
+                      SizedBox(height: CustomSizer(2).h),
+                      Text(
+                        text,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: CustomSizer(13).sp),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
