@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/Diary/components/diary_body.dart';
