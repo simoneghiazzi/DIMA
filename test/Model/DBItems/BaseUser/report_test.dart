@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Model/DBItems/BaseUser/report.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 
 void main() async {
   /// Fake Firebase
@@ -13,7 +13,7 @@ void main() async {
   var description = "Report description";
   var dateTime = DateTime(2021, 10, 19);
 
-  /// Mock DiaryPage
+  /// Mock Report
   Report mockReport = Report(
     id: id,
     category: category,
@@ -21,7 +21,7 @@ void main() async {
     dateTime: dateTime,
   );
 
-  /// Add the mock diary page to the fakeFirebase
+  /// Add the mock report to the fakeFirebase
   fakeFirebase.collection(mockReport.collection).doc(mockReport.id).set(mockReport.data);
 
   group("Report initialization", () {
@@ -31,7 +31,7 @@ void main() async {
   });
 
   group("Report data", () {
-    test("Set report from document", () async {
+    test("Report factory from document", () async {
       var result = (await fakeFirebase.collection(mockReport.collection).doc(mockReport.id).get());
       var retrievedReport = Report.fromDocument(result);
       expect(retrievedReport.id, id);

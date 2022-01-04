@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:sApport/Model/utils.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
 
 void main() async {
@@ -39,7 +39,7 @@ void main() async {
   });
 
   group("DiaryPage data", () {
-    test("Set diary page from document", () async {
+    test("Diary page factory from document", () async {
       var result = (await fakeFirebase.collection(mockDiaryPage.collection).doc(mockDiaryPage.id).get());
       var retrievedDiaryPage = DiaryPage.fromDocument(result);
       expect(retrievedDiaryPage.id, id);

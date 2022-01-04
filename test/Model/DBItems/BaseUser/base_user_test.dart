@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
 
 void main() async {
@@ -38,9 +38,20 @@ void main() async {
   });
 
   group("BaseUser data", () {
+    test("Expert factory from document", () async {
+      var result = (await fakeFirebase.collection(mockBaseUser.collection).doc(mockBaseUser.id).get());
+      var retrievedExpert = BaseUser.fromDocument(result);
+      expect(retrievedExpert.id, id);
+      expect(retrievedExpert.name, name);
+      expect(retrievedExpert.surname, surname);
+      expect(retrievedExpert.birthDate, birthDate);
+      expect(retrievedExpert.email, email);
+    });
+
     test("Set base user from document", () async {
       var result = (await fakeFirebase.collection(mockBaseUser.collection).doc(mockBaseUser.id).get());
-      var retrievedUser = BaseUser.fromDocument(result);
+      var retrievedUser = BaseUser();
+      retrievedUser.setFromDocument(result);
       expect(retrievedUser.id, id);
       expect(retrievedUser.name, name);
       expect(retrievedUser.surname, surname);

@@ -1,8 +1,8 @@
+import 'package:test/test.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
-import 'package:test/test.dart';
-import 'package:sApport/Model/utils.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 
 void main() async {
   /// Fake Firebase
@@ -20,7 +20,7 @@ void main() async {
   var phoneNumber = "331331331";
   var profilePhoto = "Link to the profile photo";
 
-  /// Mock BaseUser
+  /// Mock Expert
   Expert mockExpert = Expert(
     id: id,
     name: name,
@@ -34,7 +34,7 @@ void main() async {
     profilePhoto: profilePhoto,
   );
 
-  /// Add the mock base user to the fakeFirebase
+  /// Add the mock expert to the fakeFirebase
   fakeFirebase.collection(mockExpert.collection).doc(mockExpert.id).set(mockExpert.data);
 
   group("Expert initialization", () {
