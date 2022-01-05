@@ -9,7 +9,7 @@ import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
-import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Views/Home/BaseUser/components/base_user_home_page_body.dart';
 

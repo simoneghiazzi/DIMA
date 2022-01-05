@@ -1,5 +1,4 @@
 import 'package:get_it/get_it.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/user_service.dart';
@@ -8,9 +7,8 @@ import 'package:test/test.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 
-import 'chat_view_model_test.mocks.dart';
+import '../service.mocks.dart';
 
-@GenerateMocks([FirestoreService, UserService])
 void main() async {
   final mockFirestoreService = MockFirestoreService();
   final mockUserService = MockUserService();

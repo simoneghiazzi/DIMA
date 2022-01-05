@@ -6,11 +6,11 @@ import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/components/info_dialog.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/Views/Forms/Report/report_form.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/Report/reports_list_screen.dart';
 import 'package:sApport/Views/Report/create_report_screen.dart';
-import 'package:sApport/ViewModel/Forms/Report/report_form.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 
 /// Body of the [CreateReportScreen].

@@ -4,7 +4,7 @@ import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/Map/place.dart';
 import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/Model/Services/map_service.dart';
-import 'package:sApport/ViewModel/Forms/Authentication/base_user_signup_form.dart';
+import 'package:sApport/Views/Forms/Authentication/base_user_signup_form.dart';
 
 class ExpertSignUpForm extends BaseUserSignUpForm {
   // Services

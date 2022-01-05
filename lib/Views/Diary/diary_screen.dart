@@ -4,7 +4,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/Diary/components/diary_body.dart';
 import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
-import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/Views/components/vertical_split_view.dart';
 import 'package:sApport/Views/Diary/components/diary_page_body.dart';
 

@@ -14,7 +14,7 @@ import 'package:sApport/Views/components/loading_dialog.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/form_text_field.dart';
 import 'package:sApport/Views/Login/components/background.dart';
-import 'package:sApport/ViewModel/Forms/Authentication/credential_form.dart';
+import 'package:sApport/Views/Forms/Authentication/credential_form.dart';
 
 /// Body of the [CredentialScreen].
 ///

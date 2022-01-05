@@ -12,7 +12,7 @@ import 'package:sApport/Views/components/social_icon.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
-import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/Views/Welcome/components/background.dart';
 import 'package:sApport/Views/Welcome/components/or_divider.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';

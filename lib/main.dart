@@ -18,7 +18,7 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
-import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 

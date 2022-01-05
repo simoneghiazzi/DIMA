@@ -13,7 +13,7 @@ import 'package:sApport/Views/components/info_dialog.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
-import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 
 /// Body of the Diary Page.
 ///

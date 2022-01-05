@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/widgets.dart';
-import 'package:sApport/ViewModel/Forms/Diary/diary_form.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_form.dart';
 
 class DiaryViewModel with ChangeNotifier {
   // Services

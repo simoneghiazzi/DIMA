@@ -10,7 +10,7 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Home/components/header.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
-import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/Views/Diary/components/diary_page_data_source.dart';
 
 /// Body of the Diary.

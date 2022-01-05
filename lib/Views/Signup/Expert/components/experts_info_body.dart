@@ -16,7 +16,7 @@ import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/form_text_field.dart';
 import 'package:sApport/Views/Signup/components/background.dart';
 import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
-import 'package:sApport/ViewModel/Forms/Authentication/expert_signup_form.dart';
+import 'package:sApport/Views/Forms/Authentication/expert_signup_form.dart';
 
 /// Body of the [ExpertsSignUpScreen].
 ///

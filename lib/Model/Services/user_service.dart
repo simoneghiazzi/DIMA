@@ -2,7 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
-import 'package:sApport/ViewModel/Forms/Authentication/base_user_signup_form.dart';
+import 'package:sApport/Views/Forms/Authentication/base_user_signup_form.dart';
 
 /// Service that manages the [loggedUser] state inside the entire application.
 class UserService {
