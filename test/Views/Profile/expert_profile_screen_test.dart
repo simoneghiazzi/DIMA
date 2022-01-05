@@ -1,9 +1,13 @@
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
@@ -11,15 +15,19 @@ import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/components/expert_chat_list_body.dart';
+import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Profile/expert_profile_screen.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../navigator.mocks.dart';
+import '../../view_model.mocks.dart';
+
+@GenerateMocks([AppRouterDelegate])
 void main() {
-  final fakeFirebase = FakeFirebaseFirestore();
-  FirestoreService _firestoreService = FirestoreService(fakeFirebase);
+  final mockChatViewModel = MockChatViewModel();
+  final mockRouterDelegate = MockAppRouterDelegate();
 
   var id = Utils.randomId();
   var name = "SIMONE";
@@ -50,8 +58,6 @@ void main() {
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(MockFirebaseAuth()));
   getIt.registerSingleton<UserService>(UserService());
 
-  AppRouterDelegate routerDelegate = AppRouterDelegate();
-
   testWidgets("Testing the correct render of an expert's profile page", (WidgetTester tester) async {
     // Set the physical size dimensions
     tester.binding.window.physicalSizeTestValue = Size(720, 1384);
@@ -61,10 +67,10 @@ void main() {
     await mockNetworkImagesFor(() async {
       await tester.pumpWidget(MultiProvider(
         providers: [
-          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
-          ChangeNotifierProvider<ChatViewModel>(create: (_) => ChatViewModel()),
+          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => mockRouterDelegate),
+          ChangeNotifierProvider<ChatViewModel>(create: (_) => mockChatViewModel),
         ],
-        child: Sizer(builder: (context, orientation, deviceType) {    
+        child: Sizer(builder: (context, orientation, deviceType) {
           // Create the expert profile screen page widget passing the expert's info
           return MaterialApp(home: ExpertProfileScreen(expert: expert));
         }),
@@ -84,5 +90,24 @@ void main() {
     expect(addressFinder, findsOneWidget);
 
     expect(buttonFinder, findsOneWidget);
+
+    await tester.tap(buttonFinder);
+
+    /// Check replaceAllButNumber call
+    var verification = verify(mockRouterDelegate.replaceAllButNumber(2, routeSettingsList: captureAnyNamed("routeSettingsList")));
+    verification.called(1);
+
+    /// Parameters Verification
+    expect(verification.captured[0][0].name, ChatListScreen.route);
+    expect(verification.captured[0][0].arguments, isA<ExpertChatListBody>());
+    expect(verification.captured[0][1].name, ChatPageScreen.route);
+
+    /// Check addNewChat call
+    verification = verify(mockChatViewModel.addNewChat(captureAny));
+    verification.called(1);
+
+    /// Parameters Verification
+    expect(verification.captured[0], isA<ExpertChat>());
+    expect(verification.captured[0].peerUser, expert);
   });
 }
