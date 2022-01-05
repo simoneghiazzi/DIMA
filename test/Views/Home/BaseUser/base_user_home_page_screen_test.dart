@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,8 +18,6 @@ import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:sApport/Views/Home/BaseUser/components/base_user_home_page_body.dart';
 import 'package:sApport/Views/Home/BaseUser/components/dash_card.dart';
 import 'package:sizer/sizer.dart';
-
-import '../../mock_navigator_observer.dart';
 
 void main() async {
   // final fakeFirebase = FakeFirebaseFirestore();
@@ -46,7 +42,6 @@ void main() async {
   // userReference.set(baseUser.data);
 
   //Mocking a navigator observer to check whether the navigator is called after a tap
-  final mockObserver = MockNavigatorObserver();
 
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(FirestoreService(FakeFirebaseFirestore()));
@@ -64,7 +59,6 @@ void main() async {
         data: new MediaQueryData(),
         child: new MaterialApp(
           home: new BaseUserHomePageBody(),
-          navigatorObservers: [mockObserver],
         ),
       );
 
@@ -109,7 +103,6 @@ void main() async {
         data: new MediaQueryData(),
         child: new MaterialApp(
           home: new BaseUserHomePageBody(),
-          navigatorObservers: [mockObserver],
         ),
       );
 
@@ -140,9 +133,6 @@ void main() async {
 
       await tester.tap(expertsChatsCardFinder);
       //await tester.pumpAndSettle();
-
-      //Verify that a push event happened
-      verify(mockObserver.didPush(any, any));
     });
 
     testWidgets("Testing the correct call of the anonymous chats list screen", (WidgetTester tester) async {
@@ -153,7 +143,6 @@ void main() async {
         data: new MediaQueryData(),
         child: new MaterialApp(
           home: new BaseUserHomePageBody(),
-          navigatorObservers: [mockObserver],
         ),
       );
 
@@ -184,9 +173,6 @@ void main() async {
 
       await tester.tap(anonymousChatsCardFinder);
       //await tester.pumpAndSettle();
-
-      //Verify that a push event happened
-      verify(mockObserver.didPush(any, any));
     });
 
     testWidgets("Testing the correct call of the map screen", (WidgetTester tester) async {
@@ -197,7 +183,6 @@ void main() async {
         data: new MediaQueryData(),
         child: new MaterialApp(
           home: new BaseUserHomePageBody(),
-          navigatorObservers: [mockObserver],
         ),
       );
 
@@ -228,9 +213,6 @@ void main() async {
 
       await tester.tap(mapCardFinder);
       //await tester.pumpAndSettle();
-
-      //Verify that a push event happened
-      verify(mockObserver.didPush(any, any));
     });
 
     testWidgets("Testing the correct call of the reports screen", (WidgetTester tester) async {
@@ -241,7 +223,6 @@ void main() async {
         data: new MediaQueryData(),
         child: new MaterialApp(
           home: new BaseUserHomePageBody(),
-          navigatorObservers: [mockObserver],
         ),
       );
 
@@ -272,9 +253,6 @@ void main() async {
 
       await tester.tap(reportsCardFinder);
       //await tester.pumpAndSettle();
-
-      //Verify that a push event happened
-      verify(mockObserver.didPush(any, any));
     });
   });
 }

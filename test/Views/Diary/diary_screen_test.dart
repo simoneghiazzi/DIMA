@@ -12,15 +12,13 @@ import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/diary_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Diary/components/diary_body.dart';
 import 'package:sApport/Views/Home/components/header.dart';
 import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-
-import '../mock_navigator_observer.dart';
 
 void main() {
   final fakeFirebase = FakeFirebaseFirestore();
@@ -53,9 +51,6 @@ void main() {
   //Insert the user
   userReference.set(baseUser.data);
 
-  //Mocking a navigator observer to check whether the navigator is called after a tap
-  final mockObserver = MockNavigatorObserver();
-
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(FirestoreService(fakeFirebase));
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(MockFirebaseAuth()));
@@ -75,7 +70,6 @@ void main() {
         data: new MediaQueryData(),
         child: new MaterialApp(
           home: new DiaryBody(),
-          navigatorObservers: [mockObserver],
         ),
       );
 
@@ -120,7 +114,6 @@ void main() {
         data: new MediaQueryData(),
         child: new MaterialApp(
           home: new DiaryBody(),
-          navigatorObservers: [mockObserver],
         ),
       );
 

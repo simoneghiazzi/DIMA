@@ -3,7 +3,6 @@ import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +23,6 @@ import 'package:sizer/sizer.dart';
 import '../../navigator.mocks.dart';
 import '../../view_model.mocks.dart';
 
-@GenerateMocks([AppRouterDelegate])
 void main() {
   final mockChatViewModel = MockChatViewModel();
   final mockRouterDelegate = MockAppRouterDelegate();
