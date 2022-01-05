@@ -13,7 +13,7 @@ import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/form_text_field.dart';
 import 'package:sApport/Views/Login/components/background.dart';
 import 'package:sApport/Views/Login/forgot_password_screen.dart';
-import 'package:sApport/Views/Forms/Authentication/login_form.dart';
+import 'package:sApport/Views/Login/components/forms/login_form.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
 
 /// Body of the [LoginScreen].
