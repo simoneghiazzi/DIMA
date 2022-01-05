@@ -27,7 +27,7 @@ void main() async {
   var notReadMessages = 4;
 
   /// Mock ExpertChat
-  ExpertChat mockAnonymousChat = ExpertChat(
+  ExpertChat mockExpertChat = ExpertChat(
     lastMessage: lastMessage,
     lastMessageDateTime: lastMessageDateTime,
     notReadMessages: notReadMessages,
@@ -37,7 +37,7 @@ void main() async {
   fakeFirebase
       .collection(BaseUser.COLLECTION)
       .doc(userId)
-      .collection(mockAnonymousChat.collection)
+      .collection(mockExpertChat.collection)
       .doc(peerUser.id)
       .set({"lastMessageTimestamp": lastMessageDateTime.millisecondsSinceEpoch, "notReadMessages": notReadMessages, "lastMessage": lastMessage});
 
@@ -59,7 +59,7 @@ void main() async {
 
   group("ExpertChat data", () {
     test("Expert chat factory from document", () async {
-      var result = (await fakeFirebase.collection(BaseUser.COLLECTION).doc(userId).collection(mockAnonymousChat.collection).doc(peerUser.id).get());
+      var result = (await fakeFirebase.collection(BaseUser.COLLECTION).doc(userId).collection(mockExpertChat.collection).doc(peerUser.id).get());
       var retrievedExpertChat = ExpertChat.fromDocument(result);
 
       expect(retrievedExpertChat.lastMessage, lastMessage);
