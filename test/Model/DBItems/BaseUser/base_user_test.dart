@@ -38,25 +38,25 @@ void main() async {
   });
 
   group("BaseUser data", () {
-    test("Expert factory from document", () async {
+    test("Base user factory from document", () async {
       var result = (await fakeFirebase.collection(mockBaseUser.collection).doc(mockBaseUser.id).get());
-      var retrievedExpert = BaseUser.fromDocument(result);
-      expect(retrievedExpert.id, id);
-      expect(retrievedExpert.name, name);
-      expect(retrievedExpert.surname, surname);
-      expect(retrievedExpert.birthDate, birthDate);
-      expect(retrievedExpert.email, email);
+      var retrievedBaseUser = BaseUser.fromDocument(result);
+      expect(retrievedBaseUser.id, id);
+      expect(retrievedBaseUser.name, name);
+      expect(retrievedBaseUser.surname, surname);
+      expect(retrievedBaseUser.birthDate, birthDate);
+      expect(retrievedBaseUser.email, email);
     });
 
     test("Set base user from document", () async {
       var result = (await fakeFirebase.collection(mockBaseUser.collection).doc(mockBaseUser.id).get());
-      var retrievedUser = BaseUser();
-      retrievedUser.setFromDocument(result);
-      expect(retrievedUser.id, id);
-      expect(retrievedUser.name, name);
-      expect(retrievedUser.surname, surname);
-      expect(retrievedUser.birthDate, birthDate);
-      expect(retrievedUser.email, email);
+      var retrievedBaseUser = BaseUser();
+      retrievedBaseUser.setFromDocument(result);
+      expect(retrievedBaseUser.id, id);
+      expect(retrievedBaseUser.name, name);
+      expect(retrievedBaseUser.surname, surname);
+      expect(retrievedBaseUser.birthDate, birthDate);
+      expect(retrievedBaseUser.email, email);
     });
 
     test("Get base user data as a key-value map", () async {

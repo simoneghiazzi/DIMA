@@ -214,31 +214,6 @@ class FirestoreService {
         .catchError((error) => print("Failed to set the notReadMessages field: $error"));
   }
 
-  /// It updates the `lastMessage`, `lastMessageTimestamp` and `notReadMessages` fields
-  /// of the [senderUser] and peerUsers specified in the [chat].
-  ///
-  /// If the [chat] is a [Request], adds it to the list of chats of the 2 users
-  /// in the correct collection and updates the counters.
-  void _updateChatInfo(User senderUser, Chat chat, int timestamp) async {
-    var senderUserRef = _firestore.collection(senderUser.collection).doc(senderUser.id).collection(chat.collection).doc(chat.peerUser!.id);
-    var peerUserRef = _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(chat.peerCollection).doc(senderUser.id);
-
-    var doc = await peerUserRef.get();
-    int? counter;
-    doc.data() != null ? counter = doc.get("notReadMessages") + 1 : counter = 1;
-
-    // If the chat is a Request and the counter is 1 it means that it is a new chat and it is the first message,
-    // so call increment conversation counter
-    if (chat is Request && counter == 1) {
-      _incrementConversationCounter(senderUser, chat, 1);
-    }
-    WriteBatch batch = FirebaseFirestore.instance.batch();
-    // The notReadMessages field is setted to 0 for the sender user and to counter for the peer user
-    batch.set(senderUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
-    batch.set(peerUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": counter, "lastMessage": chat.lastMessage});
-    batch.commit().then((value) => print("Chat info updated")).catchError((error) => print("Failed to update the chat info: $error"));
-  }
-
   /***************************************** CHATS *****************************************/
 
   /// Upgrade the [PendingChat] of the [senderUser] and the [Request] of the
@@ -281,6 +256,31 @@ class FirestoreService {
   /// user based on the [chatCollection] ordered by lastMessageTimestamp.
   Stream<QuerySnapshot> getChatsStreamFromDB(User user, String chatCollection) {
     return _firestore.collection(user.collection).doc(user.id).collection(chatCollection).orderBy("lastMessageTimestamp").limit(_limit).snapshots();
+  }
+
+  /// It updates the `lastMessage`, `lastMessageTimestamp` and `notReadMessages` fields
+  /// of the [senderUser] and peerUsers specified in the [chat].
+  ///
+  /// If the [chat] is a [Request], adds it to the list of chats of the 2 users
+  /// in the correct collection and updates the counters.
+  void _updateChatInfo(User senderUser, Chat chat, int timestamp) async {
+    var senderUserRef = _firestore.collection(senderUser.collection).doc(senderUser.id).collection(chat.collection).doc(chat.peerUser!.id);
+    var peerUserRef = _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(chat.peerCollection).doc(senderUser.id);
+
+    var doc = await peerUserRef.get();
+    int? counter;
+    doc.data() != null ? counter = doc.get("notReadMessages") + 1 : counter = 1;
+
+    // If the chat is a Request and the counter is 1 it means that it is a new chat and it is the first message,
+    // so call increment conversation counter
+    if (chat is Request && counter == 1) {
+      _incrementConversationCounter(senderUser, chat, 1);
+    }
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    // The notReadMessages field is setted to 0 for the sender user and to counter for the peer user
+    batch.set(senderUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
+    batch.set(peerUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": counter, "lastMessage": chat.lastMessage});
+    batch.commit().then((value) => print("Chat info updated")).catchError((error) => print("Failed to update the chat info: $error"));
   }
 
   /// It takes the [user] and returns the hash set of ids of all the chat

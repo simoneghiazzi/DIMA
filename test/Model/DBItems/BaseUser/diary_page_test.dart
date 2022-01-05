@@ -27,14 +27,14 @@ void main() async {
   fakeFirebase.collection(mockDiaryPage.collection).doc(mockDiaryPage.id).set(mockDiaryPage.data);
 
   group("DiaryPage initialization", () {
-    var testDiaryPage = DiaryPage(dateTime: DateTime.now());
+    var diaryPageTest = DiaryPage(dateTime: DateTime.now());
 
     test("Diary page collection", () {
-      expect(testDiaryPage.collection, DiaryPage.COLLECTION);
+      expect(diaryPageTest.collection, DiaryPage.COLLECTION);
     });
 
     test("Diary page favourite initially set to false", () {
-      expect(testDiaryPage.favourite, false);
+      expect(diaryPageTest.favourite, false);
     });
   });
 
