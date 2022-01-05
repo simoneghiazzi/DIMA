@@ -35,7 +35,9 @@ class RoundedButton extends StatelessWidget {
     return Container(
       child: ElevatedButton(
         style: ButtonStyle(
-          fixedSize: MaterialStateProperty.all<Size>(Size(width ?? 50.w, 6.h)),
+          
+          //fixedSize: MaterialStateProperty.all<Size>(Size(width ?? 50.w, 6.h)),
+
           backgroundColor: MaterialStateProperty.all<Color>(enabled ? color : Color(0xFFD3D3D3)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
           shadowColor: MaterialStateProperty.all<Color>(enabled ? kPrimaryLightColor : Color(0xFFD3D3D3)),

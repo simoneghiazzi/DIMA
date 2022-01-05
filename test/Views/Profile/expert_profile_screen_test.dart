@@ -53,28 +53,20 @@ void main() {
   AppRouterDelegate routerDelegate = AppRouterDelegate();
 
   testWidgets("Testing the correct render of an expert's profile page", (WidgetTester tester) async {
-    //Create the expert profile screen page widget passing the expert's info
-    Widget testWidget = new MediaQuery(
-      data: new MediaQueryData(),
-      child: new MaterialApp(home: new ExpertProfileScreen(expert: expert)),
-    );
+    // Set the physical size dimensions
+    tester.binding.window.physicalSizeTestValue = Size(720, 1384);
+    tester.binding.window.devicePixelRatioTestValue = 2.0;
 
-    //The mockNetwork is required because by default Flutter testing gives 404 as response to network requests
+    // The mockNetwork is required because by default Flutter testing gives 404 as response to network requests
     await mockNetworkImagesFor(() async {
       await tester.pumpWidget(MultiProvider(
         providers: [
           ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
           ChangeNotifierProvider<ChatViewModel>(create: (_) => ChatViewModel()),
         ],
-        child: Sizer(builder: (context, orientation, deviceType) {
-          // Check the device type and disable the landscape orientation if it is not a tablet
-
-          /*************************** RIGA DA DECOMMENTARE IN DEPLOY ***************************/
-          if (!(deviceType == DeviceType.tablet)) {
-            SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-          }
-
-          return testWidget;
+        child: Sizer(builder: (context, orientation, deviceType) {    
+          // Create the expert profile screen page widget passing the expert's info
+          return MaterialApp(home: ExpertProfileScreen(expert: expert));
         }),
       ));
     });
@@ -84,9 +76,13 @@ void main() {
     final emailFinder = find.text(expert.email);
     final addressFinder = find.text(expert.address);
 
+    final buttonFinder = find.text("Get In Touch");
+
     expect(nameFinder, findsOneWidget);
     expect(phoneFinder, findsOneWidget);
     expect(emailFinder, findsOneWidget);
     expect(addressFinder, findsOneWidget);
+
+    expect(buttonFinder, findsOneWidget);
   });
 }
