@@ -11,7 +11,7 @@ import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Views/components/form_text_field.dart';
 import 'package:sApport/Views/Signup/components/background.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
-import 'package:sApport/Views/Forms/Authentication/base_user_signup_form.dart';
+import 'package:sApport/Views/Signup/BaseUser/components/form/base_user_signup_form.dart';
 
 /// Body of the [BaseUsersSignUpScreen].
 ///

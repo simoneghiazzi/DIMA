@@ -24,7 +24,7 @@ import 'package:sApport/ViewModel/BaseUser/report_view_model.dart' as _i13;
 import 'package:sApport/ViewModel/chat_view_model.dart' as _i17;
 import 'package:sApport/ViewModel/map_view_model.dart' as _i19;
 import 'package:sApport/ViewModel/user_view_model.dart' as _i21;
-import 'package:sApport/Views/Forms/Authentication/base_user_signup_form.dart'
+import 'package:sApport/Views/Signup/BaseUser/components/form/base_user_signup_form.dart'
     as _i22;
 
 // ignore_for_file: avoid_redundant_argument_values
