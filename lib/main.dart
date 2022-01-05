@@ -102,8 +102,6 @@ class _MyAppState extends State<MyApp> {
       child: Sizer(
         builder: (context, orientation, deviceType) {
           // Check the device type and disable the landscape orientation if it is not a tablet
-
-          /*************************** RIGA DA DECOMMENTARE IN DEPLOY ***************************/
           if (!(deviceType == DeviceType.tablet)) {
             SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
           }
