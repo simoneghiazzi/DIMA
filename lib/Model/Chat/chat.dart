@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/Model/DBItems/message.dart';
@@ -47,12 +46,10 @@ abstract class Chat extends ChangeNotifier {
   /// - [peerCollection] :   name of the peer chat collection saved into the DB.
   Chat(this.collection, this.peerCollection, {this.peerUser, required this.lastMessage, this.lastMessageDateTime, required this.notReadMessages});
 
-  /// Subscribe to the anomymous chats stream of the [loggedUser] from the Firebase DB and
-  /// update the [_anonymousChats] linked hash map with the chats.
+  /// Subscribe to the messages stream of the [loggedUser] from the Firebase DB and
+  /// update the [_messages] list.
   ///
-  /// It also retrieve the [peerUser] info for every new chat from the Firebase DB.
-  ///
-  /// Finally it calls the [notifyListeners] on the [_anonymousChats] value notifier to notify the changes
+  /// Then it calls the [notifyListeners] on the [_messages] value notifier to notify the changes
   /// to all the listeners.
   void loadMessages() async {
     _messagesSubscriber = _firestoreService.getMessagesStreamFromDB(Utils.pairChatId(_userService.loggedUser!.id, peerUser!.id)).listen(
@@ -74,18 +71,6 @@ abstract class Chat extends ChangeNotifier {
   void closeListeners() {
     _messagesSubscriber?.cancel();
     _messages.value.clear();
-  }
-
-  /// Set dinamically the fields of the [User] from the [doc].
-  void setFromDocument(DocumentSnapshot doc) {
-    try {
-      lastMessage = doc.get("lastMessage");
-      int milli = doc.get("lastMessageTimestamp");
-      lastMessageDateTime = DateTime.fromMillisecondsSinceEpoch(milli);
-      notReadMessages = doc.get("notReadMessages");
-    } catch (e) {
-      print("Error in setting the chat from the document snapshot: $e");
-    }
   }
 
   /// Get the [_messages] value notifier.

@@ -38,7 +38,7 @@ class _ExpertChatListBodyState extends State<ExpertChatListBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TopBar(onBack: chatViewModel.resetCurrentChat, text: "Experts"),
-            ChatListConstructor(valueNotifier: chatViewModel.expertChats!),
+            ChatListConstructor(valueNotifier: chatViewModel.expertsChats!),
           ],
         ),
         // "+" button used to look for new expert

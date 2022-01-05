@@ -309,15 +309,27 @@ class ChatViewModel extends ChangeNotifier {
   ValueNotifier<Chat?> get currentChat => _currentChat;
 
   /// Get the [_anonymousChats] value notifier.
+  /// 
+  /// **The function [loadAnonymousChats] must be called before getting
+  /// the [anonymousChats].**
   ValueNotifier<LinkedHashMap<String, Chat>>? get anonymousChats => _anonymousChats;
 
   /// Get the [_pendingChats] value notifier.
+  /// 
+  /// **The function [loadPendingChats] must be called before getting
+  /// the [pendingChats].**
   ValueNotifier<LinkedHashMap<String, Chat>>? get pendingChats => _pendingChats;
 
   /// Get the [_expertsChats] value notifier.
-  ValueNotifier<LinkedHashMap<String, Chat>>? get expertChats => _expertsChats;
+  /// 
+  /// **The function [loadExpertsChats] must be called before getting
+  /// the [expertsChats].**
+  ValueNotifier<LinkedHashMap<String, Chat>>? get expertsChats => _expertsChats;
 
   /// Get the [_activeChats] value notifier.
+  /// 
+  /// **The function [loadActiveChats] must be called before getting
+  /// the [activeChats].**
   ValueNotifier<LinkedHashMap<String, Chat>>? get activeChats => _activeChats;
 
   /// Stream of the new random user controller.

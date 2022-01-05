@@ -55,5 +55,8 @@ class ReportViewModel {
   ValueNotifier<Report?> get currentReport => _currentReport;
 
   /// Get the [_reports] list of the user.
+  /// 
+  /// **The function [loadReports] must be called before getting
+  /// the [reports].**
   LinkedHashMap<String, Report> get reports => _reports;
 }

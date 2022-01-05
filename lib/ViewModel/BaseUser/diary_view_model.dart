@@ -150,6 +150,9 @@ class DiaryViewModel with ChangeNotifier {
   ValueNotifier<DiaryPage?> get currentDiaryPage => _currentDiaryPage;
 
   /// Get the [_diaryPages] value notifier.
+  /// 
+  /// **The function [loadDiaryPages] must be called before getting
+  /// the [diaryPages].**
   ValueNotifier<List<DiaryPage>>? get diaryPages => _diaryPages;
 
   /// Get the [_isEditing] flag.
