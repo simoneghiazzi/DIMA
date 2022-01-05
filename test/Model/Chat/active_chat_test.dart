@@ -1,11 +1,11 @@
-import 'package:get_it/get_it.dart';
-import 'package:sApport/Model/Chat/active_chat.dart';
-import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
-import 'package:sApport/Model/DBItems/Expert/expert.dart';
-import 'package:sApport/Model/Services/firestore_service.dart';
-import 'package:sApport/Model/Services/user_service.dart';
-import 'package:sApport/Model/utils.dart';
 import 'package:test/test.dart';
+import 'package:get_it/get_it.dart';
+import 'package:sApport/Model/utils.dart';
+import 'package:sApport/Model/Chat/active_chat.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
+import 'package:sApport/Model/Services/user_service.dart';
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
+import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import '../../service.mocks.dart';
 
