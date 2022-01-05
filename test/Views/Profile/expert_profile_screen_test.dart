@@ -1,9 +1,12 @@
+// @dart=2.9
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mockito/mockito.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
@@ -14,13 +17,11 @@ import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sizer/sizer.dart';
 
-void main() {
-  final fakeFirebase = FakeFirebaseFirestore();
-  FirestoreService _firestoreService = FirestoreService(fakeFirebase);
+import '../mock_navigator_observer.dart';
 
+void main() {
   var id = Utils.randomId();
   var name = "SIMONE";
   var surname = "GHIAZZI";
@@ -45,44 +46,114 @@ void main() {
     profilePhoto: profilePhoto,
   );
 
+  final fakeFirebase = FakeFirebaseFirestore();
+
+  //Populate the mock DB
+  var userReference = fakeFirebase.collection(expert.collection).doc(expert.id);
+  //Insert the user
+  userReference.set(expert.data);
+
+  //Mocking a navigator observer to check whether the navigator is called after a tap
+  final mockObserver = MockNavigatorObserver();
+
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(FirestoreService(FakeFirebaseFirestore()));
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(MockFirebaseAuth()));
   getIt.registerSingleton<UserService>(UserService());
 
-  AppRouterDelegate routerDelegate = AppRouterDelegate();
+  group('Correct rendering: ', () {
+    testWidgets("Testing the correct render of an expert's profile page", (WidgetTester tester) async {
+      AppRouterDelegate routerDelegate = AppRouterDelegate();
+      // Set the physical size dimensions
+      tester.binding.window.physicalSizeTestValue = Size(720, 1384);
+      tester.binding.window.devicePixelRatioTestValue = 2.0;
 
-  testWidgets("Testing the correct render of an expert's profile page", (WidgetTester tester) async {
-    // Set the physical size dimensions
-    tester.binding.window.physicalSizeTestValue = Size(720, 1384);
-    tester.binding.window.devicePixelRatioTestValue = 2.0;
+      // The mockNetwork is required because by default Flutter testing gives 404 as response to network requests
+      await mockNetworkImagesFor(() async {
+        await tester.pumpWidget(MultiProvider(
+          providers: [
+            ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
+            ChangeNotifierProvider<ChatViewModel>(create: (_) => ChatViewModel()),
+          ],
+          child: Sizer(builder: (context, orientation, deviceType) {
+            // Create the expert profile screen page widget passing the expert's info
+            return MaterialApp(
+              home: ExpertProfileScreen(expert: expert),
+              navigatorObservers: [mockObserver],
+            );
+          }),
+        ));
+      });
 
-    // The mockNetwork is required because by default Flutter testing gives 404 as response to network requests
-    await mockNetworkImagesFor(() async {
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
-          ChangeNotifierProvider<ChatViewModel>(create: (_) => ChatViewModel()),
-        ],
-        child: Sizer(builder: (context, orientation, deviceType) {    
-          // Create the expert profile screen page widget passing the expert's info
-          return MaterialApp(home: ExpertProfileScreen(expert: expert));
-        }),
-      ));
+      //Verify the correct render of the main widgets
+      final nameFinder = find.text(expert.name.toUpperCase() + " " + expert.surname.toUpperCase());
+      final phoneFinder = find.text(expert.phoneNumber);
+      final emailFinder = find.text(expert.email);
+      final addressFinder = find.text(expert.address);
+
+      expect(nameFinder, findsOneWidget);
+      expect(phoneFinder, findsOneWidget);
+      expect(emailFinder, findsOneWidget);
+      expect(addressFinder, findsOneWidget);
     });
+  });
 
-    final nameFinder = find.text(expert.name.toUpperCase() + " " + expert.surname.toUpperCase());
-    final phoneFinder = find.text(expert.phoneNumber);
-    final emailFinder = find.text(expert.email);
-    final addressFinder = find.text(expert.address);
+  group('Navigation tests:', () {
+    testWidgets("Testing the correct navigation to the expert chat page", (WidgetTester tester) async {
+      //Create a test user
+      var id = Utils.randomId();
+      var name = "Test";
+      var surname = "User";
+      var email = "simone.ghiazzi@prova.it";
+      var birthDate = DateTime(1997, 10, 19);
 
-    final buttonFinder = find.text("Get In Touch");
+      BaseUser baseUser = BaseUser(
+        id: id,
+        name: name,
+        surname: surname,
+        email: email,
+        birthDate: birthDate,
+      );
 
-    expect(nameFinder, findsOneWidget);
-    expect(phoneFinder, findsOneWidget);
-    expect(emailFinder, findsOneWidget);
-    expect(addressFinder, findsOneWidget);
+      final UserService _userService = GetIt.I<UserService>();
+      _userService.loggedUser = baseUser;
 
-    expect(buttonFinder, findsOneWidget);
+      //Populate the mock DB
+      var userReference = fakeFirebase.collection(baseUser.collection).doc(baseUser.id);
+      //Insert the user
+      userReference.set(baseUser.data);
+
+      AppRouterDelegate routerDelegate = AppRouterDelegate();
+      // Set the physical size dimensions
+      tester.binding.window.physicalSizeTestValue = Size(720, 1384);
+      tester.binding.window.devicePixelRatioTestValue = 2.0;
+
+      // The mockNetwork is required because by default Flutter testing gives 404 as response to network requests
+      await mockNetworkImagesFor(() async {
+        await tester.pumpWidget(MultiProvider(
+          providers: [
+            ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
+            ChangeNotifierProvider<ChatViewModel>(create: (_) => ChatViewModel()),
+          ],
+          child: Sizer(builder: (context, orientation, deviceType) {
+            // Create the expert profile screen page widget passing the expert's info
+            return MaterialApp(
+              home: ExpertProfileScreen(expert: expert),
+              navigatorObservers: [mockObserver],
+            );
+          }),
+        ));
+      });
+
+      //Look for the get in touch button that opens a chat with the expert
+      final getInTouchFinder = find.text("Get In Touch");
+      expect(getInTouchFinder, findsOneWidget);
+
+      await tester.tap(getInTouchFinder);
+      //await tester.pumpAndSettle();
+
+      //Verify that a push event happened
+      verify(mockObserver.didPush(any, any));
+    });
   });
 }
