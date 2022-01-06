@@ -17,7 +17,7 @@ void main() async {
   getIt.registerSingleton<FirestoreService>(MockFirestoreService());
   getIt.registerSingleton<UserService>(MockUserService());
 
-  /// Mock Fields
+  /// Test Fields
   var userId = Utils.randomId();
   var peerUser = BaseUser(id: Utils.randomId());
 
@@ -25,18 +25,17 @@ void main() async {
   var lastMessageDateTime = DateTime(2021, 10, 19, 21, 10, 50);
   var notReadMessages = 4;
 
-  /// Mock PendingChat
-  PendingChat mockPendingChat = PendingChat(
+  PendingChat pendingChat = PendingChat(
     lastMessage: lastMessage,
     lastMessageDateTime: lastMessageDateTime,
     notReadMessages: notReadMessages,
   );
 
-  /// Add the mock pending chat to the fakeFirebase
+  /// Add the pending chat to the fakeFirebase
   fakeFirebase
       .collection(BaseUser.COLLECTION)
       .doc(userId)
-      .collection(mockPendingChat.collection)
+      .collection(pendingChat.collection)
       .doc(peerUser.id)
       .set({"lastMessageTimestamp": lastMessageDateTime.millisecondsSinceEpoch, "notReadMessages": notReadMessages, "lastMessage": lastMessage});
 
@@ -58,7 +57,7 @@ void main() async {
 
   group("PendingChat data", () {
     test("Pending chat factory from document", () async {
-      var result = (await fakeFirebase.collection(BaseUser.COLLECTION).doc(userId).collection(mockPendingChat.collection).doc(peerUser.id).get());
+      var result = (await fakeFirebase.collection(BaseUser.COLLECTION).doc(userId).collection(pendingChat.collection).doc(peerUser.id).get());
       var retrievedPendingChat = PendingChat.fromDocument(result);
 
       expect(retrievedPendingChat.lastMessage, lastMessage);

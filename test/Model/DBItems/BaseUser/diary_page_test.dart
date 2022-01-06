@@ -7,15 +7,14 @@ void main() async {
   /// Fake Firebase
   final fakeFirebase = FakeFirebaseFirestore();
 
-  /// Mock Fields
+  /// Test Fields
   var id = Utils.randomId();
   var title = "Diary page title";
   var content = "Diary page content";
   var dateTime = DateTime(2021, 10, 19);
   var favourite = true;
 
-  /// Mock DiaryPage
-  DiaryPage mockDiaryPage = DiaryPage(
+  DiaryPage diaryPage = DiaryPage(
     id: id,
     title: title,
     content: content,
@@ -23,8 +22,8 @@ void main() async {
     favourite: favourite,
   );
 
-  /// Add the mock diary page to the fakeFirebase
-  fakeFirebase.collection(mockDiaryPage.collection).doc(mockDiaryPage.id).set(mockDiaryPage.data);
+  /// Add the diary page to the fakeFirebase
+  fakeFirebase.collection(diaryPage.collection).doc(diaryPage.id).set(diaryPage.data);
 
   group("DiaryPage initialization", () {
     var diaryPageTest = DiaryPage(dateTime: DateTime.now());
@@ -40,7 +39,7 @@ void main() async {
 
   group("DiaryPage data", () {
     test("Diary page factory from document", () async {
-      var result = (await fakeFirebase.collection(mockDiaryPage.collection).doc(mockDiaryPage.id).get());
+      var result = (await fakeFirebase.collection(diaryPage.collection).doc(diaryPage.id).get());
       var retrievedDiaryPage = DiaryPage.fromDocument(result);
       expect(retrievedDiaryPage.id, id);
       expect(retrievedDiaryPage.title, title);
@@ -50,7 +49,7 @@ void main() async {
     });
 
     test("Get diary page data as a key-value map", () async {
-      expect(mockDiaryPage.data, {
+      expect(diaryPage.data, {
         "id": id,
         "title": title,
         "content": content,

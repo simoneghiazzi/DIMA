@@ -36,25 +36,25 @@ void main() async {
   /// Mock User Service responses
   when(mockUserService.loggedUser).thenAnswer((_) => loggedUser);
 
-  /// Mock Fields
+  /// Test Fields
   var peerUser = BaseUser(id: Utils.randomId());
   var lastMessage = "Last message test";
   var lastMessageDateTime = DateTime(2021, 10, 19, 21, 10, 50);
   var notReadMessages = 4;
 
-  /// Mock AnonymousChat used for testing the Chat abstract class
-  AnonymousChat mockAnonymousChat = AnonymousChat(
+  /// AnonymousChat used for testing the Chat abstract class
+  AnonymousChat chat = AnonymousChat(
     lastMessage: lastMessage,
     lastMessageDateTime: lastMessageDateTime,
     notReadMessages: notReadMessages,
     peerUser: peerUser,
   );
 
-  /// Add the mock anonymous chat to the fakeFirebase
+  /// Add the chat to the fakeFirebase
   fakeFirebase
       .collection(BaseUser.COLLECTION)
       .doc(loggedUser.id)
-      .collection(mockAnonymousChat.collection)
+      .collection(chat.collection)
       .doc(peerUser.id)
       .set({"lastMessageTimestamp": lastMessageDateTime.millisecondsSinceEpoch, "notReadMessages": notReadMessages, "lastMessage": lastMessage});
 
@@ -76,19 +76,19 @@ void main() async {
 
   group("Chat initialization", () {
     test("Initialized messages value notifier", () async {
-      expect(mockAnonymousChat.messages, isA<ValueNotifier<List<Message>>>());
+      expect(chat.messages, isA<ValueNotifier<List<Message>>>());
     });
   });
 
   group("Chat listeners", () {
-    mockAnonymousChat.loadMessages();
+    chat.loadMessages();
     int counter = 0;
-    mockAnonymousChat.messages.addListener(() {
+    chat.messages.addListener(() {
       counter++;
     });
 
     test("Subscribe the messages subscriber to the message stream of the firestore service", () {
-      expect(mockAnonymousChat.messagesSubscriber, isA<StreamSubscription<QuerySnapshot>>());
+      expect(chat.messagesSubscriber, isA<StreamSubscription<QuerySnapshot>>());
     });
 
     test("Notify the listeners of the value notifier every time a new message is added into the list", () {
@@ -97,30 +97,30 @@ void main() async {
 
     test("Parse the correct doc snapshot to the list of messages", () async {
       for (int i = 0; i < messages.length; i++) {
-        expect(mockAnonymousChat.messages.value[i].idFrom, messages[i].idFrom);
-        expect(mockAnonymousChat.messages.value[i].idTo, messages[i].idTo);
-        expect(mockAnonymousChat.messages.value[i].content, messages[i].content);
-        expect(mockAnonymousChat.messages.value[i].timestamp, messages[i].timestamp);
+        expect(chat.messages.value[i].idFrom, messages[i].idFrom);
+        expect(chat.messages.value[i].idTo, messages[i].idTo);
+        expect(chat.messages.value[i].content, messages[i].content);
+        expect(chat.messages.value[i].timestamp, messages[i].timestamp);
       }
     });
 
     test("Add a new message into the list when it is added to the DB in real time", () async {
       /// The fake firestore doc changes doesn't work properly, so we need to manually clear the previous list
-      mockAnonymousChat.messages.value.clear();
+      chat.messages.value.clear();
 
       Message message5 = Message(idFrom: loggedUser.id, idTo: peerUser.id, content: "Test 5", timestamp: DateTime(2021, 10, 19, 21, 30, 40));
       collectionReference.doc(message5.timestamp.millisecondsSinceEpoch.toString()).set(message5.data);
       await Future.delayed(Duration(seconds: 0));
 
-      expect(mockAnonymousChat.messages.value[4].idFrom, message5.idFrom);
-      expect(mockAnonymousChat.messages.value[4].idTo, message5.idTo);
-      expect(mockAnonymousChat.messages.value[4].content, message5.content);
-      expect(mockAnonymousChat.messages.value[4].timestamp, message5.timestamp);
+      expect(chat.messages.value[4].idFrom, message5.idFrom);
+      expect(chat.messages.value[4].idTo, message5.idTo);
+      expect(chat.messages.value[4].content, message5.content);
+      expect(chat.messages.value[4].timestamp, message5.timestamp);
     });
 
     test("Clear the old values of the value notifier", () {
-      mockAnonymousChat.closeListeners();
-      expect(mockAnonymousChat.messages.value.isEmpty, true);
+      chat.closeListeners();
+      expect(chat.messages.value.isEmpty, true);
     });
   });
 }

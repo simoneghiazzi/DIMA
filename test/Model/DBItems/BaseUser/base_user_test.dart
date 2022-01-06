@@ -8,15 +8,14 @@ void main() async {
   /// Fake Firebase
   final fakeFirebase = FakeFirebaseFirestore();
 
-  /// Mock Fields
+  /// Test Fields
   var id = Utils.randomId();
   var name = "Luca";
   var surname = "Colombo";
   var email = "luca.colombo@prova.it";
   var birthDate = DateTime(1997, 10, 19);
 
-  /// Mock BaseUser
-  BaseUser mockBaseUser = BaseUser(
+  BaseUser baseUser = BaseUser(
     id: id,
     name: name,
     surname: surname,
@@ -24,22 +23,22 @@ void main() async {
     birthDate: birthDate,
   );
 
-  /// Add the mock base user to the fakeFirebase
-  fakeFirebase.collection(mockBaseUser.collection).doc(mockBaseUser.id).set(mockBaseUser.data);
+  /// Add the base user to the fakeFirebase
+  fakeFirebase.collection(baseUser.collection).doc(baseUser.id).set(baseUser.data);
 
   group("BaseUser initialization", () {
     test("Base user collection", () {
-      expect(mockBaseUser.collection, BaseUser.COLLECTION);
+      expect(baseUser.collection, BaseUser.COLLECTION);
     });
 
     test("Base user home page route", () {
-      expect(mockBaseUser.homePageRoute, BaseUserHomePageScreen.route);
+      expect(baseUser.homePageRoute, BaseUserHomePageScreen.route);
     });
   });
 
   group("BaseUser data", () {
     test("Base user factory from document", () async {
-      var result = (await fakeFirebase.collection(mockBaseUser.collection).doc(mockBaseUser.id).get());
+      var result = (await fakeFirebase.collection(baseUser.collection).doc(baseUser.id).get());
       var retrievedBaseUser = BaseUser.fromDocument(result);
       expect(retrievedBaseUser.id, id);
       expect(retrievedBaseUser.name, name);
@@ -49,7 +48,7 @@ void main() async {
     });
 
     test("Set base user from document", () async {
-      var result = (await fakeFirebase.collection(mockBaseUser.collection).doc(mockBaseUser.id).get());
+      var result = (await fakeFirebase.collection(baseUser.collection).doc(baseUser.id).get());
       var retrievedBaseUser = BaseUser();
       retrievedBaseUser.setFromDocument(result);
       expect(retrievedBaseUser.id, id);
@@ -60,7 +59,7 @@ void main() async {
     });
 
     test("Get base user data as a key-value map", () async {
-      expect(mockBaseUser.data, {
+      expect(baseUser.data, {
         "uid": id,
         "name": name,
         "surname": surname,

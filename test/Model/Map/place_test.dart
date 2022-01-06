@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 import 'package:sApport/Model/Map/place.dart';
 
 void main() async {
-  /// Mock Fields
+  /// Test Fields
   var address = "Piazza Leonardo da Vince, Milano, Italia";
   var placeId = "Sie5qwcn3vsdvD56SV659weHVy846C";
   var lat = 45.478195;
