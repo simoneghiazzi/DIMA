@@ -192,7 +192,7 @@ class FirestoreService {
   /// It takes the [pairChatId] and removes the messages between the 2 users from the DB.
   void removeMessagesFromDB(String pairChatId) {
     var messages = _firestore.collection(Message.COLLECTION).doc(pairChatId).collection(pairChatId).get();
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+    WriteBatch batch = _firestore.batch();
     messages.then((documentSnapshot) {
       documentSnapshot.docs.forEach((doc) {
         batch.delete(doc.reference);
@@ -228,7 +228,7 @@ class FirestoreService {
     var peerAnonymousChatsReference =
         _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(AnonymousChat.COLLECTION).doc(senderUser.id);
 
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+    WriteBatch batch = _firestore.batch();
     // Pending chat of the sender user is moved into active chats
     batch.delete(pendingChatsReference);
     batch.set(senderAnonymousChatsReference, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
@@ -245,7 +245,7 @@ class FirestoreService {
     var peerUserReference =
         _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(chat.peerCollection).doc(senderUser.id);
 
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+    WriteBatch batch = _firestore.batch();
     batch.delete(senderUserReference);
     batch.delete(peerUserReference);
     batch.commit().then((value) => print("Chat removed")).catchError((error) => print("Failed to remove the chat: $error"));
@@ -276,7 +276,7 @@ class FirestoreService {
     if (chat is Request && counter == 1) {
       _incrementConversationCounter(senderUser, chat, 1);
     }
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+    WriteBatch batch = _firestore.batch();
     // The notReadMessages field is setted to 0 for the sender user and to counter for the peer user
     batch.set(senderUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
     batch.set(peerUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": counter, "lastMessage": chat.lastMessage});
