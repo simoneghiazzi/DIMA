@@ -57,11 +57,11 @@ void main() {
   getIt.registerSingleton<UserService>(UserService());
 
   testWidgets("Testing the correct render of an expert's profile page", (WidgetTester tester) async {
-    // Set the physical size dimensions
+    /// Set the physical size dimensions
     tester.binding.window.physicalSizeTestValue = Size(720, 1384);
     tester.binding.window.devicePixelRatioTestValue = 2.0;
 
-    // The mockNetwork is required because by default Flutter testing gives 404 as response to network requests
+    /// The mockNetwork is required because by default Flutter testing gives 404 as response to network requests
     await mockNetworkImagesFor(() async {
       await tester.pumpWidget(MultiProvider(
         providers: [
@@ -69,7 +69,7 @@ void main() {
           ChangeNotifierProvider<ChatViewModel>(create: (_) => mockChatViewModel),
         ],
         child: Sizer(builder: (context, orientation, deviceType) {
-          // Create the expert profile screen page widget passing the expert's info
+          /// Create the expert profile screen page widget passing the expert's info
           return MaterialApp(home: ExpertProfileScreen(expert: expert));
         }),
       ));
