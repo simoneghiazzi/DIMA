@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/Model/Chat/anonymous_chat.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/user_service.dart';
@@ -15,9 +16,14 @@ import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
+import 'package:sApport/Views/Chat/ChatList/components/anonymous_chat_list_body.dart';
 import 'package:sApport/Views/Home/BaseUser/components/base_user_home_page_body.dart';
 import 'package:sApport/Views/Home/BaseUser/components/dash_card.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../../navigator.mocks.dart';
+import '../../../view_model.mocks.dart';
 
 void main() async {
   // final fakeFirebase = FakeFirebaseFirestore();
@@ -43,17 +49,17 @@ void main() async {
 
   //Mocking a navigator observer to check whether the navigator is called after a tap
 
+  final mockChatViewModel = MockChatViewModel();
+  final mockRouterDelegate = MockAppRouterDelegate();
+  final mockDiaryViewModel = MockDiaryViewModel();
+
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(FirestoreService(FakeFirebaseFirestore()));
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(MockFirebaseAuth()));
   getIt.registerSingleton<UserService>(UserService());
 
-  ChatViewModel chatViewModel = ChatViewModel();
-
   group('Correct rendering: ', () {
     testWidgets("Testing the correct render of a basic user's homepage", (WidgetTester tester) async {
-      AppRouterDelegate routerDelegate = AppRouterDelegate();
-
       //Create the base user homepage widget
       Widget testWidget = new MediaQuery(
         data: new MediaQueryData(),
@@ -64,9 +70,9 @@ void main() async {
 
       await tester.pumpWidget(MultiProvider(
         providers: [
-          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
-          ChangeNotifierProvider<ChatViewModel>(create: (_) => chatViewModel),
-          ChangeNotifierProvider<DiaryViewModel>(create: (_) => DiaryViewModel()),
+          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => mockRouterDelegate),
+          ChangeNotifierProvider<ChatViewModel>(create: (_) => mockChatViewModel),
+          ChangeNotifierProvider<DiaryViewModel>(create: (_) => mockDiaryViewModel),
           Provider(create: (context) => ReportViewModel()),
           Provider(create: (context) => AuthViewModel()),
           Provider(create: (context) => UserViewModel()),
@@ -96,8 +102,6 @@ void main() async {
 
   group('Navigation tests: ', () {
     testWidgets("Testing the correct call of the experts' chats list screen", (WidgetTester tester) async {
-      AppRouterDelegate routerDelegate = AppRouterDelegate();
-
       //Create the base user homepage widget
       Widget testWidget = new MediaQuery(
         data: new MediaQueryData(),
@@ -108,9 +112,9 @@ void main() async {
 
       await tester.pumpWidget(MultiProvider(
         providers: [
-          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
-          ChangeNotifierProvider<ChatViewModel>(create: (_) => chatViewModel),
-          ChangeNotifierProvider<DiaryViewModel>(create: (_) => DiaryViewModel()),
+          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => mockRouterDelegate),
+          ChangeNotifierProvider<ChatViewModel>(create: (_) => mockChatViewModel),
+          ChangeNotifierProvider<DiaryViewModel>(create: (_) => mockDiaryViewModel),
           Provider(create: (context) => ReportViewModel()),
           Provider(create: (context) => AuthViewModel()),
           Provider(create: (context) => UserViewModel()),
@@ -136,8 +140,6 @@ void main() async {
     });
 
     testWidgets("Testing the correct call of the anonymous chats list screen", (WidgetTester tester) async {
-      AppRouterDelegate routerDelegate = AppRouterDelegate();
-
       //Create the base user homepage widget
       Widget testWidget = new MediaQuery(
         data: new MediaQueryData(),
@@ -148,9 +150,9 @@ void main() async {
 
       await tester.pumpWidget(MultiProvider(
         providers: [
-          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
-          ChangeNotifierProvider<ChatViewModel>(create: (_) => chatViewModel),
-          ChangeNotifierProvider<DiaryViewModel>(create: (_) => DiaryViewModel()),
+          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => mockRouterDelegate),
+          ChangeNotifierProvider<ChatViewModel>(create: (_) => mockChatViewModel),
+          ChangeNotifierProvider<DiaryViewModel>(create: (_) => mockDiaryViewModel),
           Provider(create: (context) => ReportViewModel()),
           Provider(create: (context) => AuthViewModel()),
           Provider(create: (context) => UserViewModel()),
@@ -172,12 +174,13 @@ void main() async {
       expect(anonymousChatsCardFinder, findsOneWidget);
 
       await tester.tap(anonymousChatsCardFinder);
-      //await tester.pumpAndSettle();
+
+      //Check pushPage call
+      var verification = verify(mockRouterDelegate.pushPage(name: ChatListScreen.route, arguments: AnonymousChatListBody()));
+      verification.called(1);
     });
 
     testWidgets("Testing the correct call of the map screen", (WidgetTester tester) async {
-      AppRouterDelegate routerDelegate = AppRouterDelegate();
-
       //Create the base user homepage widget
       Widget testWidget = new MediaQuery(
         data: new MediaQueryData(),
@@ -188,9 +191,9 @@ void main() async {
 
       await tester.pumpWidget(MultiProvider(
         providers: [
-          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
-          ChangeNotifierProvider<ChatViewModel>(create: (_) => chatViewModel),
-          ChangeNotifierProvider<DiaryViewModel>(create: (_) => DiaryViewModel()),
+          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => mockRouterDelegate),
+          ChangeNotifierProvider<ChatViewModel>(create: (_) => mockChatViewModel),
+          ChangeNotifierProvider<DiaryViewModel>(create: (_) => mockDiaryViewModel),
           Provider(create: (context) => ReportViewModel()),
           Provider(create: (context) => AuthViewModel()),
           Provider(create: (context) => UserViewModel()),
@@ -216,8 +219,6 @@ void main() async {
     });
 
     testWidgets("Testing the correct call of the reports screen", (WidgetTester tester) async {
-      AppRouterDelegate routerDelegate = AppRouterDelegate();
-
       //Create the base user homepage widget
       Widget testWidget = new MediaQuery(
         data: new MediaQueryData(),
@@ -228,9 +229,9 @@ void main() async {
 
       await tester.pumpWidget(MultiProvider(
         providers: [
-          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
-          ChangeNotifierProvider<ChatViewModel>(create: (_) => chatViewModel),
-          ChangeNotifierProvider<DiaryViewModel>(create: (_) => DiaryViewModel()),
+          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => mockRouterDelegate),
+          ChangeNotifierProvider<ChatViewModel>(create: (_) => mockChatViewModel),
+          ChangeNotifierProvider<DiaryViewModel>(create: (_) => mockDiaryViewModel),
           Provider(create: (context) => ReportViewModel()),
           Provider(create: (context) => AuthViewModel()),
           Provider(create: (context) => UserViewModel()),
