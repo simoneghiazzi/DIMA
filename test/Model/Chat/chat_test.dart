@@ -105,14 +105,17 @@ void main() async {
     });
 
     test("Add a new message into the list when it is added to the DB in real time", () async {
+      /// The fake firestore doc changes doesn't work properly, so we need to manually clear the previous list
+      mockAnonymousChat.messages.value.clear();
+
       Message message5 = Message(idFrom: loggedUser.id, idTo: peerUser.id, content: "Test 5", timestamp: DateTime(2021, 10, 19, 21, 30, 40));
       collectionReference.doc(message5.timestamp.millisecondsSinceEpoch.toString()).set(message5.data);
       await Future.delayed(Duration(seconds: 0));
 
-      expect(mockAnonymousChat.messages.value.last.idFrom, message5.idFrom);
-      expect(mockAnonymousChat.messages.value.last.idTo, message5.idTo);
-      expect(mockAnonymousChat.messages.value.last.content, message5.content);
-      expect(mockAnonymousChat.messages.value.last.timestamp, message5.timestamp);
+      expect(mockAnonymousChat.messages.value[4].idFrom, message5.idFrom);
+      expect(mockAnonymousChat.messages.value[4].idTo, message5.idTo);
+      expect(mockAnonymousChat.messages.value[4].content, message5.content);
+      expect(mockAnonymousChat.messages.value[4].timestamp, message5.timestamp);
     });
 
     test("Clear the old values of the value notifier", () {
