@@ -1,7 +1,7 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/DBItems/user.dart';
-import 'package:sApport/Views/Forms/field_bloc_validators.dart';
+import 'package:sApport/Views/Utils/field_bloc_validators.dart';
 
 class BaseUserSignUpForm extends FormBloc<String, String> {
   /// Define the name text field bloc and add the required validator

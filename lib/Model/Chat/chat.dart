@@ -75,4 +75,7 @@ abstract class Chat extends ChangeNotifier {
 
   /// Get the [_messages] value notifier.
   ValueNotifier<List<Message>> get messages => _messages;
+
+  /// Get the [_messagesSubscriber].
+  StreamSubscription? get messagesSubscriber => _messagesSubscriber;
 }

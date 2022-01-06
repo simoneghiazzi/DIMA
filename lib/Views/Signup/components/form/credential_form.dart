@@ -1,5 +1,5 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:sApport/Views/Forms/Authentication/login_form.dart';
+import 'package:sApport/Views/Login/components/forms/login_form.dart';
 
 class CredentialForm extends LoginForm {
   /// Define the name text field bloc and add the required validator

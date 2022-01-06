@@ -192,7 +192,7 @@ class FirestoreService {
   /// It takes the [pairChatId] and removes the messages between the 2 users from the DB.
   void removeMessagesFromDB(String pairChatId) {
     var messages = _firestore.collection(Message.COLLECTION).doc(pairChatId).collection(pairChatId).get();
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+    WriteBatch batch = _firestore.batch();
     messages.then((documentSnapshot) {
       documentSnapshot.docs.forEach((doc) {
         batch.delete(doc.reference);
@@ -214,6 +214,50 @@ class FirestoreService {
         .catchError((error) => print("Failed to set the notReadMessages field: $error"));
   }
 
+  /***************************************** CHATS *****************************************/
+
+  /// Upgrade the [PendingChat] of the [senderUser] and the [Request] of the
+  /// [peerUser] to an [AnonymousChat] for both the users.
+  void upgradePendingToActiveChatIntoDB(User senderUser, Chat chat) {
+    var timestamp = DateTime.now().millisecondsSinceEpoch;
+    var pendingChatsReference =
+        _firestore.collection(senderUser.collection).doc(senderUser.id).collection(PendingChat.COLLECTION).doc(chat.peerUser!.id);
+    var senderAnonymousChatsReference =
+        _firestore.collection(senderUser.collection).doc(senderUser.id).collection(AnonymousChat.COLLECTION).doc(chat.peerUser!.id);
+    var requestsReference = _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(Request.COLLECTION).doc(senderUser.id);
+    var peerAnonymousChatsReference =
+        _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(AnonymousChat.COLLECTION).doc(senderUser.id);
+
+    WriteBatch batch = _firestore.batch();
+    // Pending chat of the sender user is moved into active chats
+    batch.delete(pendingChatsReference);
+    batch.set(senderAnonymousChatsReference, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
+    // Request chat of the peer user is moved into active chats
+    batch.delete(requestsReference);
+    batch.set(peerAnonymousChatsReference, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
+
+    batch.commit().then((value) => print("Chats upgraded")).catchError((error) => print("Failed to upgrade the chats: $error"));
+  }
+
+  /// Remove the [chat] between the [senderUser] and the [peerUser] specified in the [chat].
+  void removeChatFromDB(User senderUser, Chat chat) {
+    var senderUserReference = _firestore.collection(senderUser.collection).doc(senderUser.id).collection(chat.collection).doc(chat.peerUser!.id);
+    var peerUserReference =
+        _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(chat.peerCollection).doc(senderUser.id);
+
+    WriteBatch batch = _firestore.batch();
+    batch.delete(senderUserReference);
+    batch.delete(peerUserReference);
+    batch.commit().then((value) => print("Chat removed")).catchError((error) => print("Failed to remove the chat: $error"));
+    _incrementConversationCounter(senderUser, chat, -1);
+  }
+
+  /// It takes the [user] and returns the list of all the chat of the
+  /// user based on the [chatCollection] ordered by lastMessageTimestamp.
+  Stream<QuerySnapshot> getChatsStreamFromDB(User user, String chatCollection) {
+    return _firestore.collection(user.collection).doc(user.id).collection(chatCollection).orderBy("lastMessageTimestamp").limit(_limit).snapshots();
+  }
+
   /// It updates the `lastMessage`, `lastMessageTimestamp` and `notReadMessages` fields
   /// of the [senderUser] and peerUsers specified in the [chat].
   ///
@@ -232,55 +276,11 @@ class FirestoreService {
     if (chat is Request && counter == 1) {
       _incrementConversationCounter(senderUser, chat, 1);
     }
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+    WriteBatch batch = _firestore.batch();
     // The notReadMessages field is setted to 0 for the sender user and to counter for the peer user
     batch.set(senderUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
     batch.set(peerUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": counter, "lastMessage": chat.lastMessage});
     batch.commit().then((value) => print("Chat info updated")).catchError((error) => print("Failed to update the chat info: $error"));
-  }
-
-  /***************************************** CHATS *****************************************/
-
-  /// Upgrade the [PendingChat] of the [senderUser] and the [Request] of the
-  /// [peerUser] to an [AnonymousChat] for both the users.
-  void upgradePendingToActiveChatIntoDB(User senderUser, Chat chat) {
-    var timestamp = DateTime.now().millisecondsSinceEpoch;
-    var pendingChatsReference =
-        _firestore.collection(senderUser.collection).doc(senderUser.id).collection(PendingChat.COLLECTION).doc(chat.peerUser!.id);
-    var senderAnonymousChatsReference =
-        _firestore.collection(senderUser.collection).doc(senderUser.id).collection(AnonymousChat.COLLECTION).doc(chat.peerUser!.id);
-    var requestsReference = _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(Request.COLLECTION).doc(senderUser.id);
-    var peerAnonymousChatsReference =
-        _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(AnonymousChat.COLLECTION).doc(senderUser.id);
-
-    WriteBatch batch = FirebaseFirestore.instance.batch();
-    // Pending chat of the sender user is moved into active chats
-    batch.delete(pendingChatsReference);
-    batch.set(senderAnonymousChatsReference, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
-    // Request chat of the peer user is moved into active chats
-    batch.delete(requestsReference);
-    batch.set(peerAnonymousChatsReference, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
-
-    batch.commit().then((value) => print("Chats upgraded")).catchError((error) => print("Failed to upgrade the chats: $error"));
-  }
-
-  /// Remove the [chat] between the [senderUser] and the [peerUser] specified in the [chat].
-  void removeChatFromDB(User senderUser, Chat chat) {
-    var senderUserReference = _firestore.collection(senderUser.collection).doc(senderUser.id).collection(chat.collection).doc(chat.peerUser!.id);
-    var peerUserReference =
-        _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(chat.peerCollection).doc(senderUser.id);
-
-    WriteBatch batch = FirebaseFirestore.instance.batch();
-    batch.delete(senderUserReference);
-    batch.delete(peerUserReference);
-    batch.commit().then((value) => print("Chat removed")).catchError((error) => print("Failed to remove the chat: $error"));
-    _incrementConversationCounter(senderUser, chat, -1);
-  }
-
-  /// It takes the [user] and returns the list of all the chat of the
-  /// user based on the [chatCollection] ordered by lastMessageTimestamp.
-  Stream<QuerySnapshot> getChatsStreamFromDB(User user, String chatCollection) {
-    return _firestore.collection(user.collection).doc(user.id).collection(chatCollection).orderBy("lastMessageTimestamp").limit(_limit).snapshots();
   }
 
   /// It takes the [user] and returns the hash set of ids of all the chat

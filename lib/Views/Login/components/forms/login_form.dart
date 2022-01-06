@@ -1,5 +1,5 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:sApport/Views/Forms/Authentication/forgot_password_form.dart';
+import 'package:sApport/Views/Login/components/forms/forgot_password_form.dart';
 
 class LoginForm extends ForgotPasswordForm {
   /// Define the surname text field bloc and add the required validator

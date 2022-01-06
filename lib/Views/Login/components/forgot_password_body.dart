@@ -10,7 +10,7 @@ import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/form_text_field.dart';
 import 'package:sApport/Views/Login/components/background.dart';
 import 'package:sApport/Views/Login/forgot_password_screen.dart';
-import 'package:sApport/Views/Forms/Authentication/forgot_password_form.dart';
+import 'package:sApport/Views/Login/components/forms/forgot_password_form.dart';
 
 /// Body of the [ForgotPasswordScreen].
 ///

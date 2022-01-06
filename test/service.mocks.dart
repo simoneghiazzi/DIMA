@@ -21,7 +21,7 @@ import 'package:sApport/Model/Services/firestore_service.dart' as _i8;
 import 'package:sApport/Model/Services/map_service.dart' as _i16;
 import 'package:sApport/Model/Services/notification_service.dart' as _i17;
 import 'package:sApport/Model/Services/user_service.dart' as _i18;
-import 'package:sApport/Views/Forms/Authentication/base_user_signup_form.dart'
+import 'package:sApport/Views/Signup/BaseUser/components/form/base_user_signup_form.dart'
     as _i19;
 
 // ignore_for_file: avoid_redundant_argument_values
