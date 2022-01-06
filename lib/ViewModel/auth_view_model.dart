@@ -50,7 +50,7 @@ class AuthViewModel {
   Future<void> signUpUser(String email, String password, User newUser) async {
     try {
       await _firebaseAuthService.createUserWithEmailAndPassword(email, password);
-      newUser.id = _firebaseAuthService.currentUser!.uid;
+      newUser.id = _firebaseAuthService.currentUserId!;
       _firestoreService.addUserIntoDB(newUser);
       _authMessageCtrl.add("");
       _isUserCreatedCtrl.add(true);
@@ -79,11 +79,11 @@ class AuthViewModel {
       var userData = await _firebaseAuthService.signInWithGoogle(link);
       _authMessageCtrl.add("");
       if (!link) {
-        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.currentUser!.uid).then((userSnap) {
+        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.currentUserId!).then((userSnap) {
           // Check if it is a new user. If yes, insert the data into the DB
           if (userSnap.docs.isEmpty) {
             _firestoreService.addUserIntoDB(BaseUser(
-                id: _firebaseAuthService.currentUser!.uid,
+                id: _firebaseAuthService.currentUserId!,
                 name: userData["name"],
                 surname: userData["surname"],
                 birthDate: userData["birthDate"],
@@ -117,11 +117,11 @@ class AuthViewModel {
       var userData = await _firebaseAuthService.signInWithFacebook(link);
       _authMessageCtrl.add("");
       if (!link) {
-        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.currentUser!.uid).then((userSnap) {
+        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.currentUserId!).then((userSnap) {
           // Check if it is a new user. If yes, insert the data into the DB
           if (userSnap.docs.isEmpty) {
             _firestoreService.addUserIntoDB(BaseUser(
-                id: _firebaseAuthService.currentUser!.uid,
+                id: _firebaseAuthService.currentUserId!,
                 name: userData["name"],
                 surname: userData["surname"],
                 birthDate: userData["birthDate"],
