@@ -2,17 +2,17 @@
 // in sApport/test/Model/Services/user_service_test.dart.
 // Do not manually edit this file.
 
-import 'dart:async' as _i7;
+import 'dart:async' as _i6;
 
 import 'package:flutter_form_bloc/flutter_form_bloc.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:sApport/Model/DBItems/user.dart' as _i3;
-import 'package:sApport/Model/Map/place.dart' as _i5;
+import 'package:sApport/Model/Map/place.dart' as _i8;
 import 'package:sApport/Model/Services/map_service.dart' as _i4;
 import 'package:sApport/Views/Signup/BaseUser/components/form/base_user_signup_form.dart'
-    as _i6;
+    as _i5;
 import 'package:sApport/Views/Signup/Expert/components/form/expert_signup_form.dart'
-    as _i8;
+    as _i7;
 
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: avoid_setters_without_getters
@@ -36,13 +36,11 @@ class _FakeFormBlocState_3<SuccessResponse, FailureResponse> extends _i1.Fake
 
 class _FakeMapService_4 extends _i1.Fake implements _i4.MapService {}
 
-class _FakePlace_5 extends _i1.Fake implements _i5.Place {}
-
 /// A class which mocks [BaseUserSignUpForm].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockBaseUserSignUpForm extends _i1.Mock
-    implements _i6.BaseUserSignUpForm {
+    implements _i5.BaseUserSignUpForm {
   MockBaseUserSignUpForm() {
     _i1.throwOnMissingStub(this);
   }
@@ -72,10 +70,10 @@ class MockBaseUserSignUpForm extends _i1.Mock
               returnValue: _FakeFormBlocState_3<String, String>())
           as _i2.FormBlocState<String, String>);
   @override
-  _i7.Stream<_i2.FormBlocState<String, String>> get stream =>
+  _i6.Stream<_i2.FormBlocState<String, String>> get stream =>
       (super.noSuchMethod(Invocation.getter(#stream),
               returnValue: Stream<_i2.FormBlocState<String, String>>.empty())
-          as _i7.Stream<_i2.FormBlocState<String, String>>);
+          as _i6.Stream<_i2.FormBlocState<String, String>>);
   @override
   bool get isClosed =>
       (super.noSuchMethod(Invocation.getter(#isClosed), returnValue: false)
@@ -85,9 +83,9 @@ class MockBaseUserSignUpForm extends _i1.Mock
       super.noSuchMethod(Invocation.method(#onSubmitting, []),
           returnValueForMissingStub: null);
   @override
-  _i7.Future<void> close() => (super.noSuchMethod(Invocation.method(#close, []),
+  _i6.Future<void> close() => (super.noSuchMethod(Invocation.method(#close, []),
       returnValue: Future<void>.value(),
-      returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+      returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
   @override
   void onDeleting() => super.noSuchMethod(Invocation.method(#onDeleting, []),
       returnValueForMissingStub: null);
@@ -238,7 +236,7 @@ class MockBaseUserSignUpForm extends _i1.Mock
 /// A class which mocks [ExpertSignUpForm].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockExpertSignUpForm extends _i1.Mock implements _i8.ExpertSignUpForm {
+class MockExpertSignUpForm extends _i1.Mock implements _i7.ExpertSignUpForm {
   MockExpertSignUpForm() {
     _i1.throwOnMissingStub(this);
   }
@@ -248,11 +246,7 @@ class MockExpertSignUpForm extends _i1.Mock implements _i8.ExpertSignUpForm {
       (super.noSuchMethod(Invocation.getter(#mapService),
           returnValue: _FakeMapService_4()) as _i4.MapService);
   @override
-  _i5.Place get expertAddress =>
-      (super.noSuchMethod(Invocation.getter(#expertAddress),
-          returnValue: _FakePlace_5()) as _i5.Place);
-  @override
-  set expertAddress(_i5.Place? _expertAddress) =>
+  set expertAddress(_i8.Place? _expertAddress) =>
       super.noSuchMethod(Invocation.setter(#expertAddress, _expertAddress),
           returnValueForMissingStub: null);
   @override
@@ -309,10 +303,10 @@ class MockExpertSignUpForm extends _i1.Mock implements _i8.ExpertSignUpForm {
               returnValue: _FakeFormBlocState_3<String, String>())
           as _i2.FormBlocState<String, String>);
   @override
-  _i7.Stream<_i2.FormBlocState<String, String>> get stream =>
+  _i6.Stream<_i2.FormBlocState<String, String>> get stream =>
       (super.noSuchMethod(Invocation.getter(#stream),
               returnValue: Stream<_i2.FormBlocState<String, String>>.empty())
-          as _i7.Stream<_i2.FormBlocState<String, String>>);
+          as _i6.Stream<_i2.FormBlocState<String, String>>);
   @override
   bool get isClosed =>
       (super.noSuchMethod(Invocation.getter(#isClosed), returnValue: false)
@@ -322,9 +316,9 @@ class MockExpertSignUpForm extends _i1.Mock implements _i8.ExpertSignUpForm {
       super.noSuchMethod(Invocation.method(#onSubmitting, []),
           returnValueForMissingStub: null);
   @override
-  _i7.Future<void> close() => (super.noSuchMethod(Invocation.method(#close, []),
+  _i6.Future<void> close() => (super.noSuchMethod(Invocation.method(#close, []),
       returnValue: Future<void>.value(),
-      returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
+      returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
   @override
   void onDeleting() => super.noSuchMethod(Invocation.method(#onDeleting, []),
       returnValueForMissingStub: null);

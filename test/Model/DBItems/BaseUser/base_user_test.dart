@@ -59,7 +59,7 @@ void main() async {
       expect(retrievedBaseUser.email, email);
     });
 
-    test("Check that base user data returns a key-value map with the correct fields", () async {
+    test("Check that base user data returns a key-value map with the correct fields", () {
       expect(baseUser.data, {
         "uid": id,
         "name": name,

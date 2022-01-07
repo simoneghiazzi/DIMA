@@ -1,3 +1,4 @@
+import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
 import 'package:get_it/get_it.dart';
 import 'user_service_test.mocks.dart';
@@ -9,8 +10,11 @@ import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
+import 'package:sApport/Views/Signup/Expert/components/form/expert_signup_form.dart';
+import 'package:sApport/Views/Signup/BaseUser/components/form/base_user_signup_form.dart';
 import '../../service.mocks.dart';
 
+@GenerateMocks([BaseUserSignUpForm, ExpertSignUpForm])
 void main() async {
   /// Fake Firebase
   final fakeFirebase = FakeFirebaseFirestore();

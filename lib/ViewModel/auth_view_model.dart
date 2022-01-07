@@ -148,15 +148,19 @@ class AuthViewModel {
   }
 
   /// Get the authentication provider of the current logged user.
+  ///
+  /// If the user is not logged in, it return an `empty string`.
   String authProvider() {
-    return _firebaseAuthService.getAuthProvider();
+    return _firebaseAuthService.getAuthProvider() ?? "";
   }
 
   /// Returns `true` if the user associated with the [email] has the password as authentication provider.
   Future<bool> hasPasswordAuthentication(String email) async {
     var list = await _firebaseAuthService.fetchSignInMethods(email);
-    if (list.contains("password")) {
-      return true;
+    if (list != null) {
+      if (list.contains("password")) {
+        return true;
+      }
     }
     return false;
   }

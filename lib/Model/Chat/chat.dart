@@ -52,19 +52,22 @@ abstract class Chat extends ChangeNotifier {
   /// Then it calls the [notifyListeners] on the [_messages] value notifier to notify the changes
   /// to all the listeners.
   void loadMessages() async {
-    _messagesSubscriber = _firestoreService.getMessagesStreamFromDB(Utils.pairChatId(_userService.loggedUser!.id, peerUser!.id)).listen(
-      (snapshot) async {
-        for (var docChange in snapshot.docChanges.reversed) {
-          var message = Message.fromDocument(docChange.doc);
-          // If oldIndex == -1, the document is added, so its new and it has to be added to the list
-          if (docChange.oldIndex == -1) {
-            _messages.value.add(message);
-            _messages.notifyListeners();
+    try {
+      _messagesSubscriber = _firestoreService.getMessagesStreamFromDB(Utils.pairChatId(_userService.loggedUser!.id, peerUser!.id)).listen(
+        (snapshot) async {
+          for (var docChange in snapshot.docChanges.reversed) {
+            var message = Message.fromDocument(docChange.doc);
+            // If oldIndex == -1, the document is added, so its new and it has to be added to the list
+            if (docChange.oldIndex == -1) {
+              _messages.value.add(message);
+              _messages.notifyListeners();
+            }
           }
-        }
-      },
-      onError: (error) => print("Failed to get the stream of messages: $error"),
-    );
+        },
+      );
+    } catch (error) {
+      print("Failed to get the stream of messages: $error");
+    }
   }
 
   /// Cancel all the value listeners and clear their contents.

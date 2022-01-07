@@ -22,15 +22,11 @@ class BaseUser extends User {
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
-    try {
-      id = doc.id;
-      name = doc.get("name");
-      surname = doc.get("surname");
-      birthDate = doc.get("birthDate").toDate();
-      email = doc.get("email");
-    } catch (e) {
-      print("Error in setting the message from the document snapshot: $e");
-    }
+    id = doc.id;
+    name = doc.get("name");
+    surname = doc.get("surname");
+    birthDate = doc.get("birthDate").toDate();
+    email = doc.get("email");
   }
 
   @override
