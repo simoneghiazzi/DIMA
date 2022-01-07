@@ -122,5 +122,23 @@ void main() async {
       chat.closeListeners();
       expect(chat.messages.value.isEmpty, true);
     });
+
+    test("Check that if an error occurs when loading the messages it catches the error", () {
+      var mockFirestoreService = MockFirestoreService();
+      getIt.allowReassignment = true;
+      getIt.registerSingleton<FirestoreService>(mockFirestoreService);
+
+      /// AnonymousChat used for testing the Chat abstract class
+      AnonymousChat chat = AnonymousChat(
+        lastMessage: lastMessage,
+        lastMessageDateTime: lastMessageDateTime,
+        notReadMessages: notReadMessages,
+        peerUser: peerUser,
+      );
+
+      when(mockFirestoreService.getMessagesStreamFromDB(pairChatId)).thenThrow(Error);
+
+      chat.loadMessages();
+    });
   });
 }

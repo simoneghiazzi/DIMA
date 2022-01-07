@@ -43,20 +43,16 @@ class Expert extends User {
 
   @override
   void setFromDocument(DocumentSnapshot doc) {
-    try {
-      id = doc.id;
-      name = doc.get("name");
-      surname = doc.get("surname");
-      birthDate = doc.get("birthDate").toDate();
-      latitude = doc.get("lat");
-      longitude = doc.get("lng");
-      address = doc.get("address");
-      email = doc.get("email");
-      phoneNumber = doc.get("phoneNumber");
-      profilePhoto = doc.get("profilePhoto");
-    } catch (e) {
-      print("Error in setting the message from the document snapshot: $e");
-    }
+    id = doc.id;
+    name = doc.get("name");
+    surname = doc.get("surname");
+    birthDate = doc.get("birthDate").toDate();
+    latitude = doc.get("lat");
+    longitude = doc.get("lng");
+    address = doc.get("address");
+    email = doc.get("email");
+    phoneNumber = doc.get("phoneNumber");
+    profilePhoto = doc.get("profilePhoto");
   }
 
   @override
