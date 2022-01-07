@@ -54,7 +54,7 @@ void main() async {
     );
   }
 
-  group("Correct rendering", () {
+  group("Correct rendering:", () {
     testWidgets("Testing the correct render of a basic user's homepage", (WidgetTester tester) async {
       /// Set the device dimensions for the test
       WidgetTestHelper.setPortraitDimensions(tester);
@@ -73,7 +73,7 @@ void main() async {
     });
   });
 
-  group("Navigation tests", () {
+  group("Navigation tests:", () {
     testWidgets("Testing the correct call of the experts' chats list screen", (WidgetTester tester) async {
       /// Set the device dimensions for the test
       WidgetTestHelper.setPortraitDimensions(tester);

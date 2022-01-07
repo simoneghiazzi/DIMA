@@ -56,56 +56,58 @@ void main() {
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(MockFirebaseAuth()));
   getIt.registerSingleton<UserService>(UserService());
 
-  testWidgets("Testing the correct render of an expert's profile page", (WidgetTester tester) async {
-    /// Set the physical size dimensions
-    tester.binding.window.physicalSizeTestValue = Size(720, 1384);
-    tester.binding.window.devicePixelRatioTestValue = 2.0;
+  group("Correct rendering: ", () {
+    testWidgets("Testing the correct render of an expert's profile page", (WidgetTester tester) async {
+      /// Set the physical size dimensions
+      tester.binding.window.physicalSizeTestValue = Size(720, 1384);
+      tester.binding.window.devicePixelRatioTestValue = 2.0;
 
-    /// The mockNetwork is required because by default Flutter testing gives 404 as response to network requests
-    await mockNetworkImagesFor(() async {
-      await tester.pumpWidget(MultiProvider(
-        providers: [
-          ChangeNotifierProvider<AppRouterDelegate>(create: (_) => mockRouterDelegate),
-          ChangeNotifierProvider<ChatViewModel>(create: (_) => mockChatViewModel),
-        ],
-        child: Sizer(builder: (context, orientation, deviceType) {
-          /// Create the expert profile screen page widget passing the expert's info
-          return MaterialApp(home: ExpertProfileScreen(expert: expert));
-        }),
-      ));
+      /// The mockNetwork is required because by default Flutter testing gives 404 as response to network requests
+      await mockNetworkImagesFor(() async {
+        await tester.pumpWidget(MultiProvider(
+          providers: [
+            ChangeNotifierProvider<AppRouterDelegate>(create: (_) => mockRouterDelegate),
+            ChangeNotifierProvider<ChatViewModel>(create: (_) => mockChatViewModel),
+          ],
+          child: Sizer(builder: (context, orientation, deviceType) {
+            /// Create the expert profile screen page widget passing the expert's info
+            return MaterialApp(home: ExpertProfileScreen(expert: expert));
+          }),
+        ));
+      });
+
+      final nameFinder = find.text(expert.name.toUpperCase() + " " + expert.surname.toUpperCase());
+      final phoneFinder = find.text(expert.phoneNumber);
+      final emailFinder = find.text(expert.email);
+      final addressFinder = find.text(expert.address);
+
+      final buttonFinder = find.text("Get In Touch");
+
+      expect(nameFinder, findsOneWidget);
+      expect(phoneFinder, findsOneWidget);
+      expect(emailFinder, findsOneWidget);
+      expect(addressFinder, findsOneWidget);
+
+      expect(buttonFinder, findsOneWidget);
+
+      await tester.tap(buttonFinder);
+
+      /// Check replaceAllButNumber call
+      var verification = verify(mockRouterDelegate.replaceAllButNumber(2, routeSettingsList: captureAnyNamed("routeSettingsList")));
+      verification.called(1);
+
+      /// Parameters Verification
+      expect(verification.captured[0][0].name, ChatListScreen.route);
+      expect(verification.captured[0][0].arguments, isA<ExpertChatListBody>());
+      expect(verification.captured[0][1].name, ChatPageScreen.route);
+
+      /// Check addNewChat call
+      verification = verify(mockChatViewModel.addNewChat(captureAny));
+      verification.called(1);
+
+      /// Parameters Verification
+      expect(verification.captured[0], isA<ExpertChat>());
+      expect(verification.captured[0].peerUser, expert);
     });
-
-    final nameFinder = find.text(expert.name.toUpperCase() + " " + expert.surname.toUpperCase());
-    final phoneFinder = find.text(expert.phoneNumber);
-    final emailFinder = find.text(expert.email);
-    final addressFinder = find.text(expert.address);
-
-    final buttonFinder = find.text("Get In Touch");
-
-    expect(nameFinder, findsOneWidget);
-    expect(phoneFinder, findsOneWidget);
-    expect(emailFinder, findsOneWidget);
-    expect(addressFinder, findsOneWidget);
-
-    expect(buttonFinder, findsOneWidget);
-
-    await tester.tap(buttonFinder);
-
-    /// Check replaceAllButNumber call
-    var verification = verify(mockRouterDelegate.replaceAllButNumber(2, routeSettingsList: captureAnyNamed("routeSettingsList")));
-    verification.called(1);
-
-    /// Parameters Verification
-    expect(verification.captured[0][0].name, ChatListScreen.route);
-    expect(verification.captured[0][0].arguments, isA<ExpertChatListBody>());
-    expect(verification.captured[0][1].name, ChatPageScreen.route);
-
-    /// Check addNewChat call
-    verification = verify(mockChatViewModel.addNewChat(captureAny));
-    verification.called(1);
-
-    /// Parameters Verification
-    expect(verification.captured[0], isA<ExpertChat>());
-    expect(verification.captured[0].peerUser, expert);
   });
 }

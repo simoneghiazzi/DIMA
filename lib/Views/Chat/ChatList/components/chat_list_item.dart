@@ -66,7 +66,7 @@ class _ChatListItemState extends State<ChatListItem> {
   Widget build(BuildContext context) {
     isSelected = chatViewModel.currentChat.value?.peerUser?.id == widget.chatItem.peerUser!.id;
     // If the chat is the same as the currentChat (the peerUser is the same) and the not read messages are > 0,
-    // set the messages has read
+    // set the messages as read
     if (widget.chatItem.notReadMessages > 0 && widget.chatItem.peerUser == chatViewModel.currentChat.value?.peerUser) {
       widget.chatItem.notReadMessages = 0;
       chatViewModel.setMessagesHasRead();
