@@ -21,11 +21,15 @@ class MapService {
   ///
   /// It returns a [Place] with the [lat], [lng] and [address] varibles setted from the
   /// Google Map API request.
-  Future<Place> searchPlace(String placeId) async {
+  Future<Place?> searchPlace(String placeId) async {
     Uri url = Uri.parse("https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$_APIkey");
     var response = await http.get(url);
-    var jsonResult = converter.jsonDecode(response.body)["result"] as Map<String, dynamic>;
-    return Place.fromSearchJson(jsonResult);
+    var convertedRes = converter.jsonDecode(response.body);
+    if (convertedRes["result"] != null) {
+      var jsonResult = convertedRes["result"] as Map<String, dynamic>;
+      return Place.fromSearchJson(jsonResult);
+    }
+    return Future.value(null);
   }
 
   /// Returns the current position of the device.

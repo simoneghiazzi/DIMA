@@ -10,7 +10,7 @@ class ExpertSignUpForm extends BaseUserSignUpForm {
   // Services
   final MapService mapService = GetIt.I();
 
-  late Place expertAddress;
+  late Place? expertAddress;
   String? profilePhoto;
 
   ExpertSignUpForm() {
@@ -50,9 +50,9 @@ class ExpertSignUpForm extends BaseUserSignUpForm {
       name: nameText.value,
       surname: surnameText.value,
       birthDate: birthDate.value,
-      latitude: expertAddress.lat!,
-      longitude: expertAddress.lng!,
-      address: expertAddress.address!,
+      latitude: expertAddress?.lat! ?? 0.0,
+      longitude: expertAddress?.lng! ?? 0.0,
+      address: expertAddress?.address! ?? "",
       phoneNumber: phoneNumber.value,
       profilePhoto: profilePhoto!,
     );

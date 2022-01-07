@@ -1,15 +1,15 @@
-import 'package:mockito/mockito.dart';
-import 'package:sApport/Model/DBItems/Expert/expert.dart';
-import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:test/test.dart';
 import 'package:get_it/get_it.dart';
+import 'user_service_test.mocks.dart';
+import 'package:mockito/mockito.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Model/Services/user_service.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
+import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import '../../service.mocks.dart';
-import 'user_service_test.mocks.dart';
 
 void main() async {
   /// Fake Firebase

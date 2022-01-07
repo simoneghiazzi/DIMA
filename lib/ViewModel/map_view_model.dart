@@ -63,8 +63,10 @@ class MapViewModel {
   Future<void> searchPlace(String placeId) async {
     _autocompletedPlacesCtrl.add(null);
     return mapService.searchPlace(placeId).then((place) {
-      searchTextCtrl.text = place.address!;
-      _selectedPlaceCtrl.add(place);
+      if (place != null) {
+        searchTextCtrl.text = place.address!;
+        _selectedPlaceCtrl.add(place);
+      }
     });
   }
 
