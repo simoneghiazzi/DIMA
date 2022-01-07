@@ -81,26 +81,28 @@ class FirebaseAuthService {
       } else {
         // Check the sign in methods of the user to prevent profiles from being automatically linked
         var signInMethods = await fetchSignInMethods(googleUser.email);
-        if (signInMethods.contains("google.com") || signInMethods.isEmpty) {
-          // Sign in with Google credential
-          await _firebaseAuth.signInWithCredential(googleCredential);
+        if (signInMethods != null) {
+          if (signInMethods.contains("google.com") || signInMethods.isEmpty) {
+            // Sign in with Google credential
+            await _firebaseAuth.signInWithCredential(googleCredential);
 
-          // Retrieve the user birthdate info from the Google account
-          final res = await get(
-            Uri.parse("https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
-            headers: {"Authorization": (await googleUser.authHeaders)["Authorization"]!},
-          );
-          final birthDate = jsonDecode(res.body)["birthdays"][0]["date"];
+            // Retrieve the user birthdate info from the Google account
+            final res = await get(
+              Uri.parse("https://people.googleapis.com/v1/people/me?personFields=birthdays&key="),
+              headers: {"Authorization": (await googleUser.authHeaders)["Authorization"]!},
+            );
+            final birthDate = jsonDecode(res.body)["birthdays"][0]["date"];
 
-          // Return the information retrieved from the Google account
-          return {
-            "name": googleUser.displayName!.split(" ")[0],
-            "surname": googleUser.displayName!.split(" ")[1],
-            "email": googleUser.email,
-            "birthDate": DateTime.parse("${birthDate["year"]}-${birthDate["month"]}-${birthDate["day"]}"),
-          };
-        } else {
-          throw (FirebaseAuthException(code: "account-exists-with-different-credential"));
+            // Return the information retrieved from the Google account
+            return {
+              "name": googleUser.displayName!.split(" ")[0],
+              "surname": googleUser.displayName!.split(" ")[1],
+              "email": googleUser.email,
+              "birthDate": DateTime.parse("${birthDate["year"]}-${birthDate["month"]}-${birthDate["day"]}"),
+            };
+          } else {
+            throw (FirebaseAuthException(code: "account-exists-with-different-credential"));
+          }
         }
       }
     }
@@ -153,10 +155,11 @@ class FirebaseAuthService {
 
   /// Sends a password reset email to the given [email] address.
   void resetPassword(String email) {
-    _firebaseAuth
-        .sendPasswordResetEmail(email: email)
-        .then((value) => print("Reset password email sent"))
-        .catchError((error) => print("Failed send reset password email: $error"));
+    try {
+      _firebaseAuth.sendPasswordResetEmail(email: email).then((value) => print("Reset password email sent"));
+    } on FirebaseAuthException catch (error) {
+      print("Failed send reset password email: $error");
+    }
   }
 
   /// Signs out the current user.
@@ -167,28 +170,26 @@ class FirebaseAuthService {
   }
 
   /// Get the authentication provider of the current logged user.
-  ///
-  /// If the user is not logged in, it return an `empty string`.
-  String getAuthProvider() {
-    try {
-      return _firebaseAuth.currentUser!.providerData[0].providerId;
-    } catch (e) {
-      return "";
-    }
+  String? getAuthProvider() {
+    return _firebaseAuth.currentUser?.providerData[0].providerId;
   }
 
   /// Returns the list of sign-in methods that can be used to sign in a given user (identified by its main email address).
-  ///
-  /// An empty `List` is returned if the user could not be found.
-  Future<List<String>> fetchSignInMethods(String email) {
-    return _firebaseAuth.fetchSignInMethodsForEmail(email).catchError((error) {
-      print("Error in getting the sign in methods: $error");
-    });
+  Future<List<String>>? fetchSignInMethods(String email) {
+    try {
+      return _firebaseAuth.fetchSignInMethodsForEmail(email);
+    } on FirebaseAuthException catch (error) {
+      print("Failed to fetching the signed in methods of the user: $error");
+    }
   }
 
   /// Delete and signs out the user.
-  Future deleteUser() async {
-    _firebaseAuth.currentUser!.delete();
+  Future<void> deleteUser() async {
+    try {
+      return _firebaseAuth.currentUser!.delete();
+    } on FirebaseAuthException catch (error) {
+      print("Failed to delete the user: $error");
+    }
   }
 
   /// It checks if the email is verified in case the user has signed up with the email and password method.
@@ -202,11 +203,8 @@ class FirebaseAuthService {
   }
 
   /// Send the verification email to the user in the sign up process.
-  void _sendVerificationEmail() {
-    _firebaseAuth.currentUser!
-        .sendEmailVerification()
-        .then((value) => print("Verification email sent"))
-        .catchError((error) => print("Failed to send the verification email: $error"));
+  Future<void> _sendVerificationEmail() {
+    return _firebaseAuth.currentUser!.sendEmailVerification().then((value) => print("Verification email sent"));
   }
 
   /// Get the uid of the current logged user.
