@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:get_it/get_it.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/Model/DBItems/message.dart';

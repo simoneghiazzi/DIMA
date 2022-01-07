@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
-import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sApport/Model/DBItems/BaseUser/report.dart';
 import 'package:sApport/Model/Services/user_service.dart';
@@ -55,7 +55,7 @@ class ReportViewModel {
   ValueNotifier<Report?> get currentReport => _currentReport;
 
   /// Get the [_reports] list of the user.
-  /// 
+  ///
   /// **The function [loadReports] must be called before getting
   /// the [reports].**
   LinkedHashMap<String, Report> get reports => _reports;
