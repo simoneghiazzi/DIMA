@@ -13,8 +13,6 @@ import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
-import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
-import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Diary/components/diary_body.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
@@ -23,22 +21,23 @@ import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../navigator.mocks.dart';
+import '../../service.mocks.dart';
 import '../../view_model.mocks.dart';
+import '../widget_test_helper.dart';
 
 void main() {
+  /// Mock Services
   final mockRouterDelegate = MockAppRouterDelegate();
   final mockDiaryViewModel = MockDiaryViewModel();
-  final mockChatViewModel = MockChatViewModel();
-
-  final fakeFirebase = FakeFirebaseFirestore();
+  final mockUserService = MockUserService();
 
   var id = Utils.randomId();
-  var name = "SIMONE";
-  var surname = "GHIAZZI";
+  var name = "Simone";
+  var surname = "Ghiazzi";
   var email = "simone.ghiazzi@prova.it";
   var birthDate = DateTime(1997, 10, 19);
 
-  BaseUser baseUser = BaseUser(
+  BaseUser loggedUser = BaseUser(
     id: id,
     name: name,
     surname: surname,
@@ -46,37 +45,30 @@ void main() {
     birthDate: birthDate,
   );
 
-//Create a diary page
+  /// Mock User Service responses
+  when(mockUserService.loggedUser).thenAnswer((_) => loggedUser);
+
+  /// Create a diary page
   var now = DateTime.now();
   DiaryPage diaryPage = DiaryPage(
     id: now.millisecondsSinceEpoch.toString(),
-    title: "TEST",
-    content: "TEST CONTENT",
+    title: "Test",
+    content: "Test content",
     dateTime: now,
   );
 
-  //Populate the mock DB
-  var userReference = fakeFirebase.collection(baseUser.collection).doc(baseUser.id);
-  //Insert the user
-  userReference.set(baseUser.data);
-
-  ///Register services
+  /// Register services
   var getIt = GetIt.I;
-  getIt.registerSingleton<FirestoreService>(FirestoreService(fakeFirebase));
+  getIt.registerSingleton<FirestoreService>(FirestoreService(FakeFirebaseFirestore()));
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(MockFirebaseAuth()));
-  getIt.registerSingleton<UserService>(UserService());
-
-  final UserService _userService = GetIt.I<UserService>();
-  _userService.loggedUser = baseUser;
+  getIt.registerSingleton<UserService>(mockUserService);
 
   /// Get MultiProvider Widget for creating the test
   Widget getMultiProvider({required Widget child}) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AppRouterDelegate>(create: (_) => mockRouterDelegate),
-        ChangeNotifierProvider<ChatViewModel>(create: (_) => mockChatViewModel),
         ChangeNotifierProvider<DiaryViewModel>(create: (_) => mockDiaryViewModel),
-        Provider(create: (context) => ReportViewModel()),
         Provider(create: (context) => UserViewModel()),
       ],
       child: Sizer(builder: (context, orientation, deviceType) {
@@ -85,20 +77,16 @@ void main() {
     );
   }
 
-  group('Correct rendering:', () {
-    testWidgets("Testing the correct render of the diary screen without a page already added", (WidgetTester tester) async {
+  group("DiaryScreen correct rendering", () {
+    testWidgets("Diary screen without a page already added should show the add page button", (WidgetTester tester) async {
+      /// Set the device dimensions for the test
+      WidgetTestHelper.setPortraitDimensions(tester);
+
+      /// Mock User Service responses
       when(mockDiaryViewModel.diaryPages).thenAnswer((_) => ValueNotifier([]));
       when(mockDiaryViewModel.currentDiaryPage).thenAnswer((_) => ValueNotifier(null));
 
-      //Create the base user homepage widget
-      Widget testWidget = new MediaQuery(
-        data: new MediaQueryData(),
-        child: new MaterialApp(
-          home: new DiaryBody(),
-        ),
-      );
-
-      await tester.pumpWidget(getMultiProvider(child: testWidget));
+      await tester.pumpWidget(getMultiProvider(child: MaterialApp(home: DiaryBody())));
 
       final headerFinder = find.byType(Header);
       final calendarFinder = find.byType(SfCalendar);
@@ -109,55 +97,88 @@ void main() {
       expect(addPageButtonFinder, findsOneWidget);
     });
 
-    testWidgets("Testing the correct render of the diary screen with a page already added", (WidgetTester tester) async {
-      when(mockDiaryViewModel.diaryPages).thenAnswer((_) => ValueNotifier([diaryPage]));
-      when(mockDiaryViewModel.currentDiaryPage).thenAnswer((_) => ValueNotifier(diaryPage));
+    testWidgets("Diary screen with some pages that are not today should show the add page button", (WidgetTester tester) async {
+      /// Set the device dimensions for the test
+      WidgetTestHelper.setPortraitDimensions(tester);
 
-      //Insert the diary page
-      fakeFirebase.collection(diaryPage.collection).doc(id).collection("diaryPages").doc(diaryPage.id).set(diaryPage.data);
-
-      //Create the base user homepage widget
-      Widget testWidget = new MediaQuery(
-        data: new MediaQueryData(),
-        child: new MaterialApp(
-          home: new DiaryBody(),
-        ),
+      var oldDiaryPage = DiaryPage(
+        id: now.millisecondsSinceEpoch.toString(),
+        title: "Test",
+        content: "Test content",
+        dateTime: DateTime(2022, 1, 1),
       );
 
-      await tester.pumpWidget(getMultiProvider(child: testWidget));
+      /// Mock User Service responses
+      when(mockDiaryViewModel.diaryPages).thenAnswer((_) => ValueNotifier([oldDiaryPage]));
+      when(mockDiaryViewModel.currentDiaryPage).thenAnswer((_) => ValueNotifier(null));
+
+      await tester.pumpWidget(getMultiProvider(child: MaterialApp(home: DiaryBody())));
 
       final headerFinder = find.byType(Header);
       final calendarFinder = find.byType(SfCalendar);
       final addPageButtonFinder = find.byType(FloatingActionButton);
+
+      expect(headerFinder, findsOneWidget);
+      expect(calendarFinder, findsOneWidget);
+      expect(addPageButtonFinder, findsOneWidget);
+    });
+
+    testWidgets("Diary screen with a diary page that is today should not show the add page button", (WidgetTester tester) async {
+      /// Set the device dimensions for the test
+      WidgetTestHelper.setPortraitDimensions(tester);
+
+      /// Mock User Service responses
+      when(mockDiaryViewModel.diaryPages).thenAnswer((_) => ValueNotifier([diaryPage]));
+      when(mockDiaryViewModel.currentDiaryPage).thenAnswer((_) => ValueNotifier(null));
+
+      await tester.pumpWidget(getMultiProvider(child: MaterialApp(home: DiaryBody())));
+
+      final headerFinder = find.byType(Header);
+      final calendarFinder = find.byType(SfCalendar);
+      final addPageButtonFinder = find.byType(FloatingActionButton);
+
+      expect(headerFinder, findsOneWidget);
+      expect(calendarFinder, findsOneWidget);
+
+      /// Expect nothing because we have added by hand a mock diary page with
+      /// dateTime = now, so the button must not appear
+      expect(addPageButtonFinder, findsNothing);
+    });
+
+    testWidgets("Diary screen with a page should show the icon inside the month cell of the calendar", (WidgetTester tester) async {
+      /// Set the device dimensions for the test
+      WidgetTestHelper.setPortraitDimensions(tester);
+
+      /// Mock User Service responses
+      when(mockDiaryViewModel.diaryPages).thenAnswer((_) => ValueNotifier([diaryPage]));
+      when(mockDiaryViewModel.currentDiaryPage).thenAnswer((_) => ValueNotifier(null));
+
+      await tester.pumpWidget(getMultiProvider(child: MaterialApp(home: DiaryBody())));
+
+      /// This will cause the widget to wait for the creation of the month cell with the appointments
+      await tester.pump(Duration.zero);
+
+      final headerFinder = find.byType(Header);
+      final calendarFinder = find.byType(SfCalendar);
       final iconPageFinder = find.byIcon(Icons.menu_book);
 
       expect(headerFinder, findsOneWidget);
       expect(calendarFinder, findsOneWidget);
       expect(iconPageFinder, findsOneWidget);
-
-      //Expect nothing because we have added by hand a mock diary page with
-      //dateTime = now, so the button must not appear
-      expect(addPageButtonFinder, findsNothing);
     });
   });
 
-  group("Navigation tests: ", () {
-    testWidgets("Testing the add page button", (WidgetTester tester) async {
+  group("DiaryPage navigation tests", () {
+    testWidgets("Tap on the add page button and check that the diary page screen is pushed", (WidgetTester tester) async {
+      /// Set the device dimensions for the test
+      WidgetTestHelper.setPortraitDimensions(tester);
+
+      /// Mock User Service responses
       when(mockDiaryViewModel.diaryPages).thenAnswer((_) => ValueNotifier([]));
       when(mockDiaryViewModel.currentDiaryPage).thenAnswer((_) => ValueNotifier(null));
-
-      ///This is needed to mock the bool for editing (or adding) a page
       when(mockDiaryViewModel.isEditing).thenAnswer((_) => true);
 
-      //Create the base user homepage widget
-      Widget testWidget = new MediaQuery(
-        data: new MediaQueryData(),
-        child: new MaterialApp(
-          home: new DiaryBody(),
-        ),
-      );
-
-      await tester.pumpWidget(getMultiProvider(child: testWidget));
+      await tester.pumpWidget(getMultiProvider(child: MaterialApp(home: DiaryBody())));
 
       final addPageButtonFinder = find.byType(FloatingActionButton);
       expect(addPageButtonFinder, findsOneWidget);
@@ -167,22 +188,20 @@ void main() {
       verification.called(1);
     });
 
-    testWidgets("Testing opening a diary page", (WidgetTester tester) async {
+    testWidgets("Tap on the diary page icon into the calendar and check that the agenda is shown", (WidgetTester tester) async {
+      /// Set the device dimensions for the test
+      WidgetTestHelper.setPortraitDimensions(tester);
+
+      /// Mock User Service responses
       when(mockDiaryViewModel.diaryPages).thenAnswer((_) => ValueNotifier([diaryPage]));
-      when(mockDiaryViewModel.currentDiaryPage).thenAnswer((_) => ValueNotifier(diaryPage));
+      when(mockDiaryViewModel.currentDiaryPage).thenAnswer((_) => ValueNotifier(null));
 
-      ///This is needed to mock the bool for editing (or adding) a page
-      when(mockDiaryViewModel.isEditing).thenAnswer((_) => true);
+      await tester.pumpWidget(getMultiProvider(child: MaterialApp(home: DiaryBody())));
 
-      //Create the base user homepage widget
-      Widget testWidget = new MediaQuery(
-        data: new MediaQueryData(),
-        child: new MaterialApp(
-          home: new DiaryBody(),
-        ),
-      );
+      /// This will cause the widget to wait for the creation of the month cell with the appointments
+      await tester.pump(Duration.zero);
 
-      await tester.pumpWidget(getMultiProvider(child: testWidget));
+      // Check that the agenda is shown
     });
   });
 }
