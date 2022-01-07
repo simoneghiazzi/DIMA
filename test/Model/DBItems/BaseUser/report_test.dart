@@ -24,13 +24,13 @@ void main() async {
   fakeFirebase.collection(report.collection).doc(report.id).set(report.data);
 
   group("Report initialization", () {
-    test("Report collection", () {
+    test("Report collection initially set to report", () {
       expect(report.collection, Report.COLLECTION);
     });
   });
 
   group("Report data", () {
-    test("Report factory from document", () async {
+    test("Report factory returns the instance with the fields retrived from the document snapshot correctly setted", () async {
       var result = (await fakeFirebase.collection(report.collection).doc(report.id).get());
       var retrievedReport = Report.fromDocument(result);
       expect(retrievedReport.id, id);
@@ -39,7 +39,7 @@ void main() async {
       expect(retrievedReport.dateTime, dateTime);
     });
 
-    test("Get report data as a key-value map", () async {
+    test("Check that report data returns a key-value map with the correct fields", () async {
       expect(report.data, {
         "id": id,
         "category": category,

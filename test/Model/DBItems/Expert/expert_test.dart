@@ -37,17 +37,17 @@ void main() async {
   fakeFirebase.collection(expert.collection).doc(expert.id).set(expert.data);
 
   group("Expert initialization", () {
-    test("Expert collection", () {
+    test("Expert collection initially set to experts", () {
       expect(expert.collection, Expert.COLLECTION);
     });
 
-    test("Expert home page route", () {
+    test("Expert home page route initially set to /expertHomePageScreen", () {
       expect(expert.homePageRoute, ExpertHomePageScreen.route);
     });
   });
 
   group("Expert data", () {
-    test("Expert factory from document", () async {
+    test("Expert factory returns the instance with the fields retrived from the document snapshot correctly setted", () async {
       var result = (await fakeFirebase.collection(expert.collection).doc(expert.id).get());
       var retrievedExpert = Expert.fromDocument(result);
       expect(retrievedExpert.id, id);
@@ -62,7 +62,8 @@ void main() async {
       expect(retrievedExpert.profilePhoto, profilePhoto);
     });
 
-    test("Set expert fields from document", () async {
+    test("Set expert from document sets the fields of an already created instance with the correct values retrived from the document snapshot",
+        () async {
       var result = (await fakeFirebase.collection(expert.collection).doc(expert.id).get());
       var retrievedExpert = Expert();
       retrievedExpert.setFromDocument(result);
@@ -78,7 +79,7 @@ void main() async {
       expect(retrievedExpert.profilePhoto, profilePhoto);
     });
 
-    test("Get expert data as a key-value map", () async {
+    test("Check that expert data returns a key-value map with the correct fields", () async {
       expect(expert.data, {
         "eid": id,
         "name": name,

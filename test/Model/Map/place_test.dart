@@ -9,7 +9,7 @@ void main() async {
   var lng = 9.2256787;
 
   group("Place data", () {
-    test("Place factory from the autocomplete json response of the GoogleMaps API", () async {
+    test("Place factory from the autocomplete json response of the GoogleMaps API returns the instance with the fields correctly setted", () async {
       /// Mock the GoogleMaps API json response
       var json = {"description": address, "place_id": placeId};
       var place = Place.fromAutocompleteJson(json);
@@ -22,7 +22,7 @@ void main() async {
       expect(place.lng, null);
     });
 
-    test("Place factory from the search json response of the GoogleMaps API", () async {
+    test("Place factory from the search json response of the GoogleMaps API returns the instance with the fields correctly setted", () async {
       /// Mock the GoogleMaps API json response
       var json = {
         "geometry": {

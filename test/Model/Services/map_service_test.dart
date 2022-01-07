@@ -6,7 +6,7 @@ void main() async {
   MapService mapService = MapService();
 
   group("MapService autocomplete", () {
-    test("Autocomplete function returns a non-empty list of Place", () async {
+    test("Autocomplete function should return a non-empty list of Place when a correct input is given", () async {
       var places = await mapService.autocomplete("Milano");
 
       expect(places, isA<List<Place>>());
@@ -22,7 +22,7 @@ void main() async {
   });
 
   group("MapService search place", () {
-    test("Search place function returns a Place from the place_id", () async {
+    test("Search place function should return a Place from the place_id when a correct input is given", () async {
       /// Place_id of the Polimi address
       var place = await mapService.searchPlace("ChIJUxfRffbGhkcRdzNKd-H6MI4");
 

@@ -43,11 +43,11 @@ void main() async {
   group("ExpertChat initialization", () {
     var expertChatTest = ExpertChat();
 
-    test("Expert chat collection", () {
+    test("Expert chat collection initially set to expertsChats", () {
       expect(expertChatTest.collection, ExpertChat.COLLECTION);
     });
 
-    test("Expert chat peer user collection", () {
+    test("Expert chat peer user collection initially set to activeChats", () {
       expect(expertChatTest.peerCollection, ExpertChat.PEER_COLLECTION);
     });
 
@@ -57,7 +57,7 @@ void main() async {
   });
 
   group("ExpertChat data", () {
-    test("Expert chat factory from document", () async {
+    test("Expert chat factory returns the instance with the fields retrived from the document snapshot correctly setted", () async {
       var result = (await fakeFirebase.collection(BaseUser.COLLECTION).doc(userId).collection(expertChat.collection).doc(peerUser.id).get());
       var retrievedExpertChat = ExpertChat.fromDocument(result);
 

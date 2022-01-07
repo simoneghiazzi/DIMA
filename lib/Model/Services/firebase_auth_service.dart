@@ -209,9 +209,6 @@ class FirebaseAuthService {
         .catchError((error) => print("Failed to send the verification email: $error"));
   }
 
-  /// Stream of the user authentication state.
-  Stream<User?> get onAuthStateChanged => _firebaseAuth.authStateChanges();
-
   /// Get the uid of the current logged user.
   String? get currentUserId => _firebaseAuth.currentUser?.uid;
 }

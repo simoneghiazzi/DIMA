@@ -75,7 +75,7 @@ void main() async {
   collectionReference.doc(message4.timestamp.millisecondsSinceEpoch.toString()).set(message4.data);
 
   group("Chat initialization", () {
-    test("Initialized messages value notifier", () async {
+    test("Chat messages initialized as value notifier of list of message", () async {
       expect(chat.messages, isA<ValueNotifier<List<Message>>>());
     });
   });
@@ -87,15 +87,15 @@ void main() async {
       counter++;
     });
 
-    test("Subscribe the messages subscriber to the message stream of the firestore service", () {
+    test("Check the subscription of the messagesSubscriber to the message stream of the firestore service", () {
       expect(chat.messagesSubscriber, isA<StreamSubscription<QuerySnapshot>>());
     });
 
-    test("Notify the listeners of the value notifier every time a new message is added into the list", () {
+    test("Check that the value notifier notify the listeners every time a new message is added into the list of messages", () {
       expect(counter, messages.length);
     });
 
-    test("Parse the correct doc snapshot to the list of messages", () async {
+    test("Check that the initially inserted message into the DB are correctly parsed and added to the list of messages", () async {
       for (int i = 0; i < messages.length; i++) {
         expect(chat.messages.value[i].idFrom, messages[i].idFrom);
         expect(chat.messages.value[i].idTo, messages[i].idTo);
@@ -104,13 +104,13 @@ void main() async {
       }
     });
 
-    test("Add a new message into the list when it is added to the DB in real time", () async {
+    test("Add a new message into the DB should trigger the listener in order to add this new message into the messages list", () async {
       /// The fake firestore doc changes doesn't work properly, so we need to manually clear the previous list
       chat.messages.value.clear();
 
       Message message5 = Message(idFrom: loggedUser.id, idTo: peerUser.id, content: "Test 5", timestamp: DateTime(2021, 10, 19, 21, 30, 40));
       collectionReference.doc(message5.timestamp.millisecondsSinceEpoch.toString()).set(message5.data);
-      await Future.delayed(Duration(seconds: 0));
+      await Future.delayed(Duration.zero);
 
       expect(chat.messages.value[4].idFrom, message5.idFrom);
       expect(chat.messages.value[4].idTo, message5.idTo);
@@ -118,7 +118,7 @@ void main() async {
       expect(chat.messages.value[4].timestamp, message5.timestamp);
     });
 
-    test("Clear the old values of the value notifier", () {
+    test("Close listeners should clear the old values of the value notifier", () {
       chat.closeListeners();
       expect(chat.messages.value.isEmpty, true);
     });

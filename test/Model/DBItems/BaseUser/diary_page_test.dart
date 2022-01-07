@@ -28,7 +28,7 @@ void main() async {
   group("DiaryPage initialization", () {
     var diaryPageTest = DiaryPage(dateTime: DateTime.now());
 
-    test("Diary page collection", () {
+    test("Diary page collection initially set to diary", () {
       expect(diaryPageTest.collection, DiaryPage.COLLECTION);
     });
 
@@ -38,7 +38,7 @@ void main() async {
   });
 
   group("DiaryPage data", () {
-    test("Diary page factory from document", () async {
+    test("Diary page factory returns the instance with the fields retrived from the document snapshot correctly setted", () async {
       var result = (await fakeFirebase.collection(diaryPage.collection).doc(diaryPage.id).get());
       var retrievedDiaryPage = DiaryPage.fromDocument(result);
       expect(retrievedDiaryPage.id, id);
@@ -48,7 +48,7 @@ void main() async {
       expect(retrievedDiaryPage.favourite, favourite);
     });
 
-    test("Get diary page data as a key-value map", () async {
+    test("Check that diary page data returns a key-value map with the correct fields", () async {
       expect(diaryPage.data, {
         "id": id,
         "title": title,

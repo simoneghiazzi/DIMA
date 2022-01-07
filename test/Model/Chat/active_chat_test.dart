@@ -43,11 +43,11 @@ void main() async {
   group("ActiveChat initialization", () {
     var activeChatTest = ActiveChat();
 
-    test("Active chat collection", () {
+    test("Active chat collection initially set to activeChats", () {
       expect(activeChatTest.collection, ActiveChat.COLLECTION);
     });
 
-    test("Active chat peer user collection", () {
+    test("Active chat peer user collection initially set to expertsChats", () {
       expect(activeChatTest.peerCollection, ActiveChat.PEER_COLLECTION);
     });
 
@@ -57,7 +57,7 @@ void main() async {
   });
 
   group("ActiveChat data", () {
-    test("Active chat factory from document", () async {
+    test("Active chat factory returns the instance with the fields retrived from the document snapshot correctly setted", () async {
       var result = (await fakeFirebase.collection(Expert.COLLECTION).doc(userId).collection(activeChat.collection).doc(peerUser.id).get());
       var retrievedActiveChat = ActiveChat.fromDocument(result);
 

@@ -42,11 +42,11 @@ void main() async {
   group("PendingChat initialization", () {
     var pendingChatTest = PendingChat();
 
-    test("Pending chat collection", () {
+    test("Pending chat collection initially set to pendingChats", () {
       expect(pendingChatTest.collection, PendingChat.COLLECTION);
     });
 
-    test("Pending chat peer user collection", () {
+    test("Pending chat peer user collection initially set to request", () {
       expect(pendingChatTest.peerCollection, PendingChat.PEER_COLLECTION);
     });
 
@@ -56,7 +56,7 @@ void main() async {
   });
 
   group("PendingChat data", () {
-    test("Pending chat factory from document", () async {
+    test("Pending chat factory returns the instance with the fields retrived from the document snapshot correctly setted", () async {
       var result = (await fakeFirebase.collection(BaseUser.COLLECTION).doc(userId).collection(pendingChat.collection).doc(peerUser.id).get());
       var retrievedPendingChat = PendingChat.fromDocument(result);
 

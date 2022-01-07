@@ -42,11 +42,11 @@ void main() async {
   group("Request initialization", () {
     var requestTest = Request();
 
-    test("Request collection", () {
+    test("Request collection initially set to request", () {
       expect(requestTest.collection, Request.COLLECTION);
     });
 
-    test("Request peer user collection", () {
+    test("Request peer user collection initially set to pendingChats", () {
       expect(requestTest.peerCollection, Request.PEER_COLLECTION);
     });
 
@@ -56,7 +56,7 @@ void main() async {
   });
 
   group("Request data", () {
-    test("Request factory from document", () async {
+    test("Request factory returns the instance with the fields retrived from the document snapshot correctly setted", () async {
       var result = (await fakeFirebase.collection(BaseUser.COLLECTION).doc(userId).collection(request.collection).doc(peerUser.id).get());
       var retrievedRequest = Request.fromDocument(result);
 

@@ -42,11 +42,11 @@ void main() async {
   group("AnonymousChat initialization", () {
     var anonymousChatTest = AnonymousChat();
 
-    test("Anonymous chat collection", () {
+    test("Anonymous chat collection initially set to anonymousChats", () {
       expect(anonymousChatTest.collection, AnonymousChat.COLLECTION);
     });
 
-    test("Anonymous chat peer user collection", () {
+    test("Anonymous chat peer user collection initially set to anonymousChats", () {
       expect(anonymousChatTest.peerCollection, AnonymousChat.PEER_COLLECTION);
     });
 
@@ -56,7 +56,7 @@ void main() async {
   });
 
   group("AnonymousChat data", () {
-    test("Anonymous chat factory from document", () async {
+    test("Anonymous chat factory returns the instance with the fields retrived from the document snapshot correctly setted", () async {
       var result = (await fakeFirebase.collection(BaseUser.COLLECTION).doc(userId).collection(anonymousChat.collection).doc(peerUser.id).get());
       var retrievedAnonymousChat = AnonymousChat.fromDocument(result);
 

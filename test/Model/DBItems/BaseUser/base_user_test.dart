@@ -27,17 +27,17 @@ void main() async {
   fakeFirebase.collection(baseUser.collection).doc(baseUser.id).set(baseUser.data);
 
   group("BaseUser initialization", () {
-    test("Base user collection", () {
+    test("Base user collection initially set to users", () {
       expect(baseUser.collection, BaseUser.COLLECTION);
     });
 
-    test("Base user home page route", () {
+    test("Base user home page route initially set to /baseUserHomePageScreen", () {
       expect(baseUser.homePageRoute, BaseUserHomePageScreen.route);
     });
   });
 
   group("BaseUser data", () {
-    test("Base user factory from document", () async {
+    test("Base user factory returns the instance with the fields retrived from the document snapshot correctly setted", () async {
       var result = (await fakeFirebase.collection(baseUser.collection).doc(baseUser.id).get());
       var retrievedBaseUser = BaseUser.fromDocument(result);
       expect(retrievedBaseUser.id, id);
@@ -47,7 +47,8 @@ void main() async {
       expect(retrievedBaseUser.email, email);
     });
 
-    test("Set base user from document", () async {
+    test("Set base user from document sets the fields of an already created instance with the correct values retrived from the document snapshot",
+        () async {
       var result = (await fakeFirebase.collection(baseUser.collection).doc(baseUser.id).get());
       var retrievedBaseUser = BaseUser();
       retrievedBaseUser.setFromDocument(result);
@@ -58,7 +59,7 @@ void main() async {
       expect(retrievedBaseUser.email, email);
     });
 
-    test("Get base user data as a key-value map", () async {
+    test("Check that base user data returns a key-value map with the correct fields", () async {
       expect(baseUser.data, {
         "uid": id,
         "name": name,

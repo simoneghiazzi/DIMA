@@ -63,7 +63,7 @@ void main() async {
   });
 
   group("UserService loading base user", () {
-    test("Load the signed in base user from the firestore DB and set it as the logged user", () async {
+    test("Load the signed in base user should set the logged user with the user retrieved form the Firestore DB", () async {
       /// Mock Firebase Auth Service responses
       when(mockFirebaseAuthService.currentUserId).thenAnswer((_) => loggedUser.id);
 
@@ -87,7 +87,7 @@ void main() async {
       expect(userService.loggedUser, null);
     });
 
-    test("Create a new logged user from the base user sign up form", () {
+    test("Create a new logged user from the base user sign up form should set the logged user with the user created by the form", () {
       userService.createUserFromSignUpForm(mockBaseUserSignUpForm);
 
       expect(userService.loggedUser, isA<BaseUser>());
@@ -96,7 +96,7 @@ void main() async {
   });
 
   group("UserService loading expert", () {
-    test("Load the signed in expert from the firestore DB and set it as the logged user", () async {
+    test("Load the signed in expert should set the logged user with the expert retrieved form the Firestore DB", () async {
       /// Mock Firebase Auth Service responses
       when(mockFirebaseAuthService.currentUserId).thenAnswer((_) => loggedExpert.id);
 
@@ -104,7 +104,7 @@ void main() async {
       expect(userService.loggedUser, isA<Expert>());
     });
 
-    test("Create a new logged expert from the expert sign up form", () {
+    test("Create a new logged user from the expert sign up form should set the logged user with the expert created by the form", () {
       userService.createUserFromSignUpForm(mockExpertSignUpForm);
 
       expect(userService.loggedUser, isA<Expert>());

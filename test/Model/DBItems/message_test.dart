@@ -23,13 +23,13 @@ void main() async {
   fakeFirebase.collection(message.collection).doc(message.id).set(message.data);
 
   group("Message initialization", () {
-    test("Message collection", () {
+    test("Message collection initially set to messages", () {
       expect(message.collection, Message.COLLECTION);
     });
   });
 
   group("Message data", () {
-    test("Message factory from document", () async {
+    test("Message factory returns the instance with the fields retrived from the document snapshot correctly setted", () async {
       var result = (await fakeFirebase.collection(message.collection).doc(message.id).get());
       var retrievedDiaryPage = Message.fromDocument(result);
       expect(retrievedDiaryPage.idFrom, idFrom);
@@ -38,7 +38,7 @@ void main() async {
       expect(retrievedDiaryPage.content, content);
     });
 
-    test("Get diary page data as a key-value map", () async {
+    test("Check that message data returns a key-value map with the correct fields", () async {
       expect(message.data, {
         "idFrom": idFrom,
         "idTo": idTo,
