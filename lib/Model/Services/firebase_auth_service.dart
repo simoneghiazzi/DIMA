@@ -77,7 +77,7 @@ class FirebaseAuthService {
 
       // If link is true, it links the Google account to the logged user
       if (link) {
-        await currentUser!.linkWithCredential(googleCredential);
+        await _firebaseAuth.currentUser!.linkWithCredential(googleCredential);
       } else {
         // Check the sign in methods of the user to prevent profiles from being automatically linked
         var signInMethods = await fetchSignInMethods(googleUser.email);
@@ -132,7 +132,7 @@ class FirebaseAuthService {
 
       // If link is true, it links the Facebook account to the logged user
       if (link) {
-        await currentUser!.linkWithCredential(facebookCredential);
+        await _firebaseAuth.currentUser!.linkWithCredential(facebookCredential);
       } else {
         // Sign in with Facebook credential
         await _firebaseAuth.signInWithCredential(facebookCredential);
@@ -143,7 +143,7 @@ class FirebaseAuthService {
         return {
           "name": userData["name"].split(" ")[0],
           "surname": userData["name"].split(" ")[1],
-          "email": currentUser?.email,
+          "email": _firebaseAuth.currentUser?.email,
           "birthDate": DateTime.parse("${birthDate[2]}-${birthDate[0]}-${birthDate[1]}")
         };
       }
@@ -213,5 +213,5 @@ class FirebaseAuthService {
   Stream<User?> get onAuthStateChanged => _firebaseAuth.authStateChanges();
 
   /// Get the uid of the current logged user.
-  User? get currentUser => _firebaseAuth.currentUser;
+  String? get currentUserId => _firebaseAuth.currentUser?.uid;
 }

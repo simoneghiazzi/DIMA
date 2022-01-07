@@ -18,7 +18,7 @@ void main() async {
   getIt.registerSingleton<FirestoreService>(MockFirestoreService());
   getIt.registerSingleton<UserService>(MockUserService());
 
-  /// Mock Fields
+  /// Test Fields
   var userId = Utils.randomId();
   var peerUser = Expert(id: Utils.randomId());
 
@@ -26,18 +26,17 @@ void main() async {
   var lastMessageDateTime = DateTime(2021, 10, 19, 21, 10, 50);
   var notReadMessages = 4;
 
-  /// Mock ExpertChat
-  ExpertChat mockExpertChat = ExpertChat(
+  ExpertChat expertChat = ExpertChat(
     lastMessage: lastMessage,
     lastMessageDateTime: lastMessageDateTime,
     notReadMessages: notReadMessages,
   );
 
-  /// Add the mock expert chat to the fakeFirebase
+  /// Add the expert chat to the fakeFirebase
   fakeFirebase
       .collection(BaseUser.COLLECTION)
       .doc(userId)
-      .collection(mockExpertChat.collection)
+      .collection(expertChat.collection)
       .doc(peerUser.id)
       .set({"lastMessageTimestamp": lastMessageDateTime.millisecondsSinceEpoch, "notReadMessages": notReadMessages, "lastMessage": lastMessage});
 
@@ -59,7 +58,7 @@ void main() async {
 
   group("ExpertChat data", () {
     test("Expert chat factory from document", () async {
-      var result = (await fakeFirebase.collection(BaseUser.COLLECTION).doc(userId).collection(mockExpertChat.collection).doc(peerUser.id).get());
+      var result = (await fakeFirebase.collection(BaseUser.COLLECTION).doc(userId).collection(expertChat.collection).doc(peerUser.id).get());
       var retrievedExpertChat = ExpertChat.fromDocument(result);
 
       expect(retrievedExpertChat.lastMessage, lastMessage);

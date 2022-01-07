@@ -18,7 +18,7 @@ void main() async {
   getIt.registerSingleton<FirestoreService>(MockFirestoreService());
   getIt.registerSingleton<UserService>(MockUserService());
 
-  /// Mock Fields
+  /// Test Fields
   var userId = Utils.randomId();
   var peerUser = BaseUser(id: Utils.randomId());
 
@@ -26,18 +26,17 @@ void main() async {
   var lastMessageDateTime = DateTime(2021, 10, 19, 21, 10, 50);
   var notReadMessages = 4;
 
-  /// Mock ActiveChat
-  ActiveChat mockActiveChat = ActiveChat(
+  ActiveChat activeChat = ActiveChat(
     lastMessage: lastMessage,
     lastMessageDateTime: lastMessageDateTime,
     notReadMessages: notReadMessages,
   );
 
-  /// Add the mock active chat to the fakeFirebase
+  /// Add the active chat to the fakeFirebase
   fakeFirebase
       .collection(Expert.COLLECTION)
       .doc(userId)
-      .collection(mockActiveChat.collection)
+      .collection(activeChat.collection)
       .doc(peerUser.id)
       .set({"lastMessageTimestamp": lastMessageDateTime.millisecondsSinceEpoch, "notReadMessages": notReadMessages, "lastMessage": lastMessage});
 
@@ -59,7 +58,7 @@ void main() async {
 
   group("ActiveChat data", () {
     test("Active chat factory from document", () async {
-      var result = (await fakeFirebase.collection(Expert.COLLECTION).doc(userId).collection(mockActiveChat.collection).doc(peerUser.id).get());
+      var result = (await fakeFirebase.collection(Expert.COLLECTION).doc(userId).collection(activeChat.collection).doc(peerUser.id).get());
       var retrievedActiveChat = ActiveChat.fromDocument(result);
 
       expect(retrievedActiveChat.lastMessage, lastMessage);

@@ -123,7 +123,7 @@ class _ExpertsInfoBodyState extends State<ExpertsInfoBody> {
                             context,
                             infoType: InfoDialogType.success,
                             title: "Address found",
-                            content: "${expertSignUpForm.expertAddress.address!}",
+                            content: "${expertSignUpForm.expertAddress?.address!}",
                             buttonType: ButtonType.confirm,
                             onTap: () {
                               userViewModel.createUser(expertSignUpForm);

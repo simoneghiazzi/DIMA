@@ -17,7 +17,7 @@ void main() async {
   getIt.registerSingleton<FirestoreService>(MockFirestoreService());
   getIt.registerSingleton<UserService>(MockUserService());
 
-  /// Mock Fields
+  /// Test Fields
   var userId = Utils.randomId();
   var peerUser = BaseUser(id: Utils.randomId());
 
@@ -25,18 +25,17 @@ void main() async {
   var lastMessageDateTime = DateTime(2021, 10, 19, 21, 10, 50);
   var notReadMessages = 4;
 
-  /// Mock Request
-  Request mockRequest = Request(
+  Request request = Request(
     lastMessage: lastMessage,
     lastMessageDateTime: lastMessageDateTime,
     notReadMessages: notReadMessages,
   );
 
-  /// Add the mock request to the fakeFirebase
+  /// Add the request to the fakeFirebase
   fakeFirebase
       .collection(BaseUser.COLLECTION)
       .doc(userId)
-      .collection(mockRequest.collection)
+      .collection(request.collection)
       .doc(peerUser.id)
       .set({"lastMessageTimestamp": lastMessageDateTime.millisecondsSinceEpoch, "notReadMessages": notReadMessages, "lastMessage": lastMessage});
 
@@ -58,7 +57,7 @@ void main() async {
 
   group("Request data", () {
     test("Request factory from document", () async {
-      var result = (await fakeFirebase.collection(BaseUser.COLLECTION).doc(userId).collection(mockRequest.collection).doc(peerUser.id).get());
+      var result = (await fakeFirebase.collection(BaseUser.COLLECTION).doc(userId).collection(request.collection).doc(peerUser.id).get());
       var retrievedRequest = Request.fromDocument(result);
 
       expect(retrievedRequest.lastMessage, lastMessage);
