@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sApport/Model/Map/place.dart';
 import 'package:sApport/Model/Services/map_service.dart';
-import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 
 class MapViewModel {
