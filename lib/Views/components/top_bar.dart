@@ -47,16 +47,19 @@ class TopBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               if (back) ...[
-                SizedBox(width: 1.w),
-                IconButton(
-                  icon: Icon(backIcon, color: Colors.white),
-                  onPressed: () {
-                    FocusScope.of(context).unfocus();
-                    routerDelegate.pop();
-                    if (onBack != null) {
-                      onBack!();
-                    }
-                  },
+                Card(
+                  color: kPrimaryColor,
+                  shadowColor: Colors.transparent,
+                  child: IconButton(
+                    icon: Icon(backIcon, color: Colors.white),
+                    onPressed: () {
+                      FocusScope.of(context).unfocus();
+                      routerDelegate.pop();
+                      if (onBack != null) {
+                        onBack!();
+                      }
+                    },
+                  ),
                 ),
               ] else ...[
                 SizedBox(width: 4.w),

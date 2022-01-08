@@ -86,32 +86,36 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                 if (!diaryViewModel.isEditing) ...[
                   if (Utils.isToday(diaryViewModel.currentDiaryPage.value!.dateTime)) ...[
                     // If it is the diary page of today and isEditing is false, show the button for modifing the page
-                    InkWell(
-                      child: InkResponse(
-                        onTap: () {
-                          diaryViewModel.editPage();
-                          if (MediaQuery.of(context).orientation == Orientation.landscape) {
-                            routerDelegate.pushPage(name: DiaryPageScreen.route);
-                          }
-                          setState(() {});
-                        },
-                        child: Container(padding: EdgeInsets.all(10), child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white)),
+                    Container(
+                      child: InkWell(
+                        child: InkResponse(
+                          onTap: () {
+                            diaryViewModel.editPage();
+                            if (MediaQuery.of(context).orientation == Orientation.landscape) {
+                              routerDelegate.pushPage(name: DiaryPageScreen.route);
+                            }
+                            setState(() {});
+                          },
+                          child: Container(padding: EdgeInsets.all(10), child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white)),
+                        ),
                       ),
                     ),
                   ],
                   // If isEditing is false, show the button for setting the page as favourite or not
-                  InkWell(
-                    child: InkResponse(
-                      onTap: () {
-                        diaryViewModel.currentDiaryPage.value!.favourite = !diaryViewModel.currentDiaryPage.value!.favourite;
-                        diaryViewModel.setFavourite(diaryViewModel.currentDiaryPage.value!.favourite);
-                        setState(() {});
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        child: diaryViewModel.currentDiaryPage.value!.favourite
-                            ? Icon(CupertinoIcons.heart_fill, color: Colors.white)
-                            : Icon(CupertinoIcons.heart, color: Colors.white),
+                  Container(
+                    child: InkWell(
+                      child: InkResponse(
+                        onTap: () {
+                          diaryViewModel.currentDiaryPage.value!.favourite = !diaryViewModel.currentDiaryPage.value!.favourite;
+                          diaryViewModel.setFavourite(diaryViewModel.currentDiaryPage.value!.favourite);
+                          setState(() {});
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          child: diaryViewModel.currentDiaryPage.value!.favourite
+                              ? Icon(CupertinoIcons.heart_fill, color: Colors.white)
+                              : Icon(CupertinoIcons.heart, color: Colors.white),
+                        ),
                       ),
                     ),
                   ),

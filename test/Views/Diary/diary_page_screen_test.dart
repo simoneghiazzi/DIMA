@@ -1,8 +1,10 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
@@ -12,10 +14,12 @@ import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_form.dart';
 import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
-import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
+import 'package:sApport/Views/Diary/diary_page_screen.dart';
+import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../navigator.mocks.dart';
@@ -66,6 +70,16 @@ void main() {
 
   ///This is needed to mock the bool for editing the page
   when(mockDiaryViewModel.isEditing).thenAnswer((_) => false);
+  when(mockDiaryViewModel.isPageAdded).thenAnswer((_) => Stream<bool>.value(false));
+
+  //Mock the text editing controllers placing the diary title and content inside them
+  TextEditingController mockTitleEditing = TextEditingController();
+  mockTitleEditing.text = diaryPage.title;
+  TextEditingController mockContentEditing = TextEditingController();
+  mockContentEditing.text = diaryPage.content;
+
+  when(mockDiaryViewModel.titleTextCtrl).thenAnswer((_) => mockTitleEditing);
+  when(mockDiaryViewModel.contentTextCtrl).thenAnswer((_) => mockContentEditing);
 
   /// Get MultiProvider Widget for creating the test
   Widget getMultiProvider({required Widget child}) {
@@ -83,8 +97,63 @@ void main() {
   }
 
   group("Correct rendering:", () {
-    testWidgets('Testing the correct render of a page and its content', (tester) async {
-      // TODO: Implement test
+    testWidgets('Testing the correct render of a page and its content. Not modifying and not favourite', (tester) async {
+      //We want to simulate the situation in which the page is simply shown
+      when(mockDiaryViewModel.isEditing).thenAnswer((_) => false);
+
+      await tester.pumpWidget(
+          getMultiProvider(
+              child: new MaterialApp(
+            home: new DiaryPageScreen(),
+          )),
+          Duration.zero);
+
+      final topBarFinder = find.widgetWithText(TopBar, DateFormat("dd MMM yyyy").format(diaryPage.dateTime));
+      final titleFinder = find.text(diaryPage.title);
+      final contentFinder = find.text(diaryPage.content);
+      final modifyIconFinder = find.byIcon(CupertinoIcons.pencil_ellipsis_rectangle);
+      final favouriteIconEmptyFinder = find.byIcon(CupertinoIcons.heart);
+
+      expect(topBarFinder, findsOneWidget);
+      expect(titleFinder, findsOneWidget);
+      expect(contentFinder, findsOneWidget);
+      expect(modifyIconFinder, findsOneWidget);
+      expect(favouriteIconEmptyFinder, findsOneWidget);
+    });
+
+    testWidgets('Testing the correct render of a page and its content. Not modifying and favourite', (tester) async {
+      //We want to simulate the situation in which the page is simply shown
+      when(mockDiaryViewModel.isEditing).thenAnswer((_) => false);
+
+      //The page is favourite
+      diaryPage.favourite = true;
+
+      await tester.pumpWidget(
+          getMultiProvider(
+              child: new MaterialApp(
+            home: new DiaryPageScreen(),
+          )),
+          Duration.zero);
+
+      final favouriteIconFinder = find.byIcon(CupertinoIcons.heart_fill);
+      expect(favouriteIconFinder, findsOneWidget);
+    });
+
+    testWidgets('Testing the correct render of a page and its content while modifying', (tester) async {
+      //We want to simulate the situation in which the page is simply shown
+      when(mockDiaryViewModel.isEditing).thenAnswer((_) => true);
+      DiaryForm mockDiaryForm = DiaryForm();
+      when(mockDiaryViewModel.diaryForm).thenAnswer((_) => mockDiaryForm);
+
+      await tester.pumpWidget(
+          getMultiProvider(
+              child: new MaterialApp(
+            home: new DiaryPageScreen(),
+          )),
+          Duration.zero);
+
+      final submitIconFinder = find.byIcon(Icons.check);
+      expect(submitIconFinder, findsOneWidget);
     });
   });
 }
