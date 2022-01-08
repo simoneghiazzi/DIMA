@@ -151,7 +151,7 @@ class _MessageListConstructorState extends State<MessageListConstructor> {
   /// Initial scroll to the NewMessageListItem and add the listener for
   /// showing the "scroll down" button when a certain threshold is passed.
   void scrollHandler() {
-    if (_scrollToNewMessage) {
+    if (_scrollToNewMessage && dataKey.currentContext != null) {
       _scrollToNewMessage = false;
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         if (_notReadMessages != 0) {
