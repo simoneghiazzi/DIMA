@@ -398,9 +398,9 @@ class FirestoreService {
         .catchError((error) => log("Failed to update the favourite note: $error"));
   }
 
-  /// It takes the [id] of an user and return the stream of
+  /// It takes the [userId] of an user and return the stream of
   /// all the diaryPages of the user oredered by date from the DB
-  Stream<QuerySnapshot> getDiaryPagesStreamFromDB(String id) {
-    return _firestore.collection(DiaryPage.COLLECTION).doc(id).collection("diaryPages").orderBy(FieldPath.documentId).snapshots();
+  Stream<QuerySnapshot> getDiaryPagesStreamFromDB(String userId) {
+    return _firestore.collection(DiaryPage.COLLECTION).doc(userId).collection("diaryPages").orderBy(FieldPath.documentId).snapshots();
   }
 }

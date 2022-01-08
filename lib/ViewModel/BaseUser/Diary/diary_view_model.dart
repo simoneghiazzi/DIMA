@@ -13,7 +13,7 @@ class DiaryViewModel with ChangeNotifier {
   final UserService _userService = GetIt.I<UserService>();
 
   // Diary Form
-  final DiaryForm diaryForm = DiaryForm();
+  DiaryForm diaryForm = DiaryForm();
 
   // Text Controllers
   final TextEditingController titleTextCtrl = TextEditingController();
@@ -29,7 +29,7 @@ class DiaryViewModel with ChangeNotifier {
   ValueNotifier<DiaryPage?> _currentDiaryPage = ValueNotifier(null);
 
   // List of the diary pages of the user
-  ValueNotifier<List<DiaryPage>>? _diaryPages;
+  ValueNotifier<List<DiaryPage>> _diaryPages = ValueNotifier<List<DiaryPage>>(<DiaryPage>[]);
 
   bool _isEditing = false;
 
@@ -40,7 +40,7 @@ class DiaryViewModel with ChangeNotifier {
   }
 
   /// Add a new [DiaryPage] into the DB
-  Future<void> submitPage() {
+  Future<void> submitPage() async {
     var now = DateTime.now();
     _currentDiaryPage.value = DiaryPage(
       id: now.millisecondsSinceEpoch.toString(),
@@ -49,38 +49,47 @@ class DiaryViewModel with ChangeNotifier {
       dateTime: now,
     );
     _isEditing = false;
-    return _firestoreService
-        .addDiaryPageIntoDB(
-          _userService.loggedUser!.id,
-          _currentDiaryPage.value!,
-        )
-        .then((value) => _isPageAddedCtrl.add(true))
-        .catchError((error) => _isPageAddedCtrl.add(false));
+    try {
+      return _firestoreService.addDiaryPageIntoDB(_userService.loggedUser!.id, _currentDiaryPage.value!).then((value) {
+        _isPageAddedCtrl.add(true);
+        log("Diary page submitted");
+      });
+    } catch (error) {
+      _isPageAddedCtrl.add(false);
+      log("Error in submitting the diary page");
+    }
   }
 
-  /// Update the already existing [_currentDiaryPage] into the DB
-  Future<void> updatePage() {
-    var now = DateTime.now();
-    _currentDiaryPage.value!.title = titleTextCtrl.text.trim();
-    _currentDiaryPage.value!.content = contentTextCtrl.text.trim();
-    _currentDiaryPage.value!.dateTime = now;
-    _isEditing = false;
-    return _firestoreService
-        .updateDiaryPageIntoDB(
-          _userService.loggedUser!.id,
-          _currentDiaryPage.value!,
-        )
-        .then((value) => _isPageAddedCtrl.add(true))
-        .catchError((error) => _isPageAddedCtrl.add(false));
+  /// Update the already existing [_currentDiaryPage] into the DB.
+  Future<void> updatePage() async {
+    if (_currentDiaryPage.value != null) {
+      var now = DateTime.now();
+      _currentDiaryPage.value!.title = titleTextCtrl.text.trim();
+      _currentDiaryPage.value!.content = contentTextCtrl.text.trim();
+      _currentDiaryPage.value!.dateTime = now;
+      _isEditing = false;
+      try {
+        return _firestoreService.updateDiaryPageIntoDB(_userService.loggedUser!.id, _currentDiaryPage.value!).then((value) {
+          _isPageAddedCtrl.add(true);
+          log("Diary page updated");
+        });
+      } catch (error) {
+        _isPageAddedCtrl.add(false);
+        log("Error in updating the diary page");
+      }
+    }
   }
 
   /// Set the [isFavourite] parameter of the [_currentDiaryPage] into the DB.
-  Future<void> setFavourite(bool isFavourite) {
+  Future<void> setFavourite(bool isFavourite) async {
     _currentDiaryPage.value!.favourite = isFavourite;
-    return _firestoreService.setDiaryPageAsFavouriteIntoDB(
-      _userService.loggedUser!.id,
-      _currentDiaryPage.value!,
-    );
+    try {
+      return _firestoreService
+          .setDiaryPageAsFavouriteIntoDB(_userService.loggedUser!.id, _currentDiaryPage.value!)
+          .then((value) => log("Diary page favourite flag updated"));
+    } catch (error) {
+      log("Error in updating the diary page favourite flag");
+    }
   }
 
   /// Subscribe to the diary pages stream of the [loggedUser] from the Firebase DB and
@@ -89,24 +98,24 @@ class DiaryViewModel with ChangeNotifier {
   /// Finally it calls the [notifyListeners] on the [_diaryPages] value notifier to notify the changes
   /// to all the listeners.
   void loadDiaryPages() async {
-    _diaryPages = ValueNotifier<List<DiaryPage>>(List<DiaryPage>.from([]));
-    _diaryPagesSubscriber = _firestoreService.getDiaryPagesStreamFromDB(_userService.loggedUser!.id).listen(
-      (snapshot) {
+    try {
+      _diaryPagesSubscriber = _firestoreService.getDiaryPagesStreamFromDB(_userService.loggedUser!.id).listen((snapshot) {
         for (var docChange in snapshot.docChanges) {
           var _diaryPage = DiaryPage.fromDocument(docChange.doc);
           // If oldIndex == -1, the document is added, so its new and it has to be added to the list
           if (docChange.oldIndex == -1) {
-            _diaryPages!.value.add(_diaryPage);
-            _diaryPages!.notifyListeners();
+            _diaryPages.value.add(_diaryPage);
+            _diaryPages.notifyListeners();
           } else {
             // Otherwise, update the diary page at the oldIndex position
-            _diaryPages!.value[docChange.oldIndex] = _diaryPage;
-            _diaryPages!.notifyListeners();
+            _diaryPages.value[docChange.oldIndex] = _diaryPage;
+            _diaryPages.notifyListeners();
           }
         }
-      },
-      onError: (error) => log("Failed to get the stream of diary pages: $error"),
-    );
+      });
+    } catch (error) {
+      log("Failed to get the stream of diary pages: $error");
+    }
   }
 
   /// Modify the [_currentDiaryPage] or edit a new [DiaryPage].
@@ -142,7 +151,7 @@ class DiaryViewModel with ChangeNotifier {
   /// Cancel all the value listeners and clear their contents.
   void closeListeners() {
     _diaryPagesSubscriber?.cancel();
-    _diaryPages?.value.clear();
+    _diaryPages.value.clear();
     _currentDiaryPage = ValueNotifier(null);
     log("Diary Page listeners closed");
   }
@@ -154,11 +163,14 @@ class DiaryViewModel with ChangeNotifier {
   ///
   /// **The function [loadDiaryPages] must be called before getting
   /// the [diaryPages].**
-  ValueNotifier<List<DiaryPage>>? get diaryPages => _diaryPages;
+  ValueNotifier<List<DiaryPage>> get diaryPages => _diaryPages;
 
   /// Get the [_isEditing] flag.
   bool get isEditing => _isEditing;
 
   /// Stream of the succesfully addition of the diary page
   Stream<bool> get isPageAdded => _isPageAddedCtrl.stream;
+
+  /// Get the [_diaryPagesSubscriber].
+  StreamSubscription? get diaryPagesSubscriber => _diaryPagesSubscriber;
 }

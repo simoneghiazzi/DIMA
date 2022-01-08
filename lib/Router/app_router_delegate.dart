@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
-import 'package:sApport/Views/Diary/diary_screen.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
@@ -11,7 +10,6 @@ import 'package:sApport/Views/Report/create_report_screen.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/Views/Login/forgot_password_screen.dart';
 import 'package:sApport/Views/Profile/expert_profile_screen.dart';
-import 'package:sApport/Views/Settings/user_settings_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
 import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';

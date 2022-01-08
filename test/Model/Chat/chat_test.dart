@@ -62,10 +62,10 @@ void main() async {
   var pairChatId = Utils.pairChatId(loggedUser.id, peerUser.id);
   var collectionReference = fakeFirebase.collection(Message.COLLECTION).doc(pairChatId).collection(pairChatId);
 
-  Message message1 = Message(idFrom: peerUser.id, idTo: loggedUser.id, content: "Test 1", timestamp: DateTime(2021, 10, 19, 21, 10, 50));
-  Message message2 = Message(idFrom: peerUser.id, idTo: loggedUser.id, content: "Test 2", timestamp: DateTime(2021, 10, 19, 21, 11, 25));
-  Message message3 = Message(idFrom: loggedUser.id, idTo: peerUser.id, content: "Test 3", timestamp: DateTime(2021, 10, 19, 21, 13, 40));
-  Message message4 = Message(idFrom: peerUser.id, idTo: loggedUser.id, content: "Test 4", timestamp: DateTime(2021, 10, 19, 21, 15, 35));
+  var message1 = Message(idFrom: peerUser.id, idTo: loggedUser.id, content: "Test 1", timestamp: DateTime(2021, 10, 19, 21, 10, 50));
+  var message2 = Message(idFrom: peerUser.id, idTo: loggedUser.id, content: "Test 2", timestamp: DateTime(2021, 10, 19, 21, 11, 25));
+  var message3 = Message(idFrom: loggedUser.id, idTo: peerUser.id, content: "Test 3", timestamp: DateTime(2021, 10, 19, 21, 13, 40));
+  var message4 = Message(idFrom: peerUser.id, idTo: loggedUser.id, content: "Test 4", timestamp: DateTime(2021, 10, 19, 21, 15, 35));
 
   List<Message> messages = [message1, message2, message3, message4];
 
@@ -75,27 +75,44 @@ void main() async {
   collectionReference.doc(message4.timestamp.millisecondsSinceEpoch.toString()).set(message4.data);
 
   group("Chat initialization", () {
-    test("Chat messages initialized as value notifier of list of message", () async {
+    test("Check that chat messages list is correctly initialized to the value notifier with an empty list", () async {
       expect(chat.messages, isA<ValueNotifier<List<Message>>>());
+      expect(chat.messages.value, isEmpty);
     });
   });
 
-  group("Chat listeners", () {
-    chat.loadMessages();
+  group("Chat interaction with the services", () {
     int counter = 0;
     chat.messages.addListener(() {
       counter++;
     });
 
-    test("Check the subscription of the messagesSubscriber to the message stream of the firestore service", () {
+    setUp(() {
+      counter = 0;
+      chat.messages.value.clear();
+    });
+
+    test("Check the subscription of the messagesSubscriber to the message stream of the firestore service", () async {
+      /// Load the messages
+      chat.loadMessages();
+      await Future.delayed(Duration.zero);
+
       expect(chat.messagesSubscriber, isA<StreamSubscription<QuerySnapshot>>());
     });
 
-    test("Check that the value notifier notify the listeners every time a new message is added into the list of messages", () {
+    test("Check that the value notifier notify the listeners every time a new message is added into the list of messages", () async {
+      /// Load the messages
+      chat.loadMessages();
+      await Future.delayed(Duration.zero);
+
       expect(counter, messages.length);
     });
 
-    test("Check that the initially inserted message into the DB are correctly parsed and added to the list of messages", () async {
+    test("Check that the initially inserted message are correctly parsed and added to the list of messages", () async {
+      /// Load the messages
+      chat.loadMessages();
+      await Future.delayed(Duration.zero);
+
       for (int i = 0; i < messages.length; i++) {
         expect(chat.messages.value[i].idFrom, messages[i].idFrom);
         expect(chat.messages.value[i].idTo, messages[i].idTo);
@@ -105,6 +122,10 @@ void main() async {
     });
 
     test("Add a new message into the DB should trigger the listener in order to add this new message into the messages list", () async {
+      /// Load the messages
+      chat.loadMessages();
+      await Future.delayed(Duration.zero);
+
       /// The fake firestore doc changes doesn't work properly, so we need to manually clear the previous list
       chat.messages.value.clear();
 
@@ -116,11 +137,6 @@ void main() async {
       expect(chat.messages.value[4].idTo, message5.idTo);
       expect(chat.messages.value[4].content, message5.content);
       expect(chat.messages.value[4].timestamp, message5.timestamp);
-    });
-
-    test("Close listeners should clear the old values of the value notifier", () {
-      chat.closeListeners();
-      expect(chat.messages.value.isEmpty, true);
     });
 
     test("Check that if an error occurs when loading the messages it catches the error", () {
@@ -136,9 +152,17 @@ void main() async {
         peerUser: peerUser,
       );
 
+      /// Mock Firebase error
       when(mockFirestoreService.getMessagesStreamFromDB(pairChatId)).thenThrow(Error);
 
       chat.loadMessages();
+    });
+
+    test("Close listeners should clear the old values of the value notifier", () {
+      chat.messages.value = messages;
+      chat.closeListeners();
+
+      expect(chat.messages.value.isEmpty, true);
     });
   });
 }

@@ -68,7 +68,7 @@ class _DiaryBodyState extends State<DiaryBody> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: diaryViewModel.diaryPages!,
+        valueListenable: diaryViewModel.diaryPages,
         builder: (context, List<DiaryPage> diaryPages, child) {
           return Stack(
             children: <Widget>[
