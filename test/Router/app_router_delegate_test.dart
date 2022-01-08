@@ -1,5 +1,8 @@
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
+import 'package:sApport/Views/Chat/ChatList/components/expert_chat_list_body.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Login/forgot_password_screen.dart';
+import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:test/test.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
@@ -165,12 +168,13 @@ void main() async {
 
       test("Replace should notify the listeners when the head of the stack is changed", () {
         routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
-        routerDelegate.pushPage(name: ChatListScreen.route, arguments: AnonymousChatListBody());
+        routerDelegate.pushPage(name: ChatListScreen.route, arguments: ExpertChatListBody());
+        routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: Expert());
 
         routerDelegate.replace(name: MapScreen.route);
 
-        /// 3 = 2 push + 1 replace
-        expect(callbackCounter, 3);
+        /// 4 = 3 push + 1 replace
+        expect(callbackCounter, 4);
       });
     });
 
