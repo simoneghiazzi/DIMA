@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     // Add the WelcomePage to the routerDelegate and the homePage only if the user is already logged
-    routerDelegate.addAll([
+    routerDelegate.replaceAll([
       RouteSettings(name: WelcomeScreen.route),
       if (widget.homePage != null) ...[RouteSettings(name: widget.homePage)],
     ]);

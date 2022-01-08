@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Utils/constants.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
 import 'package:sApport/ViewModel/auth_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -13,10 +13,10 @@ import 'package:sApport/Views/components/social_icon.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
-import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/Views/Welcome/components/background.dart';
 import 'package:sApport/Views/Welcome/components/or_divider.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
 
@@ -186,7 +186,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
         }
       } else {
         // Called on sign out
-        routerDelegate.replaceAll(name: WelcomeScreen.route);
+        routerDelegate.replaceAll([RouteSettings(name: WelcomeScreen.route)]);
         chatViewModel.closeListeners();
         diaryViewModel.closeListeners();
         reportViewModel.closeListeners();

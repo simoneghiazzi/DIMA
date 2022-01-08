@@ -68,10 +68,6 @@ class MockAppRouterDelegate extends _i1.Mock implements _i3.AppRouterDelegate {
       Invocation.method(#replace, [], {#name: name, #arguments: arguments}),
       returnValueForMissingStub: null);
   @override
-  void replaceAll({String? name, dynamic arguments}) => super.noSuchMethod(
-      Invocation.method(#replaceAll, [], {#name: name, #arguments: arguments}),
-      returnValueForMissingStub: null);
-  @override
   void replaceAllButNumber(int? start,
           {List<_i2.RouteSettings>? routeSettingsList = const []}) =>
       super.noSuchMethod(
@@ -79,7 +75,7 @@ class MockAppRouterDelegate extends _i1.Mock implements _i3.AppRouterDelegate {
               {#routeSettingsList: routeSettingsList}),
           returnValueForMissingStub: null);
   @override
-  void addAll(List<_i2.RouteSettings>? list) =>
+  void replaceAll(List<_i2.RouteSettings>? list) =>
       super.noSuchMethod(Invocation.method(#addAll, [list]),
           returnValueForMissingStub: null);
   @override

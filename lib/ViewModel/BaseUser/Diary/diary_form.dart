@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:rxdart/rxdart.dart';
 
 abstract class DiaryFormInterface {
@@ -36,10 +37,11 @@ class DiaryForm implements DiaryFormInterface {
   @override
   Stream<bool> get isButtonEnabled => Rx.combineLatest2(_titleController, _contentController, (dynamic a, dynamic b) => a && b);
 
-  /// Reset all the controllers and the variables for the password check
+  /// Reset all the sink controllers
   void resetControllers() {
-    title.add(null);
-    content.add(null);
+    title.add("");
+    content.add("");
+    log("Sinks resetted");
   }
 
   @override
