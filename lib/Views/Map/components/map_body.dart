@@ -55,7 +55,7 @@ class _MapBodyState extends State<MapBody> {
   Set<Marker> _markers = Set<Marker>();
 
   // Markers pin
-  late BitmapDescriptor pinLocationIcon;
+  BitmapDescriptor? pinLocationIcon;
 
   // Info Window
   CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
@@ -222,7 +222,7 @@ class _MapBodyState extends State<MapBody> {
           Marker(
             markerId: MarkerId(expert.data["surname"].toString() + expert.data["lat"].toString() + expert.data["lng"].toString()),
             position: LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
-            icon: pinLocationIcon,
+            icon: pinLocationIcon ?? BitmapDescriptor.defaultMarker,
             onTap: () {
               _customInfoWindowController.addInfoWindow!(
                 MapInfoWindow(expert: expert),
