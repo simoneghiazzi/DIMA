@@ -1,4 +1,5 @@
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Views/Login/forgot_password_screen.dart';
 import 'package:test/test.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
@@ -250,6 +251,7 @@ void main() async {
       test("Replace all but number should return without changing the stack if the start index is not valid", () {
         routerDelegate.pushPage(name: WelcomeScreen.route);
         routerDelegate.pushPage(name: LoginScreen.route);
+        routerDelegate.pushPage(name: ForgotPasswordScreen.route);
 
         routerDelegate.replaceAllButNumber(2, routeSettingsList: []);
 
