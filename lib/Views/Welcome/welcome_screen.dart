@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -70,7 +71,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
   /// - If the orientation change from landscape to portrait and the current value of one of
   /// the view models is not null, it pushes the relative page.
   void handleOrientationChanges() {
-    print("handleOrientationChanges");
+    log("handleOrientationChanges");
     String lastRoute = routerDelegate.getLastRoute();
     if (MediaQuery.of(context).orientation == Orientation.portrait) {
       if (lastRoute == ChatPageScreen.route ||

@@ -67,6 +67,7 @@ dependencies:
   flutter_form_bloc: ^0.29.3
   intl_phone_number_input: ^0.7.0+2
   mockito: ^5.0.17
+  firebase_storage_mocks: ^0.5.0
 
 dev_dependencies:
   network_image_mock: ^2.0.1

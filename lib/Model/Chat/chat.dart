@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sApport/Model/utils.dart';
@@ -66,7 +67,7 @@ abstract class Chat extends ChangeNotifier {
         },
       );
     } catch (error) {
-      print("Failed to get the stream of messages: $error");
+      log("Failed to get the stream of messages: $error");
     }
   }
 

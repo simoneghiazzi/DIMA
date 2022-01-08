@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'dart:math';
 import 'dart:async';
+import 'dart:developer';
 import 'dart:collection';
+import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sApport/Model/utils.dart';
@@ -19,11 +20,13 @@ import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart';
 class FirestoreService {
   // Firestore instance
   final FirebaseFirestore _firestore;
+  // Firebase storage instance
+  final FirebaseStorage? firebaseStorage;
   // Max number of returned instances from the DB by the queries
   int _limit = 30;
 
   /// Service used by the view models to interact with the Firestore DB
-  FirestoreService(this._firestore);
+  FirestoreService(this._firestore, {this.firebaseStorage});
 
   /***************************************** USERS *****************************************/
 
@@ -41,9 +44,9 @@ class FirestoreService {
       await uploadProfilePhoto(user as Expert);
     }
     return userReference.set(user.data).then((_) {
-      print("User added");
+      log("User added");
     }).catchError((error) {
-      print("Failed to add user: $error");
+      log("Failed to add user: $error");
     });
   }
 
@@ -57,7 +60,7 @@ class FirestoreService {
     if (user is BaseUser) {
       _incrementBaseUsersCounter(-1);
     }
-    return userReference.delete().then((value) => print("User deleted")).catchError((error) => print("Failed to delete user: $error"));
+    return userReference.delete().then((value) => log("User deleted")).catchError((error) => log("Failed to delete user: $error"));
   }
 
   /// It takes a [user] and updates the specified [field] with the [newValue] into the DB
@@ -66,19 +69,19 @@ class FirestoreService {
         .collection(user.collection)
         .doc(user.id)
         .update({field: newValue})
-        .then((value) => print("User updated"))
-        .catchError((error) => print("Failed to update user: $error"));
+        .then((value) => log("User updated"))
+        .catchError((error) => log("Failed to update user: $error"));
   }
 
-  /// Get the list of all the docs in the [collection] from the DB
-  Future<QuerySnapshot> getBaseCollectionFromDB(String collection) {
-    return _firestore.collection(collection).get();
+  /// Get the list of all the docs in the [Expert] collection from the DB
+  Future<QuerySnapshot> getExpertCollectionFromDB() {
+    return _firestore.collection(Expert.COLLECTION).get();
   }
 
   /// It takes the [id] and the [collection] and returns a doc instance with
   /// all the information of the retrieved user
   Future<QuerySnapshot> getUserByIdFromDB(String collection, String id) {
-    return _firestore.collection(collection).where(FieldPath.documentId, isEqualTo: id).get();
+    return _firestore.collection(collection).where(FieldPath.documentId, isEqualTo: id).limit(1).get();
   }
 
   /// Get random user from the DB. It takes the [user] and the auto-generated [randomId] and it returns a Future BaseUser instance
@@ -110,7 +113,7 @@ class FirestoreService {
       randomUsers.addAll(snapshotGreater.docs);
 
       while (randomUsers.length != 0) {
-        var doc = randomUsers.removeAt(Random().nextInt(randomUsers.length));
+        var doc = randomUsers.removeAt(math.Random().nextInt(randomUsers.length));
         if (doc.id == "utils") {
           continue;
         }
@@ -132,7 +135,7 @@ class FirestoreService {
           return user;
         }
       } catch (e) {
-        print("User not find in collection ${user.collection}");
+        log("User not found in collection ${user.collection}");
       }
     }
     return null;
@@ -140,10 +143,10 @@ class FirestoreService {
 
   /// Upload the [profilePhoto] of the [expert] into the FirebaseStorage and add the url into the user doc in the DB
   Future<void> uploadProfilePhoto(Expert expert) async {
-    var firebaseStorageRef = FirebaseStorage.instance.ref().child(expert.id + "/profilePhoto");
+    var firebaseStorageRef = (firebaseStorage ?? FirebaseStorage.instance).ref().child(expert.id + "/profilePhoto");
     UploadTask uploadTask = firebaseStorageRef.putFile(File(expert.profilePhoto));
     await uploadTask.whenComplete(() async {
-      print("Profile Photo uploaded");
+      log("Profile Photo uploaded");
       expert.profilePhoto = await firebaseStorageRef.getDownloadURL();
     });
   }
@@ -158,8 +161,8 @@ class FirestoreService {
           utils.data() != null ? counter = utils.get("userCounter") : counter = 0;
           transaction.set(utilsReference, {"userCounter": counter! + increment});
         })
-        .then((value) => print("Base user counter incremented"))
-        .catchError((error) => print("Failed to increment the base user counter: $error"));
+        .then((value) => log("Base user counter incremented"))
+        .catchError((error) => log("Failed to increment the base user counter: $error"));
   }
 
   /// Get the counter of the intances of base users from the DB
@@ -172,7 +175,7 @@ class FirestoreService {
   /// It takes the [chat] between the 2 users and the [message] and adds it into the messages collection of the DB.
   ///
   /// Then it calls [_updateChatInfo].
-  void addMessageIntoDB(User senderUser, Chat chat, Message message) {
+  Future<void> addMessageIntoDB(User senderUser, Chat chat, Message message) async {
     String pairChatId = Utils.pairChatId(senderUser.id, chat.peerUser!.id);
     _firestore
         .collection(Message.COLLECTION)
@@ -190,14 +193,14 @@ class FirestoreService {
   }
 
   /// It takes the [pairChatId] and removes the messages between the 2 users from the DB.
-  void removeMessagesFromDB(String pairChatId) {
+  Future<void> removeMessagesFromDB(String pairChatId) async {
     var messages = _firestore.collection(Message.COLLECTION).doc(pairChatId).collection(pairChatId).get();
     WriteBatch batch = _firestore.batch();
     messages.then((documentSnapshot) {
       documentSnapshot.docs.forEach((doc) {
         batch.delete(doc.reference);
       });
-      batch.commit().then((value) => print("Messages removed")).catchError((error) => print("Failed to remove the messages: $error"));
+      batch.commit().then((value) => log("Messages removed")).catchError((error) => log("Failed to remove the messages: $error"));
     });
   }
 
@@ -210,8 +213,8 @@ class FirestoreService {
         .collection(chat.collection)
         .doc(chat.peerUser!.id)
         .update({"notReadMessages": 0})
-        .then((value) => print("notReadMessages field setted to zero"))
-        .catchError((error) => print("Failed to set the notReadMessages field: $error"));
+        .then((value) => log("notReadMessages field setted to zero"))
+        .catchError((error) => log("Failed to set the notReadMessages field: $error"));
   }
 
   /***************************************** CHATS *****************************************/
@@ -236,7 +239,7 @@ class FirestoreService {
     batch.delete(requestsReference);
     batch.set(peerAnonymousChatsReference, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
 
-    batch.commit().then((value) => print("Chats upgraded")).catchError((error) => print("Failed to upgrade the chats: $error"));
+    batch.commit().then((value) => log("Chats upgraded")).catchError((error) => log("Failed to upgrade the chats: $error"));
   }
 
   /// Remove the [chat] between the [senderUser] and the [peerUser] specified in the [chat].
@@ -248,7 +251,7 @@ class FirestoreService {
     WriteBatch batch = _firestore.batch();
     batch.delete(senderUserReference);
     batch.delete(peerUserReference);
-    batch.commit().then((value) => print("Chat removed")).catchError((error) => print("Failed to remove the chat: $error"));
+    batch.commit().then((value) => log("Chat removed")).catchError((error) => log("Failed to remove the chat: $error"));
     _incrementConversationCounter(senderUser, chat, -1);
   }
 
@@ -280,7 +283,7 @@ class FirestoreService {
     // The notReadMessages field is setted to 0 for the sender user and to counter for the peer user
     batch.set(senderUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
     batch.set(peerUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": counter, "lastMessage": chat.lastMessage});
-    batch.commit().then((value) => print("Chat info updated")).catchError((error) => print("Failed to update the chat info: $error"));
+    batch.commit().then((value) => log("Chat info updated")).catchError((error) => log("Failed to update the chat info: $error"));
   }
 
   /// It takes the [user] and returns the hash set of ids of all the chat
@@ -313,8 +316,8 @@ class FirestoreService {
           transaction.set(utilsSenderReference, {"anonymousChatCounter": newCounterSender < 0 ? 0 : newCounterSender});
           transaction.set(utilsPeerReference, {"anonymousChatCounter": newCounterPeer < 0 ? 0 : newCounterPeer});
         })
-        .then((value) => print("Conversation counters incremented"))
-        .catchError((error) => print("Failed to increment the conversation counters: $error"));
+        .then((value) => log("Conversation counters incremented"))
+        .catchError((error) => log("Failed to increment the conversation counters: $error"));
   }
 
   /// It takes the [user] and returns the anonymous chat's counter from the DB
@@ -333,8 +336,8 @@ class FirestoreService {
         .collection("reportList")
         .doc(report.id)
         .set(report.data)
-        .then((value) => print("Report added"))
-        .catchError((error) => print("Failed to add the report: $error"));
+        .then((value) => log("Report added"))
+        .catchError((error) => log("Failed to add the report: $error"));
   }
 
   /// It takes the [id] of an user and return the stream of all the
@@ -354,8 +357,8 @@ class FirestoreService {
         .collection("diaryPages")
         .doc(diaryPage.id)
         .set(diaryPage.data)
-        .then((value) => print("Diary page added"))
-        .catchError((error) => print("Failed to add the diary note: $error"));
+        .then((value) => log("Diary page added"))
+        .catchError((error) => log("Failed to add the diary note: $error"));
   }
 
   /// It takes the [id] of an user and the new [diaryPage]
@@ -371,8 +374,8 @@ class FirestoreService {
           "content": diaryPage.data["content"],
           "dateTime": diaryPage.data["dateTime"],
         })
-        .then((value) => print("Diary page updated"))
-        .catchError((error) => print("Failed to update the diary note: $error"));
+        .then((value) => log("Diary page updated"))
+        .catchError((error) => log("Failed to update the diary note: $error"));
   }
 
   /// It takes the [id] of an user and the [diaryPage] and set it as favourite or not
@@ -385,8 +388,8 @@ class FirestoreService {
         .update({
           "favourite": diaryPage.data["favourite"],
         })
-        .then((value) => print("Favourite note updated"))
-        .catchError((error) => print("Failed to update the favourite note: $error"));
+        .then((value) => log("Favourite note updated"))
+        .catchError((error) => log("Failed to update the favourite note: $error"));
   }
 
   /// It takes the [id] of an user and return the stream of

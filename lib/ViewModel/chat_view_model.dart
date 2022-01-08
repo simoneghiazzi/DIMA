@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:collection';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
@@ -113,7 +114,7 @@ class ChatViewModel extends ChangeNotifier {
           }
         }
       },
-      onError: (error) => print("Failed to get the stream of anonymous chats: $error"),
+      onError: (error) => log("Failed to get the stream of anonymous chats: $error"),
     );
   }
 
@@ -141,7 +142,7 @@ class ChatViewModel extends ChangeNotifier {
           }
         }
       },
-      onError: (error) => print("Failed to get the stream of pending chats: $error"),
+      onError: (error) => log("Failed to get the stream of pending chats: $error"),
     );
   }
 
@@ -177,7 +178,7 @@ class ChatViewModel extends ChangeNotifier {
           }
         }
       },
-      onError: (error) => print("Failed to get the stream of expert chats: $error"),
+      onError: (error) => log("Failed to get the stream of expert chats: $error"),
     );
   }
 
@@ -213,7 +214,7 @@ class ChatViewModel extends ChangeNotifier {
           }
         }
       },
-      onError: (error) => print("Failed to get the stream of active chats: $error"),
+      onError: (error) => log("Failed to get the stream of active chats: $error"),
     );
   }
 
@@ -268,7 +269,7 @@ class ChatViewModel extends ChangeNotifier {
   /// Set the [chat] as the [_currentChat].
   void setCurrentChat(Chat chat) {
     _currentChat.value = chat;
-    print("Current chat setted");
+    log("Current chat setted");
   }
 
   /// Reset the [_currentChat] and clear the [contentTextCtrl].
@@ -277,7 +278,7 @@ class ChatViewModel extends ChangeNotifier {
   void resetCurrentChat() {
     _currentChat.value = null;
     contentTextCtrl.clear();
-    print("Current chat resetted");
+    log("Current chat resetted");
   }
 
   /// Cancel all the value listeners and clear their contents.
@@ -302,32 +303,32 @@ class ChatViewModel extends ChangeNotifier {
 
     // Reset current chat
     _currentChat = ValueNotifier(null);
-    print("Chat listeners closed");
+    log("Chat listeners closed");
   }
 
   /// Get the [_currentChat] value notifier.
   ValueNotifier<Chat?> get currentChat => _currentChat;
 
   /// Get the [_anonymousChats] value notifier.
-  /// 
+  ///
   /// **The function [loadAnonymousChats] must be called before getting
   /// the [anonymousChats].**
   ValueNotifier<LinkedHashMap<String, Chat>>? get anonymousChats => _anonymousChats;
 
   /// Get the [_pendingChats] value notifier.
-  /// 
+  ///
   /// **The function [loadPendingChats] must be called before getting
   /// the [pendingChats].**
   ValueNotifier<LinkedHashMap<String, Chat>>? get pendingChats => _pendingChats;
 
   /// Get the [_expertsChats] value notifier.
-  /// 
+  ///
   /// **The function [loadExpertsChats] must be called before getting
   /// the [expertsChats].**
   ValueNotifier<LinkedHashMap<String, Chat>>? get expertsChats => _expertsChats;
 
   /// Get the [_activeChats] value notifier.
-  /// 
+  ///
   /// **The function [loadActiveChats] must be called before getting
   /// the [activeChats].**
   ValueNotifier<LinkedHashMap<String, Chat>>? get activeChats => _activeChats;

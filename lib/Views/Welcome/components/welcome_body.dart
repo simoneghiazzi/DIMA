@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Views/Utils/custom_sizer.dart';
@@ -176,12 +177,12 @@ class _WelcomeBodyState extends State<WelcomeBody> {
     return authViewModel.isUserLogged.listen((isUserLogged) async {
       if (isUserLogged) {
         // Called on sign in
-        await userViewModel.loadLoggedUser().then((_) => print("User of category ${userViewModel.loggedUser!.collection} logged"));
+        await userViewModel.loadLoggedUser().then((_) => log("User of category ${userViewModel.loggedUser!.collection} logged"));
         LoadingDialog.hide(context);
         if (userViewModel.loggedUser != null) {
           routerDelegate.replaceAllButNumber(1, routeSettingsList: [RouteSettings(name: userViewModel.loggedUser!.homePageRoute)]);
         } else {
-          print("Error in logging the user in");
+          log("Error in logging the user in");
         }
       } else {
         // Called on sign out

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:developer';
 import 'package:sizer/sizer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/services.dart';
@@ -27,15 +28,15 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Firebase initialization and functional checks
-  await Firebase.initializeApp().then((_) => print("Firebase initialization completed")).catchError((e) {
-    print('Initialization error $e');
+  await Firebase.initializeApp().then((_) => log("Firebase initialization completed")).catchError((e) {
+    log('Initialization error $e');
     exit(-1);
   });
   await FirebaseAppCheck.instance
       .activate(webRecaptchaSiteKey: "recaptcha-v3-site-key")
-      .then((_) => print("FirebaseAppCheck initialization completed"))
+      .then((_) => log("FirebaseAppCheck initialization completed"))
       .catchError((e) {
-    print("FirebaseAppCheck error $e");
+    log("FirebaseAppCheck error $e");
     exit(-1);
   });
 
@@ -49,7 +50,7 @@ Future<void> main() async {
   //
   // If the user is not already logged or the email has not been verified, load the welcome page.
   if (_firebaseAuthService.currentUserId != null && _firebaseAuthService.isUserEmailVerified()) {
-    await _userService.loadLoggedUserFromDB().then((_) => print("User of category ${_userService.loggedUser!.collection} logged"));
+    await _userService.loadLoggedUserFromDB().then((_) => log("User of category ${_userService.loggedUser!.collection} logged"));
     runApp(MyApp(homePage: _userService.loggedUser!.homePageRoute));
   } else {
     runApp(MyApp());

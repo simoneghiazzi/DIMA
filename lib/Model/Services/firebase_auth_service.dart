@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:collection';
 import 'package:http/http.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -156,9 +157,9 @@ class FirebaseAuthService {
   /// Sends a password reset email to the given [email] address.
   void resetPassword(String email) {
     try {
-      _firebaseAuth.sendPasswordResetEmail(email: email).then((value) => print("Reset password email sent"));
+      _firebaseAuth.sendPasswordResetEmail(email: email).then((value) => log("Reset password email sent"));
     } on FirebaseAuthException catch (error) {
-      print("Failed send reset password email: $error");
+      log("Failed send reset password email: $error");
     }
   }
 
@@ -179,7 +180,7 @@ class FirebaseAuthService {
     try {
       return _firebaseAuth.fetchSignInMethodsForEmail(email);
     } on FirebaseAuthException catch (error) {
-      print("Failed to fetching the signed in methods of the user: $error");
+      log("Failed to fetching the signed in methods of the user: $error");
     }
   }
 
@@ -188,7 +189,7 @@ class FirebaseAuthService {
     try {
       return _firebaseAuth.currentUser!.delete();
     } on FirebaseAuthException catch (error) {
-      print("Failed to delete the user: $error");
+      log("Failed to delete the user: $error");
     }
   }
 
@@ -204,7 +205,7 @@ class FirebaseAuthService {
 
   /// Send the verification email to the user in the sign up process.
   Future<void> _sendVerificationEmail() {
-    return _firebaseAuth.currentUser!.sendEmailVerification().then((value) => print("Verification email sent"));
+    return _firebaseAuth.currentUser!.sendEmailVerification().then((value) => log("Verification email sent"));
   }
 
   /// Get the uid of the current logged user.

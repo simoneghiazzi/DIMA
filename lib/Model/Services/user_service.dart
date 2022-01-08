@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:get_it/get_it.dart';
 import 'package:sApport/Model/DBItems/user.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
@@ -22,7 +23,7 @@ class UserService {
         return _firestoreService
             .getUserByIdFromDB(loggedUser!.collection, _firebaseAuthService.currentUserId!)
             .then((value) => loggedUser!.setFromDocument(value.docs[0]))
-            .catchError((error) => print("Error in getting the user from DB: $error"));
+            .catchError((error) => log("Error in getting the user from DB: $error"));
       }
     }
   }
