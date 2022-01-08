@@ -96,9 +96,6 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
       case ForgotPasswordScreen.route:
         child = ForgotPasswordScreen();
         break;
-      case UserSettingsScreen.route:
-        child = UserSettingsScreen();
-        break;
       case ExpertHomePageScreen.route:
         child = ExpertHomePageScreen(pageIndex: routeSettings.arguments as int?);
         break;
@@ -110,9 +107,6 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         break;
       case ChatListScreen.route:
         child = ChatListScreen(chatListBody: routeSettings.arguments as Widget);
-        break;
-      case DiaryScreen.route:
-        child = DiaryScreen();
         break;
       case DiaryPageScreen.route:
         child = DiaryPageScreen();

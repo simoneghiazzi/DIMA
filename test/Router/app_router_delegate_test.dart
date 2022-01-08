@@ -1,3 +1,4 @@
+import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:test/test.dart';
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
@@ -231,15 +232,14 @@ void main() async {
     group("Replace all but number:", () {
       test("Replace all but number should remove all the pages from start to the head of the stack and add the list of pages provided", () {
         routerDelegate.pushPage(name: WelcomeScreen.route);
-        routerDelegate.pushPage(name: BaseUsersSignUpScreen.route);
-        routerDelegate.pushPage(name: CredentialScreen.route);
+        routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
+        routerDelegate.pushPage(name: CreateReportScreen.route);
+        routerDelegate.pushPage(name: ReportsListScreen.route);
+        routerDelegate.pushPage(name: ReportsListScreen.route);
 
-        routerDelegate.replaceAllButNumber(1, routeSettingsList: [
-          RouteSettings(name: ExpertsSignUpScreen.route),
-          RouteSettings(name: CredentialScreen.route),
-        ]);
+        routerDelegate.replaceAllButNumber(2, routeSettingsList: [RouteSettings(name: ChatPageScreen.route)]);
 
-        var expectedRoutes = [WelcomeScreen.route, ExpertsSignUpScreen.route, CredentialScreen.route];
+        var expectedRoutes = [WelcomeScreen.route, BaseUserHomePageScreen.route, ChatPageScreen.route];
 
         expect(routerDelegate.stack.length, 3);
         for (int i = 0; i < expectedRoutes.length; i++) {
