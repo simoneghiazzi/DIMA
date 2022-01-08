@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:get_it/get_it.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Firebase;
 import 'package:sApport/Model/DBItems/user.dart';
@@ -37,7 +38,7 @@ class AuthViewModel {
         _authMessageCtrl.add("Wrong email or password.");
       } else {
         _authMessageCtrl.add("Error in signing in the user. Please try again later.");
-        print("Error in signing in with email and password.");
+        log("Error in signing in with email and password.");
       }
     }
   }
@@ -61,7 +62,7 @@ class AuthViewModel {
         _authMessageCtrl.add("The password is too weak.\nIt has to be at least 6 chars.");
       } else {
         _authMessageCtrl.add("Error in signing up the user. Please try again later.");
-        print("Error in signing up the user: $error");
+        log("Error in signing up the user: $error");
       }
     }
   }
@@ -100,7 +101,7 @@ class AuthViewModel {
       }
     } catch (error) {
       _authMessageCtrl.add("Error in signing in with the Google account. Please try again later.");
-      print("Error in signing in with the Google account");
+      log("Error in signing in with the Google account");
     }
   }
 
@@ -138,7 +139,7 @@ class AuthViewModel {
       }
     } catch (error) {
       _authMessageCtrl.add("Error in signing in with the Facebook account. Please try again later.");
-      print("Error in signing in with the Facebook account");
+      log("Error in signing in with the Facebook account");
     }
   }
 
@@ -177,7 +178,7 @@ class AuthViewModel {
     _notificationService.getDeviceToken().then((token) {
       _firestoreService.updateUserFieldIntoDB(loggedUser, "pushToken", token);
     }).catchError((e) {
-      print("Error in getting the device token: $e");
+      log("Error in getting the device token: $e");
     });
   }
 

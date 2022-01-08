@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
@@ -244,7 +245,7 @@ class _MapBodyState extends State<MapBody> {
       if (place != null) {
         _goToPlace(LatLng(place.lat!, place.lng!));
       } else {
-        print("Error, search again");
+        log("Error, search again");
       }
     });
   }

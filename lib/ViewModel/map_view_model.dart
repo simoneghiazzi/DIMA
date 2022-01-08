@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -28,7 +29,7 @@ class MapViewModel {
     Permission.location.status.then((status) {
       positionPermission = status;
     }).catchError((error) {
-      print("Error in getting the position permission status: $error");
+      log("Error in getting the position permission status: $error");
     });
   }
 
@@ -73,16 +74,16 @@ class MapViewModel {
   /// Returns the current position of the user device.
   Future<Position> loadCurrentPosition() {
     return mapService.getCurrentPosition().catchError((e) {
-      print("Error in getting the current position: $e");
+      log("Error in getting the current position: $e");
     });
   }
 
   /// Return the list of experts.
   Future<QuerySnapshot?> loadExperts() async {
     try {
-      return _firestoreService.getBaseCollectionFromDB(Expert.COLLECTION);
+      return _firestoreService.getExpertCollectionFromDB();
     } catch (e) {
-      print("Failed to get the list of experts: $e");
+      log("Failed to get the list of experts: $e");
       return null;
     }
   }

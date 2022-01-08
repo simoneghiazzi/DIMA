@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sApport/Model/Services/user_service.dart';
@@ -104,7 +105,7 @@ class DiaryViewModel with ChangeNotifier {
           }
         }
       },
-      onError: (error) => print("Failed to get the stream of diary pages: $error"),
+      onError: (error) => log("Failed to get the stream of diary pages: $error"),
     );
   }
 
@@ -121,7 +122,7 @@ class DiaryViewModel with ChangeNotifier {
     _currentDiaryPage.value = diaryPage;
     titleTextCtrl.text = diaryPage.title;
     contentTextCtrl.text = diaryPage.content;
-    print("Current diary page setted");
+    log("Current diary page setted");
   }
 
   /// Reset the [_currentDiaryPage], clear the [titleTextController] and
@@ -135,7 +136,7 @@ class DiaryViewModel with ChangeNotifier {
     contentTextCtrl.clear();
     diaryForm.resetControllers();
     _isEditing = false;
-    print("Current diary page resetted");
+    log("Current diary page resetted");
   }
 
   /// Cancel all the value listeners and clear their contents.
@@ -143,14 +144,14 @@ class DiaryViewModel with ChangeNotifier {
     _diaryPagesSubscriber?.cancel();
     _diaryPages?.value.clear();
     _currentDiaryPage = ValueNotifier(null);
-    print("Diary Page listeners closed");
+    log("Diary Page listeners closed");
   }
 
   /// Get the [_currentDiaryPage] instance.
   ValueNotifier<DiaryPage?> get currentDiaryPage => _currentDiaryPage;
 
   /// Get the [_diaryPages] value notifier.
-  /// 
+  ///
   /// **The function [loadDiaryPages] must be called before getting
   /// the [diaryPages].**
   ValueNotifier<List<DiaryPage>>? get diaryPages => _diaryPages;

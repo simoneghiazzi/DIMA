@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:collection';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
@@ -28,27 +29,27 @@ class ReportViewModel {
         }
       }
     }).onError((error, stackTrace) {
-      print("Failed to get the list of reports: $error");
+      log("Failed to get the list of reports: $error");
     });
   }
 
   /// Set the [report] as the [_currentReport].
   void setCurrentReport(Report report) {
     _currentReport.value = report;
-    print("Current report setted");
+    log("Current report setted");
   }
 
   /// Reset the [_currentReport].
   void resetCurrentReport() {
     _currentReport.value = null;
-    print("Current report resetted");
+    log("Current report resetted");
   }
 
   /// Cancel all the value listeners and clear their contents.
   void closeListeners() {
     _reports.clear();
     _currentReport = ValueNotifier(null);
-    print("Report listeners closed");
+    log("Report listeners closed");
   }
 
   /// Get the [_currentReport] instance.
