@@ -5,7 +5,6 @@
 import 'dart:async' as _i6;
 
 import 'package:cloud_firestore/cloud_firestore.dart' as _i2;
-import 'package:firebase_auth/firebase_auth.dart' as _i7;
 import 'package:geolocator/geolocator.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:sApport/Model/Chat/chat.dart' as _i12;
@@ -46,9 +45,6 @@ class MockFirebaseAuthService extends _i1.Mock implements _i5.FirebaseAuthServic
     _i1.throwOnMissingStub(this);
   }
 
-  @override
-  _i6.Stream<_i7.User?> get onAuthStateChanged =>
-      (super.noSuchMethod(Invocation.getter(#onAuthStateChanged), returnValue: Stream<_i7.User?>.empty()) as _i6.Stream<_i7.User?>);
   @override
   _i6.Future<void> signInWithEmailAndPassword(String? email, String? password) =>
       (super.noSuchMethod(Invocation.method(#signInWithEmailAndPassword, [email, password]),
@@ -134,10 +130,10 @@ class MockFirestoreService extends _i1.Mock implements _i8.FirestoreService {
       (super.noSuchMethod(Invocation.method(#setMessagesHasRead, [senderUser, chat]),
           returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
   @override
-  void upgradePendingToActiveChatIntoDB(_i9.User? senderUser, _i12.Chat? chat) =>
+  Future<void> upgradePendingToActiveChatIntoDB(_i9.User? senderUser, _i12.Chat? chat) =>
       super.noSuchMethod(Invocation.method(#upgradePendingToActiveChatIntoDB, [senderUser, chat]), returnValueForMissingStub: null);
   @override
-  void removeChatFromDB(_i9.User? senderUser, _i12.Chat? chat) =>
+  Future<void> removeChatFromDB(_i9.User? senderUser, _i12.Chat? chat) =>
       super.noSuchMethod(Invocation.method(#removeChatFromDB, [senderUser, chat]), returnValueForMissingStub: null);
   @override
   _i6.Stream<_i2.QuerySnapshot<Object?>> getChatsStreamFromDB(_i9.User? user, String? chatCollection) =>
@@ -158,7 +154,7 @@ class MockFirestoreService extends _i1.Mock implements _i8.FirestoreService {
       (super.noSuchMethod(Invocation.method(#updateDiaryPageIntoDB, [id, diaryPage]),
           returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
   @override
-  _i6.Future<void> setFavouriteDiaryNotesIntoDB(String? id, _i15.DiaryPage? diaryPage) =>
+  _i6.Future<void> setDiaryPageAsFavouriteIntoDB(String? id, _i15.DiaryPage? diaryPage) =>
       (super.noSuchMethod(Invocation.method(#setFavouriteDiaryNotesIntoDB, [id, diaryPage]),
           returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
   @override

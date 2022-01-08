@@ -77,7 +77,7 @@ class DiaryViewModel with ChangeNotifier {
   /// Set the [isFavourite] parameter of the [_currentDiaryPage] into the DB.
   Future<void> setFavourite(bool isFavourite) {
     _currentDiaryPage.value!.favourite = isFavourite;
-    return _firestoreService.setFavouriteDiaryNotesIntoDB(
+    return _firestoreService.setDiaryPageAsFavouriteIntoDB(
       _userService.loggedUser!.id,
       _currentDiaryPage.value!,
     );
