@@ -134,10 +134,10 @@ class MockFirestoreService extends _i1.Mock implements _i8.FirestoreService {
       (super.noSuchMethod(Invocation.method(#setMessagesHasRead, [senderUser, chat]),
           returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
   @override
-  void upgradePendingToActiveChatIntoDB(_i9.User? senderUser, _i12.Chat? chat) =>
+  Future<void> upgradePendingToActiveChatIntoDB(_i9.User? senderUser, _i12.Chat? chat) =>
       super.noSuchMethod(Invocation.method(#upgradePendingToActiveChatIntoDB, [senderUser, chat]), returnValueForMissingStub: null);
   @override
-  void removeChatFromDB(_i9.User? senderUser, _i12.Chat? chat) =>
+  Future<void> removeChatFromDB(_i9.User? senderUser, _i12.Chat? chat) =>
       super.noSuchMethod(Invocation.method(#removeChatFromDB, [senderUser, chat]), returnValueForMissingStub: null);
   @override
   _i6.Stream<_i2.QuerySnapshot<Object?>> getChatsStreamFromDB(_i9.User? user, String? chatCollection) =>
@@ -158,7 +158,7 @@ class MockFirestoreService extends _i1.Mock implements _i8.FirestoreService {
       (super.noSuchMethod(Invocation.method(#updateDiaryPageIntoDB, [id, diaryPage]),
           returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
   @override
-  _i6.Future<void> setFavouriteDiaryNotesIntoDB(String? id, _i15.DiaryPage? diaryPage) =>
+  _i6.Future<void> setDiaryPageAsFavouriteIntoDB(String? id, _i15.DiaryPage? diaryPage) =>
       (super.noSuchMethod(Invocation.method(#setFavouriteDiaryNotesIntoDB, [id, diaryPage]),
           returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
   @override

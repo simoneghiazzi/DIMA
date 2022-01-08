@@ -244,7 +244,7 @@ class ChatViewModel extends ChangeNotifier {
   /// Accept a new pending chat request.
   void acceptPendingChat() {
     _pendingChats!.value.remove(_currentChat.value!.peerUser!.id);
-    _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser!, _currentChat.value!);
+    _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser!, _currentChat.value! as PendingChat);
     addNewChat(AnonymousChat(peerUser: _currentChat.value!.peerUser as BaseUser));
     _pendingChats!.notifyListeners();
   }

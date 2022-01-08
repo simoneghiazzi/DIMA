@@ -204,12 +204,12 @@ class FirestoreService {
     });
   }
 
-  /// It sets the `notReadMessages` field of the chat of the [senderUser] with the peerUser specified
+  /// It sets the `notReadMessages` field of the chat of the [user] with the peerUser specified
   /// in the [chat] to `0`.
-  Future<void> setMessagesHasRead(User senderUser, Chat chat) {
+  Future<void> setMessagesHasRead(User user, Chat chat) {
     return _firestore
-        .collection(senderUser.collection)
-        .doc(senderUser.id)
+        .collection(user.collection)
+        .doc(user.id)
         .collection(chat.collection)
         .doc(chat.peerUser!.id)
         .update({"notReadMessages": 0})
@@ -221,29 +221,37 @@ class FirestoreService {
 
   /// Upgrade the [PendingChat] of the [senderUser] and the [Request] of the
   /// [peerUser] to an [AnonymousChat] for both the users.
-  void upgradePendingToActiveChatIntoDB(User senderUser, Chat chat) {
-    var timestamp = DateTime.now().millisecondsSinceEpoch;
+  Future<void> upgradePendingToActiveChatIntoDB(User senderUser, PendingChat pendingChat) async {
     var pendingChatsReference =
-        _firestore.collection(senderUser.collection).doc(senderUser.id).collection(PendingChat.COLLECTION).doc(chat.peerUser!.id);
+        _firestore.collection(senderUser.collection).doc(senderUser.id).collection(PendingChat.COLLECTION).doc(pendingChat.peerUser!.id);
     var senderAnonymousChatsReference =
-        _firestore.collection(senderUser.collection).doc(senderUser.id).collection(AnonymousChat.COLLECTION).doc(chat.peerUser!.id);
-    var requestsReference = _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(Request.COLLECTION).doc(senderUser.id);
+        _firestore.collection(senderUser.collection).doc(senderUser.id).collection(AnonymousChat.COLLECTION).doc(pendingChat.peerUser!.id);
+    var requestsReference =
+        _firestore.collection(pendingChat.peerUser!.collection).doc(pendingChat.peerUser!.id).collection(Request.COLLECTION).doc(senderUser.id);
     var peerAnonymousChatsReference =
-        _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(AnonymousChat.COLLECTION).doc(senderUser.id);
+        _firestore.collection(pendingChat.peerUser!.collection).doc(pendingChat.peerUser!.id).collection(AnonymousChat.COLLECTION).doc(senderUser.id);
 
     WriteBatch batch = _firestore.batch();
     // Pending chat of the sender user is moved into active chats
     batch.delete(pendingChatsReference);
-    batch.set(senderAnonymousChatsReference, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
+    batch.set(senderAnonymousChatsReference, {
+      "lastMessageTimestamp": pendingChat.lastMessageDateTime!.millisecondsSinceEpoch,
+      "notReadMessages": 0,
+      "lastMessage": pendingChat.lastMessage,
+    });
     // Request chat of the peer user is moved into active chats
     batch.delete(requestsReference);
-    batch.set(peerAnonymousChatsReference, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
+    batch.set(peerAnonymousChatsReference, {
+      "lastMessageTimestamp": pendingChat.lastMessageDateTime!.millisecondsSinceEpoch,
+      "notReadMessages": 0,
+      "lastMessage": pendingChat.lastMessage,
+    });
 
     batch.commit().then((value) => log("Chats upgraded")).catchError((error) => log("Failed to upgrade the chats: $error"));
   }
 
   /// Remove the [chat] between the [senderUser] and the [peerUser] specified in the [chat].
-  void removeChatFromDB(User senderUser, Chat chat) {
+  Future<void> removeChatFromDB(User senderUser, Chat chat) async {
     var senderUserReference = _firestore.collection(senderUser.collection).doc(senderUser.id).collection(chat.collection).doc(chat.peerUser!.id);
     var peerUserReference =
         _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(chat.peerCollection).doc(senderUser.id);
@@ -266,7 +274,7 @@ class FirestoreService {
   ///
   /// If the [chat] is a [Request], adds it to the list of chats of the 2 users
   /// in the correct collection and updates the counters.
-  void _updateChatInfo(User senderUser, Chat chat, int timestamp) async {
+  Future<void> _updateChatInfo(User senderUser, Chat chat, int timestamp) async {
     var senderUserRef = _firestore.collection(senderUser.collection).doc(senderUser.id).collection(chat.collection).doc(chat.peerUser!.id);
     var peerUserRef = _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(chat.peerCollection).doc(senderUser.id);
 
@@ -300,7 +308,7 @@ class FirestoreService {
 
   /// It takes the [chat] and the [increment] amount and increments the anonymous chat's counter
   /// of the [senderUser] and of the [peerUser] specified in the [chat] within a transaction.
-  void _incrementConversationCounter(User senderUser, Chat chat, int increment) {
+  Future<void> _incrementConversationCounter(User senderUser, Chat chat, int increment) async {
     var utilsSenderReference = _firestore.collection(senderUser.collection).doc(senderUser.id).collection("utils").doc("utils");
     var utilsPeerReference = _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection("utils").doc("utils");
 
@@ -327,12 +335,12 @@ class FirestoreService {
 
   /***************************************** REPORTS *****************************************/
 
-  /// It takes the [id] of an user and the [report] and
+  /// It takes the [userId] of an user and the [report] and
   /// adds it into the list of reports of the user into the DB
-  Future<void> addReportIntoDB(String id, Report report) async {
+  Future<void> addReportIntoDB(String userId, Report report) async {
     _firestore
         .collection(report.collection)
-        .doc(id)
+        .doc(userId)
         .collection("reportList")
         .doc(report.id)
         .set(report.data)
@@ -348,12 +356,12 @@ class FirestoreService {
 
   /**************************************** DIARY ********************************************/
 
-  /// It takes the [id] of an user and the [diaryPage]
+  /// It takes the [userId] of an user and the [diaryPage]
   /// and adds it into the list of diaryPages of the user into the DB
-  Future<void> addDiaryPageIntoDB(String id, DiaryPage diaryPage) {
+  Future<void> addDiaryPageIntoDB(String userId, DiaryPage diaryPage) {
     return _firestore
         .collection(diaryPage.collection)
-        .doc(id)
+        .doc(userId)
         .collection("diaryPages")
         .doc(diaryPage.id)
         .set(diaryPage.data)
@@ -361,12 +369,12 @@ class FirestoreService {
         .catchError((error) => log("Failed to add the diary note: $error"));
   }
 
-  /// It takes the [id] of an user and the new [diaryPage]
+  /// It takes the [userId] of an user and the new [diaryPage]
   /// and updates the title and content fields into the DB
-  Future<void> updateDiaryPageIntoDB(String id, DiaryPage diaryPage) {
+  Future<void> updateDiaryPageIntoDB(String userId, DiaryPage diaryPage) {
     return _firestore
         .collection(diaryPage.collection)
-        .doc(id)
+        .doc(userId)
         .collection("diaryPages")
         .doc(diaryPage.id)
         .update({
@@ -378,11 +386,11 @@ class FirestoreService {
         .catchError((error) => log("Failed to update the diary note: $error"));
   }
 
-  /// It takes the [id] of an user and the [diaryPage] and set it as favourite or not
-  Future<void> setFavouriteDiaryNotesIntoDB(String id, DiaryPage diaryPage) {
+  /// It takes the [userId] of an user and the [diaryPage] and set it as favourite or not
+  Future<void> setDiaryPageAsFavouriteIntoDB(String userId, DiaryPage diaryPage) {
     return _firestore
         .collection(diaryPage.collection)
-        .doc(id)
+        .doc(userId)
         .collection("diaryPages")
         .doc(diaryPage.id)
         .update({
