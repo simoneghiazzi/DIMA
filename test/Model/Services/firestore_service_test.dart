@@ -191,12 +191,13 @@ void main() async {
   /***************************************** USERS *****************************************/
 
   group("Firestore user methods:", () {
+    setUp(() async {
+      /// Fake Firebase
+      fakeFirebase = FakeFirebaseFirestore();
+      firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
+    });
+
     group("Add a new base user:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
       test("Check that the DB contains the document with the base user information", () async {
         await firestoreService.addUserIntoDB(baseUser);
 
@@ -241,12 +242,6 @@ void main() async {
     });
 
     group("Add a new expert:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that the DB contains the document with the expert information", () async {
         await firestoreService.addUserIntoDB(expert);
 
@@ -289,12 +284,6 @@ void main() async {
     });
 
     group("Remove a base user:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that the DB does not contain the document anymore after removing the user", () async {
         await firestoreService.addUserIntoDB(baseUser);
 
@@ -333,10 +322,6 @@ void main() async {
 
     group("Remove an expert:", () {
       test("Check that the DB does not contain the document anymore after removing the expert", () async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-
         await firestoreService.addUserIntoDB(expert);
 
         /// Delay for awaiting that the transaction completes
@@ -356,9 +341,6 @@ void main() async {
 
     group("Update user field:", () {
       test("Check that the DB contains the document with the updated fields", () async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
         var updatedName = "UpdatedName";
         var newField = "newField";
 
@@ -380,12 +362,6 @@ void main() async {
     });
 
     group("Get expert collection:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that getExpertCollection returns the query snapshot of the searched collection", () async {
         await firestoreService.addUserIntoDB(expert);
 
@@ -428,12 +404,6 @@ void main() async {
     });
 
     group("Get user by ID:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that getUserById returns the correct document of the base user", () async {
         await firestoreService.addUserIntoDB(baseUser);
 
@@ -458,12 +428,6 @@ void main() async {
     });
 
     group("Get random user:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that getRandomUser returns the document of a new user", () async {
         await firestoreService.addUserIntoDB(baseUser);
         await firestoreService.addUserIntoDB(baseUser2);
@@ -499,12 +463,6 @@ void main() async {
     });
 
     group("Find user type:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that findUserType returns the correct instance of the user", () async {
         await firestoreService.addUserIntoDB(baseUser);
         await firestoreService.addUserIntoDB(expert);
@@ -532,13 +490,13 @@ void main() async {
   /***************************************** MESSAGES *****************************************/
 
   group("Firestore message methods:", () {
-    group("Add message:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
+    setUp(() async {
+      /// Fake Firebase
+      fakeFirebase = FakeFirebaseFirestore();
+      firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
+    });
 
+    group("Add message:", () {
       test("Check that the DB contains the document with the message information", () async {
         await firestoreService.addUserIntoDB(baseUser);
         await firestoreService.addUserIntoDB(baseUser2);
@@ -728,12 +686,6 @@ void main() async {
     });
 
     group("Get messages stream:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that getMessagesStreamFromDB returns the correct stream of messages in descending order", () async {
         await firestoreService.addUserIntoDB(baseUser);
         await firestoreService.addUserIntoDB(baseUser2);
@@ -760,12 +712,6 @@ void main() async {
     });
 
     group("Remove messages:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that removeMessagesFromDB deletes all the messages between 2 users", () async {
         await firestoreService.addUserIntoDB(baseUser);
         await firestoreService.addUserIntoDB(baseUser2);
@@ -788,12 +734,6 @@ void main() async {
     });
 
     group("Set messages has read:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that setMessagesHasRead sets the notReadMessages of the chat with a peer user to 0", () async {
         await firestoreService.addUserIntoDB(baseUser);
         await firestoreService.addUserIntoDB(baseUser2);
@@ -824,12 +764,13 @@ void main() async {
   /***************************************** CHATS *****************************************/
 
   group("Firestore chat methods:", () {
+    setUp(() async {
+      /// Fake Firebase
+      fakeFirebase = FakeFirebaseFirestore();
+      firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
+    });
+
     group("Upgrade pending to active chat:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
       test("Check that upgradePendingToActiveChatIntoDB remove the chat from the request and the pending list and add them to the anonymous lists",
           () async {
         await firestoreService.addUserIntoDB(baseUser);
@@ -890,12 +831,6 @@ void main() async {
     });
 
     group("Remove chat:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that removeChatFromDB deletes the chat for both the users", () async {
         await firestoreService.addUserIntoDB(baseUser);
         await firestoreService.addUserIntoDB(baseUser2);
@@ -944,12 +879,6 @@ void main() async {
     });
 
     group("Get chats stream:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that getChatsStreamFromDB returns the correct stream of chats ordered by lastMessageDateTime", () async {
         await firestoreService.addUserIntoDB(baseUser);
         await firestoreService.addUserIntoDB(baseUser2);
@@ -980,12 +909,13 @@ void main() async {
   /***************************************** REPORTS *****************************************/
 
   group("Firestore report methods:", () {
+    setUp(() async {
+      /// Fake Firebase
+      fakeFirebase = FakeFirebaseFirestore();
+      firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
+    });
+
     group("Add new report:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
       test("Check that the DB contains the document with the report information", () async {
         await firestoreService.addReportIntoDB(baseUser.id, report);
 
@@ -1001,12 +931,6 @@ void main() async {
     });
 
     group("Get reports:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that getReportsFromDB returns the correct future of reports ordered by documentId", () async {
         var reports = [report, report2, report3];
 
@@ -1029,12 +953,13 @@ void main() async {
   /***************************************** DIARY *****************************************/
 
   group("Firestore diary methods:", () {
+    setUp(() async {
+      /// Fake Firebase
+      fakeFirebase = FakeFirebaseFirestore();
+      firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
+    });
+
     group("Add new diary page:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
       test("Check that the DB contains the document with the diary page information", () async {
         await firestoreService.addDiaryPageIntoDB(baseUser.id, diaryPage);
 
@@ -1051,11 +976,6 @@ void main() async {
     });
 
     group("Update diary page:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
       test("Check that the DB contains the document with the updated information of the diary page", () async {
         await firestoreService.addDiaryPageIntoDB(baseUser.id, diaryPage);
 
@@ -1078,11 +998,6 @@ void main() async {
     });
 
     group("Set diary page as favourite:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
       test("Check that the DB contains the document with the updated information of the diary page", () async {
         await firestoreService.addDiaryPageIntoDB(baseUser.id, diaryPage);
 
@@ -1100,12 +1015,6 @@ void main() async {
     });
 
     group("Get diary pages:", () {
-      setUp(() async {
-        /// Fake Firebase
-        fakeFirebase = FakeFirebaseFirestore();
-        firestoreService = FirestoreService(fakeFirebase, firebaseStorage: fakeFirebaseStorage);
-      });
-
       test("Check that getDiaryPagesStreamFromDB returns the correct stream of diaryPages ordered by documentId", () async {
         var diaryPages = [diaryPage, diaryPage2, diaryPage3];
 
