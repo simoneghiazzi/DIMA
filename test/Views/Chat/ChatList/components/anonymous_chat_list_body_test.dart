@@ -7,14 +7,12 @@ import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Model/Chat/anonymous_chat.dart';
 import 'package:sApport/Model/Chat/chat.dart';
-import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -39,27 +37,12 @@ void main() {
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(MockFirebaseAuth()));
   getIt.registerSingleton<UserService>(UserService());
 
-  //Mock the logged user
-  var id = Utils.randomId();
-  var name = "Simone";
-  var surname = "Ghiazzi";
-  var email = "simone.ghiazzi@prova.it";
-  var birthDate = DateTime(1997, 10, 19);
-
-  BaseUser loggedUser = BaseUser(
-    id: id,
-    name: name,
-    surname: surname,
-    email: email,
-    birthDate: birthDate,
-  );
-
   //Mock a new random user
-  id = Utils.randomId();
-  name = "Test";
-  surname = "user";
-  email = "test.user@prova.it";
-  birthDate = DateTime(1997, 11, 12);
+  var id = Utils.randomId();
+  var name = "Test";
+  var surname = "user";
+  var email = "test.user@prova.it";
+  var birthDate = DateTime(1997, 11, 12);
 
   BaseUser randomUser = BaseUser(
     id: id,
