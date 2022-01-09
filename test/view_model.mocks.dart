@@ -83,6 +83,11 @@ class MockDiaryViewModel extends _i1.Mock implements _i9.DiaryViewModel {
       (super.noSuchMethod(Invocation.getter(#currentDiaryPage),
               returnValue: _FakeValueNotifier_2<_i10.DiaryPage?>())
           as _i3.ValueNotifier<_i10.DiaryPage?>);
+    @override
+  _i3.ValueNotifier<List<_i10.DiaryPage>> get diaryPages =>
+      (super.noSuchMethod(Invocation.getter(#diaryPages),
+              returnValue: _FakeValueNotifier_2<List<_i10.DiaryPage>>())
+          as _i3.ValueNotifier<List<_i10.DiaryPage>>);
   @override
   bool get isEditing =>
       (super.noSuchMethod(Invocation.getter(#isEditing), returnValue: false)

@@ -19,18 +19,31 @@ class ReportViewModel {
   // List of the reports of the user saved as Linked Hash Map
   LinkedHashMap<String, Report> _reports = LinkedHashMap<String, Report>();
 
+  Future<void> submitReport(String category, String description) async {
+    var now = DateTime.now();
+    currentReport.value = Report(
+      id: now.millisecondsSinceEpoch.toString(),
+      category: category,
+      description: description,
+      dateTime: now,
+    );
+    return _firestoreService.addReportIntoDB(_userService.loggedUser!.id, currentReport.value!);
+  }
+
   /// Load the list of reports.
   Future<QuerySnapshot>? loadReports() {
-    _firestoreService.getReportsFromDB(_userService.loggedUser!.id).then((snapshot) {
-      for (var doc in snapshot.docs) {
-        Report report = Report.fromDocument(doc);
-        if (!_reports.containsKey(report.id)) {
-          reports[report.id] = report;
+    try {
+      _firestoreService.getReportsFromDB(_userService.loggedUser!.id).then((snapshot) {
+        for (var doc in snapshot.docs) {
+          Report report = Report.fromDocument(doc);
+          if (!_reports.containsKey(report.id)) {
+            reports[report.id] = report;
+          }
         }
-      }
-    }).onError((error, stackTrace) {
+      });
+    } catch (error) {
       log("Failed to get the list of reports: $error");
-    });
+    }
   }
 
   /// Set the [report] as the [_currentReport].

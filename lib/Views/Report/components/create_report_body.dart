@@ -73,7 +73,7 @@ class _CreateReportBodyState extends State<CreateReportBody> {
             child: Container(
               constraints: BoxConstraints(maxWidth: 500),
               child: BlocProvider(
-                create: (context) => ReportForm(),
+                create: (context) => ReportForm(reportViewModel),
                 child: Builder(
                   builder: (context) {
                     ReportForm reportForm = BlocProvider.of<ReportForm>(context);

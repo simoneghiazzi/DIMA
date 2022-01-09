@@ -61,9 +61,9 @@ void main() async {
 
   List<DiaryPage> diaryPages = [diaryPage, diaryPage2, diaryPage3];
 
-  collectionReference.doc(diaryPage.dateTime.millisecondsSinceEpoch.toString()).set(diaryPage.data);
-  collectionReference.doc(diaryPage2.dateTime.millisecondsSinceEpoch.toString()).set(diaryPage2.data);
-  collectionReference.doc(diaryPage3.dateTime.millisecondsSinceEpoch.toString()).set(diaryPage3.data);
+  collectionReference.doc(diaryPage.id).set(diaryPage.data);
+  collectionReference.doc(diaryPage2.id).set(diaryPage2.data);
+  collectionReference.doc(diaryPage3.id).set(diaryPage3.data);
 
   /// Mock User Service responses
   when(mockUserService.loggedUser).thenAnswer((_) => loggedUser);
@@ -140,7 +140,7 @@ void main() async {
         expect(counter, diaryPages.length);
       });
 
-      test("Check that the initially inserted diary pages are correctly parsed and added to the list of diary pages", () async {
+      test("Check that the initially inserted diary pages are correctly parsed and added to the list of diary pages in the correct order", () async {
         /// Load the diary pages
         diaryViewModel.loadDiaryPages();
         await Future.delayed(Duration.zero);

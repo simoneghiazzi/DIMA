@@ -1,15 +1,13 @@
-import 'package:get_it/get_it.dart';
+import 'dart:developer';
+
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
-import 'package:sApport/Model/DBItems/BaseUser/report.dart';
-import 'package:sApport/Model/Services/user_service.dart';
-import 'package:sApport/Model/Services/firestore_service.dart';
+import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 
 class ReportForm extends FormBloc<String, String> {
-  // Services
-  final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
-  final UserService _userService = GetIt.I<UserService>();
+  // View Model
+  final ReportViewModel reportViewModel;
 
-  ReportForm() {
+  ReportForm(this.reportViewModel) {
     // Add the field blocs to the create report form
     addFieldBlocs(fieldBlocs: [reportCategory, reportText]);
   }
@@ -30,19 +28,14 @@ class ReportForm extends FormBloc<String, String> {
 
   @override
   void onSubmitting() async {
-    var now = DateTime.now();
-    Report report = Report(
-      id: now.millisecondsSinceEpoch.toString(),
-      category: reportCategory.value!,
-      description: reportText.value.trim(),
-      dateTime: now,
-    );
-    _firestoreService.addReportIntoDB(_userService.loggedUser!.id, report).then((value) {
+    reportViewModel.submitReport(reportCategory.value!, reportText.value.trim()).then((_) {
       reportCategory.clear();
       reportText.clear();
       emitSuccess(canSubmitAgain: true);
+      log("Report correctly submitted");
     }).catchError((error) {
       emitFailure();
+      log("Error in submitting the report");
     });
   }
 }

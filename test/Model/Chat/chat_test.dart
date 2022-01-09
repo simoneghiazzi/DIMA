@@ -108,7 +108,7 @@ void main() async {
       expect(counter, messages.length);
     });
 
-    test("Check that the initially inserted message are correctly parsed and added to the list of messages", () async {
+    test("Check that the initially inserted message are correctly parsed and added to the list of messages in the correct order", () async {
       /// Load the messages
       chat.loadMessages();
       await Future.delayed(Duration.zero);
