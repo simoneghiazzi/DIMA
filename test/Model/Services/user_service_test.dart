@@ -71,7 +71,7 @@ void main() async {
       /// Mock Firebase Auth Service responses
       when(mockFirebaseAuthService.currentUserId).thenAnswer((_) => loggedUser.id);
 
-      await userService.loadLoggedUserFromDB();
+      await userService.loadLoggedUser();
       expect(userService.loggedUser, isA<BaseUser>());
     });
 
@@ -79,7 +79,7 @@ void main() async {
       /// Mock Firebase Auth Service responses
       when(mockFirebaseAuthService.currentUserId).thenAnswer((_) => "FAKE_ID");
 
-      await userService.loadLoggedUserFromDB();
+      await userService.loadLoggedUser();
       expect(userService.loggedUser, null);
     });
 
@@ -87,7 +87,7 @@ void main() async {
       /// Mock Firebase Auth Service responses
       when(mockFirebaseAuthService.currentUserId).thenAnswer((_) => null);
 
-      await userService.loadLoggedUserFromDB();
+      await userService.loadLoggedUser();
       expect(userService.loggedUser, null);
     });
 
@@ -104,7 +104,7 @@ void main() async {
       /// Mock Firebase Auth Service responses
       when(mockFirebaseAuthService.currentUserId).thenAnswer((_) => loggedExpert.id);
 
-      await userService.loadLoggedUserFromDB();
+      await userService.loadLoggedUser();
       expect(userService.loggedUser, isA<Expert>());
     });
 

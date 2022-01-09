@@ -210,7 +210,7 @@ class MockUserService extends _i1.Mock implements _i18.UserService {
   @override
   set loggedUser(_i9.User? _loggedUser) => super.noSuchMethod(Invocation.setter(#loggedUser, _loggedUser), returnValueForMissingStub: null);
   @override
-  _i6.Future<void> loadLoggedUserFromDB() => (super.noSuchMethod(Invocation.method(#loadLoggedUserFromDB, []),
+  _i6.Future<void> loadLoggedUser() => (super.noSuchMethod(Invocation.method(#loadLoggedUserFromDB, []),
       returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
   @override
   void createUserFromSignUpForm(_i19.BaseUserSignUpForm? baseUserSignUpForm) =>

@@ -50,7 +50,7 @@ Future<void> main() async {
   //
   // If the user is not already logged or the email has not been verified, load the welcome page.
   if (_firebaseAuthService.currentUserId != null && _firebaseAuthService.isUserEmailVerified()) {
-    await _userService.loadLoggedUserFromDB().then((_) => log("User of category ${_userService.loggedUser!.collection} logged"));
+    await _userService.loadLoggedUser().then((_) => log("User of category ${_userService.loggedUser!.collection} logged"));
     runApp(MyApp(homePage: _userService.loggedUser!.homePageRoute));
   } else {
     runApp(MyApp());

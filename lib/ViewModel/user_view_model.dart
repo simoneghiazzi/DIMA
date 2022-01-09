@@ -11,7 +11,7 @@ class UserViewModel {
   ///
   /// If the user is not signed in, it throws an exception.
   Future<void> loadLoggedUser() {
-    return _userService.loadLoggedUserFromDB();
+    return _userService.loadLoggedUser();
   }
 
   /// Create a new user from the [baseUserSignUpForm] info.

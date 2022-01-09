@@ -16,7 +16,7 @@ class UserService {
   /// It instantiate the [loggedUser] with all the retrieved information from the DB.
   ///
   /// If the user is not signed in, it throws an exception.
-  Future<void> loadLoggedUserFromDB() async {
+  Future<void> loadLoggedUser() async {
     if (_firebaseAuthService.currentUserId != null) {
       loggedUser = await _firestoreService.findUserType(_firebaseAuthService.currentUserId!);
       if (loggedUser != null) {
