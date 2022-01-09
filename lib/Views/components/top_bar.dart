@@ -79,12 +79,7 @@ class TopBar extends StatelessWidget {
                 padding: EdgeInsets.only(right: 10),
                 child: Row(
                   children: [
-                    if (buttons != null) ...[
-                      for (int i = 0; i < buttons!.length; i++)
-                        FittedBox(
-                          child: buttons![i],
-                        )
-                    ]
+                    if (buttons != null) ...[for (int i = 0; i < buttons!.length; i++) buttons![i]]
                   ],
                 ),
               ),
