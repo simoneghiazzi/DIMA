@@ -37,6 +37,7 @@ class TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+
     return Container(
       color: kPrimaryColor,
       child: SafeArea(
@@ -77,7 +78,14 @@ class TopBar extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(right: 10),
                 child: Row(
-                  children: [...?buttons],
+                  children: [
+                    if (buttons != null) ...[
+                      for (int i = 0; i < buttons!.length; i++)
+                        FittedBox(
+                          child: buttons![i],
+                        )
+                    ]
+                  ],
                 ),
               ),
             ],

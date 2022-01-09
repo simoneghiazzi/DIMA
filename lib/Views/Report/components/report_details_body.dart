@@ -65,14 +65,18 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> with WidgetsBindi
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Description",
-                      style: TextStyle(color: kPrimaryColor, fontSize: 18.sp, fontWeight: FontWeight.bold),
+                    Flexible(
+                      child: Text(
+                        "Description",
+                        style: TextStyle(color: kPrimaryColor, fontSize: 18.sp, fontWeight: FontWeight.bold),
+                      ),
                     ),
                     // DateTime
-                    Text(
-                      DateFormat("dd MMM yyyy").format(reportViewModel.currentReport.value!.dateTime!),
-                      style: TextStyle(color: kPrimaryColor.withAlpha(150), fontSize: 12.sp, fontWeight: FontWeight.bold),
+                    Flexible(
+                      child: Text(
+                        DateFormat("dd MMM yyyy").format(reportViewModel.currentReport.value!.dateTime!),
+                        style: TextStyle(color: kPrimaryColor.withAlpha(150), fontSize: 12.sp, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),
