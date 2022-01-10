@@ -3,9 +3,8 @@ import 'dart:developer';
 import 'dart:collection';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/DBItems/BaseUser/report.dart';
 import 'package:sApport/Model/Services/user_service.dart';
+import 'package:sApport/Model/DBItems/BaseUser/report.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 
 class ReportViewModel {
@@ -34,12 +33,12 @@ class ReportViewModel {
   }
 
   /// Load the list of reports.
-  Future<QuerySnapshot>? loadReports() {
-    _firestoreService.getReportsFromDB(_userService.loggedUser!.id).then((snapshot) {
+  Future<void> loadReports() async {
+    return _firestoreService.getReportsFromDB(_userService.loggedUser!.id).then((snapshot) {
       for (var doc in snapshot.docs) {
         Report report = Report.fromDocument(doc);
         if (!_reports.containsKey(report.id)) {
-          reports[report.id] = report;
+          _reports[report.id] = report;
         }
       }
     }).catchError((error) {
@@ -60,7 +59,7 @@ class ReportViewModel {
   }
 
   /// Cancel all the value listeners and clear their contents.
-  void closeListeners() {
+  void resetViewModel() {
     _reports.clear();
     _currentReport = ValueNotifier(null);
     log("Report listeners closed");

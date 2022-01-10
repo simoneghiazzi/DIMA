@@ -294,7 +294,7 @@ class ChatViewModel extends ChangeNotifier {
   }
 
   /// Cancel all the value listeners and clear their contents.
-  void closeListeners() {
+  void resetViewModel() {
     // Cancel chat list subscribers
     _anonymousChatsSubscriber?.cancel();
     _pendingChatsSubscriber?.cancel();

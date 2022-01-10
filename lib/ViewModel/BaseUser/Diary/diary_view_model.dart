@@ -145,7 +145,7 @@ class DiaryViewModel with ChangeNotifier {
   }
 
   /// Cancel all the value listeners and clear their contents.
-  void closeListeners() {
+  void resetViewModel() {
     _diaryPagesSubscriber?.cancel();
     _diaryPages.value.clear();
     _currentDiaryPage = ValueNotifier(null);

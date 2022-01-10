@@ -33,6 +33,14 @@ class TestHelper {
   late Expert expert;
   late Expert expert2;
   late Expert expert3;
+  List<Expert> get experts => [expert, expert2, expert3];
+  Future<QuerySnapshot> get expertsFuture {
+    if (fakeFirebase != null) {
+      return fakeFirebase!.collection(Expert.COLLECTION).get();
+    } else {
+      throw DatabaseNotAttachedException();
+    }
+  }
 
   /// Anonymous Chats
   late AnonymousChat anonymousChat;

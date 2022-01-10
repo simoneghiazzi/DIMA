@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/Diary/diary_screen.dart';
@@ -47,6 +48,7 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
   late DiaryViewModel diaryViewModel;
   late ChatViewModel chatViewModel;
   late ReportViewModel reportViewModel;
+  late MapViewModel mapViewModel;
 
   // Router Delegate
   late AppRouterDelegate routerDelegate;
@@ -63,18 +65,22 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
+    mapViewModel = Provider.of<MapViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
 
-    // Chat View Model streams initialization
+    // Loading chats and streams initialization
     chatViewModel.loadAnonymousChats();
     chatViewModel.loadPendingChats();
     chatViewModel.loadExpertsChats();
 
-    // Chat View Model stream initialization
+    // Loading diary pages and streams initialization
     diaryViewModel.loadDiaryPages();
 
-    // Report View Model stream initialization
+    // Loading reports
     reportViewModel.loadReports();
+
+    // Loading experts
+    mapViewModel.loadExperts();
 
     // Register the notification service
     authViewModel.setNotification(userViewModel.loggedUser!);

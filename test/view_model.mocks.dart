@@ -133,7 +133,7 @@ class MockDiaryViewModel extends _i1.Mock implements _i8.DiaryViewModel {
       super.noSuchMethod(Invocation.method(#resetCurrentDiaryPage, []),
           returnValueForMissingStub: null);
   @override
-  void closeListeners() =>
+  void resetViewModel() =>
       super.noSuchMethod(Invocation.method(#closeListeners, []),
           returnValueForMissingStub: null);
   @override
@@ -187,7 +187,7 @@ class MockReportViewModel extends _i1.Mock implements _i12.ReportViewModel {
       super.noSuchMethod(Invocation.method(#resetCurrentReport, []),
           returnValueForMissingStub: null);
   @override
-  void closeListeners() =>
+  void resetViewModel() =>
       super.noSuchMethod(Invocation.method(#closeListeners, []),
           returnValueForMissingStub: null);
 }
@@ -386,7 +386,7 @@ class MockChatViewModel extends _i1.Mock implements _i16.ChatViewModel {
       super.noSuchMethod(Invocation.method(#resetCurrentChat, []),
           returnValueForMissingStub: null);
   @override
-  void closeListeners() =>
+  void resetViewModel() =>
       super.noSuchMethod(Invocation.method(#closeListeners, []),
           returnValueForMissingStub: null);
   @override
@@ -415,7 +415,7 @@ class MockMapViewModel extends _i1.Mock implements _i18.MapViewModel {
   }
 
   @override
-  _i5.MapService get mapService =>
+  _i5.MapService get _mapService =>
       (super.noSuchMethod(Invocation.getter(#mapService),
           returnValue: _FakeMapService_4()) as _i5.MapService);
   @override

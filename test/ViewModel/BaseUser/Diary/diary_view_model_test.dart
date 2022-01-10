@@ -93,7 +93,7 @@ void main() async {
       );
 
       setUp(() async {
-        diaryViewModel.closeListeners();
+        diaryViewModel.resetViewModel();
 
         /// Removes the new added diary page from the DB
         fakeFirebase
@@ -517,14 +517,14 @@ void main() async {
     group("Close listeners:", () {
       test("Close listeners should clear the old values of the diary pages value notifier", () {
         diaryViewModel.diaryPages.value = testHelper.diaryPages;
-        diaryViewModel.closeListeners();
+        diaryViewModel.resetViewModel();
 
         expect(diaryViewModel.diaryPages.value, isEmpty);
       });
 
       test("Close listener should reset the current diary page", () {
         diaryViewModel.currentDiaryPage.value = testHelper.diaryPage;
-        diaryViewModel.closeListeners();
+        diaryViewModel.resetViewModel();
 
         expect(diaryViewModel.currentDiaryPage.value, isNull);
       });

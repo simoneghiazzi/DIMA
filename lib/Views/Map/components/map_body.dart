@@ -13,7 +13,6 @@ import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/Map/components/map_info_window.dart';
 import 'package:sizer/sizer.dart';
 
@@ -124,11 +123,15 @@ class _MapBodyState extends State<MapBody> {
             child: FutureBuilder<Position>(
                 future: _loadCurrentPositionFuture,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
+                  if (snapshot.hasError) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Error in loading the correct position"),
+                      duration: const Duration(seconds: 5),
+                    ));
+                  } else if (snapshot.hasData) {
                     return buildMap(lat: snapshot.data!.latitude, lng: snapshot.data!.longitude);
-                  } else {
-                    return CircularProgressIndicator();
                   }
+                  return CircularProgressIndicator();
                 }),
           ),
           // GPS Button
@@ -138,7 +141,9 @@ class _MapBodyState extends State<MapBody> {
               onPressed: () async {
                 mapViewModel.clearControllers();
                 var pos = await mapViewModel.loadCurrentPosition();
-                _goToPlace(LatLng(pos.latitude, pos.longitude));
+                if (pos != null) {
+                  _goToPlace(LatLng(pos.latitude, pos.longitude));
+                }
               },
               materialTapTargetSize: MaterialTapTargetSize.padded,
               backgroundColor: kPrimaryColor,
@@ -213,29 +218,27 @@ class _MapBodyState extends State<MapBody> {
     );
   }
 
-  // DA RIFARE NEL VIEW MODEL
+  /// Retrieve the list of experts from the map view model and adds a new marker for each expert
+  /// present in the list.
+  ///
+  /// After inserting all the experts, it calls setState.
   void getMarkers() {
-    mapViewModel.loadExperts().then((snapshot) {
-      if (snapshot != null) {
-        for (var doc in snapshot.docs) {
-          Expert expert = Expert.fromDocument(doc);
-          _markers.add(
-            Marker(
-              markerId: MarkerId(expert.data["surname"].toString() + expert.data["lat"].toString() + expert.data["lng"].toString()),
-              position: LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
-              icon: pinLocationIcon ?? BitmapDescriptor.defaultMarker,
-              onTap: () {
-                _customInfoWindowController.addInfoWindow!(
-                  MapInfoWindow(expert: expert),
-                  LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
-                );
-              },
-            ),
-          );
-        }
-        setState(() {});
-      }
-    });
+    for (var expert in mapViewModel.experts.values) {
+      _markers.add(
+        Marker(
+          markerId: MarkerId(expert.data["surname"].toString() + expert.data["lat"].toString() + expert.data["lng"].toString()),
+          position: LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
+          icon: pinLocationIcon ?? BitmapDescriptor.defaultMarker,
+          onTap: () {
+            _customInfoWindowController.addInfoWindow!(
+              MapInfoWindow(expert: expert),
+              LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
+            );
+          },
+        ),
+      );
+      setState(() {});
+    }
   }
 
   /// Subscriber to the stream of selected place. It returns a [StreamSubscription].

@@ -364,7 +364,7 @@ void main() async {
       );
 
       setUp(() async {
-        chatViewModel.closeListeners();
+        chatViewModel.resetViewModel();
 
         /// Removes the new added chats from the DB
         await fakeFirebase
@@ -560,7 +560,7 @@ void main() async {
       );
 
       setUp(() async {
-        chatViewModel.closeListeners();
+        chatViewModel.resetViewModel();
 
         /// Removes the new added chat from the DB
         await fakeFirebase
@@ -693,7 +693,7 @@ void main() async {
       );
 
       setUp(() async {
-        chatViewModel.closeListeners();
+        chatViewModel.resetViewModel();
 
         /// Removes the new added chat from the DB
         await fakeFirebase
@@ -904,7 +904,7 @@ void main() async {
       );
 
       setUp(() async {
-        chatViewModel.closeListeners();
+        chatViewModel.resetViewModel();
 
         /// Removes the new added chat from the DB
         await fakeFirebase
@@ -1171,7 +1171,7 @@ void main() async {
         });
 
         test("Close listeners should clear the old values of the all the chats HashMap value notifiers", () {
-          chatViewModel.closeListeners();
+          chatViewModel.resetViewModel();
 
           expect(chatViewModel.anonymousChats.value, isEmpty);
           expect(chatViewModel.pendingChats.value, isEmpty);
@@ -1180,7 +1180,7 @@ void main() async {
         });
 
         test("Close listeners should call the close listeners method of every chat of all the chats HashMap value notifiers", () {
-          chatViewModel.closeListeners();
+          chatViewModel.resetViewModel();
 
           verify(mockAnonymousChat.closeListeners()).called(1);
           verify(mockPendingChat.closeListeners()).called(1);
@@ -1194,7 +1194,7 @@ void main() async {
 
         test("Close listener should reset the current chat", () {
           chatViewModel.currentChat.value = testHelper.anonymousChat;
-          chatViewModel.closeListeners();
+          chatViewModel.resetViewModel();
 
           expect(chatViewModel.currentChat.value, isNull);
         });

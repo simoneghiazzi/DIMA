@@ -54,8 +54,14 @@ void main() async {
     group("Load reports:", () {
       setUp(() => reportViewModel.reports.clear());
 
+      test("Load reports should call the getReports method of the firestore service", () async {
+        await reportViewModel.loadReports();
+
+        verify(mockFirestoreService.getReportsFromDB(testHelper.loggedUser.id)).called(1);
+      });
+
       test("Check that the reports are correctly parsed and added to the linked HashMap of reports in the correct order", () async {
-        /// Load the diary pages
+        /// Load the reports
         await reportViewModel.loadReports();
 
         for (int i = 0; i < testHelper.reports.length; i++) {
@@ -131,20 +137,17 @@ void main() async {
       });
     });
 
-    group("Close listeners:", () {
-      test("Close listeners should clear the old values of the report linked HashMap", () async {
-        /// Mock FirestoreService responses
-        when(mockFirestoreService.getReportsFromDB(testHelper.loggedUser.id)).thenAnswer((_) =>
-            fakeFirebase.collection(Report.COLLECTION).doc(testHelper.loggedUser.id).collection("reportList").orderBy(FieldPath.documentId).get());
+    group("Reset view model:", () {
+      test("Reset view model should clear the old values of the report linked HashMap", () async {
         await reportViewModel.loadReports();
-        reportViewModel.closeListeners();
+        reportViewModel.resetViewModel();
 
         expect(reportViewModel.reports, isEmpty);
       });
 
-      test("Close listener should reset the current report", () {
+      test("Reset view model should reset the current report", () {
         reportViewModel.currentReport.value = testHelper.report;
-        reportViewModel.closeListeners();
+        reportViewModel.resetViewModel();
 
         expect(reportViewModel.currentReport.value, isNull);
       });
