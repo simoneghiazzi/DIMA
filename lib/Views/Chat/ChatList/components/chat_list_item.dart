@@ -69,7 +69,7 @@ class _ChatListItemState extends State<ChatListItem> {
     // set the messages as read
     if (widget.chatItem.notReadMessages > 0 && widget.chatItem.peerUser == chatViewModel.currentChat.value?.peerUser) {
       widget.chatItem.notReadMessages = 0;
-      chatViewModel.setMessagesHasRead();
+      chatViewModel.setMessagesAsRead();
     }
     return Container(
       margin: EdgeInsets.only(bottom: 10.0),

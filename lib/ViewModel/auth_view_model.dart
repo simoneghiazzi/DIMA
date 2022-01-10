@@ -43,7 +43,8 @@ class AuthViewModel {
     }
   }
 
-  /// Sign up a [newUser] with email and password and add the user into the Firebase DB.
+  /// Sign up a [newUser] with email and password, sends the email verification link
+  /// and add the user into the Firebase DB.
   ///
   /// It adds the result of the signup process to the [isUserCreated] stream controller.
   ///
@@ -51,10 +52,6 @@ class AuthViewModel {
   Future<void> signUpUser(String email, String password, User newUser) async {
     try {
       await _firebaseAuthService.createUserWithEmailAndPassword(email, password);
-      newUser.id = _firebaseAuthService.currentUserId!;
-      _firestoreService.addUserIntoDB(newUser);
-      _authMessageCtrl.add("");
-      _isUserCreatedCtrl.add(true);
     } on Firebase.FirebaseAuthException catch (error) {
       if (error.code == "email-already-in-use") {
         _authMessageCtrl.add("An account associated with this email already exists.");
@@ -62,9 +59,29 @@ class AuthViewModel {
         _authMessageCtrl.add("The password is too weak.\nIt has to be at least 6 chars.");
       } else {
         _authMessageCtrl.add("Error in signing up the user. Please try again later.");
-        log("Error in signing up the user: $error");
       }
+      log("Error in creating the user: $error");
+      return;
     }
+    try {
+      await _firebaseAuthService.sendVerificationEmail();
+    } catch (error) {
+      _authMessageCtrl.add("Error in signing up the user. Please try again later.");
+      _firebaseAuthService.deleteUser();
+      log("Error in sending the verification email to the user: $error");
+      return;
+    }
+    newUser.id = _firebaseAuthService.currentUserId!;
+    try {
+      await _firestoreService.addUserIntoDB(newUser);
+    } catch (error) {
+      _firebaseAuthService.deleteUser();
+      _authMessageCtrl.add("Error in signing up the user. Please try again later.");
+      log("Failed to add the user into the DB: $error");
+      return;
+    }
+    _authMessageCtrl.add("");
+    _isUserCreatedCtrl.add(true);
   }
 
   /// Login a user with Google. If the user is new, it automatically creates a new account

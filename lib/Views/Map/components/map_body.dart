@@ -216,23 +216,25 @@ class _MapBodyState extends State<MapBody> {
   // DA RIFARE NEL VIEW MODEL
   void getMarkers() {
     mapViewModel.loadExperts().then((snapshot) {
-      for (var doc in snapshot!.docs) {
-        Expert expert = Expert.fromDocument(doc);
-        _markers.add(
-          Marker(
-            markerId: MarkerId(expert.data["surname"].toString() + expert.data["lat"].toString() + expert.data["lng"].toString()),
-            position: LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
-            icon: pinLocationIcon ?? BitmapDescriptor.defaultMarker,
-            onTap: () {
-              _customInfoWindowController.addInfoWindow!(
-                MapInfoWindow(expert: expert),
-                LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
-              );
-            },
-          ),
-        );
+      if (snapshot != null) {
+        for (var doc in snapshot.docs) {
+          Expert expert = Expert.fromDocument(doc);
+          _markers.add(
+            Marker(
+              markerId: MarkerId(expert.data["surname"].toString() + expert.data["lat"].toString() + expert.data["lng"].toString()),
+              position: LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
+              icon: pinLocationIcon ?? BitmapDescriptor.defaultMarker,
+              onTap: () {
+                _customInfoWindowController.addInfoWindow!(
+                  MapInfoWindow(expert: expert),
+                  LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
+                );
+              },
+            ),
+          );
+        }
+        setState(() {});
       }
-      setState(() {});
     });
   }
 

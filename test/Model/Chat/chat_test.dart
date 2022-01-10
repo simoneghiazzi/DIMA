@@ -153,7 +153,9 @@ void main() async {
       );
 
       /// Mock Firebase error
-      when(mockFirestoreService.getMessagesStreamFromDB(pairChatId)).thenThrow(Error);
+      when(mockFirestoreService.getMessagesStreamFromDB(pairChatId)).thenAnswer((_) async* {
+        throw Exception("Firebase stream not allowed");
+      });
 
       chat.loadMessages();
     });

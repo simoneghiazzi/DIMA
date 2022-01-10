@@ -16,8 +16,6 @@ class FirebaseAuthService {
 
   /// Attempts to sign in a user with the given [email] and [password].
   ///
-  /// If successfull, it also save the [firebaseUser] instance inside the auth service.
-  ///
   /// A [FirebaseAuthException] maybe thrown with the following error code:
   /// - **user-not-found**:
   ///   - Thrown if there is no user corresponding to the given email.
@@ -29,18 +27,13 @@ class FirebaseAuthService {
 
   /// Tries to create a new user account with the given [email] address and [password].
   ///
-  /// If successfull, it also save the [firebaseUser] instance inside the auth service and
-  /// calls the [_sendVerificationEmail] method.
-  ///
   /// A [FirebaseAuthException] maybe thrown with the following error code:
   /// - **email-already-in-use**:
   ///   - Thrown if there already exists an account with the given email address.
   /// - **weak-password**:
   ///   - Thrown if the password is not strong enough.
   Future<void> createUserWithEmailAndPassword(String email, String password) {
-    return _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password).then((credential) {
-      _sendVerificationEmail();
-    });
+    return _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
   }
 
   /// Attempts to sign in a user with the Google account.
@@ -155,9 +148,10 @@ class FirebaseAuthService {
   }
 
   /// Sends a password reset email to the given [email] address.
-  void resetPassword(String email) {
+  Future<void> resetPassword(String email) async {
     try {
-      _firebaseAuth.sendPasswordResetEmail(email: email).then((value) => log("Reset password email sent"));
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+      log("Reset password email sent");
     } on FirebaseAuthException catch (error) {
       log("Failed send reset password email: $error");
     }
@@ -171,14 +165,16 @@ class FirebaseAuthService {
   }
 
   /// Get the authentication provider of the current logged user.
+  ///
+  /// If the user is not logged in, it returns `null`.
   String? getAuthProvider() {
     return _firebaseAuth.currentUser?.providerData[0].providerId;
   }
 
   /// Returns the list of sign-in methods that can be used to sign in a given user (identified by its main email address).
-  Future<List<String>>? fetchSignInMethods(String email) {
+  Future<List<String>?> fetchSignInMethods(String email) async {
     try {
-      return _firebaseAuth.fetchSignInMethodsForEmail(email);
+      return await _firebaseAuth.fetchSignInMethodsForEmail(email);
     } on FirebaseAuthException catch (error) {
       log("Failed to fetching the signed in methods of the user: $error");
     }
@@ -186,11 +182,7 @@ class FirebaseAuthService {
 
   /// Delete and signs out the user.
   Future<void> deleteUser() async {
-    try {
-      return _firebaseAuth.currentUser!.delete();
-    } on FirebaseAuthException catch (error) {
-      log("Failed to delete the user: $error");
-    }
+    return _firebaseAuth.currentUser!.delete().then((_) => log("User deleted"));
   }
 
   /// It checks if the email is verified in case the user has signed up with the email and password method.
@@ -204,8 +196,8 @@ class FirebaseAuthService {
   }
 
   /// Send the verification email to the user in the sign up process.
-  Future<void> _sendVerificationEmail() {
-    return _firebaseAuth.currentUser!.sendEmailVerification().then((value) => log("Verification email sent"));
+  Future<void> sendVerificationEmail() async {
+    return _firebaseAuth.currentUser!.sendEmailVerification().then((_) => log("Verification email sent"));
   }
 
   /// Get the uid of the current logged user.

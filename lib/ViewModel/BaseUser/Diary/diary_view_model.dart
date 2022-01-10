@@ -49,15 +49,13 @@ class DiaryViewModel with ChangeNotifier {
       dateTime: now,
     );
     _isEditing = false;
-    try {
-      return _firestoreService.addDiaryPageIntoDB(_userService.loggedUser!.id, _currentDiaryPage.value!).then((value) {
-        _isPageAddedCtrl.add(true);
-        log("Diary page submitted");
-      });
-    } catch (error) {
+    return _firestoreService.addDiaryPageIntoDB(_userService.loggedUser!.id, _currentDiaryPage.value!).then((value) {
+      _isPageAddedCtrl.add(true);
+      log("Diary page submitted");
+    }).catchError((error) {
       _isPageAddedCtrl.add(false);
-      log("Error in submitting the diary page");
-    }
+      log("Error in submitting the diary page: $error");
+    });
   }
 
   /// Update the already existing [_currentDiaryPage] into the DB.
@@ -68,28 +66,26 @@ class DiaryViewModel with ChangeNotifier {
       _currentDiaryPage.value!.content = contentTextCtrl.text.trim();
       _currentDiaryPage.value!.dateTime = now;
       _isEditing = false;
-      try {
-        return _firestoreService.updateDiaryPageIntoDB(_userService.loggedUser!.id, _currentDiaryPage.value!).then((value) {
-          _isPageAddedCtrl.add(true);
-          log("Diary page updated");
-        });
-      } catch (error) {
+      return _firestoreService.updateDiaryPageIntoDB(_userService.loggedUser!.id, _currentDiaryPage.value!).then((value) {
+        _isPageAddedCtrl.add(true);
+        log("Diary page updated");
+      }).catchError((error) {
         _isPageAddedCtrl.add(false);
-        log("Error in updating the diary page");
-      }
+        log("Error in updating the diary page: $error");
+      });
     }
   }
 
   /// Set the [isFavourite] parameter of the [_currentDiaryPage] into the DB.
   Future<void> setFavourite(bool isFavourite) async {
     _currentDiaryPage.value!.favourite = isFavourite;
-    try {
-      return _firestoreService
-          .setDiaryPageAsFavouriteIntoDB(_userService.loggedUser!.id, _currentDiaryPage.value!)
-          .then((value) => log("Diary page favourite flag updated"));
-    } catch (error) {
+    return _firestoreService
+        .setDiaryPageAsFavouriteIntoDB(_userService.loggedUser!.id, _currentDiaryPage.value!)
+        .then((value) => log("Diary page favourite flag updated"))
+        .catchError((error) {
+      _currentDiaryPage.value!.favourite = !isFavourite;
       log("Error in updating the diary page favourite flag");
-    }
+    });
   }
 
   /// Subscribe to the diary pages stream of the [loggedUser] from the Firebase DB and
@@ -97,9 +93,9 @@ class DiaryViewModel with ChangeNotifier {
   ///
   /// Finally it calls the [notifyListeners] on the [_diaryPages] value notifier to notify the changes
   /// to all the listeners.
-  void loadDiaryPages() async {
-    try {
-      _diaryPagesSubscriber = _firestoreService.getDiaryPagesStreamFromDB(_userService.loggedUser!.id).listen((snapshot) {
+  Future<void> loadDiaryPages() async {
+    _diaryPagesSubscriber = _firestoreService.getDiaryPagesStreamFromDB(_userService.loggedUser!.id).listen(
+      (snapshot) {
         for (var docChange in snapshot.docChanges) {
           var _diaryPage = DiaryPage.fromDocument(docChange.doc);
           // If oldIndex == -1, the document is added, so its new and it has to be added to the list
@@ -112,10 +108,10 @@ class DiaryViewModel with ChangeNotifier {
             _diaryPages.notifyListeners();
           }
         }
-      });
-    } catch (error) {
-      log("Failed to get the stream of diary pages: $error");
-    }
+      },
+      onError: (error) => log("Failed to get the stream of diary pages: $error"),
+      cancelOnError: true,
+    );
   }
 
   /// Modify the [_currentDiaryPage] or edit a new [DiaryPage].

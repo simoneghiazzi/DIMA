@@ -25,11 +25,13 @@ class MapViewModel {
 
   MapViewModel() {
     // Set the position permission status on the location of the device
-    Permission.location.status.then((status) {
-      positionPermission = status;
-    }).catchError((error) {
+    try {
+      Permission.location.status.then((status) {
+        positionPermission = status;
+      });
+    } catch (error) {
       log("Error in getting the position permission status: $error");
-    });
+    }
   }
 
   /// Request the user for access to the location [Permission].
@@ -79,12 +81,9 @@ class MapViewModel {
 
   /// Return the list of experts.
   Future<QuerySnapshot?> loadExperts() async {
-    try {
-      return _firestoreService.getExpertCollectionFromDB();
-    } catch (e) {
-      log("Failed to get the list of experts: $e");
-      return null;
-    }
+    return _firestoreService.getExpertCollectionFromDB().catchError((error) {
+      log("Failed to get the list of experts: $error");
+    });
   }
 
   /// Clear all the text and stream controllers.

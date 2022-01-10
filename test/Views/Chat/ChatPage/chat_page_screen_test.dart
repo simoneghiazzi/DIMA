@@ -5,7 +5,9 @@ import 'package:get_it/get_it.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/Model/Chat/active_chat.dart';
 import 'package:sApport/Model/Chat/anonymous_chat.dart';
+import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/DBItems/message.dart';
@@ -30,7 +32,7 @@ import '../../../view_model.mocks.dart';
 import '../../widget_test_helper.dart';
 import 'chat_page_screen_test.mocks.dart';
 
-@GenerateMocks([AnonymousChat, PendingChat])
+@GenerateMocks([AnonymousChat, PendingChat, ExpertChat, ActiveChat])
 void main() {
   /// Mock Services
   final mockChatViewModel = MockChatViewModel();

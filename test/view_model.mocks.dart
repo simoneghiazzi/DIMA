@@ -116,7 +116,7 @@ class MockDiaryViewModel extends _i1.Mock implements _i9.DiaryViewModel {
       returnValue: Future<void>.value(),
       returnValueForMissingStub: Future<void>.value()) as _i11.Future<void>);
   @override
-  void loadDiaryPages() =>
+  Future<void> loadDiaryPages() =>
       super.noSuchMethod(Invocation.method(#loadDiaryPages, []),
           returnValueForMissingStub: null);
   @override
@@ -299,15 +299,15 @@ class MockChatViewModel extends _i1.Mock implements _i17.ChatViewModel {
       returnValue: Future<void>.value(),
       returnValueForMissingStub: Future<void>.value()) as _i11.Future<void>);
   @override
-  void sendMessage() => super.noSuchMethod(Invocation.method(#sendMessage, []),
+  Future<void> sendMessage() => super.noSuchMethod(Invocation.method(#sendMessage, []),
       returnValueForMissingStub: null);
   @override
-  _i11.Future<void> setMessagesHasRead() => (super.noSuchMethod(
+  _i11.Future<void> setMessagesAsRead() => (super.noSuchMethod(
       Invocation.method(#setMessagesHasRead, []),
       returnValue: Future<void>.value(),
       returnValueForMissingStub: Future<void>.value()) as _i11.Future<void>);
   @override
-  void loadAnonymousChats() =>
+  Future<void> loadAnonymousChats() =>
       super.noSuchMethod(Invocation.method(#loadAnonymousChats, []),
           returnValueForMissingStub: null);
   @override
@@ -323,7 +323,7 @@ class MockChatViewModel extends _i1.Mock implements _i17.ChatViewModel {
       super.noSuchMethod(Invocation.method(#loadActiveChats, []),
           returnValueForMissingStub: null);
   @override
-  _i11.Future<_i5.QuerySnapshot<Object?>> getPeerUserDoc(
+  _i11.Future<_i5.QuerySnapshot<Object?>> _getPeerUserDoc(
           String? collection, String? id) =>
       (super.noSuchMethod(Invocation.method(#getPeerUserDoc, [collection, id]),
               returnValue: Future<_i5.QuerySnapshot<Object?>>.value(

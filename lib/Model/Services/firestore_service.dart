@@ -38,39 +38,31 @@ class FirestoreService {
     var userReference = _firestore.collection(user.collection).doc(user.id);
     if (user is BaseUser) {
       // If the user is a base user, increment the base user counter
-      _incrementBaseUsersCounter(1);
+      await _incrementBaseUsersCounter(1);
     } else {
       // Otherwise, update the profile photo into the FirebaseStorage
       await uploadProfilePhoto(user as Expert);
     }
-    return userReference.set(user.data).then((_) {
-      log("User added");
-    }).catchError((error) {
-      log("Failed to add user: $error");
-    });
+    return userReference.set(user.data).then((_) => log("User added"));
   }
 
   /// Delete a user from the firestore DB.
   ///
   /// It takes the [user] and based on the type it deletes him/her from the list of experts or from the list
   /// of base users and it decrements the collection counter.
-  Future<void> removeUserFromDB(User user) {
+  Future<void> removeUserFromDB(User user) async {
     var userReference = _firestore.collection(user.collection).doc(user.id);
     // If the user is a base user, decrement the base user counter
     if (user is BaseUser) {
-      _incrementBaseUsersCounter(-1);
+      await _incrementBaseUsersCounter(-1);
     }
     return userReference.delete().then((value) => log("User deleted")).catchError((error) => log("Failed to delete user: $error"));
   }
 
   /// It takes a [user] and updates the specified [field] with the [newValue] into the DB
-  Future<void> updateUserFieldIntoDB(User user, String field, newValue) {
-    return _firestore
-        .collection(user.collection)
-        .doc(user.id)
-        .update({field: newValue})
-        .then((value) => log("User updated"))
-        .catchError((error) => log("Failed to update user: $error"));
+  Future<void> updateUserFieldIntoDB(User user, String field, newValue) async {
+    var userReference = _firestore.collection(user.collection).doc(user.id);
+    return userReference.update({field: newValue}).then((value) => log("User updated")).catchError((error) => log("User updated"));
   }
 
   /// Get the list of all the docs in the [Expert] collection from the DB
@@ -151,16 +143,10 @@ class FirestoreService {
 
   /// It takes the [increment] amount and increments the user's counter into the DB
   Future<void> _incrementBaseUsersCounter(int increment) async {
-    var utilsReference = _firestore.collection(BaseUser.COLLECTION).doc("utils");
-    await _firestore
-        .runTransaction((transaction) async {
-          var utils = await transaction.get(utilsReference);
-          int? counter;
-          utils.data() != null ? counter = utils.get("userCounter") : counter = 0;
-          transaction.set(utilsReference, {"userCounter": counter! + increment});
-        })
-        .then((value) => log("Base user counter incremented"))
-        .catchError((error) => log("Failed to increment the base user counter: $error"));
+    return _firestore
+        .collection(BaseUser.COLLECTION)
+        .doc("utils")
+        .update({"userCounter": FieldValue.increment(increment)}).then((value) => log("Base user counter incremented"));
   }
 
   /// Get the counter of the intances of base users from the DB
@@ -204,15 +190,8 @@ class FirestoreService {
 
   /// It sets the `notReadMessages` field of the chat of the [user] with the peerUser specified
   /// in the [chat] to `0`.
-  Future<void> setMessagesHasRead(User user, Chat chat) {
-    return _firestore
-        .collection(user.collection)
-        .doc(user.id)
-        .collection(chat.collection)
-        .doc(chat.peerUser!.id)
-        .update({"notReadMessages": 0})
-        .then((value) => log("notReadMessages field setted to zero"))
-        .catchError((error) => log("Failed to set the notReadMessages field: $error"));
+  Future<void> setMessagesAsRead(User user, Chat chat) {
+    return _firestore.collection(user.collection).doc(user.id).collection(chat.collection).doc(chat.peerUser!.id).update({"notReadMessages": 0});
   }
 
   /***************************************** CHATS *****************************************/
@@ -277,18 +256,16 @@ class FirestoreService {
     var peerUserRef = _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection(chat.peerCollection).doc(senderUser.id);
 
     var doc = await peerUserRef.get();
-    int? counter;
-    doc.data() != null ? counter = doc.get("notReadMessages") + 1 : counter = 1;
 
-    // If the chat is a Request and the counter is 1 it means that it is a new chat and it is the first message,
+    // If the chat is a Request and the doc does not exists it means that it is a new chat and it is the first message,
     // so call increment conversation counter
-    if (chat is Request && counter == 1) {
+    if (chat is Request && !doc.exists) {
       _incrementConversationCounter(senderUser, chat, 1);
     }
     WriteBatch batch = _firestore.batch();
-    // The notReadMessages field is setted to 0 for the sender user and to counter for the peer user
+    // The notReadMessages field is setted to 0 for the sender user and to the increment of 1 for the peer user
     batch.set(senderUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
-    batch.set(peerUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": counter, "lastMessage": chat.lastMessage});
+    batch.set(peerUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": FieldValue.increment(1), "lastMessage": chat.lastMessage});
     batch.commit().then((value) => log("Chat info updated")).catchError((error) => log("Failed to update the chat info: $error"));
   }
 
@@ -305,25 +282,12 @@ class FirestoreService {
   }
 
   /// It takes the [chat] and the [increment] amount and increments the anonymous chat's counter
-  /// of the [senderUser] and of the [peerUser] specified in the [chat] within a transaction.
+  /// of the [senderUser] and of the [peerUser] specified in the [chat].
   Future<void> _incrementConversationCounter(User senderUser, Chat chat, int increment) async {
     var utilsSenderReference = _firestore.collection(senderUser.collection).doc(senderUser.id).collection("utils").doc("utils");
     var utilsPeerReference = _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection("utils").doc("utils");
-
-    _firestore
-        .runTransaction((transaction) async {
-          var utilsSender = await transaction.get(utilsSenderReference);
-          var utilsPeer = await transaction.get(utilsPeerReference);
-          int? oldCounterSender, oldCounterPeer;
-          utilsSender.data() != null ? oldCounterSender = utilsSender.get("anonymousChatCounter") : oldCounterSender = 0;
-          utilsPeer.data() != null ? oldCounterPeer = utilsPeer.get("anonymousChatCounter") : oldCounterPeer = 0;
-          int newCounterSender = oldCounterSender! + increment;
-          int newCounterPeer = oldCounterPeer! + increment;
-          transaction.set(utilsSenderReference, {"anonymousChatCounter": newCounterSender < 0 ? 0 : newCounterSender});
-          transaction.set(utilsPeerReference, {"anonymousChatCounter": newCounterPeer < 0 ? 0 : newCounterPeer});
-        })
-        .then((value) => log("Conversation counters incremented"))
-        .catchError((error) => log("Failed to increment the conversation counters: $error"));
+    utilsSenderReference.update({"anonymousChatCounter": FieldValue.increment(increment)}).then((value) => log("Conversation counters incremented"));
+    utilsPeerReference.update({"anonymousChatCounter": FieldValue.increment(increment)}).then((value) => log("Conversation counters incremented"));
   }
 
   /// It takes the [user] and returns the anonymous chat's counter from the DB
@@ -336,14 +300,7 @@ class FirestoreService {
   /// It takes the [userId] of an user and the [report] and
   /// adds it into the list of reports of the user into the DB
   Future<void> addReportIntoDB(String userId, Report report) async {
-    _firestore
-        .collection(report.collection)
-        .doc(userId)
-        .collection("reportList")
-        .doc(report.id)
-        .set(report.data)
-        .then((value) => log("Report added"))
-        .catchError((error) => log("Failed to add the report: $error"));
+    _firestore.collection(report.collection).doc(userId).collection("reportList").doc(report.id).set(report.data);
   }
 
   /// It takes the [id] of an user and return the stream of all the
@@ -357,45 +314,24 @@ class FirestoreService {
   /// It takes the [userId] of an user and the [diaryPage]
   /// and adds it into the list of diaryPages of the user into the DB
   Future<void> addDiaryPageIntoDB(String userId, DiaryPage diaryPage) {
-    return _firestore
-        .collection(diaryPage.collection)
-        .doc(userId)
-        .collection("diaryPages")
-        .doc(diaryPage.id)
-        .set(diaryPage.data)
-        .then((value) => log("Diary page added"))
-        .catchError((error) => log("Failed to add the diary note: $error"));
+    return _firestore.collection(diaryPage.collection).doc(userId).collection("diaryPages").doc(diaryPage.id).set(diaryPage.data);
   }
 
   /// It takes the [userId] of an user and the new [diaryPage]
   /// and updates the title and content fields into the DB
   Future<void> updateDiaryPageIntoDB(String userId, DiaryPage diaryPage) {
-    return _firestore
-        .collection(diaryPage.collection)
-        .doc(userId)
-        .collection("diaryPages")
-        .doc(diaryPage.id)
-        .update({
-          "title": diaryPage.data["title"],
-          "content": diaryPage.data["content"],
-          "dateTime": diaryPage.data["dateTime"],
-        })
-        .then((value) => log("Diary page updated"))
-        .catchError((error) => log("Failed to update the diary note: $error"));
+    return _firestore.collection(diaryPage.collection).doc(userId).collection("diaryPages").doc(diaryPage.id).update({
+      "title": diaryPage.data["title"],
+      "content": diaryPage.data["content"],
+      "dateTime": diaryPage.data["dateTime"],
+    });
   }
 
   /// It takes the [userId] of an user and the [diaryPage] and set it as favourite or not
   Future<void> setDiaryPageAsFavouriteIntoDB(String userId, DiaryPage diaryPage) {
-    return _firestore
-        .collection(diaryPage.collection)
-        .doc(userId)
-        .collection("diaryPages")
-        .doc(diaryPage.id)
-        .update({
-          "favourite": diaryPage.data["favourite"],
-        })
-        .then((value) => log("Favourite note updated"))
-        .catchError((error) => log("Failed to update the favourite note: $error"));
+    return _firestore.collection(diaryPage.collection).doc(userId).collection("diaryPages").doc(diaryPage.id).update({
+      "favourite": diaryPage.data["favourite"],
+    });
   }
 
   /// It takes the [userId] of an user and return the stream of
