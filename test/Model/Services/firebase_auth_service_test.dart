@@ -61,20 +61,6 @@ void main() async {
 
         verify(mockFirebaseAuth.createUserWithEmailAndPassword(email: email, password: password)).called(1);
       });
-
-      test("Check that create a new user calls the sendEmailVerification method of the Firebase user", () async {
-        await firebaseAuthService.createUserWithEmailAndPassword(email, password);
-
-        verify(mockUser.sendEmailVerification()).called(1);
-      });
-
-      test("Check that if an exception occurs in sending the verification email it catches the error", () async {
-        /// Mock FirebaseAuth exception
-        when(mockUser.sendEmailVerification()).thenAnswer((_) async {
-          return Future.error(FirebaseAuthException(code: "code", message: "test"));
-        });
-        await firebaseAuthService.createUserWithEmailAndPassword(email, password);
-      });
     });
 
     group("Deletion of the user:", () {

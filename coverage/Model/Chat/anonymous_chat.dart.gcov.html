@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-01-08 20:08:41</td>
+            <td class="headerValue">2022-01-10 03:08:58</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -74,8 +74,8 @@
 <a name="12"><span class="lineNum">      12 </span>            :   /// Anonymous chat of the base user with another base user.</a>
 <a name="13"><span class="lineNum">      13 </span>            :   ///</a>
 <a name="14"><span class="lineNum">      14 </span>            :   /// The peer collection of an [AnonymousChat] is another [AnonymousChat].</a>
-<a name="15"><span class="lineNum">      15 </span><span class="lineCov">          4 :   AnonymousChat({BaseUser? peerUser, String lastMessage = &quot;&quot;, DateTime? lastMessageDateTime, int notReadMessages = 0})</span></a>
-<a name="16"><span class="lineNum">      16 </span><span class="lineCov">          4 :       : super(</span></a>
+<a name="15"><span class="lineNum">      15 </span><span class="lineCov">          7 :   AnonymousChat({BaseUser? peerUser, String lastMessage = &quot;&quot;, DateTime? lastMessageDateTime, int notReadMessages = 0})</span></a>
+<a name="16"><span class="lineNum">      16 </span><span class="lineCov">          7 :       : super(</span></a>
 <a name="17"><span class="lineNum">      17 </span>            :           COLLECTION,</a>
 <a name="18"><span class="lineNum">      18 </span>            :           PEER_COLLECTION,</a>
 <a name="19"><span class="lineNum">      19 </span>            :           peerUser: peerUser,</a>
@@ -85,13 +85,13 @@
 <a name="23"><span class="lineNum">      23 </span>            :         );</a>
 <a name="24"><span class="lineNum">      24 </span>            : </a>
 <a name="25"><span class="lineNum">      25 </span>            :   /// Create an instance of [AnonymousChat] form the [doc] fields retrieved from the FireBase DB.</a>
-<a name="26"><span class="lineNum">      26 </span><span class="lineCov">          2 :   factory AnonymousChat.fromDocument(DocumentSnapshot doc) {</span></a>
-<a name="27"><span class="lineNum">      27 </span><span class="lineCov">          2 :     int milli = doc.get(&quot;lastMessageTimestamp&quot;);</span></a>
-<a name="28"><span class="lineNum">      28 </span><span class="lineCov">          2 :     return AnonymousChat(</span></a>
-<a name="29"><span class="lineNum">      29 </span><span class="lineCov">          2 :         lastMessage: doc.get(&quot;lastMessage&quot;),</span></a>
-<a name="30"><span class="lineNum">      30 </span><span class="lineCov">          2 :         lastMessageDateTime: DateTime.fromMillisecondsSinceEpoch(milli),</span></a>
-<a name="31"><span class="lineNum">      31 </span><span class="lineCov">          2 :         notReadMessages: doc.get(&quot;notReadMessages&quot;),</span></a>
-<a name="32"><span class="lineNum">      32 </span><span class="lineCov">          4 :         peerUser: BaseUser(id: doc.id));</span></a>
+<a name="26"><span class="lineNum">      26 </span><span class="lineCov">          3 :   factory AnonymousChat.fromDocument(DocumentSnapshot doc) {</span></a>
+<a name="27"><span class="lineNum">      27 </span><span class="lineCov">          3 :     int milli = doc.get(&quot;lastMessageTimestamp&quot;);</span></a>
+<a name="28"><span class="lineNum">      28 </span><span class="lineCov">          3 :     return AnonymousChat(</span></a>
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">          3 :         lastMessage: doc.get(&quot;lastMessage&quot;),</span></a>
+<a name="30"><span class="lineNum">      30 </span><span class="lineCov">          3 :         lastMessageDateTime: DateTime.fromMillisecondsSinceEpoch(milli),</span></a>
+<a name="31"><span class="lineNum">      31 </span><span class="lineCov">          3 :         notReadMessages: doc.get(&quot;notReadMessages&quot;),</span></a>
+<a name="32"><span class="lineNum">      32 </span><span class="lineCov">          6 :         peerUser: BaseUser(id: doc.id));</span></a>
 <a name="33"><span class="lineNum">      33 </span>            :   }</a>
 <a name="34"><span class="lineNum">      34 </span>            : }</a>
 </pre>

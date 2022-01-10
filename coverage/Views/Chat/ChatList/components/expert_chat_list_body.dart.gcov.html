@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-01-08 20:08:41</td>
+            <td class="headerValue">2022-01-10 03:08:58</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -72,7 +72,7 @@
 <a name="10"><span class="lineNum">      10 </span>            : /// It contains the [TopBar], the [ChatListConstructor] of the experts chats and the button for searching new random users.</a>
 <a name="11"><span class="lineNum">      11 </span>            : class ExpertChatListBody extends StatefulWidget {</a>
 <a name="12"><span class="lineNum">      12 </span>            :   /// It contains the [TopBar], the [ChatListConstructor] of the experts chats and the button for searching new random users.</a>
-<a name="13"><span class="lineNum">      13 </span><span class="lineCov">          4 :   const ExpertChatListBody({Key? key}) : super(key: key);</span></a>
+<a name="13"><span class="lineNum">      13 </span><span class="lineCov">          6 :   const ExpertChatListBody({Key? key}) : super(key: key);</span></a>
 <a name="14"><span class="lineNum">      14 </span>            : </a>
 <a name="15"><span class="lineNum">      15 </span><span class="lineNoCov">          0 :   @override</span></a>
 <a name="16"><span class="lineNum">      16 </span><span class="lineNoCov">          0 :   _ExpertChatListBodyState createState() =&gt; _ExpertChatListBodyState();</span></a>
@@ -100,7 +100,7 @@
 <a name="38"><span class="lineNum">      38 </span>            :           crossAxisAlignment: CrossAxisAlignment.start,</a>
 <a name="39"><span class="lineNum">      39 </span><span class="lineNoCov">          0 :           children: &lt;Widget&gt;[</span></a>
 <a name="40"><span class="lineNum">      40 </span><span class="lineNoCov">          0 :             TopBar(onBack: chatViewModel.resetCurrentChat, text: &quot;Experts&quot;),</span></a>
-<a name="41"><span class="lineNum">      41 </span><span class="lineNoCov">          0 :             ChatListConstructor(valueNotifier: chatViewModel.expertsChats!),</span></a>
+<a name="41"><span class="lineNum">      41 </span><span class="lineNoCov">          0 :             ChatListConstructor(valueNotifier: chatViewModel.expertsChats),</span></a>
 <a name="42"><span class="lineNum">      42 </span>            :           ],</a>
 <a name="43"><span class="lineNum">      43 </span>            :         ),</a>
 <a name="44"><span class="lineNum">      44 </span>            :         // &quot;+&quot; button used to look for new expert</a>

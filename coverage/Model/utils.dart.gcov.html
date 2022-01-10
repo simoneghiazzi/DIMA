@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-01-08 20:08:41</td>
+            <td class="headerValue">2022-01-10 03:08:58</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -67,18 +67,18 @@
 <a name="5"><span class="lineNum">       5 </span>            :   static const String AUTO_ID_ALPHABET = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&quot;;</a>
 <a name="6"><span class="lineNum">       6 </span>            : </a>
 <a name="7"><span class="lineNum">       7 </span>            :   /// Generate a random ID of the specified [idLength].</a>
-<a name="8"><span class="lineNum">       8 </span><span class="lineCov">         20 :   static String randomId({int idLength = 28}) {</span></a>
-<a name="9"><span class="lineNum">       9 </span><span class="lineCov">         20 :     StringBuffer idBuilder = new StringBuffer();</span></a>
-<a name="10"><span class="lineNum">      10 </span><span class="lineCov">         40 :     for (int i = 0; i &lt; idLength; i++) {</span></a>
-<a name="11"><span class="lineNum">      11 </span><span class="lineCov">        100 :       idBuilder.writeCharCode(AUTO_ID_ALPHABET.codeUnitAt((Random.secure().nextInt(AUTO_ID_ALPHABET.length))));</span></a>
+<a name="8"><span class="lineNum">       8 </span><span class="lineCov">         26 :   static String randomId({int idLength = 28}) {</span></a>
+<a name="9"><span class="lineNum">       9 </span><span class="lineCov">         26 :     StringBuffer idBuilder = new StringBuffer();</span></a>
+<a name="10"><span class="lineNum">      10 </span><span class="lineCov">         52 :     for (int i = 0; i &lt; idLength; i++) {</span></a>
+<a name="11"><span class="lineNum">      11 </span><span class="lineCov">        130 :       idBuilder.writeCharCode(AUTO_ID_ALPHABET.codeUnitAt((Random.secure().nextInt(AUTO_ID_ALPHABET.length))));</span></a>
 <a name="12"><span class="lineNum">      12 </span>            :     }</a>
-<a name="13"><span class="lineNum">      13 </span><span class="lineCov">         20 :     return idBuilder.toString();</span></a>
+<a name="13"><span class="lineNum">      13 </span><span class="lineCov">         26 :     return idBuilder.toString();</span></a>
 <a name="14"><span class="lineNum">      14 </span>            :   }</a>
 <a name="15"><span class="lineNum">      15 </span>            : </a>
 <a name="16"><span class="lineNum">      16 </span>            :   /// Returns the pair chat id of 2 users based on the [senderId] and the [peerId].</a>
-<a name="17"><span class="lineNum">      17 </span><span class="lineCov">          3 :   static String pairChatId(String senderId, String peerId) {</span></a>
-<a name="18"><span class="lineNum">      18 </span><span class="lineCov">          9 :     if (senderId.hashCode &lt;= peerId.hashCode) {</span></a>
-<a name="19"><span class="lineNum">      19 </span><span class="lineCov">          3 :       return &quot;$senderId-$peerId&quot;;</span></a>
+<a name="17"><span class="lineNum">      17 </span><span class="lineCov">          4 :   static String pairChatId(String senderId, String peerId) {</span></a>
+<a name="18"><span class="lineNum">      18 </span><span class="lineCov">         12 :     if (senderId.hashCode &lt;= peerId.hashCode) {</span></a>
+<a name="19"><span class="lineNum">      19 </span><span class="lineCov">          4 :       return &quot;$senderId-$peerId&quot;;</span></a>
 <a name="20"><span class="lineNum">      20 </span>            :     } else {</a>
 <a name="21"><span class="lineNum">      21 </span><span class="lineCov">          2 :       return &quot;$peerId-$senderId&quot;;</span></a>
 <a name="22"><span class="lineNum">      22 </span>            :     }</a>

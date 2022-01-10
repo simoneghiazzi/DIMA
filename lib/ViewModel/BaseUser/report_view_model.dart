@@ -31,7 +31,6 @@ class ReportViewModel {
         .addReportIntoDB(_userService.loggedUser!.id, currentReport.value!)
         .then((value) => log("Report added"))
         .catchError((error) => log("Failed to add the report: $error"));
-    ;
   }
 
   /// Load the list of reports.

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-01-08 20:08:41</td>
+            <td class="headerValue">2022-01-10 03:08:58</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -78,7 +78,7 @@
 <a name="16"><span class="lineNum">      16 </span>            :   /// It instantiate the [loggedUser] with all the retrieved information from the DB.</a>
 <a name="17"><span class="lineNum">      17 </span>            :   ///</a>
 <a name="18"><span class="lineNum">      18 </span>            :   /// If the user is not signed in, it throws an exception.</a>
-<a name="19"><span class="lineNum">      19 </span><span class="lineCov">          1 :   Future&lt;void&gt; loadLoggedUserFromDB() async {</span></a>
+<a name="19"><span class="lineNum">      19 </span><span class="lineCov">          1 :   Future&lt;void&gt; loadLoggedUser() async {</span></a>
 <a name="20"><span class="lineNum">      20 </span><span class="lineCov">          2 :     if (_firebaseAuthService.currentUserId != null) {</span></a>
 <a name="21"><span class="lineNum">      21 </span><span class="lineCov">          6 :       loggedUser = await _firestoreService.findUserType(_firebaseAuthService.currentUserId!);</span></a>
 <a name="22"><span class="lineNum">      22 </span><span class="lineCov">          1 :       if (loggedUser != null) {</span></a>
