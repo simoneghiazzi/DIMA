@@ -47,7 +47,7 @@ class _ChatListConstructorState extends State<ChatListConstructor> {
             physics: BouncingScrollPhysics(),
             padding: EdgeInsets.all(10.0),
             itemBuilder: (context, index) {
-              // The index for the linked hash map runs from expertChats.length - 1 to 0 because the hash map
+              // The index for the linked hash map runs from chats.length - 1 to 0 because the hash map
               // is ordered by the time of insertion, so the last inserted element (the newer chat) is the first element
               // to show in the list.
               return ChatListItem(

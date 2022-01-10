@@ -51,7 +51,7 @@ class TestHelper {
   late ExpertChat expertChat;
   late ExpertChat expertChat2_2;
   List<ExpertChat> get expertsChats => [expertChat, expertChat2_2];
-  Stream<QuerySnapshot> get expertChatsStream {
+  Stream<QuerySnapshot> get expertsChatsStream {
     if (fakeFirebase != null) {
       return fakeFirebase!.collection(BaseUser.COLLECTION).doc(loggedUser.id).collection(ExpertChat.COLLECTION).snapshots();
     } else {

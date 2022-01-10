@@ -22,6 +22,16 @@ import '../test_helper.dart';
 import '../service.mocks.dart';
 import '../Views/Chat/ChatPage/chat_page_screen_test.mocks.dart';
 
+class MockDocumentChange<T extends Object?> extends Mock implements DocumentChange {
+  var oldIndex = -1;
+  var newIndex = -1;
+  late DocumentSnapshot doc;
+}
+
+class MockQuerySnapshot<T extends Object?> extends Mock implements QuerySnapshot {
+  List<MockDocumentChange> docChanges = <MockDocumentChange>[];
+}
+
 void main() async {
   /// Fake Firebase
   final fakeFirebase = FakeFirebaseFirestore();
@@ -47,7 +57,7 @@ void main() async {
       fakeFirebase.collection(value.positionalArguments[0]).where(FieldPath.documentId, isEqualTo: value.positionalArguments[1]).limit(1).get());
   when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedUser, AnonymousChat.COLLECTION)).thenAnswer((_) => testHelper.anonymousChatsStream);
   when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedUser, PendingChat.COLLECTION)).thenAnswer((_) => testHelper.pendingChatsStream);
-  when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedUser, ExpertChat.COLLECTION)).thenAnswer((_) => testHelper.expertChatsStream);
+  when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedUser, ExpertChat.COLLECTION)).thenAnswer((_) => testHelper.expertsChatsStream);
   when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedUser, ActiveChat.COLLECTION)).thenAnswer((_) => testHelper.activeChatsStream);
   when(mockFirestoreService.getMessagesStreamFromDB(any)).thenAnswer((_) => fakeFirebase.collection("empty").snapshots());
   when(mockFirestoreService.getRandomUserFromDB(testHelper.loggedUser, any)).thenAnswer((_) async {
@@ -342,31 +352,52 @@ void main() async {
     });
 
     group("Load anonymous chats:", () {
-      int counter = 0;
-      chatViewModel.anonymousChats.addListener(() {
-        counter++;
-      });
+      var anonymousChat4 = AnonymousChat(
+        lastMessage: "Message user 4",
+        lastMessageDateTime: DateTime(2022, 1, 10, 21, 10, 50),
+        peerUser: testHelper.baseUser4,
+      );
 
       setUp(() async {
-        counter = 0;
-        chatViewModel.anonymousChats.value.clear();
+        chatViewModel.closeListeners();
 
-        /// Load the anonymous chats
-        chatViewModel.loadAnonymousChats();
-        await Future.delayed(Duration.zero);
+        /// Removes the new added chat from the DB
+        await fakeFirebase
+            .collection(BaseUser.COLLECTION)
+            .doc(testHelper.loggedUser.id)
+            .collection(AnonymousChat.COLLECTION)
+            .doc(anonymousChat4.peerUser!.id)
+            .delete();
       });
 
       test("Check the subscription of the anonymous chats subscriber to the get chats stream of the firestore service", () async {
+        /// Load the anonymous chats
+        chatViewModel.loadAnonymousChats();
+        await Future.delayed(Duration.zero);
+
         expect(chatViewModel.anonymousChatsSubscriber, isA<StreamSubscription<QuerySnapshot>>());
       });
 
       test("Check that the value notifier notify the listeners every time a new anonymous chat is added into the HashMap of anonymous chats",
           () async {
+        int counter = 0;
+        var listener = () => counter++;
+        chatViewModel.anonymousChats.addListener(listener);
+
+        /// Load the anonymous chats
+        chatViewModel.loadAnonymousChats();
+        await Future.delayed(Duration.zero);
+
         expect(counter, testHelper.anonymousChats.length);
+        chatViewModel.anonymousChats.removeListener(listener);
       });
 
       test("Check that the initially inserted anonymous chats are correctly parsed and added to the hashmap of anonymous chats in the correct order",
           () async {
+        /// Load the anonymous chats
+        chatViewModel.loadAnonymousChats();
+        await Future.delayed(Duration.zero);
+
         for (int i = 0; i < testHelper.anonymousChats.length; i++) {
           expect(chatViewModel.anonymousChats.value.values.elementAt(i).peerUser!.id, testHelper.anonymousChats[i].peerUser!.id);
           expect(chatViewModel.anonymousChats.value.values.elementAt(i).lastMessage, testHelper.anonymousChats[i].lastMessage);
@@ -375,15 +406,75 @@ void main() async {
         }
       });
 
-      test("Add a new anonymous chat into the DB should trigger the listener in order to add this new chat into the chats HashMap", () async {
-        /// The fake firestore doc changes doesn't work properly, so we need to manually clear the previous list
-        chatViewModel.anonymousChats.value.clear();
-
-        var anonymousChat4 = AnonymousChat(
-          lastMessage: "Message user 4",
-          lastMessageDateTime: DateTime(2022, 1, 10, 21, 10, 50),
-          peerUser: testHelper.baseUser4,
+      test(
+          "Modifying an old anonymous chat (when a new message arrives/is sent) will trigger the listener that should change the order of the HashMap",
+          () async {
+        var chatThatWillBeModified = AnonymousChat(
+          lastMessage: "Message user 1",
+          lastMessageDateTime: DateTime(2021, 10, 19, 21, 10, 50),
+          peerUser: testHelper.baseUser,
         );
+        var anonymousHashMap = LinkedHashMap<String, AnonymousChat>();
+        anonymousHashMap["${chatThatWillBeModified.peerUser!.id}"] = chatThatWillBeModified;
+        anonymousHashMap["${testHelper.anonymousChat2_2.peerUser!.id}"] = testHelper.anonymousChat2_2;
+        anonymousHashMap["${testHelper.anonymousChat3_3.peerUser!.id}"] = testHelper.anonymousChat3_3;
+        chatViewModel.anonymousChats.value = anonymousHashMap;
+
+        chatThatWillBeModified.lastMessageDateTime = DateTime(2022, 1, 10, 15, 12, 00);
+        chatThatWillBeModified.lastMessage = "Chat modified";
+        chatThatWillBeModified.notReadMessages = 1;
+
+        var listener;
+        var callback = expectAsync1((int lastPos) {
+          for (int i = 0; i < lastPos - 1; i++) {
+            /// The old chats should be "moved down" of one position
+            expect(chatViewModel.anonymousChats.value.keys.elementAt(i), testHelper.anonymousChats[i + 1].peerUser!.id);
+          }
+
+          /// The last modified element should be moved in the last position of the HashMap
+          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).peerUser!.id, chatThatWillBeModified.peerUser!.id);
+          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).lastMessage, chatThatWillBeModified.lastMessage);
+          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).lastMessageDateTime, chatThatWillBeModified.lastMessageDateTime);
+          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).notReadMessages, chatThatWillBeModified.notReadMessages);
+
+          chatViewModel.anonymousChats.removeListener(listener);
+        }, count: 1);
+
+        listener = () => callback(chatViewModel.anonymousChats.value.length - 1);
+        chatViewModel.anonymousChats.addListener(listener);
+
+        /// The fake firestore doc changes doesn't work properly, so we need to manually simulate the response
+        /// with docChanges
+        when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedUser, AnonymousChat.COLLECTION)).thenAnswer((_) async* {
+          var snapshot = await testHelper.anonymousChatsStream.first;
+          var mockSnapshot = MockQuerySnapshot();
+          var newDocChanges = <MockDocumentChange>[];
+
+          /// We need to manually change the old index of the old chat that has been modified
+          for (var docChange in snapshot.docChanges) {
+            /// We simulate that chatThatWillBeModified that was in position 0 is modified
+            if (docChange.doc.id == chatThatWillBeModified.peerUser!.id) {
+              var newDocChange = MockDocumentChange();
+              newDocChange.oldIndex = 0;
+              newDocChange.doc = docChange.doc;
+              newDocChanges.add(newDocChange);
+            }
+          }
+          mockSnapshot.docChanges.clear();
+          mockSnapshot.docChanges = newDocChanges;
+          yield mockSnapshot;
+        });
+
+        /// Load the anonymous chats
+        chatViewModel.loadAnonymousChats();
+      });
+
+      test("Add a new anonymous chat into the DB will trigger the listener that should add this new chat into the anonymous chats HashMap", () async {
+        var anonymousHashMap = LinkedHashMap<String, AnonymousChat>();
+        anonymousHashMap["${testHelper.anonymousChat.peerUser!.id}"] = testHelper.anonymousChat;
+        anonymousHashMap["${testHelper.anonymousChat2_2.peerUser!.id}"] = testHelper.anonymousChat2_2;
+        anonymousHashMap["${testHelper.anonymousChat3_3.peerUser!.id}"] = testHelper.anonymousChat3_3;
+        chatViewModel.anonymousChats.value = anonymousHashMap;
 
         fakeFirebase
             .collection(BaseUser.COLLECTION)
@@ -396,13 +487,52 @@ void main() async {
           "lastMessage": anonymousChat4.lastMessage
         });
 
-        await Future.delayed(Duration.zero);
+        var listener;
+        var callback = expectAsync1((int lastPos) async {
+          for (int i = 0; i < lastPos - 1; i++) {
+            /// The old chats should be in the same position as before
+            expect(chatViewModel.anonymousChats.value.keys.elementAt(i), testHelper.anonymousChats[i].peerUser!.id);
+          }
 
-        /// Add with most recent datetime, so it should be in position 4
-        expect(chatViewModel.anonymousChats.value.values.elementAt(3).peerUser!.id, anonymousChat4.peerUser!.id);
-        expect(chatViewModel.anonymousChats.value.values.elementAt(3).lastMessage, anonymousChat4.lastMessage);
-        expect(chatViewModel.anonymousChats.value.values.elementAt(3).lastMessageDateTime, anonymousChat4.lastMessageDateTime);
-        expect(chatViewModel.anonymousChats.value.values.elementAt(3).notReadMessages, anonymousChat4.notReadMessages);
+          /// The linked hash map is ordered by the time of insertion, so the last inserted element
+          /// (the newer chat) should be in the last position of the list
+          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).peerUser!.id, anonymousChat4.peerUser!.id);
+          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).lastMessage, anonymousChat4.lastMessage);
+          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).lastMessageDateTime, anonymousChat4.lastMessageDateTime);
+          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).notReadMessages, anonymousChat4.notReadMessages);
+
+          chatViewModel.anonymousChats.removeListener(listener);
+        }, count: 1);
+
+        listener = () => callback(chatViewModel.anonymousChats.value.length - 1);
+        chatViewModel.anonymousChats.addListener(listener);
+
+        /// The fake firestore doc changes doesn't work properly, so we need to manually simulate the response
+        /// with docChanges
+        when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedUser, AnonymousChat.COLLECTION)).thenAnswer((_) async* {
+          var snapshot = await testHelper.anonymousChatsStream.first;
+          var mockSnapshot = MockQuerySnapshot();
+          var newDocChanges = <MockDocumentChange>[];
+
+          /// We need to manually remove the old chats from the docChanges list
+          for (var docChange in snapshot.docChanges) {
+            /// Elements will contain the chat of the current docChange if it was one of the initially inserted
+            /// chats, otherwise it will be empty
+            var elements = testHelper.anonymousChats.where((element) => element.peerUser!.id == docChange.doc.id);
+            if (elements.isEmpty) {
+              var newDocChange = MockDocumentChange();
+              newDocChange.oldIndex = -1;
+              newDocChange.doc = docChange.doc;
+              newDocChanges.add(newDocChange);
+            }
+          }
+          mockSnapshot.docChanges.clear();
+          mockSnapshot.docChanges = newDocChanges;
+          yield mockSnapshot;
+        });
+
+        /// Load the anonymous chats
+        chatViewModel.loadAnonymousChats();
       });
 
       test("Check that if an error occurs when loading the anonymous chats it catches the error", () {
@@ -415,30 +545,51 @@ void main() async {
     });
 
     group("Load pending chats:", () {
-      int counter = 0;
-      chatViewModel.pendingChats.addListener(() {
-        counter++;
-      });
+      var pendingChat3 = PendingChat(
+        lastMessage: "Message user 4",
+        lastMessageDateTime: DateTime(2022, 1, 10, 21, 10, 50),
+        peerUser: testHelper.baseUser4,
+      );
 
       setUp(() async {
-        counter = 0;
-        chatViewModel.pendingChats.value.clear();
+        chatViewModel.closeListeners();
 
-        /// Load the pending chats
-        chatViewModel.loadPendingChats();
-        await Future.delayed(Duration.zero);
+        /// Removes the new added chat from the DB
+        await fakeFirebase
+            .collection(BaseUser.COLLECTION)
+            .doc(testHelper.loggedUser.id)
+            .collection(PendingChat.COLLECTION)
+            .doc(pendingChat3.peerUser!.id)
+            .delete();
       });
 
       test("Check the subscription of the pending chats subscriber to the get chats stream of the firestore service", () async {
+        /// Load the anonymous chats
+        chatViewModel.loadPendingChats();
+        await Future.delayed(Duration.zero);
+
         expect(chatViewModel.pendingChatsSubscriber, isA<StreamSubscription<QuerySnapshot>>());
       });
 
       test("Check that the value notifier notify the listeners every time a new pending chat is added into the HashMap of pending chats", () async {
+        int counter = 0;
+        var listener = () => counter++;
+        chatViewModel.pendingChats.addListener(listener);
+
+        /// Load the anonymous chats
+        chatViewModel.loadPendingChats();
+        await Future.delayed(Duration.zero);
+
         expect(counter, testHelper.pendingChats.length);
+        chatViewModel.pendingChats.removeListener(listener);
       });
 
       test("Check that the initially inserted pending chats are correctly parsed and added to the hashmap of pending chats in the correct order",
           () async {
+        /// Load the anonymous chats
+        chatViewModel.loadPendingChats();
+        await Future.delayed(Duration.zero);
+
         for (int i = 0; i < testHelper.pendingChats.length; i++) {
           expect(chatViewModel.pendingChats.value.values.elementAt(i).peerUser!.id, testHelper.pendingChats[i].peerUser!.id);
           expect(chatViewModel.pendingChats.value.values.elementAt(i).lastMessage, testHelper.pendingChats[i].lastMessage);
@@ -447,15 +598,11 @@ void main() async {
         }
       });
 
-      test("Add a new pending chat into the DB should trigger the listener in order to add this new chat into the chats HashMap", () async {
-        /// The fake firestore doc changes doesn't work properly, so we need to manually clear the previous list
-        chatViewModel.pendingChats.value.clear();
-
-        var pendingChat3 = PendingChat(
-          lastMessage: "Message user 3",
-          lastMessageDateTime: DateTime(2022, 1, 10, 21, 10, 50),
-          peerUser: testHelper.baseUser4,
-        );
+      test("Add a new pending chat into the DB will trigger the listener that should add this new chat into the pending chats HashMap", () async {
+        var pendingHashMap = LinkedHashMap<String, PendingChat>();
+        pendingHashMap["${testHelper.pendingChat_5.peerUser!.id}"] = testHelper.pendingChat_5;
+        pendingHashMap["${testHelper.pendingChat2_6.peerUser!.id}"] = testHelper.pendingChat2_6;
+        chatViewModel.pendingChats.value = pendingHashMap;
 
         fakeFirebase
             .collection(BaseUser.COLLECTION)
@@ -468,13 +615,52 @@ void main() async {
           "lastMessage": pendingChat3.lastMessage
         });
 
-        await Future.delayed(Duration.zero);
+        var listener;
+        var callback = expectAsync1((int lastPos) async {
+          for (int i = 0; i < lastPos - 1; i++) {
+            /// The old chats should be in the same position as before
+            expect(chatViewModel.pendingChats.value.keys.elementAt(i), testHelper.pendingChats[i].peerUser!.id);
+          }
 
-        /// Add with most recent datetime, so it should be in position 3
-        expect(chatViewModel.pendingChats.value.values.elementAt(2).peerUser!.id, pendingChat3.peerUser!.id);
-        expect(chatViewModel.pendingChats.value.values.elementAt(2).lastMessage, pendingChat3.lastMessage);
-        expect(chatViewModel.pendingChats.value.values.elementAt(2).lastMessageDateTime, pendingChat3.lastMessageDateTime);
-        expect(chatViewModel.pendingChats.value.values.elementAt(2).notReadMessages, pendingChat3.notReadMessages);
+          /// The linked hash map is ordered by the time of insertion, so the last inserted element
+          /// (the newer chat) should be in the last position of the list
+          expect(chatViewModel.pendingChats.value.values.elementAt(lastPos).peerUser!.id, pendingChat3.peerUser!.id);
+          expect(chatViewModel.pendingChats.value.values.elementAt(lastPos).lastMessage, pendingChat3.lastMessage);
+          expect(chatViewModel.pendingChats.value.values.elementAt(lastPos).lastMessageDateTime, pendingChat3.lastMessageDateTime);
+          expect(chatViewModel.pendingChats.value.values.elementAt(lastPos).notReadMessages, pendingChat3.notReadMessages);
+
+          chatViewModel.pendingChats.removeListener(listener);
+        }, count: 1);
+
+        listener = () => callback(chatViewModel.pendingChats.value.length - 1);
+        chatViewModel.pendingChats.addListener(listener);
+
+        /// The fake firestore doc changes doesn't work properly, so we need to manually simulate the response
+        /// with docChanges
+        when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedUser, PendingChat.COLLECTION)).thenAnswer((_) async* {
+          var snapshot = await testHelper.pendingChatsStream.first;
+          var mockSnapshot = MockQuerySnapshot();
+          var newDocChanges = <MockDocumentChange>[];
+
+          /// We need to manually remove the old chats from the docChanges list
+          for (var docChange in snapshot.docChanges) {
+            /// Elements will contain the chat of the current docChange if it was one of the initially inserted
+            /// chats, otherwise it will be empty
+            var elements = testHelper.pendingChats.where((element) => element.peerUser!.id == docChange.doc.id);
+            if (elements.isEmpty) {
+              var newDocChange = MockDocumentChange();
+              newDocChange.oldIndex = -1;
+              newDocChange.doc = docChange.doc;
+              newDocChanges.add(newDocChange);
+            }
+          }
+          mockSnapshot.docChanges.clear();
+          mockSnapshot.docChanges = newDocChanges;
+          yield mockSnapshot;
+        });
+
+        /// Load the pending chats
+        chatViewModel.loadPendingChats();
       });
 
       test("Check that if an error occurs when loading the pending chats it catches the error", () {
@@ -487,30 +673,51 @@ void main() async {
     });
 
     group("Load active chats:", () {
-      int counter = 0;
-      chatViewModel.activeChats.addListener(() {
-        counter++;
-      });
+      var activeChat4 = ActiveChat(
+        lastMessage: "Message user 3",
+        lastMessageDateTime: DateTime(2022, 1, 10, 21, 10, 50),
+        peerUser: testHelper.baseUser4,
+      );
 
       setUp(() async {
-        counter = 0;
-        chatViewModel.activeChats.value.clear();
+        chatViewModel.closeListeners();
 
-        /// Load the active chats
-        chatViewModel.loadActiveChats();
-        await Future.delayed(Duration.zero);
+        /// Removes the new added chat from the DB
+        await fakeFirebase
+            .collection(Expert.COLLECTION)
+            .doc(testHelper.loggedExpert.id)
+            .collection(ActiveChat.COLLECTION)
+            .doc(activeChat4.peerUser!.id)
+            .delete();
       });
 
       test("Check the subscription of the active chats subscriber to the get chats stream of the firestore service", () async {
+        /// Load the active chats
+        chatViewModel.loadActiveChats();
+        await Future.delayed(Duration.zero);
+
         expect(chatViewModel.activeChatsSubscriber, isA<StreamSubscription<QuerySnapshot>>());
       });
 
       test("Check that the value notifier notify the listeners every time a new active chat is added into the HashMap of active chats", () async {
+        int counter = 0;
+        var listener = () => counter++;
+        chatViewModel.activeChats.addListener(listener);
+
+        /// Load the anonymous chats
+        chatViewModel.loadActiveChats();
+        await Future.delayed(Duration.zero);
+
         expect(counter, testHelper.activeChats.length);
+        chatViewModel.activeChats.removeListener(listener);
       });
 
       test("Check that the initially inserted active chats are correctly parsed and added to the hashmap of active chats in the correct order",
           () async {
+        /// Load the anonymous chats
+        chatViewModel.loadActiveChats();
+        await Future.delayed(Duration.zero);
+
         for (int i = 0; i < testHelper.activeChats.length; i++) {
           expect(chatViewModel.activeChats.value.values.elementAt(i).peerUser!.id, testHelper.activeChats[i].peerUser!.id);
           expect(chatViewModel.activeChats.value.values.elementAt(i).lastMessage, testHelper.activeChats[i].lastMessage);
@@ -519,15 +726,83 @@ void main() async {
         }
       });
 
-      test("Add a new active chat into the DB should trigger the listener in order to add this new chat into the chats HashMap", () async {
-        /// The fake firestore doc changes doesn't work properly, so we need to manually clear the previous list
-        chatViewModel.activeChats.value.clear();
+      test("Modifying an old active chat (when a new message arrives/is sent) will trigger the listener that should change the order of the HashMap",
+          () async {
+        /// Modify Mock User Service responses
+        when(mockUserService.loggedUser).thenAnswer((_) => testHelper.loggedExpert);
 
-        var activeChat4 = ActiveChat(
-          lastMessage: "Message user 3",
-          lastMessageDateTime: DateTime(2022, 1, 10, 21, 10, 50),
-          peerUser: testHelper.baseUser4,
+        var chatThatWillBeModified = ActiveChat(
+          lastMessage: "Message user 1",
+          lastMessageDateTime: DateTime(2021, 10, 19, 21, 10, 50),
+          peerUser: testHelper.baseUser,
         );
+        var activeHashMap = LinkedHashMap<String, ActiveChat>();
+        activeHashMap["${chatThatWillBeModified.peerUser!.id}"] = chatThatWillBeModified;
+        activeHashMap["${testHelper.activeChat2_2.peerUser!.id}"] = testHelper.activeChat2_2;
+        activeHashMap["${testHelper.activeChat3_3.peerUser!.id}"] = testHelper.activeChat3_3;
+        chatViewModel.activeChats.value = activeHashMap;
+
+        chatThatWillBeModified.lastMessageDateTime = DateTime(2022, 1, 10, 15, 12, 00);
+        chatThatWillBeModified.lastMessage = "Chat modified";
+        chatThatWillBeModified.notReadMessages = 1;
+
+        var listener;
+        var callback = expectAsync1((int lastPos) {
+          for (int i = 0; i < lastPos - 1; i++) {
+            /// The old chats should be "moved down" of one position
+            expect(chatViewModel.activeChats.value.keys.elementAt(i), testHelper.activeChats[i + 1].peerUser!.id);
+          }
+
+          /// The last modified element should be moved in the last position of the HashMap
+          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).peerUser!.id, chatThatWillBeModified.peerUser!.id);
+          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).lastMessage, chatThatWillBeModified.lastMessage);
+          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).lastMessageDateTime, chatThatWillBeModified.lastMessageDateTime);
+          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).notReadMessages, chatThatWillBeModified.notReadMessages);
+
+          chatViewModel.activeChats.removeListener(listener);
+        }, count: 1);
+
+        listener = () => callback(chatViewModel.activeChats.value.length - 1);
+        chatViewModel.activeChats.addListener(listener);
+
+        /// The fake firestore doc changes doesn't work properly, so we need to manually simulate the response
+        /// with docChanges
+        when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedExpert, ActiveChat.COLLECTION)).thenAnswer((_) async* {
+          var snapshot = await testHelper.activeChatsStream.first;
+          var mockSnapshot = MockQuerySnapshot();
+          var newDocChanges = <MockDocumentChange>[];
+
+          /// We need to manually change the old index of the old chat that has been modified
+          for (var docChange in snapshot.docChanges) {
+            /// We simulate that chatThatWillBeModified that was in position 0 is modified
+            if (docChange.doc.id == chatThatWillBeModified.peerUser!.id) {
+              var newDocChange = MockDocumentChange();
+              newDocChange.oldIndex = 0;
+              newDocChange.doc = docChange.doc;
+              newDocChanges.add(newDocChange);
+            }
+          }
+          mockSnapshot.docChanges.clear();
+          mockSnapshot.docChanges = newDocChanges;
+          yield mockSnapshot;
+        });
+
+        /// Load the active chats
+        chatViewModel.loadActiveChats();
+
+        /// Reset Mock User Service response
+        when(mockUserService.loggedUser).thenAnswer((_) => testHelper.loggedUser);
+      });
+
+      test("Add a new active chat into the DB will trigger the listener that should add this new chat into the active chats HashMap", () async {
+        /// Modify Mock User Service responses
+        when(mockUserService.loggedUser).thenAnswer((_) => testHelper.loggedExpert);
+
+        var activeHashMap = LinkedHashMap<String, ActiveChat>();
+        activeHashMap["${testHelper.activeChat.peerUser!.id}"] = testHelper.activeChat;
+        activeHashMap["${testHelper.activeChat2_2.peerUser!.id}"] = testHelper.activeChat2_2;
+        activeHashMap["${testHelper.activeChat3_3.peerUser!.id}"] = testHelper.activeChat3_3;
+        chatViewModel.activeChats.value = activeHashMap;
 
         fakeFirebase
             .collection(Expert.COLLECTION)
@@ -540,13 +815,55 @@ void main() async {
           "lastMessage": activeChat4.lastMessage
         });
 
-        await Future.delayed(Duration.zero);
+        var listener;
+        var callback = expectAsync1((int lastPos) async {
+          for (int i = 0; i < lastPos - 1; i++) {
+            /// The old chats should be in the same position as before
+            expect(chatViewModel.activeChats.value.keys.elementAt(i), testHelper.activeChats[i].peerUser!.id);
+          }
 
-        /// Add with most recent datetime, so it should be in position 3
-        expect(chatViewModel.activeChats.value.values.elementAt(3).peerUser!.id, activeChat4.peerUser!.id);
-        expect(chatViewModel.activeChats.value.values.elementAt(3).lastMessage, activeChat4.lastMessage);
-        expect(chatViewModel.activeChats.value.values.elementAt(3).lastMessageDateTime, activeChat4.lastMessageDateTime);
-        expect(chatViewModel.activeChats.value.values.elementAt(3).notReadMessages, activeChat4.notReadMessages);
+          /// The linked hash map is ordered by the time of insertion, so the last inserted element
+          /// (the newer chat) should be in the last position of the list
+          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).peerUser!.id, activeChat4.peerUser!.id);
+          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).lastMessage, activeChat4.lastMessage);
+          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).lastMessageDateTime, activeChat4.lastMessageDateTime);
+          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).notReadMessages, activeChat4.notReadMessages);
+
+          chatViewModel.activeChats.removeListener(listener);
+        }, count: 1);
+
+        listener = () => callback(chatViewModel.activeChats.value.length - 1);
+        chatViewModel.activeChats.addListener(listener);
+
+        /// The fake firestore doc changes doesn't work properly, so we need to manually simulate the response
+        /// with docChanges
+        when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedExpert, ActiveChat.COLLECTION)).thenAnswer((_) async* {
+          var snapshot = await testHelper.activeChatsStream.first;
+          var mockSnapshot = MockQuerySnapshot();
+          var newDocChanges = <MockDocumentChange>[];
+
+          /// We need to manually remove the old chats from the docChanges list
+          for (var docChange in snapshot.docChanges) {
+            /// Elements will contain the chat of the current docChange if it was one of the initially inserted
+            /// chats, otherwise it will be empty
+            var elements = testHelper.anonymousChats.where((element) => element.peerUser!.id == docChange.doc.id);
+            if (elements.isEmpty) {
+              var newDocChange = MockDocumentChange();
+              newDocChange.oldIndex = -1;
+              newDocChange.doc = docChange.doc;
+              newDocChanges.add(newDocChange);
+            }
+          }
+          mockSnapshot.docChanges.clear();
+          mockSnapshot.docChanges = newDocChanges;
+          yield mockSnapshot;
+        });
+
+        /// Load the anonymous chats
+        chatViewModel.loadActiveChats();
+
+        /// Reset Mock User Service response
+        when(mockUserService.loggedUser).thenAnswer((_) => testHelper.loggedUser);
       });
 
       test("Check that if an error occurs when loading the active chats it catches the error", () {
@@ -559,30 +876,51 @@ void main() async {
     });
 
     group("Load experts chats:", () {
-      int counter = 0;
-      chatViewModel.expertsChats.addListener(() {
-        counter++;
-      });
+      var expertChat3 = ExpertChat(
+        lastMessage: "Message user 3",
+        lastMessageDateTime: DateTime(2022, 1, 10, 21, 10, 50),
+        peerUser: testHelper.expert3,
+      );
 
       setUp(() async {
-        counter = 0;
-        chatViewModel.expertsChats.value.clear();
+        chatViewModel.closeListeners();
 
-        /// Load the experts chats
-        chatViewModel.loadExpertsChats();
-        await Future.delayed(Duration.zero);
+        /// Removes the new added chat from the DB
+        await fakeFirebase
+            .collection(BaseUser.COLLECTION)
+            .doc(testHelper.loggedUser.id)
+            .collection(ExpertChat.COLLECTION)
+            .doc(expertChat3.peerUser!.id)
+            .delete();
       });
 
       test("Check the subscription of the experts chats subscriber to the get chats stream of the firestore service", () async {
+        /// Load the experts chats
+        chatViewModel.loadExpertsChats();
+        await Future.delayed(Duration.zero);
+
         expect(chatViewModel.expertsChatsSubscriber, isA<StreamSubscription<QuerySnapshot>>());
       });
 
       test("Check that the value notifier notify the listeners every time a new experts chat is added into the HashMap of experts chats", () async {
+        int counter = 0;
+        var listener = () => counter++;
+        chatViewModel.expertsChats.addListener(listener);
+
+        /// Load the experts chats
+        chatViewModel.loadExpertsChats();
+        await Future.delayed(Duration.zero);
+
         expect(counter, testHelper.expertsChats.length);
+        chatViewModel.expertsChats.removeListener(listener);
       });
 
       test("Check that the initially inserted experts chats are correctly parsed and added to the hashmap of experts chats in the correct order",
           () async {
+        /// Load the experts chats
+        chatViewModel.loadExpertsChats();
+        await Future.delayed(Duration.zero);
+
         for (int i = 0; i < testHelper.expertsChats.length; i++) {
           expect(chatViewModel.expertsChats.value.values.elementAt(i).peerUser!.id, testHelper.expertsChats[i].peerUser!.id);
           expect(chatViewModel.expertsChats.value.values.elementAt(i).lastMessage, testHelper.expertsChats[i].lastMessage);
@@ -591,15 +929,72 @@ void main() async {
         }
       });
 
-      test("Add a new experts chat into the DB should trigger the listener in order to add this new chat into the chats HashMap", () async {
-        /// The fake firestore doc changes doesn't work properly, so we need to manually clear the previous list
-        chatViewModel.expertsChats.value.clear();
-
-        var expertChat3 = ExpertChat(
-          lastMessage: "Message user 3",
-          lastMessageDateTime: DateTime(2022, 1, 10, 21, 10, 50),
-          peerUser: testHelper.expert3,
+      test("Modifying an old experts chat (when a new message arrives/is sent) will trigger the listener that should change the order of the HashMap",
+          () async {
+        var chatThatWillBeModified = ExpertChat(
+          lastMessage: "Message user 1",
+          lastMessageDateTime: DateTime(2021, 10, 19, 21, 10, 50),
+          peerUser: testHelper.expert,
         );
+        var expertsHashMap = LinkedHashMap<String, ExpertChat>();
+        expertsHashMap["${chatThatWillBeModified.peerUser!.id}"] = chatThatWillBeModified;
+        expertsHashMap["${testHelper.expertChat2_2.peerUser!.id}"] = testHelper.expertChat2_2;
+        chatViewModel.expertsChats.value = expertsHashMap;
+
+        chatThatWillBeModified.lastMessageDateTime = DateTime(2022, 1, 10, 15, 12, 00);
+        chatThatWillBeModified.lastMessage = "Chat modified";
+        chatThatWillBeModified.notReadMessages = 1;
+
+        var listener;
+        var callback = expectAsync1((int lastPos) {
+          for (int i = 0; i < lastPos - 1; i++) {
+            /// The old chats should be "moved down" of one position
+            expect(chatViewModel.expertsChats.value.keys.elementAt(i), testHelper.expertsChats[i + 1].peerUser!.id);
+          }
+
+          /// The last modified element should be moved in the last position of the HashMap
+          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).peerUser!.id, chatThatWillBeModified.peerUser!.id);
+          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).lastMessage, chatThatWillBeModified.lastMessage);
+          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).lastMessageDateTime, chatThatWillBeModified.lastMessageDateTime);
+          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).notReadMessages, chatThatWillBeModified.notReadMessages);
+
+          chatViewModel.expertsChats.removeListener(listener);
+        }, count: 1);
+
+        listener = () => callback(chatViewModel.expertsChats.value.length - 1);
+        chatViewModel.expertsChats.addListener(listener);
+
+        /// The fake firestore doc changes doesn't work properly, so we need to manually simulate the response
+        /// with docChanges
+        when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedUser, ExpertChat.COLLECTION)).thenAnswer((_) async* {
+          var snapshot = await testHelper.expertsChatsStream.first;
+          var mockSnapshot = MockQuerySnapshot();
+          var newDocChanges = <MockDocumentChange>[];
+
+          /// We need to manually change the old index of the old chat that has been modified
+          for (var docChange in snapshot.docChanges) {
+            /// We simulate that chatThatWillBeModified that was in position 0 is modified
+            if (docChange.doc.id == chatThatWillBeModified.peerUser!.id) {
+              var newDocChange = MockDocumentChange();
+              newDocChange.oldIndex = 0;
+              newDocChange.doc = docChange.doc;
+              newDocChanges.add(newDocChange);
+            }
+          }
+          mockSnapshot.docChanges.clear();
+          mockSnapshot.docChanges = newDocChanges;
+          yield mockSnapshot;
+        });
+
+        /// Load the experts chats
+        chatViewModel.loadExpertsChats();
+      });
+
+      test("Add a new experts chat into the DB will trigger the listener that should add this new chat into the experts chats HashMap", () async {
+        var expertsHashMap = LinkedHashMap<String, ExpertChat>();
+        expertsHashMap["${testHelper.expertChat.peerUser!.id}"] = testHelper.expertChat;
+        expertsHashMap["${testHelper.expertChat2_2.peerUser!.id}"] = testHelper.expertChat2_2;
+        chatViewModel.expertsChats.value = expertsHashMap;
 
         fakeFirebase
             .collection(BaseUser.COLLECTION)
@@ -612,13 +1007,52 @@ void main() async {
           "lastMessage": expertChat3.lastMessage
         });
 
-        await Future.delayed(Duration.zero);
+        var listener;
+        var callback = expectAsync1((int lastPos) async {
+          for (int i = 0; i < lastPos - 1; i++) {
+            /// The old chats should be in the same position as before
+            expect(chatViewModel.expertsChats.value.keys.elementAt(i), testHelper.expertsChats[i].peerUser!.id);
+          }
 
-        /// Add with most recent datetime, so it should be in position 3
-        expect(chatViewModel.expertsChats.value.values.elementAt(2).peerUser!.id, expertChat3.peerUser!.id);
-        expect(chatViewModel.expertsChats.value.values.elementAt(2).lastMessage, expertChat3.lastMessage);
-        expect(chatViewModel.expertsChats.value.values.elementAt(2).lastMessageDateTime, expertChat3.lastMessageDateTime);
-        expect(chatViewModel.expertsChats.value.values.elementAt(2).notReadMessages, expertChat3.notReadMessages);
+          /// The linked hash map is ordered by the time of insertion, so the last inserted element
+          /// (the newer chat) should be in the last position of the list
+          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).peerUser!.id, expertChat3.peerUser!.id);
+          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).lastMessage, expertChat3.lastMessage);
+          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).lastMessageDateTime, expertChat3.lastMessageDateTime);
+          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).notReadMessages, expertChat3.notReadMessages);
+
+          chatViewModel.expertsChats.removeListener(listener);
+        }, count: 1);
+
+        listener = () => callback(chatViewModel.expertsChats.value.length - 1);
+        chatViewModel.expertsChats.addListener(listener);
+
+        /// The fake firestore doc changes doesn't work properly, so we need to manually simulate the response
+        /// with docChanges
+        when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedUser, ExpertChat.COLLECTION)).thenAnswer((_) async* {
+          var snapshot = await testHelper.expertsChatsStream.first;
+          var mockSnapshot = MockQuerySnapshot();
+          var newDocChanges = <MockDocumentChange>[];
+
+          /// We need to manually remove the old chats from the docChanges list
+          for (var docChange in snapshot.docChanges) {
+            /// Elements will contain the chat of the current docChange if it was one of the initially inserted
+            /// chats, otherwise it will be empty
+            var elements = testHelper.expertsChats.where((element) => element.peerUser!.id == docChange.doc.id);
+            if (elements.isEmpty) {
+              var newDocChange = MockDocumentChange();
+              newDocChange.oldIndex = -1;
+              newDocChange.doc = docChange.doc;
+              newDocChanges.add(newDocChange);
+            }
+          }
+          mockSnapshot.docChanges.clear();
+          mockSnapshot.docChanges = newDocChanges;
+          yield mockSnapshot;
+        });
+
+        /// Load the experts chats
+        chatViewModel.loadExpertsChats();
       });
 
       test("Check that if an error occurs when loading the experts chats it catches the error", () {
