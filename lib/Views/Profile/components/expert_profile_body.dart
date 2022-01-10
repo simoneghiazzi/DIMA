@@ -106,7 +106,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
         Expanded(
           child: Container(
             transform: Matrix4.translationValues(0.0, -40.0, 0.0),
-            padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 3.w),
+            padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 1.w),
             child: ScrollConfiguration(
               behavior: MyBehavior(),
               child: ListView(
@@ -173,63 +173,70 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 5.h),
+                  SizedBox(height: 4.h),
                   Divider(color: kPrimaryColor, height: 1.5),
-                  (MediaQuery.of(context).orientation == Orientation.landscape)
-                      // Get In Touch Button
-                      ? Container(
-                          child: RoundedButton(
-                            text: "Get In Touch",
-                            onTap: () {
-                              chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
-                              if (MediaQuery.of(context).orientation == Orientation.portrait) {
-                                // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
-                                routerDelegate.replaceAllButNumber(2, routeSettingsList: [
-                                  RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
-                                  RouteSettings(name: ChatPageScreen.route),
-                                ]);
-                              } else {
-                                // Otherwise, above the home page push only the ChatListScreen with the experts
-                                routerDelegate.replaceAllButNumber(2, routeSettingsList: [
-                                  RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
-                                ]);
-                              }
-                            },
-                            suffixIcon: Icon(Icons.chat, color: Colors.white, size: 20),
-                          ),
-                        )
-                      : Container(),
-                  SizedBox(height: 5.h),
                 ],
               ),
             ),
           ),
         ),
-        (MediaQuery.of(context).orientation == Orientation.portrait)
+        (MediaQuery.of(context).orientation == Orientation.landscape)
             // Get In Touch Button
-            ? Container(
-                child: RoundedButton(
-                  text: "Get In Touch",
-                  onTap: () {
-                    chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
-                    if (MediaQuery.of(context).orientation == Orientation.portrait) {
-                      // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
-                      routerDelegate.replaceAllButNumber(2, routeSettingsList: [
-                        RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
-                        RouteSettings(name: ChatPageScreen.route),
-                      ]);
-                    } else {
-                      // Otherwise, above the home page push only the ChatListScreen with the experts
-                      routerDelegate.replaceAllButNumber(2, routeSettingsList: [
-                        RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
-                      ]);
-                    }
-                  },
-                  suffixIcon: Icon(Icons.chat, color: Colors.white, size: 20),
-                ),
+            ? Column(
+                children: [
+                  RoundedButton(
+                    width: 40.w,
+                    text: "Get In Touch",
+                    onTap: () {
+                      chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
+                      if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                        // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
+                        routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                          RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                          RouteSettings(name: ChatPageScreen.route),
+                        ]);
+                      } else {
+                        // Otherwise, above the home page push only the ChatListScreen with the experts
+                        routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                          RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                        ]);
+                      }
+                    },
+                    suffixIcon: Icon(Icons.chat, color: Colors.white, size: 20),
+                  ),
+                  SizedBox(height: 5.h),
+                ],
               )
             : Container(),
-        SizedBox(height: 10.h),
+        (MediaQuery.of(context).orientation == Orientation.portrait)
+            // Get In Touch Button
+            ? Column(
+                children: [
+                  Container(
+                    child: RoundedButton(
+                      text: "Get In Touch",
+                      onTap: () {
+                        chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
+                        if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                          // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
+                          routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                            RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                            RouteSettings(name: ChatPageScreen.route),
+                          ]);
+                        } else {
+                          // Otherwise, above the home page push only the ChatListScreen with the experts
+                          routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                            RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                          ]);
+                        }
+                      },
+                      suffixIcon: Icon(Icons.chat, color: Colors.white, size: 20),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                ],
+              )
+            : Container(),
       ],
     );
   }
