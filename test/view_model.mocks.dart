@@ -335,11 +335,11 @@ class MockChatViewModel extends _i1.Mock implements _i17.ChatViewModel {
       returnValue: Future<void>.value(),
       returnValueForMissingStub: Future<void>.value()) as _i11.Future<void>);
   @override
-  void acceptPendingChat() =>
+  Future<void> acceptPendingChat() =>
       super.noSuchMethod(Invocation.method(#acceptPendingChat, []),
           returnValueForMissingStub: null);
   @override
-  void denyPendingChat() =>
+  Future<void> denyPendingChat() =>
       super.noSuchMethod(Invocation.method(#denyPendingChat, []),
           returnValueForMissingStub: null);
   @override
