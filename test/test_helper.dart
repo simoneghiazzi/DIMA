@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:sApport/Model/Chat/active_chat.dart';
@@ -34,6 +36,14 @@ class TestHelper {
   late Expert expert2;
   late Expert expert3;
   List<Expert> get experts => [expert, expert2, expert3];
+  LinkedHashMap<String, Expert> get expertsLinkedHashMap {
+    var linkedHashMap = LinkedHashMap<String, Expert>();
+    linkedHashMap[expert.id] = expert;
+    linkedHashMap[expert2.id] = expert2;
+    linkedHashMap[expert3.id] = expert3;
+    return linkedHashMap;
+  }
+
   Future<QuerySnapshot> get expertsFuture {
     if (fakeFirebase != null) {
       return fakeFirebase!.collection(Expert.COLLECTION).get();

@@ -19,6 +19,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../Model/Services/firebase_auth_service_test.mocks.dart';
 import '../../navigator.mocks.dart';
+import '../../test_helper.dart';
 import '../../view_model.mocks.dart';
 import '../widget_test_helper.dart';
 
@@ -47,6 +48,9 @@ void main() {
       }),
     );
   }
+
+  /// Test Helper
+  final testHelper = TestHelper();
 
   var id = Utils.randomId();
   var name = "SIMONE";
@@ -77,7 +81,7 @@ void main() {
 
   when(mockMapviewModel.selectedPlace).thenAnswer((_) => Stream<Place?>.value(null));
 
-  when(mockMapviewModel.loadExperts()).thenAnswer((_) => GetIt.I<FirestoreService>().getExpertCollectionFromDB());
+  when(mockMapviewModel.experts).thenAnswer((_) => testHelper.expertsLinkedHashMap);
 
   when(mockMapviewModel.positionPermission).thenAnswer((_) => PermissionStatus.denied);
 

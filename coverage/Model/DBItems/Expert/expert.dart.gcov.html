@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-01-10 03:08:58</td>
+            <td class="headerValue">2022-01-10 20:52:17</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -74,7 +74,7 @@
 <a name="12"><span class="lineNum">      12 </span>            :   double latitude;</a>
 <a name="13"><span class="lineNum">      13 </span>            :   double longitude;</a>
 <a name="14"><span class="lineNum">      14 </span>            : </a>
-<a name="15"><span class="lineNum">      15 </span><span class="lineCov">         10 :   Expert({</span></a>
+<a name="15"><span class="lineNum">      15 </span><span class="lineCov">         11 :   Expert({</span></a>
 <a name="16"><span class="lineNum">      16 </span>            :     String id = &quot;&quot;,</a>
 <a name="17"><span class="lineNum">      17 </span>            :     String name = &quot;&quot;,</a>
 <a name="18"><span class="lineNum">      18 </span>            :     String surname = &quot;&quot;,</a>
@@ -85,7 +85,7 @@
 <a name="23"><span class="lineNum">      23 </span>            :     this.address = &quot;&quot;,</a>
 <a name="24"><span class="lineNum">      24 </span>            :     this.phoneNumber = &quot;&quot;,</a>
 <a name="25"><span class="lineNum">      25 </span>            :     this.profilePhoto = &quot;&quot;,</a>
-<a name="26"><span class="lineNum">      26 </span><span class="lineCov">         10 :   }) : super(COLLECTION, HOMEPAGE_ROUTE, id: id, name: name, surname: surname, birthDate: birthDate, email: email);</span></a>
+<a name="26"><span class="lineNum">      26 </span><span class="lineCov">         11 :   }) : super(COLLECTION, HOMEPAGE_ROUTE, id: id, name: name, surname: surname, birthDate: birthDate, email: email);</span></a>
 <a name="27"><span class="lineNum">      27 </span>            : </a>
 <a name="28"><span class="lineNum">      28 </span>            :   /// Create an instance of the [Expert] form the [doc] fields retrieved from the FireBase DB.</a>
 <a name="29"><span class="lineNum">      29 </span><span class="lineCov">          3 :   factory Expert.fromDocument(DocumentSnapshot doc) {</span></a>
@@ -117,19 +117,19 @@
 <a name="55"><span class="lineNum">      55 </span><span class="lineCov">          6 :     profilePhoto = doc.get(&quot;profilePhoto&quot;);</span></a>
 <a name="56"><span class="lineNum">      56 </span>            :   }</a>
 <a name="57"><span class="lineNum">      57 </span>            : </a>
-<a name="58"><span class="lineNum">      58 </span><span class="lineCov">          7 :   @override</span></a>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">          8 :   @override</span></a>
 <a name="59"><span class="lineNum">      59 </span>            :   Map&lt;String, Object&gt; get data {</a>
-<a name="60"><span class="lineNum">      60 </span><span class="lineCov">          7 :     return {</span></a>
-<a name="61"><span class="lineNum">      61 </span><span class="lineCov">          7 :       &quot;eid&quot;: id,</span></a>
-<a name="62"><span class="lineNum">      62 </span><span class="lineCov">          7 :       &quot;name&quot;: name,</span></a>
-<a name="63"><span class="lineNum">      63 </span><span class="lineCov">          7 :       &quot;surname&quot;: surname,</span></a>
-<a name="64"><span class="lineNum">      64 </span><span class="lineCov">          7 :       &quot;birthDate&quot;: birthDate!,</span></a>
-<a name="65"><span class="lineNum">      65 </span><span class="lineCov">          7 :       &quot;address&quot;: address,</span></a>
-<a name="66"><span class="lineNum">      66 </span><span class="lineCov">          7 :       &quot;lat&quot;: latitude,</span></a>
-<a name="67"><span class="lineNum">      67 </span><span class="lineCov">          7 :       &quot;lng&quot;: longitude,</span></a>
-<a name="68"><span class="lineNum">      68 </span><span class="lineCov">          7 :       &quot;phoneNumber&quot;: phoneNumber,</span></a>
-<a name="69"><span class="lineNum">      69 </span><span class="lineCov">          7 :       &quot;email&quot;: email,</span></a>
-<a name="70"><span class="lineNum">      70 </span><span class="lineCov">          7 :       &quot;profilePhoto&quot;: profilePhoto,</span></a>
+<a name="60"><span class="lineNum">      60 </span><span class="lineCov">          8 :     return {</span></a>
+<a name="61"><span class="lineNum">      61 </span><span class="lineCov">          8 :       &quot;eid&quot;: id,</span></a>
+<a name="62"><span class="lineNum">      62 </span><span class="lineCov">          8 :       &quot;name&quot;: name,</span></a>
+<a name="63"><span class="lineNum">      63 </span><span class="lineCov">          8 :       &quot;surname&quot;: surname,</span></a>
+<a name="64"><span class="lineNum">      64 </span><span class="lineCov">          8 :       &quot;birthDate&quot;: birthDate!,</span></a>
+<a name="65"><span class="lineNum">      65 </span><span class="lineCov">          8 :       &quot;address&quot;: address,</span></a>
+<a name="66"><span class="lineNum">      66 </span><span class="lineCov">          8 :       &quot;lat&quot;: latitude,</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineCov">          8 :       &quot;lng&quot;: longitude,</span></a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">          8 :       &quot;phoneNumber&quot;: phoneNumber,</span></a>
+<a name="69"><span class="lineNum">      69 </span><span class="lineCov">          8 :       &quot;email&quot;: email,</span></a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineCov">          8 :       &quot;profilePhoto&quot;: profilePhoto,</span></a>
 <a name="71"><span class="lineNum">      71 </span>            :     };</a>
 <a name="72"><span class="lineNum">      72 </span>            :   }</a>
 <a name="73"><span class="lineNum">      73 </span>            : }</a>

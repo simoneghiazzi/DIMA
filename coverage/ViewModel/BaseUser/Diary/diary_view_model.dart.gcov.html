@@ -31,13 +31,13 @@
             <td class="headerValue">lcov.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">70</td>
             <td class="headerCovTableEntry">72</td>
-            <td class="headerCovTableEntryHi">97.2 %</td>
+            <td class="headerCovTableEntry">72</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-01-10 03:08:58</td>
+            <td class="headerValue">2022-01-10 20:52:17</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -166,8 +166,8 @@
 <a name="104"><span class="lineNum">     104 </span><span class="lineCov">          2 :             _diaryPages.notifyListeners();</span></a>
 <a name="105"><span class="lineNum">     105 </span>            :           } else {</a>
 <a name="106"><span class="lineNum">     106 </span>            :             // Otherwise, update the diary page at the oldIndex position</a>
-<a name="107"><span class="lineNum">     107 </span><span class="lineNoCov">          0 :             _diaryPages.value[docChange.oldIndex] = _diaryPage;</span></a>
-<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 :             _diaryPages.notifyListeners();</span></a>
+<a name="107"><span class="lineNum">     107 </span><span class="lineCov">          4 :             _diaryPages.value[docChange.oldIndex] = _diaryPage;</span></a>
+<a name="108"><span class="lineNum">     108 </span><span class="lineCov">          2 :             _diaryPages.notifyListeners();</span></a>
 <a name="109"><span class="lineNum">     109 </span>            :           }</a>
 <a name="110"><span class="lineNum">     110 </span>            :         }</a>
 <a name="111"><span class="lineNum">     111 </span>            :       },</a>
@@ -207,7 +207,7 @@
 <a name="145"><span class="lineNum">     145 </span>            :   }</a>
 <a name="146"><span class="lineNum">     146 </span>            : </a>
 <a name="147"><span class="lineNum">     147 </span>            :   /// Cancel all the value listeners and clear their contents.</a>
-<a name="148"><span class="lineNum">     148 </span><span class="lineCov">          1 :   void closeListeners() {</span></a>
+<a name="148"><span class="lineNum">     148 </span><span class="lineCov">          1 :   void resetViewModel() {</span></a>
 <a name="149"><span class="lineNum">     149 </span><span class="lineCov">          2 :     _diaryPagesSubscriber?.cancel();</span></a>
 <a name="150"><span class="lineNum">     150 </span><span class="lineCov">          3 :     _diaryPages.value.clear();</span></a>
 <a name="151"><span class="lineNum">     151 </span><span class="lineCov">          2 :     _currentDiaryPage = ValueNotifier(null);</span></a>
