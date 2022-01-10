@@ -2,25 +2,26 @@
 // in sApport/test/ViewModel/chat_view_model_test.dart.
 // Do not manually edit this file.
 
-import 'dart:async' as _i6;
+import 'dart:async' as _i5;
 
 import 'package:cloud_firestore/cloud_firestore.dart' as _i2;
-import 'package:geolocator/geolocator.dart' as _i4;
+import 'package:geolocator/geolocator.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:sApport/Model/Chat/chat.dart' as _i12;
-import 'package:sApport/Model/DBItems/BaseUser/base_user.dart' as _i10;
-import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart' as _i15;
-import 'package:sApport/Model/DBItems/BaseUser/report.dart' as _i14;
-import 'package:sApport/Model/DBItems/Expert/expert.dart' as _i11;
-import 'package:sApport/Model/DBItems/message.dart' as _i13;
-import 'package:sApport/Model/DBItems/user.dart' as _i9;
-import 'package:sApport/Model/Map/place.dart' as _i3;
-import 'package:sApport/Model/Services/firebase_auth_service.dart' as _i5;
-import 'package:sApport/Model/Services/firestore_service.dart' as _i8;
-import 'package:sApport/Model/Services/map_service.dart' as _i16;
-import 'package:sApport/Model/Services/notification_service.dart' as _i17;
-import 'package:sApport/Model/Services/user_service.dart' as _i18;
-import 'package:sApport/Views/Signup/BaseUser/components/form/base_user_signup_form.dart' as _i19;
+import 'package:sApport/Model/Chat/chat.dart' as _i10;
+import 'package:sApport/Model/Chat/pending_chat.dart' as _i12;
+import 'package:sApport/Model/DBItems/BaseUser/base_user.dart' as _i8;
+import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart' as _i14;
+import 'package:sApport/Model/DBItems/BaseUser/report.dart' as _i13;
+import 'package:sApport/Model/DBItems/Expert/expert.dart' as _i9;
+import 'package:sApport/Model/DBItems/message.dart' as _i11;
+import 'package:sApport/Model/DBItems/user.dart' as _i7;
+import 'package:sApport/Model/Map/place.dart' as _i16;
+import 'package:sApport/Model/Services/firebase_auth_service.dart' as _i4;
+import 'package:sApport/Model/Services/firestore_service.dart' as _i6;
+import 'package:sApport/Model/Services/map_service.dart' as _i15;
+import 'package:sApport/Model/Services/user_service.dart' as _i17;
+import 'package:sApport/Views/Signup/BaseUser/components/form/base_user_signup_form.dart'
+    as _i18;
 
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: avoid_setters_without_getters
@@ -31,188 +32,263 @@ import 'package:sApport/Views/Signup/BaseUser/components/form/base_user_signup_f
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 
-class _FakeQuerySnapshot_0<T extends Object?> extends _i1.Fake implements _i2.QuerySnapshot<T> {}
+class _FakeQuerySnapshot_0<T extends Object?> extends _i1.Fake
+    implements _i2.QuerySnapshot<T> {}
 
-class _FakePlace_1 extends _i1.Fake implements _i3.Place {}
-
-class _FakePosition_2 extends _i1.Fake implements _i4.Position {}
+class _FakePosition_1 extends _i1.Fake implements _i3.Position {}
 
 /// A class which mocks [FirebaseAuthService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFirebaseAuthService extends _i1.Mock implements _i5.FirebaseAuthService {
+class MockFirebaseAuthService extends _i1.Mock
+    implements _i4.FirebaseAuthService {
   MockFirebaseAuthService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i6.Future<void> signInWithEmailAndPassword(String? email, String? password) =>
-      (super.noSuchMethod(Invocation.method(#signInWithEmailAndPassword, [email, password]),
-          returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+  _i5.Future<void> signInWithEmailAndPassword(
+          String? email, String? password) =>
+      (super.noSuchMethod(
+          Invocation.method(#signInWithEmailAndPassword, [email, password]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Future<void> createUserWithEmailAndPassword(String? email, String? password) =>
-      (super.noSuchMethod(Invocation.method(#createUserWithEmailAndPassword, [email, password]),
-          returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+  _i5.Future<void> createUserWithEmailAndPassword(
+          String? email, String? password) =>
+      (super.noSuchMethod(
+          Invocation.method(#createUserWithEmailAndPassword, [email, password]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Future<Map<dynamic, dynamic>> signInWithGoogle(bool? link) =>
-      (super.noSuchMethod(Invocation.method(#signInWithGoogle, [link]), returnValue: Future<Map<dynamic, dynamic>>.value(<dynamic, dynamic>{}))
-          as _i6.Future<Map<dynamic, dynamic>>);
+  _i5.Future<Map<dynamic, dynamic>> signInWithGoogle(bool? link) =>
+      (super.noSuchMethod(Invocation.method(#signInWithGoogle, [link]),
+              returnValue:
+                  Future<Map<dynamic, dynamic>>.value(<dynamic, dynamic>{}))
+          as _i5.Future<Map<dynamic, dynamic>>);
   @override
-  _i6.Future<Map<dynamic, dynamic>> signInWithFacebook(bool? link) =>
-      (super.noSuchMethod(Invocation.method(#signInWithFacebook, [link]), returnValue: Future<Map<dynamic, dynamic>>.value(<dynamic, dynamic>{}))
-          as _i6.Future<Map<dynamic, dynamic>>);
+  _i5.Future<Map<dynamic, dynamic>> signInWithFacebook(bool? link) =>
+      (super.noSuchMethod(Invocation.method(#signInWithFacebook, [link]),
+              returnValue:
+                  Future<Map<dynamic, dynamic>>.value(<dynamic, dynamic>{}))
+          as _i5.Future<Map<dynamic, dynamic>>);
   @override
-  void resetPassword(String? email) => super.noSuchMethod(Invocation.method(#resetPassword, [email]), returnValueForMissingStub: null);
+  _i5.Future<void> resetPassword(String? email) =>
+      (super.noSuchMethod(Invocation.method(#resetPassword, [email]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Future<void> signOut() =>
-      (super.noSuchMethod(Invocation.method(#signOut, []), returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value())
-          as _i6.Future<void>);
+  _i5.Future<void> signOut() =>
+      (super.noSuchMethod(Invocation.method(#signOut, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  String getAuthProvider() => (super.noSuchMethod(Invocation.method(#getAuthProvider, []), returnValue: '') as String);
+  _i5.Future<List<String>?> fetchSignInMethods(String? email) =>
+      (super.noSuchMethod(Invocation.method(#fetchSignInMethods, [email]),
+              returnValue: Future<List<String>?>.value())
+          as _i5.Future<List<String>?>);
   @override
-  _i6.Future<List<String>> fetchSignInMethods(String? email) =>
-      (super.noSuchMethod(Invocation.method(#fetchSignInMethods, [email]), returnValue: Future<List<String>>.value(<String>[]))
-          as _i6.Future<List<String>>);
+  _i5.Future<void> deleteUser() =>
+      (super.noSuchMethod(Invocation.method(#deleteUser, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Future<dynamic> deleteUser() =>
-      (super.noSuchMethod(Invocation.method(#deleteUser, []), returnValue: Future<dynamic>.value()) as _i6.Future<dynamic>);
+  bool isUserEmailVerified() =>
+      (super.noSuchMethod(Invocation.method(#isUserEmailVerified, []),
+          returnValue: false) as bool);
   @override
-  bool isUserEmailVerified() => (super.noSuchMethod(Invocation.method(#isUserEmailVerified, []), returnValue: false) as bool);
+  _i5.Future<void> sendVerificationEmail() =>
+      (super.noSuchMethod(Invocation.method(#sendVerificationEmail, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
 }
 
 /// A class which mocks [FirestoreService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFirestoreService extends _i1.Mock implements _i8.FirestoreService {
+class MockFirestoreService extends _i1.Mock implements _i6.FirestoreService {
   MockFirestoreService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i6.Future<void> addUserIntoDB(_i9.User? user) => (super.noSuchMethod(Invocation.method(#addUserIntoDB, [user]),
-      returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+  _i5.Future<void> addUserIntoDB(_i7.User? user) =>
+      (super.noSuchMethod(Invocation.method(#addUserIntoDB, [user]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Future<void> removeUserFromDB(_i9.User? user) => (super.noSuchMethod(Invocation.method(#removeUserFromDB, [user]),
-      returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+  _i5.Future<void> removeUserFromDB(_i7.User? user) =>
+      (super.noSuchMethod(Invocation.method(#removeUserFromDB, [user]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Future<void> updateUserFieldIntoDB(_i9.User? user, String? field, dynamic newValue) =>
-      (super.noSuchMethod(Invocation.method(#updateUserFieldIntoDB, [user, field, newValue]),
-          returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+  _i5.Future<void> updateUserFieldIntoDB(
+          _i7.User? user, String? field, dynamic newValue) =>
+      (super.noSuchMethod(
+          Invocation.method(#updateUserFieldIntoDB, [user, field, newValue]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Future<_i2.QuerySnapshot<Object?>> getExpertCollectionFromDB() => (super.noSuchMethod(Invocation.method(#getBaseCollectionFromDB, []),
-      returnValue: Future<_i2.QuerySnapshot<Object?>>.value(_FakeQuerySnapshot_0<Object?>())) as _i6.Future<_i2.QuerySnapshot<Object?>>);
+  _i5.Future<_i2.QuerySnapshot<Object?>> getExpertCollectionFromDB() =>
+      (super.noSuchMethod(Invocation.method(#getExpertCollectionFromDB, []),
+              returnValue: Future<_i2.QuerySnapshot<Object?>>.value(
+                  _FakeQuerySnapshot_0<Object?>()))
+          as _i5.Future<_i2.QuerySnapshot<Object?>>);
   @override
-  _i6.Future<_i2.QuerySnapshot<Object?>> getUserByIdFromDB(String? collection, String? id) =>
-      (super.noSuchMethod(Invocation.method(#getUserByIdFromDB, [collection, id]),
-          returnValue: Future<_i2.QuerySnapshot<Object?>>.value(_FakeQuerySnapshot_0<Object?>())) as _i6.Future<_i2.QuerySnapshot<Object?>>);
+  _i5.Future<_i2.QuerySnapshot<Object?>> getUserByIdFromDB(
+          String? collection, String? id) =>
+      (super.noSuchMethod(
+              Invocation.method(#getUserByIdFromDB, [collection, id]),
+              returnValue: Future<_i2.QuerySnapshot<Object?>>.value(
+                  _FakeQuerySnapshot_0<Object?>()))
+          as _i5.Future<_i2.QuerySnapshot<Object?>>);
   @override
-  _i6.Future<_i2.QueryDocumentSnapshot<Object?>?> getRandomUserFromDB(_i10.BaseUser? user, String? randomId) =>
-      (super.noSuchMethod(Invocation.method(#getRandomUserFromDB, [user, randomId]), returnValue: Future<_i2.QueryDocumentSnapshot<Object?>?>.value())
-          as _i6.Future<_i2.QueryDocumentSnapshot<Object?>?>);
+  _i5.Future<_i2.QueryDocumentSnapshot<Object?>?> getRandomUserFromDB(
+          _i8.BaseUser? user, String? randomId) =>
+      (super.noSuchMethod(
+              Invocation.method(#getRandomUserFromDB, [user, randomId]),
+              returnValue: Future<_i2.QueryDocumentSnapshot<Object?>?>.value())
+          as _i5.Future<_i2.QueryDocumentSnapshot<Object?>?>);
   @override
-  _i6.Future<_i9.User?> findUserType(String? id) =>
-      (super.noSuchMethod(Invocation.method(#findUserType, [id]), returnValue: Future<_i9.User?>.value()) as _i6.Future<_i9.User?>);
+  _i5.Future<_i7.User?> findUserType(String? id) =>
+      (super.noSuchMethod(Invocation.method(#findUserType, [id]),
+          returnValue: Future<_i7.User?>.value()) as _i5.Future<_i7.User?>);
   @override
-  _i6.Future<void> uploadProfilePhoto(_i11.Expert? expert) => (super.noSuchMethod(Invocation.method(#uploadProfilePhoto, [expert]),
-      returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+  _i5.Future<void> uploadProfilePhoto(_i9.Expert? expert) =>
+      (super.noSuchMethod(Invocation.method(#uploadProfilePhoto, [expert]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  Future<void> addMessageIntoDB(_i9.User? senderUser, _i12.Chat? chat, _i13.Message? message) =>
-      super.noSuchMethod(Invocation.method(#addMessageIntoDB, [senderUser, chat, message]), returnValueForMissingStub: null);
+  _i5.Future<void> addMessageIntoDB(
+          _i7.User? senderUser, _i10.Chat? chat, _i11.Message? message) =>
+      (super.noSuchMethod(
+          Invocation.method(#addMessageIntoDB, [senderUser, chat, message]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Stream<_i2.QuerySnapshot<Object?>> getMessagesStreamFromDB(String? pairChatId) =>
-      (super.noSuchMethod(Invocation.method(#getMessagesStreamFromDB, [pairChatId]), returnValue: Stream<_i2.QuerySnapshot<Object?>>.empty())
-          as _i6.Stream<_i2.QuerySnapshot<Object?>>);
+  _i5.Stream<_i2.QuerySnapshot<Object?>> getMessagesStreamFromDB(
+          String? pairChatId) =>
+      (super.noSuchMethod(
+              Invocation.method(#getMessagesStreamFromDB, [pairChatId]),
+              returnValue: Stream<_i2.QuerySnapshot<Object?>>.empty())
+          as _i5.Stream<_i2.QuerySnapshot<Object?>>);
   @override
-  Future<void> removeMessagesFromDB(String? pairChatId) =>
-      super.noSuchMethod(Invocation.method(#removeMessagesFromDB, [pairChatId]), returnValueForMissingStub: null);
+  _i5.Future<void> removeMessagesFromDB(String? pairChatId) => (super
+      .noSuchMethod(Invocation.method(#removeMessagesFromDB, [pairChatId]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Future<void> setMessagesHasRead(_i9.User? senderUser, _i12.Chat? chat) =>
-      (super.noSuchMethod(Invocation.method(#setMessagesHasRead, [senderUser, chat]),
-          returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+  _i5.Future<void> setMessagesAsRead(_i7.User? user, _i10.Chat? chat) =>
+      (super.noSuchMethod(Invocation.method(#setMessagesHasRead, [user, chat]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  Future<void> upgradePendingToActiveChatIntoDB(_i9.User? senderUser, _i12.Chat? chat) =>
-      super.noSuchMethod(Invocation.method(#upgradePendingToActiveChatIntoDB, [senderUser, chat]), returnValueForMissingStub: null);
+  _i5.Future<void> upgradePendingToActiveChatIntoDB(
+          _i7.User? senderUser, _i12.PendingChat? pendingChat) =>
+      (super.noSuchMethod(
+          Invocation.method(
+              #upgradePendingToActiveChatIntoDB, [senderUser, pendingChat]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  Future<void> removeChatFromDB(_i9.User? senderUser, _i12.Chat? chat) =>
-      super.noSuchMethod(Invocation.method(#removeChatFromDB, [senderUser, chat]), returnValueForMissingStub: null);
+  _i5.Future<void> removeChatFromDB(_i7.User? senderUser, _i10.Chat? chat) =>
+      (super.noSuchMethod(
+          Invocation.method(#removeChatFromDB, [senderUser, chat]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Stream<_i2.QuerySnapshot<Object?>> getChatsStreamFromDB(_i9.User? user, String? chatCollection) =>
-      (super.noSuchMethod(Invocation.method(#getChatsStreamFromDB, [user, chatCollection]), returnValue: Stream<_i2.QuerySnapshot<Object?>>.empty())
-          as _i6.Stream<_i2.QuerySnapshot<Object?>>);
+  _i5.Stream<_i2.QuerySnapshot<Object?>> getChatsStreamFromDB(
+          _i7.User? user, String? chatCollection) =>
+      (super.noSuchMethod(
+              Invocation.method(#getChatsStreamFromDB, [user, chatCollection]),
+              returnValue: Stream<_i2.QuerySnapshot<Object?>>.empty())
+          as _i5.Stream<_i2.QuerySnapshot<Object?>>);
   @override
-  _i6.Future<void> addReportIntoDB(String? id, _i14.Report? report) => (super.noSuchMethod(Invocation.method(#addReportIntoDB, [id, report]),
-      returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+  _i5.Future<void> addReportIntoDB(String? userId, _i13.Report? report) =>
+      (super.noSuchMethod(Invocation.method(#addReportIntoDB, [userId, report]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Future<_i2.QuerySnapshot<Object?>> getReportsFromDB(String? id) => (super.noSuchMethod(Invocation.method(#getReportsFromDB, [id]),
-      returnValue: Future<_i2.QuerySnapshot<Object?>>.value(_FakeQuerySnapshot_0<Object?>())) as _i6.Future<_i2.QuerySnapshot<Object?>>);
+  _i5.Future<_i2.QuerySnapshot<Object?>> getReportsFromDB(String? id) =>
+      (super.noSuchMethod(Invocation.method(#getReportsFromDB, [id]),
+              returnValue: Future<_i2.QuerySnapshot<Object?>>.value(
+                  _FakeQuerySnapshot_0<Object?>()))
+          as _i5.Future<_i2.QuerySnapshot<Object?>>);
   @override
-  _i6.Future<void> addDiaryPageIntoDB(String? id, _i15.DiaryPage? diaryPage) =>
-      (super.noSuchMethod(Invocation.method(#addDiaryPageIntoDB, [id, diaryPage]),
-          returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+  _i5.Future<void> addDiaryPageIntoDB(
+          String? userId, _i14.DiaryPage? diaryPage) =>
+      (super.noSuchMethod(
+          Invocation.method(#addDiaryPageIntoDB, [userId, diaryPage]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Future<void> updateDiaryPageIntoDB(String? id, _i15.DiaryPage? diaryPage) =>
-      (super.noSuchMethod(Invocation.method(#updateDiaryPageIntoDB, [id, diaryPage]),
-          returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+  _i5.Future<void> updateDiaryPageIntoDB(
+          String? userId, _i14.DiaryPage? diaryPage) =>
+      (super.noSuchMethod(
+          Invocation.method(#updateDiaryPageIntoDB, [userId, diaryPage]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Future<void> setDiaryPageAsFavouriteIntoDB(String? id, _i15.DiaryPage? diaryPage) =>
-      (super.noSuchMethod(Invocation.method(#setFavouriteDiaryNotesIntoDB, [id, diaryPage]),
-          returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+  _i5.Future<void> setDiaryPageAsFavouriteIntoDB(
+          String? userId, _i14.DiaryPage? diaryPage) =>
+      (super.noSuchMethod(
+          Invocation.method(
+              #setDiaryPageAsFavouriteIntoDB, [userId, diaryPage]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  _i6.Stream<_i2.QuerySnapshot<Object?>> getDiaryPagesStreamFromDB(String? id) =>
-      (super.noSuchMethod(Invocation.method(#getDiaryPagesStreamFromDB, [id]), returnValue: Stream<_i2.QuerySnapshot<Object?>>.empty())
-          as _i6.Stream<_i2.QuerySnapshot<Object?>>);
+  _i5.Stream<_i2.QuerySnapshot<Object?>> getDiaryPagesStreamFromDB(
+          String? userId) =>
+      (super.noSuchMethod(
+              Invocation.method(#getDiaryPagesStreamFromDB, [userId]),
+              returnValue: Stream<_i2.QuerySnapshot<Object?>>.empty())
+          as _i5.Stream<_i2.QuerySnapshot<Object?>>);
 }
 
 /// A class which mocks [MapService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockMapService extends _i1.Mock implements _i16.MapService {
+class MockMapService extends _i1.Mock implements _i15.MapService {
   MockMapService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i6.Future<List<_i3.Place>> autocomplete(String? input) =>
-      (super.noSuchMethod(Invocation.method(#autocomplete, [input]), returnValue: Future<List<_i3.Place>>.value(<_i3.Place>[]))
-          as _i6.Future<List<_i3.Place>>);
+  _i5.Future<List<_i16.Place>> autocomplete(String? input) =>
+      (super.noSuchMethod(Invocation.method(#autocomplete, [input]),
+              returnValue: Future<List<_i16.Place>>.value(<_i16.Place>[]))
+          as _i5.Future<List<_i16.Place>>);
   @override
-  _i6.Future<_i3.Place> searchPlace(String? placeId) =>
-      (super.noSuchMethod(Invocation.method(#searchPlace, [placeId]), returnValue: Future<_i3.Place>.value(_FakePlace_1())) as _i6.Future<_i3.Place>);
+  _i5.Future<_i16.Place?> searchPlace(String? placeId) =>
+      (super.noSuchMethod(Invocation.method(#searchPlace, [placeId]),
+          returnValue: Future<_i16.Place?>.value()) as _i5.Future<_i16.Place?>);
   @override
-  _i6.Future<_i4.Position> getCurrentPosition() =>
-      (super.noSuchMethod(Invocation.method(#getCurrentPosition, []), returnValue: Future<_i4.Position>.value(_FakePosition_2()))
-          as _i6.Future<_i4.Position>);
-}
-
-/// A class which mocks [NotificationService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockNotificationService extends _i1.Mock implements _i17.NotificationService {
-  MockNotificationService() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i6.Future<String?> getDeviceToken() =>
-      (super.noSuchMethod(Invocation.method(#getDeviceToken, []), returnValue: Future<String?>.value()) as _i6.Future<String?>);
-  @override
-  void configNotification() => super.noSuchMethod(Invocation.method(#configNotification, []), returnValueForMissingStub: null);
+  _i5.Future<_i3.Position> getCurrentPosition() =>
+      (super.noSuchMethod(Invocation.method(#getCurrentPosition, []),
+              returnValue: Future<_i3.Position>.value(_FakePosition_1()))
+          as _i5.Future<_i3.Position>);
 }
 
 /// A class which mocks [UserService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserService extends _i1.Mock implements _i18.UserService {
+class MockUserService extends _i1.Mock implements _i17.UserService {
   MockUserService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  set loggedUser(_i9.User? _loggedUser) => super.noSuchMethod(Invocation.setter(#loggedUser, _loggedUser), returnValueForMissingStub: null);
+  set loggedUser(_i7.User? _loggedUser) =>
+      super.noSuchMethod(Invocation.setter(#loggedUser, _loggedUser),
+          returnValueForMissingStub: null);
   @override
-  _i6.Future<void> loadLoggedUser() => (super.noSuchMethod(Invocation.method(#loadLoggedUserFromDB, []),
-      returnValue: Future<void>.value(), returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+  _i5.Future<void> loadLoggedUser() =>
+      (super.noSuchMethod(Invocation.method(#loadLoggedUser, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i5.Future<void>);
   @override
-  void createUserFromSignUpForm(_i19.BaseUserSignUpForm? baseUserSignUpForm) =>
-      super.noSuchMethod(Invocation.method(#createUserFromSignUpForm, [baseUserSignUpForm]), returnValueForMissingStub: null);
+  void createUserFromSignUpForm(_i18.BaseUserSignUpForm? baseUserSignUpForm) =>
+      super.noSuchMethod(
+          Invocation.method(#createUserFromSignUpForm, [baseUserSignUpForm]),
+          returnValueForMissingStub: null);
 }

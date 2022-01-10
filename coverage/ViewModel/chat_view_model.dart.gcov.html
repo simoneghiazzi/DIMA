@@ -31,13 +31,13 @@
             <td class="headerValue">lcov.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">2</td>
-            <td class="headerCovTableEntry">140</td>
-            <td class="headerCovTableEntryLo">1.4 %</td>
+            <td class="headerCovTableEntry">151</td>
+            <td class="headerCovTableEntry">151</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2022-01-08 20:08:41</td>
+            <td class="headerValue">2022-01-10 20:52:17</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -99,305 +99,329 @@
 <a name="37"><span class="lineNum">      37 </span>            :   ValueNotifier&lt;Chat?&gt; _currentChat = ValueNotifier(null);</a>
 <a name="38"><span class="lineNum">      38 </span>            : </a>
 <a name="39"><span class="lineNum">      39 </span>            :   // List of the chats of the user saved as Linked Hash Map</a>
-<a name="40"><span class="lineNum">      40 </span>            :   ValueNotifier&lt;LinkedHashMap&lt;String, AnonymousChat&gt;&gt;? _anonymousChats;</a>
-<a name="41"><span class="lineNum">      41 </span>            :   ValueNotifier&lt;LinkedHashMap&lt;String, PendingChat&gt;&gt;? _pendingChats;</a>
-<a name="42"><span class="lineNum">      42 </span>            :   ValueNotifier&lt;LinkedHashMap&lt;String, ExpertChat&gt;&gt;? _expertsChats;</a>
-<a name="43"><span class="lineNum">      43 </span>            :   ValueNotifier&lt;LinkedHashMap&lt;String, ActiveChat&gt;&gt;? _activeChats;</a>
+<a name="40"><span class="lineNum">      40 </span>            :   var _anonymousChats = ValueNotifier&lt;LinkedHashMap&lt;String, AnonymousChat&gt;&gt;(LinkedHashMap&lt;String, AnonymousChat&gt;());</a>
+<a name="41"><span class="lineNum">      41 </span>            :   var _pendingChats = ValueNotifier&lt;LinkedHashMap&lt;String, PendingChat&gt;&gt;(LinkedHashMap&lt;String, PendingChat&gt;());</a>
+<a name="42"><span class="lineNum">      42 </span>            :   var _expertsChats = ValueNotifier&lt;LinkedHashMap&lt;String, ExpertChat&gt;&gt;(LinkedHashMap&lt;String, ExpertChat&gt;());</a>
+<a name="43"><span class="lineNum">      43 </span>            :   var _activeChats = ValueNotifier&lt;LinkedHashMap&lt;String, ActiveChat&gt;&gt;(LinkedHashMap&lt;String, ActiveChat&gt;());</a>
 <a name="44"><span class="lineNum">      44 </span>            : </a>
 <a name="45"><span class="lineNum">      45 </span>            :   /// Update the ChattingWith field of the [senderUser] inside the DB.</a>
 <a name="46"><span class="lineNum">      46 </span>            :   ///</a>
 <a name="47"><span class="lineNum">      47 </span>            :   /// It is used in order to show or not the notification on new messages.</a>
 <a name="48"><span class="lineNum">      48 </span><span class="lineCov">          1 :   Future&lt;void&gt; updateChattingWith() {</span></a>
-<a name="49"><span class="lineNum">      49 </span><span class="lineCov">          6 :     return _firestoreService.updateUserFieldIntoDB(_userService.loggedUser!, &quot;chattingWith&quot;, _currentChat.value?.peerUser?.id);</span></a>
+<a name="49"><span class="lineNum">      49 </span><span class="lineCov">          8 :     return _firestoreService.updateUserFieldIntoDB(_userService.loggedUser!, &quot;chattingWith&quot;, _currentChat.value!.peerUser?.id);</span></a>
 <a name="50"><span class="lineNum">      50 </span>            :   }</a>
 <a name="51"><span class="lineNum">      51 </span>            : </a>
 <a name="52"><span class="lineNum">      52 </span>            :   /// Reset the ChattingWith field of the [senderUser] inside the DB.</a>
 <a name="53"><span class="lineNum">      53 </span>            :   ///</a>
 <a name="54"><span class="lineNum">      54 </span>            :   /// It is used in order to show or not the notification on new messages.</a>
-<a name="55"><span class="lineNum">      55 </span><span class="lineNoCov">          0 :   Future&lt;void&gt; resetChattingWith() {</span></a>
-<a name="56"><span class="lineNum">      56 </span><span class="lineNoCov">          0 :     return _firestoreService.updateUserFieldIntoDB(_userService.loggedUser!, &quot;chattingWith&quot;, null);</span></a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineCov">          1 :   Future&lt;void&gt; resetChattingWith() {</span></a>
+<a name="56"><span class="lineNum">      56 </span><span class="lineCov">          4 :     return _firestoreService.updateUserFieldIntoDB(_userService.loggedUser!, &quot;chattingWith&quot;, null);</span></a>
 <a name="57"><span class="lineNum">      57 </span>            :   }</a>
 <a name="58"><span class="lineNum">      58 </span>            : </a>
 <a name="59"><span class="lineNum">      59 </span>            :   /// Send a message to the [peerUser] of the [_currentChat].</a>
-<a name="60"><span class="lineNum">      60 </span><span class="lineNoCov">          0 :   void sendMessage() {</span></a>
-<a name="61"><span class="lineNum">      61 </span><span class="lineNoCov">          0 :     if (contentTextCtrl.text.trim().isNotEmpty) {</span></a>
-<a name="62"><span class="lineNum">      62 </span><span class="lineNoCov">          0 :       _currentChat.value!.lastMessage = contentTextCtrl.text.trim();</span></a>
-<a name="63"><span class="lineNum">      63 </span><span class="lineNoCov">          0 :       _currentChat.value!.lastMessageDateTime = DateTime.now();</span></a>
-<a name="64"><span class="lineNum">      64 </span><span class="lineNoCov">          0 :       _firestoreService.addMessageIntoDB(</span></a>
-<a name="65"><span class="lineNum">      65 </span><span class="lineNoCov">          0 :         _userService.loggedUser!,</span></a>
-<a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :         _currentChat.value!,</span></a>
-<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 :         Message(</span></a>
-<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 :           idFrom: _userService.loggedUser!.id,</span></a>
-<a name="69"><span class="lineNum">      69 </span><span class="lineNoCov">          0 :           idTo: _currentChat.value!.peerUser!.id,</span></a>
-<a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :           timestamp: _currentChat.value!.lastMessageDateTime!,</span></a>
-<a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :           content: _currentChat.value!.lastMessage,</span></a>
-<a name="72"><span class="lineNum">      72 </span>            :         ),</a>
-<a name="73"><span class="lineNum">      73 </span>            :       );</a>
-<a name="74"><span class="lineNum">      74 </span><span class="lineNoCov">          0 :       contentTextCtrl.clear();</span></a>
-<a name="75"><span class="lineNum">      75 </span>            :     }</a>
-<a name="76"><span class="lineNum">      76 </span>            :   }</a>
-<a name="77"><span class="lineNum">      77 </span>            : </a>
-<a name="78"><span class="lineNum">      78 </span>            :   /// Set the [notReadMessages] of the logged user with the [peerUser] of the [_currentChat] to `0`.</a>
-<a name="79"><span class="lineNum">      79 </span><span class="lineNoCov">          0 :   Future&lt;void&gt; setMessagesHasRead() {</span></a>
-<a name="80"><span class="lineNum">      80 </span><span class="lineNoCov">          0 :     _currentChat.value!.notReadMessages = 0;</span></a>
-<a name="81"><span class="lineNum">      81 </span><span class="lineNoCov">          0 :     return _firestoreService.setMessagesHasRead(_userService.loggedUser!, _currentChat.value!);</span></a>
-<a name="82"><span class="lineNum">      82 </span>            :   }</a>
-<a name="83"><span class="lineNum">      83 </span>            : </a>
-<a name="84"><span class="lineNum">      84 </span>            :   /// Subscribe to the anomymous chats stream of the [loggedUser] from the Firebase DB and</a>
-<a name="85"><span class="lineNum">      85 </span>            :   /// update the [_anonymousChats] linked hash map with the chats.</a>
-<a name="86"><span class="lineNum">      86 </span>            :   ///</a>
-<a name="87"><span class="lineNum">      87 </span>            :   /// It also retrieve the [peerUser] info for every new chat from the Firebase DB.</a>
-<a name="88"><span class="lineNum">      88 </span>            :   ///</a>
-<a name="89"><span class="lineNum">      89 </span>            :   /// Finally it calls the [notifyListeners] on the [_anonymousChats] value notifier to notify the changes</a>
-<a name="90"><span class="lineNum">      90 </span>            :   /// to all the listeners.</a>
-<a name="91"><span class="lineNum">      91 </span><span class="lineNoCov">          0 :   void loadAnonymousChats() async {</span></a>
-<a name="92"><span class="lineNum">      92 </span><span class="lineNoCov">          0 :     _anonymousChats = ValueNotifier&lt;LinkedHashMap&lt;String, AnonymousChat&gt;&gt;(LinkedHashMap&lt;String, AnonymousChat&gt;());</span></a>
-<a name="93"><span class="lineNum">      93 </span><span class="lineNoCov">          0 :     _anonymousChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, AnonymousChat.COLLECTION).listen(</span></a>
-<a name="94"><span class="lineNum">      94 </span><span class="lineNoCov">          0 :       (snapshot) async {</span></a>
-<a name="95"><span class="lineNum">      95 </span><span class="lineNoCov">          0 :         for (var docChange in snapshot.docChanges) {</span></a>
-<a name="96"><span class="lineNum">      96 </span><span class="lineNoCov">          0 :           var chat = AnonymousChat.fromDocument(docChange.doc);</span></a>
-<a name="97"><span class="lineNum">      97 </span>            :           // If oldIndex == -1, the document is added, so its new and it has to retrieve the peer user from the DB</a>
-<a name="98"><span class="lineNum">      98 </span>            :           // and load the messages</a>
-<a name="99"><span class="lineNum">      99 </span><span class="lineNoCov">          0 :           if (docChange.oldIndex == -1) {</span></a>
-<a name="100"><span class="lineNum">     100 </span><span class="lineNoCov">          0 :             getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {</span></a>
-<a name="101"><span class="lineNum">     101 </span><span class="lineNoCov">          0 :               chat.peerUser!.setFromDocument(value.docs[0]);</span></a>
-<a name="102"><span class="lineNum">     102 </span><span class="lineNoCov">          0 :               chat.loadMessages();</span></a>
-<a name="103"><span class="lineNum">     103 </span><span class="lineNoCov">          0 :               _anonymousChats!.value[docChange.doc.id] = chat;</span></a>
-<a name="104"><span class="lineNum">     104 </span><span class="lineNoCov">          0 :               _anonymousChats!.notifyListeners();</span></a>
-<a name="105"><span class="lineNum">     105 </span>            :             });</a>
-<a name="106"><span class="lineNum">     106 </span>            :           } else {</a>
-<a name="107"><span class="lineNum">     107 </span>            :             // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields</a>
-<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 :             var removedChat = _anonymousChats!.value.remove(docChange.doc.id);</span></a>
-<a name="109"><span class="lineNum">     109 </span><span class="lineNoCov">          0 :             removedChat?.lastMessage = chat.lastMessage;</span></a>
-<a name="110"><span class="lineNum">     110 </span><span class="lineNoCov">          0 :             removedChat?.lastMessageDateTime = chat.lastMessageDateTime;</span></a>
-<a name="111"><span class="lineNum">     111 </span><span class="lineNoCov">          0 :             removedChat?.notReadMessages = chat.notReadMessages;</span></a>
-<a name="112"><span class="lineNum">     112 </span><span class="lineNoCov">          0 :             _anonymousChats!.value[docChange.doc.id] = removedChat!;</span></a>
-<a name="113"><span class="lineNum">     113 </span><span class="lineNoCov">          0 :             _anonymousChats!.notifyListeners();</span></a>
-<a name="114"><span class="lineNum">     114 </span>            :           }</a>
-<a name="115"><span class="lineNum">     115 </span>            :         }</a>
-<a name="116"><span class="lineNum">     116 </span>            :       },</a>
-<a name="117"><span class="lineNum">     117 </span><span class="lineNoCov">          0 :       onError: (error) =&gt; log(&quot;Failed to get the stream of anonymous chats: $error&quot;),</span></a>
-<a name="118"><span class="lineNum">     118 </span>            :     );</a>
-<a name="119"><span class="lineNum">     119 </span>            :   }</a>
-<a name="120"><span class="lineNum">     120 </span>            : </a>
-<a name="121"><span class="lineNum">     121 </span>            :   /// Subscribe to the pending chats stream of the [loggedUser] from the Firebase DB and</a>
-<a name="122"><span class="lineNum">     122 </span>            :   /// update the [_pendingChats] linked hash map with the chats.</a>
-<a name="123"><span class="lineNum">     123 </span>            :   ///</a>
-<a name="124"><span class="lineNum">     124 </span>            :   /// It also retrieve the [peerUser] info for every new chat from the Firebase DB.</a>
-<a name="125"><span class="lineNum">     125 </span>            :   ///</a>
-<a name="126"><span class="lineNum">     126 </span>            :   /// Finally it calls the [notifyListeners] on the [_pendingChats] value notifier to notify the changes</a>
-<a name="127"><span class="lineNum">     127 </span>            :   /// to all the listeners.</a>
-<a name="128"><span class="lineNum">     128 </span><span class="lineNoCov">          0 :   void loadPendingChats() async {</span></a>
-<a name="129"><span class="lineNum">     129 </span><span class="lineNoCov">          0 :     _pendingChats = ValueNotifier&lt;LinkedHashMap&lt;String, PendingChat&gt;&gt;(LinkedHashMap&lt;String, PendingChat&gt;());</span></a>
-<a name="130"><span class="lineNum">     130 </span><span class="lineNoCov">          0 :     _pendingChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, PendingChat.COLLECTION).listen(</span></a>
-<a name="131"><span class="lineNum">     131 </span><span class="lineNoCov">          0 :       (snapshot) async {</span></a>
-<a name="132"><span class="lineNum">     132 </span><span class="lineNoCov">          0 :         for (var docChange in snapshot.docChanges) {</span></a>
-<a name="133"><span class="lineNum">     133 </span>            :           // If oldIndex == -1, the document is added, so its new and it has to retrieve the peer user from the DB</a>
-<a name="134"><span class="lineNum">     134 </span><span class="lineNoCov">          0 :           if (docChange.oldIndex == -1) {</span></a>
-<a name="135"><span class="lineNum">     135 </span><span class="lineNoCov">          0 :             var chat = PendingChat.fromDocument(docChange.doc);</span></a>
-<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 :             getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {</span></a>
-<a name="137"><span class="lineNum">     137 </span><span class="lineNoCov">          0 :               chat.peerUser!.setFromDocument(value.docs[0]);</span></a>
-<a name="138"><span class="lineNum">     138 </span><span class="lineNoCov">          0 :               chat.loadMessages();</span></a>
-<a name="139"><span class="lineNum">     139 </span><span class="lineNoCov">          0 :               _pendingChats!.value[docChange.doc.id] = chat;</span></a>
-<a name="140"><span class="lineNum">     140 </span><span class="lineNoCov">          0 :               _pendingChats!.notifyListeners();</span></a>
-<a name="141"><span class="lineNum">     141 </span>            :             });</a>
-<a name="142"><span class="lineNum">     142 </span>            :           }</a>
-<a name="143"><span class="lineNum">     143 </span>            :         }</a>
-<a name="144"><span class="lineNum">     144 </span>            :       },</a>
-<a name="145"><span class="lineNum">     145 </span><span class="lineNoCov">          0 :       onError: (error) =&gt; log(&quot;Failed to get the stream of pending chats: $error&quot;),</span></a>
-<a name="146"><span class="lineNum">     146 </span>            :     );</a>
-<a name="147"><span class="lineNum">     147 </span>            :   }</a>
-<a name="148"><span class="lineNum">     148 </span>            : </a>
-<a name="149"><span class="lineNum">     149 </span>            :   /// Subscribe to the experts chats stream of the [loggedUser] from the Firebase DB and</a>
-<a name="150"><span class="lineNum">     150 </span>            :   /// update the [_expertChats] linked hash map with the chats.</a>
-<a name="151"><span class="lineNum">     151 </span>            :   ///</a>
-<a name="152"><span class="lineNum">     152 </span>            :   /// It also retrieve the [peerUser] info for every new chat from the Firebase DB.</a>
-<a name="153"><span class="lineNum">     153 </span>            :   ///</a>
-<a name="154"><span class="lineNum">     154 </span>            :   /// Finally it calls the [notifyListeners] on the [_expertChats] value notifier to notify the changes</a>
-<a name="155"><span class="lineNum">     155 </span>            :   /// to all the listeners.</a>
-<a name="156"><span class="lineNum">     156 </span><span class="lineNoCov">          0 :   void loadExpertsChats() async {</span></a>
-<a name="157"><span class="lineNum">     157 </span><span class="lineNoCov">          0 :     _expertsChats = ValueNotifier&lt;LinkedHashMap&lt;String, ExpertChat&gt;&gt;(LinkedHashMap&lt;String, ExpertChat&gt;());</span></a>
-<a name="158"><span class="lineNum">     158 </span><span class="lineNoCov">          0 :     _expertsChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, ExpertChat.COLLECTION).listen(</span></a>
-<a name="159"><span class="lineNum">     159 </span><span class="lineNoCov">          0 :       (snapshot) async {</span></a>
-<a name="160"><span class="lineNum">     160 </span><span class="lineNoCov">          0 :         for (var docChange in snapshot.docChanges) {</span></a>
-<a name="161"><span class="lineNum">     161 </span><span class="lineNoCov">          0 :           var chat = ExpertChat.fromDocument(docChange.doc);</span></a>
-<a name="162"><span class="lineNum">     162 </span>            :           // If oldIndex == -1, the document is added, so its new and it has to retrieve the peer user from the DB</a>
-<a name="163"><span class="lineNum">     163 </span><span class="lineNoCov">          0 :           if (docChange.oldIndex == -1) {</span></a>
-<a name="164"><span class="lineNum">     164 </span><span class="lineNoCov">          0 :             getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {</span></a>
-<a name="165"><span class="lineNum">     165 </span><span class="lineNoCov">          0 :               chat.peerUser!.setFromDocument(value.docs[0]);</span></a>
-<a name="166"><span class="lineNum">     166 </span><span class="lineNoCov">          0 :               chat.loadMessages();</span></a>
-<a name="167"><span class="lineNum">     167 </span><span class="lineNoCov">          0 :               _expertsChats!.value[docChange.doc.id] = chat;</span></a>
-<a name="168"><span class="lineNum">     168 </span><span class="lineNoCov">          0 :               _expertsChats!.notifyListeners();</span></a>
-<a name="169"><span class="lineNum">     169 </span>            :             });</a>
-<a name="170"><span class="lineNum">     170 </span>            :           } else {</a>
-<a name="171"><span class="lineNum">     171 </span>            :             // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields</a>
-<a name="172"><span class="lineNum">     172 </span><span class="lineNoCov">          0 :             var removedChat = _expertsChats!.value.remove(docChange.doc.id);</span></a>
-<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 :             removedChat?.lastMessage = chat.lastMessage;</span></a>
-<a name="174"><span class="lineNum">     174 </span><span class="lineNoCov">          0 :             removedChat?.lastMessageDateTime = chat.lastMessageDateTime;</span></a>
-<a name="175"><span class="lineNum">     175 </span><span class="lineNoCov">          0 :             removedChat?.notReadMessages = chat.notReadMessages;</span></a>
-<a name="176"><span class="lineNum">     176 </span><span class="lineNoCov">          0 :             _expertsChats!.value[docChange.doc.id] = removedChat!;</span></a>
-<a name="177"><span class="lineNum">     177 </span><span class="lineNoCov">          0 :             _expertsChats!.notifyListeners();</span></a>
-<a name="178"><span class="lineNum">     178 </span>            :           }</a>
-<a name="179"><span class="lineNum">     179 </span>            :         }</a>
-<a name="180"><span class="lineNum">     180 </span>            :       },</a>
-<a name="181"><span class="lineNum">     181 </span><span class="lineNoCov">          0 :       onError: (error) =&gt; log(&quot;Failed to get the stream of expert chats: $error&quot;),</span></a>
-<a name="182"><span class="lineNum">     182 </span>            :     );</a>
-<a name="183"><span class="lineNum">     183 </span>            :   }</a>
-<a name="184"><span class="lineNum">     184 </span>            : </a>
-<a name="185"><span class="lineNum">     185 </span>            :   /// Subscribe to the active chats stream of the [loggedUser] from the Firebase DB and</a>
-<a name="186"><span class="lineNum">     186 </span>            :   /// update the [_activeChats] linked hash map with the chats.</a>
-<a name="187"><span class="lineNum">     187 </span>            :   ///</a>
-<a name="188"><span class="lineNum">     188 </span>            :   /// It also retrieve the [peerUser] info for every new chat from the Firebase DB.</a>
-<a name="189"><span class="lineNum">     189 </span>            :   ///</a>
-<a name="190"><span class="lineNum">     190 </span>            :   /// Finally it calls the [notifyListeners] on the [_activeChats] value notifier to notify the changes</a>
-<a name="191"><span class="lineNum">     191 </span>            :   /// to all the listeners.</a>
-<a name="192"><span class="lineNum">     192 </span><span class="lineNoCov">          0 :   void loadActiveChats() async {</span></a>
-<a name="193"><span class="lineNum">     193 </span><span class="lineNoCov">          0 :     _activeChats = ValueNotifier&lt;LinkedHashMap&lt;String, ActiveChat&gt;&gt;(LinkedHashMap&lt;String, ActiveChat&gt;());</span></a>
-<a name="194"><span class="lineNum">     194 </span><span class="lineNoCov">          0 :     _activeChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, ActiveChat.COLLECTION).listen(</span></a>
-<a name="195"><span class="lineNum">     195 </span><span class="lineNoCov">          0 :       (snapshot) async {</span></a>
-<a name="196"><span class="lineNum">     196 </span><span class="lineNoCov">          0 :         for (var docChange in snapshot.docChanges) {</span></a>
-<a name="197"><span class="lineNum">     197 </span><span class="lineNoCov">          0 :           var chat = ActiveChat.fromDocument(docChange.doc);</span></a>
-<a name="198"><span class="lineNum">     198 </span>            :           // If oldIndex == -1, the document is added, so its new and it has to retrieve the peer user from the DB</a>
-<a name="199"><span class="lineNum">     199 </span><span class="lineNoCov">          0 :           if (docChange.oldIndex == -1) {</span></a>
-<a name="200"><span class="lineNum">     200 </span><span class="lineNoCov">          0 :             getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {</span></a>
-<a name="201"><span class="lineNum">     201 </span><span class="lineNoCov">          0 :               chat.peerUser!.setFromDocument(value.docs[0]);</span></a>
-<a name="202"><span class="lineNum">     202 </span><span class="lineNoCov">          0 :               chat.loadMessages();</span></a>
-<a name="203"><span class="lineNum">     203 </span><span class="lineNoCov">          0 :               _activeChats!.value[docChange.doc.id] = chat;</span></a>
-<a name="204"><span class="lineNum">     204 </span><span class="lineNoCov">          0 :               _activeChats!.notifyListeners();</span></a>
-<a name="205"><span class="lineNum">     205 </span>            :             });</a>
-<a name="206"><span class="lineNum">     206 </span>            :           } else {</a>
-<a name="207"><span class="lineNum">     207 </span>            :             // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields</a>
-<a name="208"><span class="lineNum">     208 </span><span class="lineNoCov">          0 :             var removedChat = _activeChats!.value.remove(docChange.doc.id);</span></a>
-<a name="209"><span class="lineNum">     209 </span><span class="lineNoCov">          0 :             removedChat?.lastMessage = chat.lastMessage;</span></a>
-<a name="210"><span class="lineNum">     210 </span><span class="lineNoCov">          0 :             removedChat?.lastMessageDateTime = chat.lastMessageDateTime;</span></a>
-<a name="211"><span class="lineNum">     211 </span><span class="lineNoCov">          0 :             removedChat?.notReadMessages = chat.notReadMessages;</span></a>
-<a name="212"><span class="lineNum">     212 </span><span class="lineNoCov">          0 :             _activeChats!.value[docChange.doc.id] = removedChat!;</span></a>
-<a name="213"><span class="lineNum">     213 </span><span class="lineNoCov">          0 :             _activeChats!.notifyListeners();</span></a>
-<a name="214"><span class="lineNum">     214 </span>            :           }</a>
-<a name="215"><span class="lineNum">     215 </span>            :         }</a>
-<a name="216"><span class="lineNum">     216 </span>            :       },</a>
-<a name="217"><span class="lineNum">     217 </span><span class="lineNoCov">          0 :       onError: (error) =&gt; log(&quot;Failed to get the stream of active chats: $error&quot;),</span></a>
-<a name="218"><span class="lineNum">     218 </span>            :     );</a>
-<a name="219"><span class="lineNum">     219 </span>            :   }</a>
-<a name="220"><span class="lineNum">     220 </span>            : </a>
-<a name="221"><span class="lineNum">     221 </span>            :   /// Return the doc of the peer user with all the info based on the [id]</a>
-<a name="222"><span class="lineNum">     222 </span>            :   /// and the [collection].</a>
-<a name="223"><span class="lineNum">     223 </span><span class="lineNoCov">          0 :   Future&lt;QuerySnapshot&gt; getPeerUserDoc(String collection, String id) {</span></a>
-<a name="224"><span class="lineNum">     224 </span><span class="lineNoCov">          0 :     return _firestoreService.getUserByIdFromDB(collection, id);</span></a>
-<a name="225"><span class="lineNum">     225 </span>            :   }</a>
-<a name="226"><span class="lineNum">     226 </span>            : </a>
-<a name="227"><span class="lineNum">     227 </span>            :   /// Look for a new random anonymous user into the DB.</a>
-<a name="228"><span class="lineNum">     228 </span><span class="lineNoCov">          0 :   Future&lt;void&gt; getNewRandomUser() {</span></a>
-<a name="229"><span class="lineNum">     229 </span><span class="lineNoCov">          0 :     return _firestoreService.getRandomUserFromDB(_userService.loggedUser as BaseUser, Utils.randomId()).then((doc) {</span></a>
-<a name="230"><span class="lineNum">     230 </span>            :       if (doc != null) {</a>
-<a name="231"><span class="lineNum">     231 </span>            :         // Create the random user and update the chat</a>
-<a name="232"><span class="lineNum">     232 </span><span class="lineNoCov">          0 :         var randomUser = BaseUser.fromDocument(doc);</span></a>
-<a name="233"><span class="lineNum">     233 </span>            :         // Add the listeners for new messages</a>
-<a name="234"><span class="lineNum">     234 </span><span class="lineNoCov">          0 :         addNewChat(Request(peerUser: randomUser));</span></a>
-<a name="235"><span class="lineNum">     235 </span>            :         // Add the &quot;true&quot; value to the new random user stream controller</a>
-<a name="236"><span class="lineNum">     236 </span><span class="lineNoCov">          0 :         _newRandomUserCtrl.add(true);</span></a>
-<a name="237"><span class="lineNum">     237 </span>            :       } else {</a>
-<a name="238"><span class="lineNum">     238 </span>            :         // Add the &quot;false&quot; value to the new random user stream controller</a>
-<a name="239"><span class="lineNum">     239 </span><span class="lineNoCov">          0 :         _newRandomUserCtrl.add(false);</span></a>
-<a name="240"><span class="lineNum">     240 </span>            :       }</a>
-<a name="241"><span class="lineNum">     241 </span>            :     });</a>
-<a name="242"><span class="lineNum">     242 </span>            :   }</a>
-<a name="243"><span class="lineNum">     243 </span>            : </a>
-<a name="244"><span class="lineNum">     244 </span>            :   /// Accept a new pending chat request.</a>
-<a name="245"><span class="lineNum">     245 </span><span class="lineNoCov">          0 :   void acceptPendingChat() {</span></a>
-<a name="246"><span class="lineNum">     246 </span><span class="lineNoCov">          0 :     _pendingChats!.value.remove(_currentChat.value!.peerUser!.id);</span></a>
-<a name="247"><span class="lineNum">     247 </span><span class="lineNoCov">          0 :     _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser!, _currentChat.value! as PendingChat);</span></a>
-<a name="248"><span class="lineNum">     248 </span><span class="lineNoCov">          0 :     addNewChat(AnonymousChat(peerUser: _currentChat.value!.peerUser as BaseUser));</span></a>
-<a name="249"><span class="lineNum">     249 </span><span class="lineNoCov">          0 :     _pendingChats!.notifyListeners();</span></a>
-<a name="250"><span class="lineNum">     250 </span>            :   }</a>
-<a name="251"><span class="lineNum">     251 </span>            : </a>
-<a name="252"><span class="lineNum">     252 </span>            :   /// Deny a pending chat.</a>
-<a name="253"><span class="lineNum">     253 </span>            :   ///</a>
-<a name="254"><span class="lineNum">     254 </span>            :   /// It deletes the chat between the 2 users and all the messages.</a>
-<a name="255"><span class="lineNum">     255 </span><span class="lineNoCov">          0 :   void denyPendingChat() {</span></a>
-<a name="256"><span class="lineNum">     256 </span><span class="lineNoCov">          0 :     _pendingChats!.value.remove(_currentChat.value!.peerUser!.id);</span></a>
-<a name="257"><span class="lineNum">     257 </span><span class="lineNoCov">          0 :     _firestoreService.removeChatFromDB(_userService.loggedUser!, _currentChat.value!);</span></a>
-<a name="258"><span class="lineNum">     258 </span><span class="lineNoCov">          0 :     _firestoreService.removeMessagesFromDB(Utils.pairChatId(_userService.loggedUser!.id, _currentChat.value!.peerUser!.id));</span></a>
-<a name="259"><span class="lineNum">     259 </span><span class="lineNoCov">          0 :     resetCurrentChat();</span></a>
-<a name="260"><span class="lineNum">     260 </span><span class="lineNoCov">          0 :     _pendingChats!.notifyListeners();</span></a>
-<a name="261"><span class="lineNum">     261 </span>            :   }</a>
-<a name="262"><span class="lineNum">     262 </span>            : </a>
-<a name="263"><span class="lineNum">     263 </span>            :   /// Set the [chat] as the [_currentChat] and add the listener for new messages.</a>
-<a name="264"><span class="lineNum">     264 </span><span class="lineNoCov">          0 :   void addNewChat(Chat chat) {</span></a>
-<a name="265"><span class="lineNum">     265 </span><span class="lineNoCov">          0 :     chat.loadMessages();</span></a>
-<a name="266"><span class="lineNum">     266 </span><span class="lineNoCov">          0 :     setCurrentChat(chat);</span></a>
-<a name="267"><span class="lineNum">     267 </span>            :   }</a>
-<a name="268"><span class="lineNum">     268 </span>            : </a>
-<a name="269"><span class="lineNum">     269 </span>            :   /// Set the [chat] as the [_currentChat].</a>
-<a name="270"><span class="lineNum">     270 </span><span class="lineNoCov">          0 :   void setCurrentChat(Chat chat) {</span></a>
-<a name="271"><span class="lineNum">     271 </span><span class="lineNoCov">          0 :     _currentChat.value = chat;</span></a>
-<a name="272"><span class="lineNum">     272 </span><span class="lineNoCov">          0 :     log(&quot;Current chat setted&quot;);</span></a>
+<a name="60"><span class="lineNum">      60 </span><span class="lineCov">          1 :   Future&lt;void&gt; sendMessage() async {</span></a>
+<a name="61"><span class="lineNum">      61 </span><span class="lineCov">          4 :     if (contentTextCtrl.text.trim().isNotEmpty) {</span></a>
+<a name="62"><span class="lineNum">      62 </span><span class="lineCov">          6 :       _currentChat.value!.lastMessage = contentTextCtrl.text.trim();</span></a>
+<a name="63"><span class="lineNum">      63 </span><span class="lineCov">          4 :       _currentChat.value!.lastMessageDateTime = DateTime.now();</span></a>
+<a name="64"><span class="lineNum">      64 </span><span class="lineCov">          1 :       _firestoreService</span></a>
+<a name="65"><span class="lineNum">      65 </span><span class="lineCov">          1 :           .addMessageIntoDB(</span></a>
+<a name="66"><span class="lineNum">      66 </span><span class="lineCov">          2 :               _userService.loggedUser!,</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineCov">          2 :               _currentChat.value!,</span></a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">          1 :               Message(</span></a>
+<a name="69"><span class="lineNum">      69 </span><span class="lineCov">          3 :                   idFrom: _userService.loggedUser!.id,</span></a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineCov">          4 :                   idTo: _currentChat.value!.peerUser!.id,</span></a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineCov">          3 :                   timestamp: _currentChat.value!.lastMessageDateTime!,</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineCov">          3 :                   content: _currentChat.value!.lastMessage))</span></a>
+<a name="73"><span class="lineNum">      73 </span><span class="lineCov">          2 :           .then((_) {</span></a>
+<a name="74"><span class="lineNum">      74 </span><span class="lineCov">          1 :         log(&quot;Message correctly sent&quot;);</span></a>
+<a name="75"><span class="lineNum">      75 </span><span class="lineCov">          2 :         contentTextCtrl.clear();</span></a>
+<a name="76"><span class="lineNum">      76 </span><span class="lineCov">          2 :       }).catchError((error) {</span></a>
+<a name="77"><span class="lineNum">      77 </span><span class="lineCov">          1 :         log(&quot;Error in sending the message&quot;);</span></a>
+<a name="78"><span class="lineNum">      78 </span>            :       });</a>
+<a name="79"><span class="lineNum">      79 </span>            :     }</a>
+<a name="80"><span class="lineNum">      80 </span>            :   }</a>
+<a name="81"><span class="lineNum">      81 </span>            : </a>
+<a name="82"><span class="lineNum">      82 </span>            :   /// Set the [notReadMessages] of the logged user with the [peerUser] of the [_currentChat] to `0`.</a>
+<a name="83"><span class="lineNum">      83 </span><span class="lineCov">          1 :   Future&lt;void&gt; setMessagesAsRead() {</span></a>
+<a name="84"><span class="lineNum">      84 </span><span class="lineCov">          3 :     _currentChat.value!.notReadMessages = 0;</span></a>
+<a name="85"><span class="lineNum">      85 </span><span class="lineCov">          1 :     return _firestoreService</span></a>
+<a name="86"><span class="lineNum">      86 </span><span class="lineCov">          5 :         .setMessagesAsRead(_userService.loggedUser!, _currentChat.value!)</span></a>
+<a name="87"><span class="lineNum">      87 </span><span class="lineCov">          3 :         .then((value) =&gt; log(&quot;notReadMessages field setted to zero&quot;))</span></a>
+<a name="88"><span class="lineNum">      88 </span><span class="lineCov">          4 :         .catchError((error) =&gt; log(&quot;Failed to set the notReadMessages field: $error&quot;));</span></a>
+<a name="89"><span class="lineNum">      89 </span>            :   }</a>
+<a name="90"><span class="lineNum">      90 </span>            : </a>
+<a name="91"><span class="lineNum">      91 </span>            :   /// Subscribe to the anomymous chats stream of the [loggedUser] from the Firebase DB and</a>
+<a name="92"><span class="lineNum">      92 </span>            :   /// update the [_anonymousChats] linked hash map with the chats.</a>
+<a name="93"><span class="lineNum">      93 </span>            :   ///</a>
+<a name="94"><span class="lineNum">      94 </span>            :   /// It also retrieve the [peerUser] info for every new chat from the Firebase DB.</a>
+<a name="95"><span class="lineNum">      95 </span>            :   ///</a>
+<a name="96"><span class="lineNum">      96 </span>            :   /// Finally it calls the [notifyListeners] on the [_anonymousChats] value notifier to notify the changes</a>
+<a name="97"><span class="lineNum">      97 </span>            :   /// to all the listeners.</a>
+<a name="98"><span class="lineNum">      98 </span><span class="lineCov">          1 :   Future&lt;void&gt; loadAnonymousChats() async {</span></a>
+<a name="99"><span class="lineNum">      99 </span><span class="lineCov">          6 :     _anonymousChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, AnonymousChat.COLLECTION).listen(</span></a>
+<a name="100"><span class="lineNum">     100 </span><span class="lineCov">          1 :       (snapshot) async {</span></a>
+<a name="101"><span class="lineNum">     101 </span><span class="lineCov">          2 :         for (var docChange in snapshot.docChanges) {</span></a>
+<a name="102"><span class="lineNum">     102 </span><span class="lineCov">          2 :           var chat = AnonymousChat.fromDocument(docChange.doc);</span></a>
+<a name="103"><span class="lineNum">     103 </span>            :           // If oldIndex == -1, the document is added, so its new and it has to retrieve the peer user from the DB</a>
+<a name="104"><span class="lineNum">     104 </span>            :           // and load the messages</a>
+<a name="105"><span class="lineNum">     105 </span><span class="lineCov">          3 :           if (docChange.oldIndex == -1) {</span></a>
+<a name="106"><span class="lineNum">     106 </span><span class="lineCov">          7 :             _getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((snapshot) {</span></a>
+<a name="107"><span class="lineNum">     107 </span><span class="lineCov">          4 :               chat.peerUser!.setFromDocument(snapshot.docs[0]);</span></a>
+<a name="108"><span class="lineNum">     108 </span><span class="lineCov">          1 :               chat.loadMessages();</span></a>
+<a name="109"><span class="lineNum">     109 </span><span class="lineCov">          5 :               _anonymousChats.value[docChange.doc.id] = chat;</span></a>
+<a name="110"><span class="lineNum">     110 </span><span class="lineCov">          2 :               _anonymousChats.notifyListeners();</span></a>
+<a name="111"><span class="lineNum">     111 </span>            :             });</a>
+<a name="112"><span class="lineNum">     112 </span>            :           } else {</a>
+<a name="113"><span class="lineNum">     113 </span>            :             // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields</a>
+<a name="114"><span class="lineNum">     114 </span><span class="lineCov">          5 :             var removedChat = _anonymousChats.value.remove(docChange.doc.id);</span></a>
+<a name="115"><span class="lineNum">     115 </span><span class="lineCov">          2 :             removedChat?.lastMessage = chat.lastMessage;</span></a>
+<a name="116"><span class="lineNum">     116 </span><span class="lineCov">          2 :             removedChat?.lastMessageDateTime = chat.lastMessageDateTime;</span></a>
+<a name="117"><span class="lineNum">     117 </span><span class="lineCov">          2 :             removedChat?.notReadMessages = chat.notReadMessages;</span></a>
+<a name="118"><span class="lineNum">     118 </span><span class="lineCov">          5 :             _anonymousChats.value[docChange.doc.id] = removedChat!;</span></a>
+<a name="119"><span class="lineNum">     119 </span><span class="lineCov">          2 :             _anonymousChats.notifyListeners();</span></a>
+<a name="120"><span class="lineNum">     120 </span>            :           }</a>
+<a name="121"><span class="lineNum">     121 </span>            :         }</a>
+<a name="122"><span class="lineNum">     122 </span>            :       },</a>
+<a name="123"><span class="lineNum">     123 </span><span class="lineCov">          3 :       onError: (error) =&gt; log(&quot;Failed to get the stream of anonymous chats: $error&quot;),</span></a>
+<a name="124"><span class="lineNum">     124 </span>            :       cancelOnError: true,</a>
+<a name="125"><span class="lineNum">     125 </span>            :     );</a>
+<a name="126"><span class="lineNum">     126 </span>            :   }</a>
+<a name="127"><span class="lineNum">     127 </span>            : </a>
+<a name="128"><span class="lineNum">     128 </span>            :   /// Subscribe to the pending chats stream of the [loggedUser] from the Firebase DB and</a>
+<a name="129"><span class="lineNum">     129 </span>            :   /// update the [_pendingChats] linked hash map with the chats.</a>
+<a name="130"><span class="lineNum">     130 </span>            :   ///</a>
+<a name="131"><span class="lineNum">     131 </span>            :   /// It also retrieve the [peerUser] info for every new chat from the Firebase DB.</a>
+<a name="132"><span class="lineNum">     132 </span>            :   ///</a>
+<a name="133"><span class="lineNum">     133 </span>            :   /// Finally it calls the [notifyListeners] on the [_pendingChats] value notifier to notify the changes</a>
+<a name="134"><span class="lineNum">     134 </span>            :   /// to all the listeners.</a>
+<a name="135"><span class="lineNum">     135 </span><span class="lineCov">          1 :   void loadPendingChats() async {</span></a>
+<a name="136"><span class="lineNum">     136 </span><span class="lineCov">          6 :     _pendingChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, PendingChat.COLLECTION).listen(</span></a>
+<a name="137"><span class="lineNum">     137 </span><span class="lineCov">          1 :       (snapshot) async {</span></a>
+<a name="138"><span class="lineNum">     138 </span><span class="lineCov">          2 :         for (var docChange in snapshot.docChanges) {</span></a>
+<a name="139"><span class="lineNum">     139 </span>            :           // If oldIndex == -1, the document is added, so its new and it has to retrieve the peer user from the DB</a>
+<a name="140"><span class="lineNum">     140 </span><span class="lineCov">          3 :           if (docChange.oldIndex == -1) {</span></a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineCov">          2 :             var chat = PendingChat.fromDocument(docChange.doc);</span></a>
+<a name="142"><span class="lineNum">     142 </span><span class="lineCov">          7 :             _getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {</span></a>
+<a name="143"><span class="lineNum">     143 </span><span class="lineCov">          4 :               chat.peerUser!.setFromDocument(value.docs[0]);</span></a>
+<a name="144"><span class="lineNum">     144 </span><span class="lineCov">          1 :               chat.loadMessages();</span></a>
+<a name="145"><span class="lineNum">     145 </span><span class="lineCov">          5 :               _pendingChats.value[docChange.doc.id] = chat;</span></a>
+<a name="146"><span class="lineNum">     146 </span><span class="lineCov">          2 :               _pendingChats.notifyListeners();</span></a>
+<a name="147"><span class="lineNum">     147 </span>            :             });</a>
+<a name="148"><span class="lineNum">     148 </span>            :           }</a>
+<a name="149"><span class="lineNum">     149 </span>            :         }</a>
+<a name="150"><span class="lineNum">     150 </span>            :       },</a>
+<a name="151"><span class="lineNum">     151 </span><span class="lineCov">          3 :       onError: (error) =&gt; log(&quot;Failed to get the stream of pending chats: $error&quot;),</span></a>
+<a name="152"><span class="lineNum">     152 </span>            :       cancelOnError: true,</a>
+<a name="153"><span class="lineNum">     153 </span>            :     );</a>
+<a name="154"><span class="lineNum">     154 </span>            :   }</a>
+<a name="155"><span class="lineNum">     155 </span>            : </a>
+<a name="156"><span class="lineNum">     156 </span>            :   /// Subscribe to the experts chats stream of the [loggedUser] from the Firebase DB and</a>
+<a name="157"><span class="lineNum">     157 </span>            :   /// update the [_expertChats] linked hash map with the chats.</a>
+<a name="158"><span class="lineNum">     158 </span>            :   ///</a>
+<a name="159"><span class="lineNum">     159 </span>            :   /// It also retrieve the [peerUser] info for every new chat from the Firebase DB.</a>
+<a name="160"><span class="lineNum">     160 </span>            :   ///</a>
+<a name="161"><span class="lineNum">     161 </span>            :   /// Finally it calls the [notifyListeners] on the [_expertChats] value notifier to notify the changes</a>
+<a name="162"><span class="lineNum">     162 </span>            :   /// to all the listeners.</a>
+<a name="163"><span class="lineNum">     163 </span><span class="lineCov">          1 :   void loadExpertsChats() async {</span></a>
+<a name="164"><span class="lineNum">     164 </span><span class="lineCov">          6 :     _expertsChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, ExpertChat.COLLECTION).listen(</span></a>
+<a name="165"><span class="lineNum">     165 </span><span class="lineCov">          1 :       (snapshot) async {</span></a>
+<a name="166"><span class="lineNum">     166 </span><span class="lineCov">          2 :         for (var docChange in snapshot.docChanges) {</span></a>
+<a name="167"><span class="lineNum">     167 </span><span class="lineCov">          2 :           var chat = ExpertChat.fromDocument(docChange.doc);</span></a>
+<a name="168"><span class="lineNum">     168 </span>            :           // If oldIndex == -1, the document is added, so its new and it has to retrieve the peer user from the DB</a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineCov">          3 :           if (docChange.oldIndex == -1) {</span></a>
+<a name="170"><span class="lineNum">     170 </span><span class="lineCov">          7 :             _getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {</span></a>
+<a name="171"><span class="lineNum">     171 </span><span class="lineCov">          4 :               chat.peerUser!.setFromDocument(value.docs[0]);</span></a>
+<a name="172"><span class="lineNum">     172 </span><span class="lineCov">          1 :               chat.loadMessages();</span></a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineCov">          5 :               _expertsChats.value[docChange.doc.id] = chat;</span></a>
+<a name="174"><span class="lineNum">     174 </span><span class="lineCov">          2 :               _expertsChats.notifyListeners();</span></a>
+<a name="175"><span class="lineNum">     175 </span>            :             });</a>
+<a name="176"><span class="lineNum">     176 </span>            :           } else {</a>
+<a name="177"><span class="lineNum">     177 </span>            :             // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields</a>
+<a name="178"><span class="lineNum">     178 </span><span class="lineCov">          5 :             var removedChat = _expertsChats.value.remove(docChange.doc.id);</span></a>
+<a name="179"><span class="lineNum">     179 </span><span class="lineCov">          2 :             removedChat?.lastMessage = chat.lastMessage;</span></a>
+<a name="180"><span class="lineNum">     180 </span><span class="lineCov">          2 :             removedChat?.lastMessageDateTime = chat.lastMessageDateTime;</span></a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineCov">          2 :             removedChat?.notReadMessages = chat.notReadMessages;</span></a>
+<a name="182"><span class="lineNum">     182 </span><span class="lineCov">          5 :             _expertsChats.value[docChange.doc.id] = removedChat!;</span></a>
+<a name="183"><span class="lineNum">     183 </span><span class="lineCov">          2 :             _expertsChats.notifyListeners();</span></a>
+<a name="184"><span class="lineNum">     184 </span>            :           }</a>
+<a name="185"><span class="lineNum">     185 </span>            :         }</a>
+<a name="186"><span class="lineNum">     186 </span>            :       },</a>
+<a name="187"><span class="lineNum">     187 </span><span class="lineCov">          3 :       onError: (error) =&gt; log(&quot;Failed to get the stream of expert chats: $error&quot;),</span></a>
+<a name="188"><span class="lineNum">     188 </span>            :       cancelOnError: true,</a>
+<a name="189"><span class="lineNum">     189 </span>            :     );</a>
+<a name="190"><span class="lineNum">     190 </span>            :   }</a>
+<a name="191"><span class="lineNum">     191 </span>            : </a>
+<a name="192"><span class="lineNum">     192 </span>            :   /// Subscribe to the active chats stream of the [loggedUser] from the Firebase DB and</a>
+<a name="193"><span class="lineNum">     193 </span>            :   /// update the [_activeChats] linked hash map with the chats.</a>
+<a name="194"><span class="lineNum">     194 </span>            :   ///</a>
+<a name="195"><span class="lineNum">     195 </span>            :   /// It also retrieve the [peerUser] info for every new chat from the Firebase DB.</a>
+<a name="196"><span class="lineNum">     196 </span>            :   ///</a>
+<a name="197"><span class="lineNum">     197 </span>            :   /// Finally it calls the [notifyListeners] on the [_activeChats] value notifier to notify the changes</a>
+<a name="198"><span class="lineNum">     198 </span>            :   /// to all the listeners.</a>
+<a name="199"><span class="lineNum">     199 </span><span class="lineCov">          1 :   void loadActiveChats() async {</span></a>
+<a name="200"><span class="lineNum">     200 </span><span class="lineCov">          6 :     _activeChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, ActiveChat.COLLECTION).listen(</span></a>
+<a name="201"><span class="lineNum">     201 </span><span class="lineCov">          1 :       (snapshot) async {</span></a>
+<a name="202"><span class="lineNum">     202 </span><span class="lineCov">          2 :         for (var docChange in snapshot.docChanges) {</span></a>
+<a name="203"><span class="lineNum">     203 </span><span class="lineCov">          2 :           var chat = ActiveChat.fromDocument(docChange.doc);</span></a>
+<a name="204"><span class="lineNum">     204 </span>            :           // If oldIndex == -1, the document is added, so its new and it has to retrieve the peer user from the DB</a>
+<a name="205"><span class="lineNum">     205 </span><span class="lineCov">          3 :           if (docChange.oldIndex == -1) {</span></a>
+<a name="206"><span class="lineNum">     206 </span><span class="lineCov">          7 :             _getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {</span></a>
+<a name="207"><span class="lineNum">     207 </span><span class="lineCov">          4 :               chat.peerUser!.setFromDocument(value.docs[0]);</span></a>
+<a name="208"><span class="lineNum">     208 </span><span class="lineCov">          1 :               chat.loadMessages();</span></a>
+<a name="209"><span class="lineNum">     209 </span><span class="lineCov">          5 :               _activeChats.value[docChange.doc.id] = chat;</span></a>
+<a name="210"><span class="lineNum">     210 </span><span class="lineCov">          2 :               _activeChats.notifyListeners();</span></a>
+<a name="211"><span class="lineNum">     211 </span>            :             });</a>
+<a name="212"><span class="lineNum">     212 </span>            :           } else {</a>
+<a name="213"><span class="lineNum">     213 </span>            :             // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields</a>
+<a name="214"><span class="lineNum">     214 </span><span class="lineCov">          5 :             var removedChat = _activeChats.value.remove(docChange.doc.id);</span></a>
+<a name="215"><span class="lineNum">     215 </span><span class="lineCov">          2 :             removedChat?.lastMessage = chat.lastMessage;</span></a>
+<a name="216"><span class="lineNum">     216 </span><span class="lineCov">          2 :             removedChat?.lastMessageDateTime = chat.lastMessageDateTime;</span></a>
+<a name="217"><span class="lineNum">     217 </span><span class="lineCov">          2 :             removedChat?.notReadMessages = chat.notReadMessages;</span></a>
+<a name="218"><span class="lineNum">     218 </span><span class="lineCov">          5 :             _activeChats.value[docChange.doc.id] = removedChat!;</span></a>
+<a name="219"><span class="lineNum">     219 </span><span class="lineCov">          2 :             _activeChats.notifyListeners();</span></a>
+<a name="220"><span class="lineNum">     220 </span>            :           }</a>
+<a name="221"><span class="lineNum">     221 </span>            :         }</a>
+<a name="222"><span class="lineNum">     222 </span>            :       },</a>
+<a name="223"><span class="lineNum">     223 </span><span class="lineCov">          3 :       onError: (error) =&gt; log(&quot;Failed to get the stream of active chats: $error&quot;),</span></a>
+<a name="224"><span class="lineNum">     224 </span>            :       cancelOnError: true,</a>
+<a name="225"><span class="lineNum">     225 </span>            :     );</a>
+<a name="226"><span class="lineNum">     226 </span>            :   }</a>
+<a name="227"><span class="lineNum">     227 </span>            : </a>
+<a name="228"><span class="lineNum">     228 </span>            :   /// Return the doc of the peer user with all the info based on the [id]</a>
+<a name="229"><span class="lineNum">     229 </span>            :   /// and the [collection].</a>
+<a name="230"><span class="lineNum">     230 </span><span class="lineCov">          1 :   Future&lt;QuerySnapshot&gt; _getPeerUserDoc(String collection, String id) {</span></a>
+<a name="231"><span class="lineNum">     231 </span><span class="lineCov">          2 :     return _firestoreService.getUserByIdFromDB(collection, id);</span></a>
+<a name="232"><span class="lineNum">     232 </span>            :   }</a>
+<a name="233"><span class="lineNum">     233 </span>            : </a>
+<a name="234"><span class="lineNum">     234 </span>            :   /// Look for a new random anonymous user into the DB.</a>
+<a name="235"><span class="lineNum">     235 </span><span class="lineCov">          1 :   Future&lt;void&gt; getNewRandomUser() async {</span></a>
+<a name="236"><span class="lineNum">     236 </span><span class="lineCov">          7 :     return _firestoreService.getRandomUserFromDB(_userService.loggedUser as BaseUser, Utils.randomId()).then((doc) {</span></a>
+<a name="237"><span class="lineNum">     237 </span>            :       if (doc != null) {</a>
+<a name="238"><span class="lineNum">     238 </span>            :         // Create the random user and update the chat</a>
+<a name="239"><span class="lineNum">     239 </span><span class="lineCov">          1 :         var randomUser = BaseUser.fromDocument(doc);</span></a>
+<a name="240"><span class="lineNum">     240 </span>            :         // Add the listeners for new messages</a>
+<a name="241"><span class="lineNum">     241 </span><span class="lineCov">          2 :         addNewChat(Request(peerUser: randomUser));</span></a>
+<a name="242"><span class="lineNum">     242 </span>            :         // Add the &quot;true&quot; value to the new random user stream controller</a>
+<a name="243"><span class="lineNum">     243 </span><span class="lineCov">          2 :         _newRandomUserCtrl.add(true);</span></a>
+<a name="244"><span class="lineNum">     244 </span>            :       } else {</a>
+<a name="245"><span class="lineNum">     245 </span>            :         // Add the &quot;false&quot; value to the new random user stream controller</a>
+<a name="246"><span class="lineNum">     246 </span><span class="lineCov">          2 :         _newRandomUserCtrl.add(false);</span></a>
+<a name="247"><span class="lineNum">     247 </span>            :       }</a>
+<a name="248"><span class="lineNum">     248 </span><span class="lineCov">          2 :     }).catchError((error) {</span></a>
+<a name="249"><span class="lineNum">     249 </span>            :       // Add the &quot;false&quot; value to the new random user stream controller</a>
+<a name="250"><span class="lineNum">     250 </span><span class="lineCov">          2 :       _newRandomUserCtrl.add(false);</span></a>
+<a name="251"><span class="lineNum">     251 </span><span class="lineCov">          1 :       log(&quot;Error in getting a new random user&quot;);</span></a>
+<a name="252"><span class="lineNum">     252 </span>            :     });</a>
+<a name="253"><span class="lineNum">     253 </span>            :   }</a>
+<a name="254"><span class="lineNum">     254 </span>            : </a>
+<a name="255"><span class="lineNum">     255 </span>            :   /// Accept a new pending chat request.</a>
+<a name="256"><span class="lineNum">     256 </span><span class="lineCov">          1 :   Future&lt;void&gt; acceptPendingChat() async {</span></a>
+<a name="257"><span class="lineNum">     257 </span><span class="lineCov">          8 :     return _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser!, _currentChat.value! as PendingChat).then((_) {</span></a>
+<a name="258"><span class="lineNum">     258 </span><span class="lineCov">          7 :       _pendingChats.value.remove(_currentChat.value!.peerUser!.id);</span></a>
+<a name="259"><span class="lineNum">     259 </span><span class="lineCov">          5 :       addNewChat(AnonymousChat(peerUser: _currentChat.value!.peerUser as BaseUser));</span></a>
+<a name="260"><span class="lineNum">     260 </span><span class="lineCov">          2 :     }).catchError((error) {</span></a>
+<a name="261"><span class="lineNum">     261 </span><span class="lineCov">          2 :       log(&quot;Error in accepting the pending chat: $error&quot;);</span></a>
+<a name="262"><span class="lineNum">     262 </span>            :     });</a>
+<a name="263"><span class="lineNum">     263 </span>            :   }</a>
+<a name="264"><span class="lineNum">     264 </span>            : </a>
+<a name="265"><span class="lineNum">     265 </span>            :   /// Deny a pending chat.</a>
+<a name="266"><span class="lineNum">     266 </span>            :   ///</a>
+<a name="267"><span class="lineNum">     267 </span>            :   /// It deletes the chat between the 2 users and all the messages.</a>
+<a name="268"><span class="lineNum">     268 </span><span class="lineCov">          1 :   Future&lt;void&gt; denyPendingChat() async {</span></a>
+<a name="269"><span class="lineNum">     269 </span><span class="lineCov">          7 :     _pendingChats.value.remove(_currentChat.value!.peerUser!.id);</span></a>
+<a name="270"><span class="lineNum">     270 </span><span class="lineCov">          6 :     _firestoreService.removeChatFromDB(_userService.loggedUser!, _currentChat.value!);</span></a>
+<a name="271"><span class="lineNum">     271 </span><span class="lineCov">         10 :     _firestoreService.removeMessagesFromDB(Utils.pairChatId(_userService.loggedUser!.id, _currentChat.value!.peerUser!.id));</span></a>
+<a name="272"><span class="lineNum">     272 </span><span class="lineCov">          1 :     resetCurrentChat();</span></a>
 <a name="273"><span class="lineNum">     273 </span>            :   }</a>
 <a name="274"><span class="lineNum">     274 </span>            : </a>
-<a name="275"><span class="lineNum">     275 </span>            :   /// Reset the [_currentChat] and clear the [contentTextCtrl].</a>
-<a name="276"><span class="lineNum">     276 </span>            :   ///</a>
-<a name="277"><span class="lineNum">     277 </span>            :   /// It must be called after all the other reset methods.</a>
-<a name="278"><span class="lineNum">     278 </span><span class="lineNoCov">          0 :   void resetCurrentChat() {</span></a>
-<a name="279"><span class="lineNum">     279 </span><span class="lineNoCov">          0 :     _currentChat.value = null;</span></a>
-<a name="280"><span class="lineNum">     280 </span><span class="lineNoCov">          0 :     contentTextCtrl.clear();</span></a>
-<a name="281"><span class="lineNum">     281 </span><span class="lineNoCov">          0 :     log(&quot;Current chat resetted&quot;);</span></a>
-<a name="282"><span class="lineNum">     282 </span>            :   }</a>
-<a name="283"><span class="lineNum">     283 </span>            : </a>
-<a name="284"><span class="lineNum">     284 </span>            :   /// Cancel all the value listeners and clear their contents.</a>
-<a name="285"><span class="lineNum">     285 </span><span class="lineNoCov">          0 :   void closeListeners() {</span></a>
-<a name="286"><span class="lineNum">     286 </span>            :     // Cancel chat list subscribers</a>
-<a name="287"><span class="lineNum">     287 </span><span class="lineNoCov">          0 :     _anonymousChatsSubscriber?.cancel();</span></a>
-<a name="288"><span class="lineNum">     288 </span><span class="lineNoCov">          0 :     _pendingChatsSubscriber?.cancel();</span></a>
-<a name="289"><span class="lineNum">     289 </span><span class="lineNoCov">          0 :     _expertsChatsSubscriber?.cancel();</span></a>
-<a name="290"><span class="lineNum">     290 </span><span class="lineNoCov">          0 :     _activeChatsSubscriber?.cancel();</span></a>
-<a name="291"><span class="lineNum">     291 </span>            : </a>
-<a name="292"><span class="lineNum">     292 </span>            :     // Cancel chat subscribers and clear theri values</a>
-<a name="293"><span class="lineNum">     293 </span><span class="lineNoCov">          0 :     _anonymousChats?.value.values.forEach((chat) =&gt; chat.closeListeners());</span></a>
-<a name="294"><span class="lineNum">     294 </span><span class="lineNoCov">          0 :     _pendingChats?.value.values.forEach((chat) =&gt; chat.closeListeners());</span></a>
-<a name="295"><span class="lineNum">     295 </span><span class="lineNoCov">          0 :     _expertsChats?.value.values.forEach((chat) =&gt; chat.closeListeners());</span></a>
-<a name="296"><span class="lineNum">     296 </span><span class="lineNoCov">          0 :     _activeChats?.value.values.forEach((chat) =&gt; chat.closeListeners());</span></a>
-<a name="297"><span class="lineNum">     297 </span>            : </a>
-<a name="298"><span class="lineNum">     298 </span>            :     // Clear chat list values</a>
-<a name="299"><span class="lineNum">     299 </span><span class="lineNoCov">          0 :     _anonymousChats?.value.clear();</span></a>
-<a name="300"><span class="lineNum">     300 </span><span class="lineNoCov">          0 :     _pendingChats?.value.clear();</span></a>
-<a name="301"><span class="lineNum">     301 </span><span class="lineNoCov">          0 :     _expertsChats?.value.clear();</span></a>
-<a name="302"><span class="lineNum">     302 </span><span class="lineNoCov">          0 :     _activeChats?.value.clear();</span></a>
+<a name="275"><span class="lineNum">     275 </span>            :   /// Set the [chat] as the [_currentChat] and add the listener for new messages.</a>
+<a name="276"><span class="lineNum">     276 </span><span class="lineCov">          1 :   void addNewChat(Chat chat) {</span></a>
+<a name="277"><span class="lineNum">     277 </span><span class="lineCov">          1 :     chat.loadMessages();</span></a>
+<a name="278"><span class="lineNum">     278 </span><span class="lineCov">          1 :     setCurrentChat(chat);</span></a>
+<a name="279"><span class="lineNum">     279 </span>            :   }</a>
+<a name="280"><span class="lineNum">     280 </span>            : </a>
+<a name="281"><span class="lineNum">     281 </span>            :   /// Set the [chat] as the [_currentChat].</a>
+<a name="282"><span class="lineNum">     282 </span><span class="lineCov">          1 :   void setCurrentChat(Chat chat) {</span></a>
+<a name="283"><span class="lineNum">     283 </span><span class="lineCov">          2 :     _currentChat.value = chat;</span></a>
+<a name="284"><span class="lineNum">     284 </span><span class="lineCov">          1 :     log(&quot;Current chat setted&quot;);</span></a>
+<a name="285"><span class="lineNum">     285 </span>            :   }</a>
+<a name="286"><span class="lineNum">     286 </span>            : </a>
+<a name="287"><span class="lineNum">     287 </span>            :   /// Reset the [_currentChat] and clear the [contentTextCtrl].</a>
+<a name="288"><span class="lineNum">     288 </span>            :   ///</a>
+<a name="289"><span class="lineNum">     289 </span>            :   /// It must be called after all the other reset methods.</a>
+<a name="290"><span class="lineNum">     290 </span><span class="lineCov">          1 :   void resetCurrentChat() {</span></a>
+<a name="291"><span class="lineNum">     291 </span><span class="lineCov">          2 :     _currentChat.value = null;</span></a>
+<a name="292"><span class="lineNum">     292 </span><span class="lineCov">          2 :     contentTextCtrl.clear();</span></a>
+<a name="293"><span class="lineNum">     293 </span><span class="lineCov">          1 :     log(&quot;Current chat resetted&quot;);</span></a>
+<a name="294"><span class="lineNum">     294 </span>            :   }</a>
+<a name="295"><span class="lineNum">     295 </span>            : </a>
+<a name="296"><span class="lineNum">     296 </span>            :   /// Cancel all the value listeners and clear their contents.</a>
+<a name="297"><span class="lineNum">     297 </span><span class="lineCov">          1 :   void resetViewModel() {</span></a>
+<a name="298"><span class="lineNum">     298 </span>            :     // Cancel chat list subscribers</a>
+<a name="299"><span class="lineNum">     299 </span><span class="lineCov">          2 :     _anonymousChatsSubscriber?.cancel();</span></a>
+<a name="300"><span class="lineNum">     300 </span><span class="lineCov">          2 :     _pendingChatsSubscriber?.cancel();</span></a>
+<a name="301"><span class="lineNum">     301 </span><span class="lineCov">          2 :     _expertsChatsSubscriber?.cancel();</span></a>
+<a name="302"><span class="lineNum">     302 </span><span class="lineCov">          2 :     _activeChatsSubscriber?.cancel();</span></a>
 <a name="303"><span class="lineNum">     303 </span>            : </a>
-<a name="304"><span class="lineNum">     304 </span>            :     // Reset current chat</a>
-<a name="305"><span class="lineNum">     305 </span><span class="lineNoCov">          0 :     _currentChat = ValueNotifier(null);</span></a>
-<a name="306"><span class="lineNum">     306 </span><span class="lineNoCov">          0 :     log(&quot;Chat listeners closed&quot;);</span></a>
-<a name="307"><span class="lineNum">     307 </span>            :   }</a>
-<a name="308"><span class="lineNum">     308 </span>            : </a>
-<a name="309"><span class="lineNum">     309 </span>            :   /// Get the [_currentChat] value notifier.</a>
-<a name="310"><span class="lineNum">     310 </span><span class="lineNoCov">          0 :   ValueNotifier&lt;Chat?&gt; get currentChat =&gt; _currentChat;</span></a>
-<a name="311"><span class="lineNum">     311 </span>            : </a>
-<a name="312"><span class="lineNum">     312 </span>            :   /// Get the [_anonymousChats] value notifier.</a>
-<a name="313"><span class="lineNum">     313 </span>            :   ///</a>
-<a name="314"><span class="lineNum">     314 </span>            :   /// **The function [loadAnonymousChats] must be called before getting</a>
-<a name="315"><span class="lineNum">     315 </span>            :   /// the [anonymousChats].**</a>
-<a name="316"><span class="lineNum">     316 </span><span class="lineNoCov">          0 :   ValueNotifier&lt;LinkedHashMap&lt;String, Chat&gt;&gt;? get anonymousChats =&gt; _anonymousChats;</span></a>
-<a name="317"><span class="lineNum">     317 </span>            : </a>
-<a name="318"><span class="lineNum">     318 </span>            :   /// Get the [_pendingChats] value notifier.</a>
-<a name="319"><span class="lineNum">     319 </span>            :   ///</a>
-<a name="320"><span class="lineNum">     320 </span>            :   /// **The function [loadPendingChats] must be called before getting</a>
-<a name="321"><span class="lineNum">     321 </span>            :   /// the [pendingChats].**</a>
-<a name="322"><span class="lineNum">     322 </span><span class="lineNoCov">          0 :   ValueNotifier&lt;LinkedHashMap&lt;String, Chat&gt;&gt;? get pendingChats =&gt; _pendingChats;</span></a>
+<a name="304"><span class="lineNum">     304 </span>            :     // Cancel chat subscribers and clear theri values</a>
+<a name="305"><span class="lineNum">     305 </span><span class="lineCov">          6 :     _anonymousChats.value.values.forEach((chat) =&gt; chat.closeListeners());</span></a>
+<a name="306"><span class="lineNum">     306 </span><span class="lineCov">          6 :     _pendingChats.value.values.forEach((chat) =&gt; chat.closeListeners());</span></a>
+<a name="307"><span class="lineNum">     307 </span><span class="lineCov">          6 :     _expertsChats.value.values.forEach((chat) =&gt; chat.closeListeners());</span></a>
+<a name="308"><span class="lineNum">     308 </span><span class="lineCov">          6 :     _activeChats.value.values.forEach((chat) =&gt; chat.closeListeners());</span></a>
+<a name="309"><span class="lineNum">     309 </span>            : </a>
+<a name="310"><span class="lineNum">     310 </span>            :     // Clear chat list values</a>
+<a name="311"><span class="lineNum">     311 </span><span class="lineCov">          3 :     _anonymousChats.value.clear();</span></a>
+<a name="312"><span class="lineNum">     312 </span><span class="lineCov">          3 :     _pendingChats.value.clear();</span></a>
+<a name="313"><span class="lineNum">     313 </span><span class="lineCov">          3 :     _expertsChats.value.clear();</span></a>
+<a name="314"><span class="lineNum">     314 </span><span class="lineCov">          3 :     _activeChats.value.clear();</span></a>
+<a name="315"><span class="lineNum">     315 </span>            : </a>
+<a name="316"><span class="lineNum">     316 </span>            :     // Reset current chat</a>
+<a name="317"><span class="lineNum">     317 </span><span class="lineCov">          2 :     _currentChat = ValueNotifier(null);</span></a>
+<a name="318"><span class="lineNum">     318 </span><span class="lineCov">          1 :     log(&quot;Chat listeners closed&quot;);</span></a>
+<a name="319"><span class="lineNum">     319 </span>            :   }</a>
+<a name="320"><span class="lineNum">     320 </span>            : </a>
+<a name="321"><span class="lineNum">     321 </span>            :   /// Get the [_currentChat] value notifier.</a>
+<a name="322"><span class="lineNum">     322 </span><span class="lineCov">          2 :   ValueNotifier&lt;Chat?&gt; get currentChat =&gt; _currentChat;</span></a>
 <a name="323"><span class="lineNum">     323 </span>            : </a>
-<a name="324"><span class="lineNum">     324 </span>            :   /// Get the [_expertsChats] value notifier.</a>
+<a name="324"><span class="lineNum">     324 </span>            :   /// Get the [_anonymousChats] value notifier.</a>
 <a name="325"><span class="lineNum">     325 </span>            :   ///</a>
-<a name="326"><span class="lineNum">     326 </span>            :   /// **The function [loadExpertsChats] must be called before getting</a>
-<a name="327"><span class="lineNum">     327 </span>            :   /// the [expertsChats].**</a>
-<a name="328"><span class="lineNum">     328 </span><span class="lineNoCov">          0 :   ValueNotifier&lt;LinkedHashMap&lt;String, Chat&gt;&gt;? get expertsChats =&gt; _expertsChats;</span></a>
+<a name="326"><span class="lineNum">     326 </span>            :   /// **The function [loadAnonymousChats] must be called before getting</a>
+<a name="327"><span class="lineNum">     327 </span>            :   /// the [anonymousChats].**</a>
+<a name="328"><span class="lineNum">     328 </span><span class="lineCov">          2 :   ValueNotifier&lt;LinkedHashMap&lt;String, Chat&gt;&gt; get anonymousChats =&gt; _anonymousChats;</span></a>
 <a name="329"><span class="lineNum">     329 </span>            : </a>
-<a name="330"><span class="lineNum">     330 </span>            :   /// Get the [_activeChats] value notifier.</a>
+<a name="330"><span class="lineNum">     330 </span>            :   /// Get the [_pendingChats] value notifier.</a>
 <a name="331"><span class="lineNum">     331 </span>            :   ///</a>
-<a name="332"><span class="lineNum">     332 </span>            :   /// **The function [loadActiveChats] must be called before getting</a>
-<a name="333"><span class="lineNum">     333 </span>            :   /// the [activeChats].**</a>
-<a name="334"><span class="lineNum">     334 </span><span class="lineNoCov">          0 :   ValueNotifier&lt;LinkedHashMap&lt;String, Chat&gt;&gt;? get activeChats =&gt; _activeChats;</span></a>
+<a name="332"><span class="lineNum">     332 </span>            :   /// **The function [loadPendingChats] must be called before getting</a>
+<a name="333"><span class="lineNum">     333 </span>            :   /// the [pendingChats].**</a>
+<a name="334"><span class="lineNum">     334 </span><span class="lineCov">          2 :   ValueNotifier&lt;LinkedHashMap&lt;String, Chat&gt;&gt; get pendingChats =&gt; _pendingChats;</span></a>
 <a name="335"><span class="lineNum">     335 </span>            : </a>
-<a name="336"><span class="lineNum">     336 </span>            :   /// Stream of the new random user controller.</a>
-<a name="337"><span class="lineNum">     337 </span><span class="lineNoCov">          0 :   Stream&lt;bool&gt; get newRandomUser =&gt; _newRandomUserCtrl.stream;</span></a>
-<a name="338"><span class="lineNum">     338 </span>            : }</a>
+<a name="336"><span class="lineNum">     336 </span>            :   /// Get the [_expertsChats] value notifier.</a>
+<a name="337"><span class="lineNum">     337 </span>            :   ///</a>
+<a name="338"><span class="lineNum">     338 </span>            :   /// **The function [loadExpertsChats] must be called before getting</a>
+<a name="339"><span class="lineNum">     339 </span>            :   /// the [expertsChats].**</a>
+<a name="340"><span class="lineNum">     340 </span><span class="lineCov">          2 :   ValueNotifier&lt;LinkedHashMap&lt;String, Chat&gt;&gt; get expertsChats =&gt; _expertsChats;</span></a>
+<a name="341"><span class="lineNum">     341 </span>            : </a>
+<a name="342"><span class="lineNum">     342 </span>            :   /// Get the [_activeChats] value notifier.</a>
+<a name="343"><span class="lineNum">     343 </span>            :   ///</a>
+<a name="344"><span class="lineNum">     344 </span>            :   /// **The function [loadActiveChats] must be called before getting</a>
+<a name="345"><span class="lineNum">     345 </span>            :   /// the [activeChats].**</a>
+<a name="346"><span class="lineNum">     346 </span><span class="lineCov">          2 :   ValueNotifier&lt;LinkedHashMap&lt;String, Chat&gt;&gt; get activeChats =&gt; _activeChats;</span></a>
+<a name="347"><span class="lineNum">     347 </span>            : </a>
+<a name="348"><span class="lineNum">     348 </span>            :   /// Stream of the new random user controller.</a>
+<a name="349"><span class="lineNum">     349 </span><span class="lineCov">          3 :   Stream&lt;bool&gt; get newRandomUser =&gt; _newRandomUserCtrl.stream;</span></a>
+<a name="350"><span class="lineNum">     350 </span>            : </a>
+<a name="351"><span class="lineNum">     351 </span>            :   /// Get the [_anonymousChatsSubscriber].</a>
+<a name="352"><span class="lineNum">     352 </span><span class="lineCov">          2 :   StreamSubscription? get anonymousChatsSubscriber =&gt; _anonymousChatsSubscriber;</span></a>
+<a name="353"><span class="lineNum">     353 </span>            : </a>
+<a name="354"><span class="lineNum">     354 </span>            :   /// Get the [_pendingChatsSubscriber].</a>
+<a name="355"><span class="lineNum">     355 </span><span class="lineCov">          2 :   StreamSubscription? get pendingChatsSubscriber =&gt; _pendingChatsSubscriber;</span></a>
+<a name="356"><span class="lineNum">     356 </span>            : </a>
+<a name="357"><span class="lineNum">     357 </span>            :   /// Get the [_expertsChatsSubscriber].</a>
+<a name="358"><span class="lineNum">     358 </span><span class="lineCov">          2 :   StreamSubscription? get expertsChatsSubscriber =&gt; _expertsChatsSubscriber;</span></a>
+<a name="359"><span class="lineNum">     359 </span>            : </a>
+<a name="360"><span class="lineNum">     360 </span>            :   /// Get the [_activeChatsSubscriber].</a>
+<a name="361"><span class="lineNum">     361 </span><span class="lineCov">          2 :   StreamSubscription? get activeChatsSubscriber =&gt; _activeChatsSubscriber;</span></a>
+<a name="362"><span class="lineNum">     362 </span>            : }</a>
 </pre>
       </td>
     </tr>

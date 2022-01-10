@@ -3,15 +3,13 @@ import 'package:test/test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/DBItems/BaseUser/report.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
-import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import '../../service.mocks.dart';
+import '../../test_helper.dart';
 
 void main() async {
   /// Fake Firebase
@@ -21,55 +19,19 @@ void main() async {
   final mockFirestoreService = MockFirestoreService();
   final mockUserService = MockUserService();
 
-  var loggedUser = BaseUser(
-    id: Utils.randomId(),
-    name: "Luca",
-    surname: "Colombo",
-    email: "luca.colombo@prova.it",
-    birthDate: DateTime(1997, 10, 19),
-  );
-
-  /// Add some mock reports to the fakeFirebase
-  var collectionReference = fakeFirebase.collection(Report.COLLECTION).doc(loggedUser.id).collection("reportList");
-
-  /// Test Reports
-  var report = Report(
-    id: DateTime(2021, 8, 5, 13, 00, 25).millisecondsSinceEpoch.toString(),
-    category: "Report category",
-    description: "Report description",
-    dateTime: DateTime(2021, 8, 5, 13, 00, 25),
-  );
-
-  var report2 = Report(
-    id: DateTime(2021, 10, 5, 13, 00, 25).millisecondsSinceEpoch.toString(),
-    category: "Report category 2",
-    description: "Report description 2",
-    dateTime: DateTime(2021, 10, 5, 13, 00, 25),
-  );
-
-  var report3 = Report(
-    id: DateTime(2022, 1, 5, 13, 00, 25).millisecondsSinceEpoch.toString(),
-    category: "Report category 3",
-    description: "Report description 3",
-    dateTime: DateTime(2022, 1, 5, 13, 00, 25),
-  );
-
-  List<Report> reports = [report, report2, report3];
-
-  collectionReference.doc(report.id).set(report.data);
-  collectionReference.doc(report2.id).set(report2.data);
-  collectionReference.doc(report3.id).set(report3.data);
-
-  /// Mock User Service responses
-  when(mockUserService.loggedUser).thenAnswer((_) => loggedUser);
-
-  /// Mock FirestoreService responses
-  when(mockFirestoreService.getReportsFromDB(loggedUser.id))
-      .thenAnswer((_) => fakeFirebase.collection(Report.COLLECTION).doc(loggedUser.id).collection("reportList").orderBy(FieldPath.documentId).get());
-
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(mockFirestoreService);
   getIt.registerSingleton<UserService>(mockUserService);
+
+  /// Test Helper
+  final testHelper = TestHelper();
+  await testHelper.attachDB(fakeFirebase);
+
+  /// Mock User Service responses
+  when(mockUserService.loggedUser).thenAnswer((_) => testHelper.loggedUser);
+
+  /// Mock FirestoreService responses
+  when(mockFirestoreService.getReportsFromDB(testHelper.loggedUser.id)).thenAnswer((_) => testHelper.reportsFuture);
 
   final reportViewModel = ReportViewModel();
   var now = DateTime.now();
@@ -91,33 +53,41 @@ void main() async {
     group("Load reports:", () {
       setUp(() => reportViewModel.reports.clear());
 
-      test("Check that the reports are correctly parsed and added to the linked HashMap of reports in the correct order", () async {
-        /// Load the diary pages
+      test("Load reports should call the getReports method of the firestore service", () async {
         await reportViewModel.loadReports();
 
-        for (int i = 0; i < reports.length; i++) {
-          expect(reportViewModel.reports.values.elementAt(i).id, reports[i].id);
-          expect(reportViewModel.reports.values.elementAt(i).category, reports[i].category);
-          expect(reportViewModel.reports.values.elementAt(i).description, reports[i].description);
-          expect(reportViewModel.reports.values.elementAt(i).dateTime, reports[i].dateTime);
+        verify(mockFirestoreService.getReportsFromDB(testHelper.loggedUser.id)).called(1);
+      });
+
+      test("Check that the reports are correctly parsed and added to the linked HashMap of reports in the correct order", () async {
+        /// Load the reports
+        await reportViewModel.loadReports();
+
+        for (int i = 0; i < testHelper.reports.length; i++) {
+          expect(reportViewModel.reports.values.elementAt(i).id, testHelper.reports[i].id);
+          expect(reportViewModel.reports.values.elementAt(i).category, testHelper.reports[i].category);
+          expect(reportViewModel.reports.values.elementAt(i).description, testHelper.reports[i].description);
+          expect(reportViewModel.reports.values.elementAt(i).dateTime, testHelper.reports[i].dateTime);
         }
       });
 
-      test("Check that if an error occurs when loading the reports it catches the error", () {
+      test("Check that if an error occurs when loading the reports it catches the error", () async {
         /// Mock Firebase exception
-        when(mockFirestoreService.getReportsFromDB(loggedUser.id)).thenThrow(Error);
+        when(mockFirestoreService.getReportsFromDB(testHelper.loggedUser.id)).thenAnswer((_) async {
+          return Future.error(Error);
+        });
 
-        reportViewModel.loadReports();
+        await reportViewModel.loadReports();
       });
     });
 
     group("Submit report:", () {
-      test("Check that submit report sets the current report with the correct values", () {
+      test("Check that submit report sets the current report with the correct values", () async {
         /// Test Fields
         var category = "Category";
         var description = "Description";
 
-        reportViewModel.submitReport(category, description);
+        await reportViewModel.submitReport(category, description);
 
         expect(reportViewModel.currentReport.value, isNotNull);
         expect(reportViewModel.currentReport.value!.category, category);
@@ -127,14 +97,14 @@ void main() async {
         expect(reportViewModel.currentReport.value!.dateTime!.year, now.year);
       });
 
-      test("Submit report should call the submit report method of the firestore service", () {
+      test("Submit report should call the submit report method of the firestore service", () async {
         /// Test Fields
         var category = "Category";
         var description = "Description";
 
-        reportViewModel.submitReport(category, description);
+        await reportViewModel.submitReport(category, description);
 
-        var verification = verify(mockFirestoreService.addReportIntoDB(loggedUser.id, captureAny));
+        var verification = verify(mockFirestoreService.addReportIntoDB(testHelper.loggedUser.id, captureAny));
         verification.called(1);
 
         /// Parameter Verification
@@ -151,35 +121,32 @@ void main() async {
     group("Set current report:", () {
       test("Check that set current report sets the correct field of the value notifier", () {
         reportViewModel.resetCurrentReport();
-        reportViewModel.setCurrentReport(report);
+        reportViewModel.setCurrentReport(testHelper.report);
 
-        expect(reportViewModel.currentReport.value, report);
+        expect(reportViewModel.currentReport.value, testHelper.report);
       });
     });
 
     group("Reset current report:", () {
       test("Check that reset current report sets the field of the value notifier to null", () {
-        reportViewModel.setCurrentReport(report);
+        reportViewModel.setCurrentReport(testHelper.report);
         reportViewModel.resetCurrentReport();
 
         expect(reportViewModel.currentReport.value, isNull);
       });
     });
 
-    group("Close listeners:", () {
-      test("Close listeners should clear the old values of the report linked HashMap", () async {
-        /// Mock FirestoreService responses
-        when(mockFirestoreService.getReportsFromDB(loggedUser.id)).thenAnswer(
-            (_) => fakeFirebase.collection(Report.COLLECTION).doc(loggedUser.id).collection("reportList").orderBy(FieldPath.documentId).get());
+    group("Reset view model:", () {
+      test("Reset view model should clear the old values of the report linked HashMap", () async {
         await reportViewModel.loadReports();
-        reportViewModel.closeListeners();
+        reportViewModel.resetViewModel();
 
         expect(reportViewModel.reports, isEmpty);
       });
 
-      test("Close listener should reset the current report", () {
-        reportViewModel.currentReport.value = report;
-        reportViewModel.closeListeners();
+      test("Reset view model should reset the current report", () {
+        reportViewModel.currentReport.value = testHelper.report;
+        reportViewModel.resetViewModel();
 
         expect(reportViewModel.currentReport.value, isNull);
       });

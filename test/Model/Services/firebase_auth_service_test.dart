@@ -61,12 +61,6 @@ void main() async {
 
         verify(mockFirebaseAuth.createUserWithEmailAndPassword(email: email, password: password)).called(1);
       });
-
-      test("Check that create a new user calls the sendEmailVerification method of the Firebase user", () async {
-        await firebaseAuthService.createUserWithEmailAndPassword(email, password);
-
-        verify(mockUser.sendEmailVerification()).called(1);
-      });
     });
 
     group("Deletion of the user:", () {
@@ -74,13 +68,6 @@ void main() async {
         await firebaseAuthService.deleteUser();
 
         verify(mockUser.delete()).called(1);
-      });
-
-      test("Check that if an exception occurs in deleting the user it catches the error", () async {
-        /// Mock FirebaseAuth exception
-        when(mockUser.delete()).thenThrow(FirebaseAuthException(code: "code", message: "test"));
-
-        await firebaseAuthService.deleteUser();
       });
     });
 
@@ -93,9 +80,10 @@ void main() async {
 
       test("Check that if an exception occurs in sending the reset password email it catches the error", () async {
         /// Mock FirebaseAuth exception
-        when(mockFirebaseAuth.sendPasswordResetEmail(email: email)).thenThrow(FirebaseAuthException(code: "code", message: "test"));
-
-        firebaseAuthService.resetPassword(email);
+        when(mockUser.sendEmailVerification()).thenAnswer((_) async {
+          return Future.error(FirebaseAuthException(code: "code", message: "test"));
+        });
+        await firebaseAuthService.resetPassword(email);
       });
     });
 
@@ -130,8 +118,10 @@ void main() async {
       });
 
       test("Check that if an exception occurs when fetching the sign in methods it catches the error and returns null", () async {
-        /// Mock FirebaseAuth responses
-        when(mockFirebaseAuth.fetchSignInMethodsForEmail(email)).thenThrow(FirebaseAuthException(code: "code", message: "test"));
+        /// Mock FirebaseAuth exception
+        when(mockFirebaseAuth.fetchSignInMethodsForEmail(email)).thenAnswer((_) async {
+          return Future.error(FirebaseAuthException(code: "code", message: "test"));
+        });
 
         var signInMethods = await firebaseAuthService.fetchSignInMethods(email);
 

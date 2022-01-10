@@ -3,9 +3,8 @@ import 'dart:developer';
 import 'dart:collection';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sApport/Model/DBItems/BaseUser/report.dart';
 import 'package:sApport/Model/Services/user_service.dart';
+import 'package:sApport/Model/DBItems/BaseUser/report.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 
 class ReportViewModel {
@@ -27,23 +26,24 @@ class ReportViewModel {
       description: description,
       dateTime: now,
     );
-    return _firestoreService.addReportIntoDB(_userService.loggedUser!.id, currentReport.value!);
+    return _firestoreService
+        .addReportIntoDB(_userService.loggedUser!.id, currentReport.value!)
+        .then((value) => log("Report added"))
+        .catchError((error) => log("Failed to add the report: $error"));
   }
 
   /// Load the list of reports.
-  Future<QuerySnapshot>? loadReports() {
-    try {
-      _firestoreService.getReportsFromDB(_userService.loggedUser!.id).then((snapshot) {
-        for (var doc in snapshot.docs) {
-          Report report = Report.fromDocument(doc);
-          if (!_reports.containsKey(report.id)) {
-            reports[report.id] = report;
-          }
+  Future<void> loadReports() async {
+    return _firestoreService.getReportsFromDB(_userService.loggedUser!.id).then((snapshot) {
+      for (var doc in snapshot.docs) {
+        Report report = Report.fromDocument(doc);
+        if (!_reports.containsKey(report.id)) {
+          _reports[report.id] = report;
         }
-      });
-    } catch (error) {
+      }
+    }).catchError((error) {
       log("Failed to get the list of reports: $error");
-    }
+    });
   }
 
   /// Set the [report] as the [_currentReport].
@@ -59,7 +59,7 @@ class ReportViewModel {
   }
 
   /// Cancel all the value listeners and clear their contents.
-  void closeListeners() {
+  void resetViewModel() {
     _reports.clear();
     _currentReport = ValueNotifier(null);
     log("Report listeners closed");

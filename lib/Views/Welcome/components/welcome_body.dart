@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
@@ -50,6 +51,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
   late ChatViewModel chatViewModel;
   late ReportViewModel reportViewModel;
   late DiaryViewModel diaryViewModel;
+  late MapViewModel mapViewModel;
 
   // Router Delegate
   late AppRouterDelegate routerDelegate;
@@ -64,6 +66,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+    mapViewModel = Provider.of<MapViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     subscriber = subscribeToUserLoggedStream();
     super.initState();
@@ -187,9 +190,10 @@ class _WelcomeBodyState extends State<WelcomeBody> {
       } else {
         // Called on sign out
         routerDelegate.replaceAll([RouteSettings(name: WelcomeScreen.route)]);
-        chatViewModel.closeListeners();
-        diaryViewModel.closeListeners();
-        reportViewModel.closeListeners();
+        chatViewModel.resetViewModel();
+        diaryViewModel.resetViewModel();
+        reportViewModel.resetViewModel();
+        mapViewModel.resetViewModel();
       }
     });
   }

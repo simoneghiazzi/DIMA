@@ -58,7 +58,7 @@ class _MessageListConstructorState extends State<MessageListConstructor> {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     _notReadMessages = chatViewModel.currentChat.value!.notReadMessages;
     _lastMessageListLength = chatViewModel.currentChat.value!.messages.value.length;
-    chatViewModel.setMessagesHasRead();
+    chatViewModel.setMessagesAsRead();
 
     // Add the initial scroller to the NewMessageItem
     scrollHandler();

@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:collection';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/Map/place.dart';
 import 'package:sApport/Model/Services/map_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
@@ -12,7 +13,7 @@ import 'package:sApport/Model/Services/firestore_service.dart';
 class MapViewModel {
   /// Services
   final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
-  final MapService mapService = GetIt.I<MapService>();
+  final MapService _mapService = GetIt.I<MapService>();
 
   // Text Controllers
   final TextEditingController searchTextCtrl = TextEditingController();
@@ -21,15 +22,22 @@ class MapViewModel {
   var _autocompletedPlacesCtrl = StreamController<List<Place>?>.broadcast();
   var _selectedPlaceCtrl = StreamController<Place?>.broadcast();
 
+  // List of the reports of the user saved as Linked Hash Map
+  LinkedHashMap<String, Expert> _experts = LinkedHashMap<String, Expert>();
+
   late PermissionStatus positionPermission;
 
-  MapViewModel() {
-    // Set the position permission status on the location of the device
-    Permission.location.status.then((status) {
-      positionPermission = status;
-    }).catchError((error) {
-      log("Error in getting the position permission status: $error");
-    });
+  MapViewModel({@visibleForTesting bool isTesting = false}) {
+    if (!isTesting) {
+      // Set the position permission status on the location of the device
+      try {
+        Permission.location.status.then((status) {
+          positionPermission = status;
+        });
+      } catch (error) {
+        log("Error in getting the position permission status: $error");
+      }
+    }
   }
 
   /// Request the user for access to the location [Permission].
@@ -47,14 +55,14 @@ class MapViewModel {
   ///
   /// It adds the list of [Place] to the [autocompletedPlaces] stream.
   Future<void> autocompleteSearchedPlace() async {
-    return mapService.autocomplete(searchTextCtrl.text).then((places) {
+    return _mapService.autocomplete(searchTextCtrl.text).then((places) {
       _autocompletedPlacesCtrl.add(places);
     });
   }
 
   /// Returns the first most probable place based on the input of the user.
   Future<Place> firstSimilarPlace(String input) async {
-    return (await mapService.autocomplete(input))[0];
+    return (await _mapService.autocomplete(input))[0];
   }
 
   /// Search a place based on the [placeId].
@@ -62,7 +70,7 @@ class MapViewModel {
   /// It adds the [Place] to the [selectedPlace] stream.
   Future<void> searchPlace(String placeId) async {
     _autocompletedPlacesCtrl.add(null);
-    return mapService.searchPlace(placeId).then((place) {
+    return _mapService.searchPlace(placeId).then((place) {
       if (place != null) {
         searchTextCtrl.text = place.address!;
         _selectedPlaceCtrl.add(place);
@@ -71,20 +79,22 @@ class MapViewModel {
   }
 
   /// Returns the current position of the user device.
-  Future<Position> loadCurrentPosition() {
-    return mapService.getCurrentPosition().catchError((e) {
-      log("Error in getting the current position: $e");
-    });
+  Future<Position?> loadCurrentPosition() {
+    return _mapService.getCurrentPosition();
   }
 
-  /// Return the list of experts.
-  Future<QuerySnapshot?> loadExperts() async {
-    try {
-      return _firestoreService.getExpertCollectionFromDB();
-    } catch (e) {
-      log("Failed to get the list of experts: $e");
-      return null;
-    }
+  /// Load the list of experts.
+  Future<void> loadExperts() async {
+    return _firestoreService.getExpertCollectionFromDB().then((snapshot) {
+      for (var doc in snapshot.docs) {
+        Expert expert = Expert.fromDocument(doc);
+        if (!_experts.containsKey(expert.id)) {
+          _experts[expert.id] = expert;
+        }
+      }
+    }).catchError((error) {
+      log("Failed to get the list of experts: $error");
+    });
   }
 
   /// Clear all the text and stream controllers.
@@ -94,9 +104,21 @@ class MapViewModel {
     _autocompletedPlacesCtrl.add(null);
   }
 
+  /// Clear the experts values.
+  void resetViewModel() {
+    _experts.clear();
+    log("MapViewModel resetted");
+  }
+
   /// Stream of the selected palce controller
   Stream<Place?> get selectedPlace => _selectedPlaceCtrl.stream;
 
   /// Stream of the autocompleted places controller
   Stream<List<Place>?> get autocompletedPlaces => _autocompletedPlacesCtrl.stream;
+
+  /// Get the [_experts] list.
+  ///
+  /// **The function [loadExperts] must be called before getting
+  /// the [experts].**
+  LinkedHashMap<String, Expert> get experts => _experts;
 }
