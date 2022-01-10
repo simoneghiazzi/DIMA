@@ -357,17 +357,23 @@ void main() async {
         lastMessageDateTime: DateTime(2022, 1, 10, 21, 10, 50),
         peerUser: testHelper.baseUser4,
       );
+      var modifiedAnonymousChat = AnonymousChat(
+        lastMessage: "Message modified 1",
+        lastMessageDateTime: DateTime(2021, 10, 19, 21, 10, 50),
+        peerUser: testHelper.baseUser,
+      );
 
       setUp(() async {
         chatViewModel.closeListeners();
 
-        /// Removes the new added chat from the DB
+        /// Removes the new added chats from the DB
         await fakeFirebase
             .collection(BaseUser.COLLECTION)
             .doc(testHelper.loggedUser.id)
             .collection(AnonymousChat.COLLECTION)
             .doc(anonymousChat4.peerUser!.id)
             .delete();
+        await fakeFirebase.collection("support").doc("${modifiedAnonymousChat.peerUser!.id}").delete();
       });
 
       test("Check the subscription of the anonymous chats subscriber to the get chats stream of the firestore service", () async {
@@ -409,20 +415,22 @@ void main() async {
       test(
           "Modifying an old anonymous chat (when a new message arrives/is sent) will trigger the listener that should change the order of the HashMap",
           () async {
-        var chatThatWillBeModified = AnonymousChat(
-          lastMessage: "Message user 1",
-          lastMessageDateTime: DateTime(2021, 10, 19, 21, 10, 50),
-          peerUser: testHelper.baseUser,
-        );
         var anonymousHashMap = LinkedHashMap<String, AnonymousChat>();
-        anonymousHashMap["${chatThatWillBeModified.peerUser!.id}"] = chatThatWillBeModified;
+        anonymousHashMap["${modifiedAnonymousChat.peerUser!.id}"] = modifiedAnonymousChat;
         anonymousHashMap["${testHelper.anonymousChat2_2.peerUser!.id}"] = testHelper.anonymousChat2_2;
         anonymousHashMap["${testHelper.anonymousChat3_3.peerUser!.id}"] = testHelper.anonymousChat3_3;
         chatViewModel.anonymousChats.value = anonymousHashMap;
 
-        chatThatWillBeModified.lastMessageDateTime = DateTime(2022, 1, 10, 15, 12, 00);
-        chatThatWillBeModified.lastMessage = "Chat modified";
-        chatThatWillBeModified.notReadMessages = 1;
+        modifiedAnonymousChat.lastMessageDateTime = DateTime(2022, 1, 10, 15, 12, 00);
+        modifiedAnonymousChat.lastMessage = "Chat modified";
+        modifiedAnonymousChat.notReadMessages = 1;
+
+        /// Add the chat in a support collection of the DB
+        await fakeFirebase.collection("support").doc("${modifiedAnonymousChat.peerUser!.id}").set({
+          "lastMessageTimestamp": modifiedAnonymousChat.lastMessageDateTime!.millisecondsSinceEpoch,
+          "notReadMessages": modifiedAnonymousChat.notReadMessages,
+          "lastMessage": modifiedAnonymousChat.lastMessage
+        });
 
         var listener;
         var callback = expectAsync1((int lastPos) {
@@ -432,10 +440,10 @@ void main() async {
           }
 
           /// The last modified element should be moved in the last position of the HashMap
-          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).peerUser!.id, chatThatWillBeModified.peerUser!.id);
-          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).lastMessage, chatThatWillBeModified.lastMessage);
-          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).lastMessageDateTime, chatThatWillBeModified.lastMessageDateTime);
-          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).notReadMessages, chatThatWillBeModified.notReadMessages);
+          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).peerUser!.id, modifiedAnonymousChat.peerUser!.id);
+          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).lastMessage, modifiedAnonymousChat.lastMessage);
+          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).lastMessageDateTime, modifiedAnonymousChat.lastMessageDateTime);
+          expect(chatViewModel.anonymousChats.value.values.elementAt(lastPos).notReadMessages, modifiedAnonymousChat.notReadMessages);
 
           chatViewModel.anonymousChats.removeListener(listener);
         }, count: 1);
@@ -453,10 +461,10 @@ void main() async {
           /// We need to manually change the old index of the old chat that has been modified
           for (var docChange in snapshot.docChanges) {
             /// We simulate that chatThatWillBeModified that was in position 0 is modified
-            if (docChange.doc.id == chatThatWillBeModified.peerUser!.id) {
+            if (docChange.doc.id == modifiedAnonymousChat.peerUser!.id) {
               var newDocChange = MockDocumentChange();
               newDocChange.oldIndex = 0;
-              newDocChange.doc = docChange.doc;
+              newDocChange.doc = await fakeFirebase.collection("support").doc("${modifiedAnonymousChat.peerUser!.id}").get();
               newDocChanges.add(newDocChange);
             }
           }
@@ -678,6 +686,11 @@ void main() async {
         lastMessageDateTime: DateTime(2022, 1, 10, 21, 10, 50),
         peerUser: testHelper.baseUser4,
       );
+      var modifiedActiveChat = ActiveChat(
+        lastMessage: "Message user 1",
+        lastMessageDateTime: DateTime(2021, 10, 19, 21, 10, 50),
+        peerUser: testHelper.baseUser,
+      );
 
       setUp(() async {
         chatViewModel.closeListeners();
@@ -689,6 +702,7 @@ void main() async {
             .collection(ActiveChat.COLLECTION)
             .doc(activeChat4.peerUser!.id)
             .delete();
+        await fakeFirebase.collection("support").doc("${modifiedActiveChat.peerUser!.id}").delete();
       });
 
       test("Check the subscription of the active chats subscriber to the get chats stream of the firestore service", () async {
@@ -731,20 +745,22 @@ void main() async {
         /// Modify Mock User Service responses
         when(mockUserService.loggedUser).thenAnswer((_) => testHelper.loggedExpert);
 
-        var chatThatWillBeModified = ActiveChat(
-          lastMessage: "Message user 1",
-          lastMessageDateTime: DateTime(2021, 10, 19, 21, 10, 50),
-          peerUser: testHelper.baseUser,
-        );
         var activeHashMap = LinkedHashMap<String, ActiveChat>();
-        activeHashMap["${chatThatWillBeModified.peerUser!.id}"] = chatThatWillBeModified;
+        activeHashMap["${modifiedActiveChat.peerUser!.id}"] = modifiedActiveChat;
         activeHashMap["${testHelper.activeChat2_2.peerUser!.id}"] = testHelper.activeChat2_2;
         activeHashMap["${testHelper.activeChat3_3.peerUser!.id}"] = testHelper.activeChat3_3;
         chatViewModel.activeChats.value = activeHashMap;
 
-        chatThatWillBeModified.lastMessageDateTime = DateTime(2022, 1, 10, 15, 12, 00);
-        chatThatWillBeModified.lastMessage = "Chat modified";
-        chatThatWillBeModified.notReadMessages = 1;
+        modifiedActiveChat.lastMessageDateTime = DateTime(2022, 1, 10, 15, 12, 00);
+        modifiedActiveChat.lastMessage = "Chat modified";
+        modifiedActiveChat.notReadMessages = 1;
+
+        /// Add the chat in a support collection of the DB
+        await fakeFirebase.collection("support").doc("${modifiedActiveChat.peerUser!.id}").set({
+          "lastMessageTimestamp": modifiedActiveChat.lastMessageDateTime!.millisecondsSinceEpoch,
+          "notReadMessages": modifiedActiveChat.notReadMessages,
+          "lastMessage": modifiedActiveChat.lastMessage
+        });
 
         var listener;
         var callback = expectAsync1((int lastPos) {
@@ -754,10 +770,10 @@ void main() async {
           }
 
           /// The last modified element should be moved in the last position of the HashMap
-          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).peerUser!.id, chatThatWillBeModified.peerUser!.id);
-          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).lastMessage, chatThatWillBeModified.lastMessage);
-          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).lastMessageDateTime, chatThatWillBeModified.lastMessageDateTime);
-          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).notReadMessages, chatThatWillBeModified.notReadMessages);
+          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).peerUser!.id, modifiedActiveChat.peerUser!.id);
+          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).lastMessage, modifiedActiveChat.lastMessage);
+          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).lastMessageDateTime, modifiedActiveChat.lastMessageDateTime);
+          expect(chatViewModel.activeChats.value.values.elementAt(lastPos).notReadMessages, modifiedActiveChat.notReadMessages);
 
           chatViewModel.activeChats.removeListener(listener);
         }, count: 1);
@@ -775,10 +791,10 @@ void main() async {
           /// We need to manually change the old index of the old chat that has been modified
           for (var docChange in snapshot.docChanges) {
             /// We simulate that chatThatWillBeModified that was in position 0 is modified
-            if (docChange.doc.id == chatThatWillBeModified.peerUser!.id) {
+            if (docChange.doc.id == modifiedActiveChat.peerUser!.id) {
               var newDocChange = MockDocumentChange();
               newDocChange.oldIndex = 0;
-              newDocChange.doc = docChange.doc;
+              newDocChange.doc = await fakeFirebase.collection("support").doc("${modifiedActiveChat.peerUser!.id}").get();
               newDocChanges.add(newDocChange);
             }
           }
@@ -876,6 +892,11 @@ void main() async {
     });
 
     group("Load experts chats:", () {
+      var modifiedExpertChat = ExpertChat(
+        lastMessage: "Message user 1",
+        lastMessageDateTime: DateTime(2021, 10, 19, 21, 10, 50),
+        peerUser: testHelper.expert,
+      );
       var expertChat3 = ExpertChat(
         lastMessage: "Message user 3",
         lastMessageDateTime: DateTime(2022, 1, 10, 21, 10, 50),
@@ -892,6 +913,7 @@ void main() async {
             .collection(ExpertChat.COLLECTION)
             .doc(expertChat3.peerUser!.id)
             .delete();
+        await fakeFirebase.collection("support").doc("${modifiedExpertChat.peerUser!.id}").delete();
       });
 
       test("Check the subscription of the experts chats subscriber to the get chats stream of the firestore service", () async {
@@ -931,19 +953,21 @@ void main() async {
 
       test("Modifying an old experts chat (when a new message arrives/is sent) will trigger the listener that should change the order of the HashMap",
           () async {
-        var chatThatWillBeModified = ExpertChat(
-          lastMessage: "Message user 1",
-          lastMessageDateTime: DateTime(2021, 10, 19, 21, 10, 50),
-          peerUser: testHelper.expert,
-        );
         var expertsHashMap = LinkedHashMap<String, ExpertChat>();
-        expertsHashMap["${chatThatWillBeModified.peerUser!.id}"] = chatThatWillBeModified;
+        expertsHashMap["${modifiedExpertChat.peerUser!.id}"] = modifiedExpertChat;
         expertsHashMap["${testHelper.expertChat2_2.peerUser!.id}"] = testHelper.expertChat2_2;
         chatViewModel.expertsChats.value = expertsHashMap;
 
-        chatThatWillBeModified.lastMessageDateTime = DateTime(2022, 1, 10, 15, 12, 00);
-        chatThatWillBeModified.lastMessage = "Chat modified";
-        chatThatWillBeModified.notReadMessages = 1;
+        modifiedExpertChat.lastMessageDateTime = DateTime(2022, 1, 10, 15, 12, 00);
+        modifiedExpertChat.lastMessage = "Chat modified";
+        modifiedExpertChat.notReadMessages = 1;
+
+        /// Add the chat in a support collection of the DB
+        await fakeFirebase.collection("support").doc("${modifiedExpertChat.peerUser!.id}").set({
+          "lastMessageTimestamp": modifiedExpertChat.lastMessageDateTime!.millisecondsSinceEpoch,
+          "notReadMessages": modifiedExpertChat.notReadMessages,
+          "lastMessage": modifiedExpertChat.lastMessage
+        });
 
         var listener;
         var callback = expectAsync1((int lastPos) {
@@ -953,10 +977,10 @@ void main() async {
           }
 
           /// The last modified element should be moved in the last position of the HashMap
-          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).peerUser!.id, chatThatWillBeModified.peerUser!.id);
-          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).lastMessage, chatThatWillBeModified.lastMessage);
-          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).lastMessageDateTime, chatThatWillBeModified.lastMessageDateTime);
-          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).notReadMessages, chatThatWillBeModified.notReadMessages);
+          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).peerUser!.id, modifiedExpertChat.peerUser!.id);
+          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).lastMessage, modifiedExpertChat.lastMessage);
+          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).lastMessageDateTime, modifiedExpertChat.lastMessageDateTime);
+          expect(chatViewModel.expertsChats.value.values.elementAt(lastPos).notReadMessages, modifiedExpertChat.notReadMessages);
 
           chatViewModel.expertsChats.removeListener(listener);
         }, count: 1);
@@ -974,10 +998,10 @@ void main() async {
           /// We need to manually change the old index of the old chat that has been modified
           for (var docChange in snapshot.docChanges) {
             /// We simulate that chatThatWillBeModified that was in position 0 is modified
-            if (docChange.doc.id == chatThatWillBeModified.peerUser!.id) {
+            if (docChange.doc.id == modifiedExpertChat.peerUser!.id) {
               var newDocChange = MockDocumentChange();
               newDocChange.oldIndex = 0;
-              newDocChange.doc = docChange.doc;
+              newDocChange.doc = await fakeFirebase.collection("support").doc("${modifiedExpertChat.peerUser!.id}").get();
               newDocChanges.add(newDocChange);
             }
           }

@@ -121,6 +121,7 @@ class ChatViewModel extends ChangeNotifier {
         }
       },
       onError: (error) => log("Failed to get the stream of anonymous chats: $error"),
+      cancelOnError: true,
     );
   }
 
@@ -148,6 +149,7 @@ class ChatViewModel extends ChangeNotifier {
         }
       },
       onError: (error) => log("Failed to get the stream of pending chats: $error"),
+      cancelOnError: true,
     );
   }
 
@@ -183,6 +185,7 @@ class ChatViewModel extends ChangeNotifier {
         }
       },
       onError: (error) => log("Failed to get the stream of expert chats: $error"),
+      cancelOnError: true,
     );
   }
 
@@ -218,6 +221,7 @@ class ChatViewModel extends ChangeNotifier {
         }
       },
       onError: (error) => log("Failed to get the stream of active chats: $error"),
+      cancelOnError: true,
     );
   }
 

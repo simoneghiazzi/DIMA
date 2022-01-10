@@ -13,6 +13,7 @@ import 'package:sApport/ViewModel/BaseUser/Diary/diary_form.dart';
 import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import '../../../service.mocks.dart';
 import '../../../test_helper.dart';
+import '../../chat_view_model_test.dart';
 import 'diary_view_model_test.mocks.dart';
 
 @GenerateMocks([DiaryForm])
@@ -76,30 +77,54 @@ void main() async {
 
   group("DiaryViewModel interaction with services:", () {
     setUp(() => clearInteractions(mockFirestoreService));
-    group("Load diary pages:", () {
-      int counter = 0;
-      diaryViewModel.diaryPages.addListener(() {
-        counter++;
-      });
 
-      setUp(() {
-        counter = 0;
-        diaryViewModel.diaryPages.value.clear();
+    group("Load diary pages:", () {
+      var modifiedDiaryPage = DiaryPage(
+        id: testHelper.diaryPage.id,
+        title: testHelper.diaryPage.title,
+        content: testHelper.diaryPage.content,
+        dateTime: testHelper.diaryPage.dateTime,
+      );
+      var diaryPage4 = DiaryPage(
+        id: DateTime(2022, 1, 8).millisecondsSinceEpoch.toString(),
+        title: "Diary page fourth title",
+        content: "Diary page fourth content",
+        dateTime: DateTime(2022, 1, 8),
+      );
+
+      setUp(() async {
+        diaryViewModel.closeListeners();
+
+        /// Removes the new added diary page from the DB
+        fakeFirebase
+            .collection(DiaryPage.COLLECTION)
+            .doc(testHelper.loggedUser.id)
+            .collection("diaryPages")
+            .doc(diaryPage4.dateTime.millisecondsSinceEpoch.toString())
+            .delete();
+
+        await fakeFirebase.collection("support").doc("${modifiedDiaryPage.id}").delete();
       });
 
       test("Check the subscription of the diaryPagesSubscriber to the diary page stream of the firestore service", () async {
         /// Load the diary pages
         diaryViewModel.loadDiaryPages();
+        await Future.delayed(Duration.zero);
 
         expect(diaryViewModel.diaryPagesSubscriber, isA<StreamSubscription<QuerySnapshot>>());
       });
 
       test("Check that the value notifier notify the listeners every time a new diary page is added into the list of diary pages", () async {
-        /// Load the diary pages
+        int counter = 0;
+        var listener = () => counter++;
+        diaryViewModel.diaryPages.addListener(listener);
+
+        /// Load the anonymous chats
         diaryViewModel.loadDiaryPages();
         await Future.delayed(Duration.zero);
 
         expect(counter, testHelper.diaryPages.length);
+        diaryViewModel.diaryPages.removeListener(listener);
       });
 
       test("Check that the initially inserted diary pages are correctly parsed and added to the list of diary pages in the correct order", () async {
@@ -116,33 +141,119 @@ void main() async {
         }
       });
 
-      test("Add a new diary page into the DB should trigger the listener in order to add this new diary page into the diary pages list", () async {
+      test("Modifying an old diary page will trigger the listener that should update the page in the list", () async {
+        var modifiedList = testHelper.diaryPages;
+        modifiedList[0] = modifiedDiaryPage;
+        diaryViewModel.diaryPages.value = modifiedList;
+
+        modifiedDiaryPage.title = "New title";
+        modifiedDiaryPage.content = "New content";
+        modifiedDiaryPage.favourite = !modifiedDiaryPage.favourite;
+
+        /// Add the page in a support collection of the DB
+        await fakeFirebase.collection("support").doc("${modifiedDiaryPage.id}").set(modifiedDiaryPage.data);
+
+        var listener;
+        var callback = expectAsync1((int lastPos) {
+          /// The modified diary page should be updated and should be in the same position as before (0)
+          expect(diaryViewModel.diaryPages.value[0].id, modifiedDiaryPage.id);
+          expect(diaryViewModel.diaryPages.value[0].title, modifiedDiaryPage.title);
+          expect(diaryViewModel.diaryPages.value[0].content, modifiedDiaryPage.content);
+          expect(diaryViewModel.diaryPages.value[0].dateTime, modifiedDiaryPage.dateTime);
+          expect(diaryViewModel.diaryPages.value[0].favourite, modifiedDiaryPage.favourite);
+
+          for (int i = 1; i < lastPos; i++) {
+            /// The other diary pages should be in their precedent positions, but the first one should be modified
+            expect(diaryViewModel.diaryPages.value[i].id, testHelper.diaryPages[i].id);
+          }
+          diaryViewModel.diaryPages.removeListener(listener);
+        }, count: 1);
+
+        listener = () => callback(diaryViewModel.diaryPages.value.length - 1);
+        diaryViewModel.diaryPages.addListener(listener);
+
+        /// The fake firestore doc changes doesn't work properly, so we need to manually simulate the response
+        /// with docChanges
+        when(mockFirestoreService.getDiaryPagesStreamFromDB(testHelper.loggedUser.id)).thenAnswer((_) async* {
+          var snapshot = await testHelper.diaryPagesStream.first;
+          var mockSnapshot = MockQuerySnapshot();
+          var newDocChanges = <MockDocumentChange>[];
+
+          /// We need to manually change the old index of the old chat that has been modified
+          for (var docChange in snapshot.docChanges) {
+            /// We simulate that diaryPageThatWillBeModified that was in position 0 is modified
+            if (docChange.doc.id == modifiedDiaryPage.id) {
+              var newDocChange = MockDocumentChange();
+              newDocChange.oldIndex = 0;
+              newDocChange.doc = await fakeFirebase.collection("support").doc("${modifiedDiaryPage.id}").get();
+              newDocChanges.add(newDocChange);
+            }
+          }
+          mockSnapshot.docChanges.clear();
+          mockSnapshot.docChanges = newDocChanges;
+          yield mockSnapshot;
+        });
+
         /// Load the diary pages
         diaryViewModel.loadDiaryPages();
-        await Future.delayed(Duration.zero);
+      });
 
-        /// The fake firestore doc changes doesn't work properly, so we need to manually clear the previous list
-        diaryViewModel.diaryPages.value.clear();
+      test("Add a diary page into the DB will trigger the listener that should add this new diary page into the diary pages list", () async {
+        diaryViewModel.diaryPages.value = testHelper.diaryPages;
 
-        var diaryPage4 = DiaryPage(
-          id: DateTime(2022, 1, 8).millisecondsSinceEpoch.toString(),
-          title: "Diary page fourth title",
-          content: "Diary page fourth content",
-          dateTime: DateTime(2022, 1, 8),
-        );
         fakeFirebase
             .collection(DiaryPage.COLLECTION)
             .doc(testHelper.loggedUser.id)
             .collection("diaryPages")
             .doc(diaryPage4.dateTime.millisecondsSinceEpoch.toString())
             .set(diaryPage4.data);
-        await Future.delayed(Duration.zero);
 
-        expect(diaryViewModel.diaryPages.value[3].id, diaryPage4.id);
-        expect(diaryViewModel.diaryPages.value[3].title, diaryPage4.title);
-        expect(diaryViewModel.diaryPages.value[3].content, diaryPage4.content);
-        expect(diaryViewModel.diaryPages.value[3].dateTime, diaryPage4.dateTime);
-        expect(diaryViewModel.diaryPages.value[3].favourite, diaryPage4.favourite);
+        var listener;
+        var callback = expectAsync1((int lastPos) async {
+          for (int i = 0; i < lastPos - 1; i++) {
+            /// The old diary pages should be in the same position as before
+            expect(diaryViewModel.diaryPages.value[i].id, testHelper.diaryPages[i].id);
+          }
+
+          /// The new page should be in the last position of the list
+          expect(diaryViewModel.diaryPages.value[lastPos].id, diaryPage4.id);
+          expect(diaryViewModel.diaryPages.value[lastPos].title, diaryPage4.title);
+          expect(diaryViewModel.diaryPages.value[lastPos].content, diaryPage4.content);
+          expect(diaryViewModel.diaryPages.value[lastPos].dateTime, diaryPage4.dateTime);
+          expect(diaryViewModel.diaryPages.value[lastPos].favourite, diaryPage4.favourite);
+
+          diaryViewModel.diaryPages.removeListener(listener);
+        }, count: 1);
+
+        listener = () => callback(diaryViewModel.diaryPages.value.length - 1);
+        diaryViewModel.diaryPages.addListener(listener);
+
+        /// The fake firestore doc changes doesn't work properly, so we need to manually simulate the response
+        /// with docChanges
+        when(mockFirestoreService.getDiaryPagesStreamFromDB(testHelper.loggedUser.id)).thenAnswer((_) async* {
+          var snapshot = await testHelper.diaryPagesStream.first;
+          var mockSnapshot = MockQuerySnapshot();
+          var newDocChanges = <MockDocumentChange>[];
+
+          /// We need to manually remove the old chats from the docChanges list
+          for (var docChange in snapshot.docChanges) {
+            /// Elements will contain the diary page of the current docChange if it was one of the initially inserted
+            /// diary pages, otherwise it will be empty
+            var elements = testHelper.diaryPages.where((element) => element.id == docChange.doc.id);
+            if (elements.isEmpty) {
+              var newDocChange = MockDocumentChange();
+              newDocChange.oldIndex = -1;
+              newDocChange.doc = docChange.doc;
+              newDocChanges.add(newDocChange);
+            }
+          }
+          mockSnapshot.docChanges.clear();
+          mockSnapshot.docChanges = newDocChanges;
+          yield mockSnapshot;
+        });
+
+        /// Load the anonymous chats
+        diaryViewModel.loadDiaryPages();
       });
 
       test("Check that if an error occurs when loading the diary pages it catches the error", () {
