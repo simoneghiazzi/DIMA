@@ -338,7 +338,7 @@ class _MapBodyState extends State<MapBody> {
                     if (!currentFocus.hasPrimaryFocus) {
                       currentFocus.unfocus();
                     }
-                    Future.delayed(Duration.zero, () => routerDelegate.pop());
+                    routerDelegate.pop();
                   },
                 ),
                 Expanded(
