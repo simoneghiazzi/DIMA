@@ -30,8 +30,6 @@ class FirebaseAuthService {
   /// A [FirebaseAuthException] maybe thrown with the following error code:
   /// - **email-already-in-use**:
   ///   - Thrown if there already exists an account with the given email address.
-  /// - **weak-password**:
-  ///   - Thrown if the password is not strong enough.
   Future<void> createUserWithEmailAndPassword(String email, String password) {
     return _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
   }

@@ -38,8 +38,8 @@ class AuthViewModel {
         _authMessageCtrl.add("Wrong email or password.");
       } else {
         _authMessageCtrl.add("Error in signing in the user. Please try again later.");
-        log("Error in signing in with email and password.");
       }
+      log("Error in signing in with email and password.");
     }
   }
 
@@ -55,8 +55,6 @@ class AuthViewModel {
     } on Firebase.FirebaseAuthException catch (error) {
       if (error.code == "email-already-in-use") {
         _authMessageCtrl.add("An account associated with this email already exists.");
-      } else if (error.code == "weak-password") {
-        _authMessageCtrl.add("The password is too weak.\nIt has to be at least 6 chars.");
       } else {
         _authMessageCtrl.add("Error in signing up the user. Please try again later.");
       }
@@ -97,18 +95,17 @@ class AuthViewModel {
       var userData = await _firebaseAuthService.signInWithGoogle(link);
       _authMessageCtrl.add("");
       if (!link) {
-        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.currentUserId!).then((userSnap) {
-          // Check if it is a new user. If yes, insert the data into the DB
-          if (userSnap.docs.isEmpty) {
-            _firestoreService.addUserIntoDB(BaseUser(
-                id: _firebaseAuthService.currentUserId!,
-                name: userData["name"],
-                surname: userData["surname"],
-                birthDate: userData["birthDate"],
-                email: userData["email"]));
-          }
-          _isUserLoggedCtrl.add(true);
-        });
+        var snapshot = await _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.currentUserId!);
+        // Check if it is a new user. If yes, insert the data into the DB
+        if (snapshot.docs.isEmpty) {
+          _firestoreService.addUserIntoDB(BaseUser(
+              id: _firebaseAuthService.currentUserId!,
+              name: userData["name"],
+              surname: userData["surname"],
+              birthDate: userData["birthDate"],
+              email: userData["email"]));
+        }
+        _isUserLoggedCtrl.add(true);
       }
     } on Firebase.FirebaseAuthException catch (error) {
       if (error.code == "account-exists-with-different-credential") {
@@ -135,18 +132,17 @@ class AuthViewModel {
       var userData = await _firebaseAuthService.signInWithFacebook(link);
       _authMessageCtrl.add("");
       if (!link) {
-        _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.currentUserId!).then((userSnap) {
-          // Check if it is a new user. If yes, insert the data into the DB
-          if (userSnap.docs.isEmpty) {
-            _firestoreService.addUserIntoDB(BaseUser(
-                id: _firebaseAuthService.currentUserId!,
-                name: userData["name"],
-                surname: userData["surname"],
-                birthDate: userData["birthDate"],
-                email: userData["email"]));
-          }
-          _isUserLoggedCtrl.add(true);
-        });
+        var snapshot = await _firestoreService.getUserByIdFromDB(BaseUser.COLLECTION, _firebaseAuthService.currentUserId!);
+        // Check if it is a new user. If yes, insert the data into the DB
+        if (snapshot.docs.isEmpty) {
+          _firestoreService.addUserIntoDB(BaseUser(
+              id: _firebaseAuthService.currentUserId!,
+              name: userData["name"],
+              surname: userData["surname"],
+              birthDate: userData["birthDate"],
+              email: userData["email"]));
+        }
+        _isUserLoggedCtrl.add(true);
       }
     } on Firebase.FirebaseAuthException catch (error) {
       if (error.code == "account-exists-with-different-credential") {
@@ -161,8 +157,8 @@ class AuthViewModel {
   }
 
   /// Send to the user [email] the link for the password reset.
-  void resetPassword(String email) {
-    _firebaseAuthService.resetPassword(email);
+  Future<void> resetPassword(String email) async {
+    return _firebaseAuthService.resetPassword(email);
   }
 
   /// Get the authentication provider of the current logged user.
@@ -186,7 +182,7 @@ class AuthViewModel {
   /// Log out the user from the app, updates the [isUserLogged] stream controller and call [clearControllers].
   Future<void> logOut() async {
     _isUserLoggedCtrl.add(false);
-    _firebaseAuthService.signOut();
+    return _firebaseAuthService.signOut();
   }
 
   /// Register the notification service for the device of the [loggedUser].

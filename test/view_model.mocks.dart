@@ -454,9 +454,10 @@ class MockAuthViewModel extends _i1.Mock implements _i17.AuthViewModel {
           returnValue: Future<void>.value(),
           returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
   @override
-  void resetPassword(String? email) =>
-      super.noSuchMethod(Invocation.method(#resetPassword, [email]),
-          returnValueForMissingStub: null);
+  _i8.Future<void> resetPassword(String? email) =>
+      (super.noSuchMethod(Invocation.method(#resetPassword, [email]),
+      returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
   @override
   String authProvider() =>
       (super.noSuchMethod(Invocation.method(#authProvider, []), returnValue: '')
