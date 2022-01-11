@@ -80,18 +80,6 @@ class MapViewModel with ChangeNotifier {
     _autocompletedPlacesCtrl.add(null);
   }
 
-  /// Clear the experts values.
-  void resetViewModel() {
-    _experts.clear();
-    log("MapViewModel resetted");
-  }
-
-  /// Stream of the selected palce controller
-  Stream<Place?> get selectedPlace => _selectedPlaceCtrl.stream;
-
-  /// Stream of the autocompleted places controller
-  Stream<List<Place>?> get autocompletedPlaces => _autocompletedPlacesCtrl.stream;
-
   /// Set the [expert] as the [_currentExpert].
   void setCurrentExpert(Expert expert) {
     _currentExpert.value = expert;
@@ -106,6 +94,12 @@ class MapViewModel with ChangeNotifier {
     log("Current expert resetted");
   }
 
+  /// Clear the experts values.
+  void resetViewModel() {
+    _experts.clear();
+    log("MapViewModel resetted");
+  }
+
   /// Get the [_currentExpert] instance.
   ValueNotifier<Expert?> get currentExpert => _currentExpert;
 
@@ -114,4 +108,10 @@ class MapViewModel with ChangeNotifier {
   /// **The function [loadExperts] must be called before getting
   /// the [experts].**
   LinkedHashMap<String, Expert> get experts => _experts;
+
+  /// Stream of the selected palce controller
+  Stream<Place?> get selectedPlace => _selectedPlaceCtrl.stream;
+
+  /// Stream of the autocompleted places controller
+  Stream<List<Place>?> get autocompletedPlaces => _autocompletedPlacesCtrl.stream;
 }

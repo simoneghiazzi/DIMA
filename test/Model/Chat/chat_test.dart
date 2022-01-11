@@ -160,7 +160,7 @@ void main() async {
       chat.loadMessages();
     });
 
-    test("Close listeners should clear the old values of the value notifier", () {
+    test("Reset view model should clear the old values of the value notifier", () {
       chat.messages.value = messages;
       chat.closeListeners();
 

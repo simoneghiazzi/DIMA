@@ -514,8 +514,8 @@ void main() async {
       });
     });
 
-    group("Close listeners:", () {
-      test("Close listeners should clear the old values of the diary pages value notifier", () {
+    group("Reset view model:", () {
+      test("Reset view model should clear the old values of the diary pages value notifier", () {
         diaryViewModel.diaryPages.value = testHelper.diaryPages;
         diaryViewModel.resetViewModel();
 

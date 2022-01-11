@@ -1208,7 +1208,7 @@ void main() async {
         });
       });
 
-      group("Close listeners:", () {
+      group("Reset view model:", () {
         var mockAnonymousChat = MockAnonymousChat();
         var mockAnonymousChat2 = MockAnonymousChat();
         var mockPendingChat = MockPendingChat();
@@ -1249,7 +1249,7 @@ void main() async {
           clearInteractions(mockExpertChat2);
         });
 
-        test("Close listeners should clear the old values of the all the chats HashMap value notifiers", () {
+        test("Reset view model should clear the old values of the all the chats HashMap value notifiers", () {
           chatViewModel.resetViewModel();
 
           expect(chatViewModel.anonymousChats.value, isEmpty);
@@ -1258,7 +1258,7 @@ void main() async {
           expect(chatViewModel.expertsChats.value, isEmpty);
         });
 
-        test("Close listeners should call the close listeners method of every chat of all the chats HashMap value notifiers", () {
+        test("Reset view model should call the Reset view model method of every chat of all the chats HashMap value notifiers", () {
           chatViewModel.resetViewModel();
 
           verify(mockAnonymousChat.closeListeners()).called(1);

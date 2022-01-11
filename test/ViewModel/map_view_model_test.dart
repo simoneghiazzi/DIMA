@@ -195,8 +195,26 @@ void main() async {
       });
     });
 
-    group("Close listeners:", () {
-      test("Close listeners should clear the old values of the experts linked HashMap", () async {
+    group("Set current expert:", () {
+      test("Check that set current expert sets the correct field of the value notifier", () {
+        mapViewModel.resetCurrentExpert();
+        mapViewModel.setCurrentExpert(testHelper.loggedExpert);
+
+        expect(mapViewModel.currentExpert.value, testHelper.loggedExpert);
+      });
+    });
+
+    group("Reset current expert:", () {
+      test("Check that reset current expert sets the field of the value notifier to null", () {
+        mapViewModel.currentExpert.value = testHelper.loggedExpert;
+        mapViewModel.resetCurrentExpert();
+
+        expect(mapViewModel.currentExpert.value, isNull);
+      });
+    });
+
+    group("Reset view model:", () {
+      test("Reset view model should clear the old values of the experts linked HashMap", () async {
         await mapViewModel.loadExperts();
         mapViewModel.resetViewModel();
 
