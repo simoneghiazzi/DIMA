@@ -132,6 +132,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
               stream: authViewModel.authMessage,
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  LoadingDialog.hide(context);
                   return Column(
                     children: [
                       Container(

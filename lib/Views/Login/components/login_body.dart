@@ -80,7 +80,6 @@ class _LoginBodyState extends State<LoginBody> {
                           onSuccess: (context, state) async {
                             LoadingDialog.show(context);
                             await authViewModel.logIn(loginForm.emailText.value, loginForm.passwordText.value);
-                            LoadingDialog.hide(context);
                           },
                           child: Column(
                             children: <Widget>[
