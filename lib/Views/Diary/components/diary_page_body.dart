@@ -95,7 +95,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                         setState(() {});
                       },
                       child: Container(
-                        padding: EdgeInsets.all(10),
+                        padding: EdgeInsets.only(left: 10, top: 10, bottom: 10, right: 15),
                         child: Icon(CupertinoIcons.pencil_ellipsis_rectangle, color: Colors.white, size: 30),
                       ),
                     ),
@@ -112,7 +112,7 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
                       setState(() {});
                     },
                     child: Container(
-                      padding: EdgeInsets.all(10),
+                      padding: EdgeInsets.only(left: 15, top: 10, bottom: 10, right: 5),
                       child: diaryViewModel.currentDiaryPage.value!.favourite
                           ? Icon(CupertinoIcons.heart_fill, color: Colors.white, size: 30)
                           : Icon(CupertinoIcons.heart, color: Colors.white, size: 30),

@@ -66,7 +66,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                 color: kPrimaryColor,
                 child: SafeArea(
                   child: Container(
-                    height: 20.h,
+                    height: 18.h,
                     color: kPrimaryColor,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,13 +89,13 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
         ),
         // Profile photo
         Container(
-          transform: Matrix4.translationValues(0.0, -12.h, 0.0),
-          child: NetworkAvatar(img: widget.expert.profilePhoto, radius: 12.h),
+          transform: Matrix4.translationValues(0.0, -10.h, 0.0),
+          child: NetworkAvatar(img: widget.expert.profilePhoto, radius: 10.h),
         ),
         // Full Name
         Container(
-          transform: Matrix4.translationValues(0.0, -9.h, 0.0),
-          padding: EdgeInsets.only(left: 12.5.w, right: 12.5.w, top: 2, bottom: 2),
+          transform: Matrix4.translationValues(0.0, -7.h, 0.0),
+          padding: EdgeInsets.only(left: 12.5.w, right: 12.5.w, top: 2),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: kPrimaryLightColor),
           child: Text(
             widget.expert.fullName.toUpperCase(),
@@ -105,8 +105,8 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
         ),
         Expanded(
           child: Container(
-            transform: Matrix4.translationValues(0.0, -7.h, 0.0),
-            padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 1.w),
+            transform: Matrix4.translationValues(0.0, -6.h, 0.0),
+            padding: EdgeInsets.only(left: 10.w, right: 10.w),
             child: ScrollConfiguration(
               behavior: MyBehavior(),
               child: ListView(
@@ -145,7 +145,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 5.5.h),
+                  SizedBox(height: 4.h),
                   // Phone Number
                   Row(
                     children: <Widget>[
@@ -159,7 +159,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 5.h),
+                  SizedBox(height: 4.h),
                   // Address
                   Row(
                     children: <Widget>[

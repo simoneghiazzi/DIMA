@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/Utils/custom_sizer.dart';
+import 'package:sizer/sizer.dart';
 
 /// Button component used in the entire application.
 ///
@@ -33,7 +34,8 @@ class RoundedButton extends StatelessWidget {
     return Container(
       child: ElevatedButton(
         style: ButtonStyle(
-          minimumSize: MaterialStateProperty.all<Size>(Size(40.w, 6.h)),
+          minimumSize: MaterialStateProperty.all<Size>(
+              Size(SizerUtil.deviceType == DeviceType.tablet ? CustomSizer(30).w : CustomSizer(40).w, CustomSizer(6).h)),
           backgroundColor: MaterialStateProperty.all<Color>(enabled ? color : Color(0xFFD3D3D3)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
           shadowColor: MaterialStateProperty.all<Color>(enabled ? kPrimaryLightColor : Color(0xFFD3D3D3)),
@@ -45,7 +47,7 @@ class RoundedButton extends StatelessWidget {
             children: [
               prefixIcon ?? Container(),
               SizedBox(width: 5),
-              Text(text, textAlign: TextAlign.center, style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold, color: textColor)),
+              Text(text, textAlign: TextAlign.center, style: TextStyle(fontSize: CustomSizer(13).sp, fontWeight: FontWeight.bold, color: textColor)),
               SizedBox(width: 5),
               suffixIcon ?? Container(),
             ],

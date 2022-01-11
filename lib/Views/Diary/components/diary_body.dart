@@ -94,14 +94,25 @@ class _DiaryBodyState extends State<DiaryBody> {
                                 todayHighlightColor: kPrimaryDarkColorTrasparent,
                                 dataSource: DiaryPageDataSource(diaryPages),
                                 headerStyle: CalendarHeaderStyle(
-                                  textStyle: TextStyle(color: kPrimaryColor, fontSize: 22.sp, fontWeight: FontWeight.bold),
+                                  backgroundColor: Colors.transparent,
+                                  textStyle: TextStyle(
+                                    color: kPrimaryColor,
+                                    fontSize: 22.sp,
+                                    fontWeight: FontWeight.bold,
+                                    backgroundColor: Colors.transparent,
+                                  ),
                                 ),
                                 headerHeight: 7.5.h,
                                 headerDateFormat: " MMM yyyy",
                                 showDatePickerButton: true,
-                                viewHeaderStyle: ViewHeaderStyle(dayTextStyle: TextStyle(color: kPrimaryColor)),
+                                viewHeaderStyle: ViewHeaderStyle(
+                                  dayTextStyle: TextStyle(color: kPrimaryColor),
+                                  backgroundColor: Colors.transparent,
+                                ),
                                 view: CalendarView.month,
-                                onTap: (details) => setState(() => _selectedDayDetails = details),
+                                onTap: (details) {
+                                  if (details.targetElement != CalendarElement.header) setState(() => _selectedDayDetails = details);
+                                },
                                 monthViewSettings: MonthViewSettings(appointmentDisplayMode: MonthAppointmentDisplayMode.none),
                               ),
                             ),
@@ -136,7 +147,9 @@ class _DiaryBodyState extends State<DiaryBody> {
                                         ),
                                       ),
                                       // If the selected day has a diary page, show the appointment builder
-                                      if (diaryPages.isNotEmpty && _selectedDayDetails!.appointments!.isNotEmpty) ...[
+                                      if (diaryPages.isNotEmpty &&
+                                          _selectedDayDetails!.appointments != null &&
+                                          _selectedDayDetails!.appointments!.isNotEmpty) ...[
                                         // If today there is a note, the "+" button is not shown and so expand the
                                         // appointment builder
                                         if (Utils.isToday(diaryPages.last.dateTime)) ...[

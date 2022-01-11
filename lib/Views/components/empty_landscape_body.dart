@@ -15,7 +15,7 @@ class EmptyLandscapeBody extends StatelessWidget {
         Container(
           color: kPrimaryColor,
           child: SafeArea(
-            child: Container(color: kPrimaryColor, height: 10.h),
+            child: Container(color: kPrimaryColor, height: 9.5.h),
           ),
         ),
         Expanded(
