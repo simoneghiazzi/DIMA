@@ -14,6 +14,7 @@ import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
 import 'package:sApport/Views/Chat/ChatList/components/expert_chat_list_body.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
@@ -26,6 +27,7 @@ import '../../view_model.mocks.dart';
 void main() {
   final mockChatViewModel = MockChatViewModel();
   final mockRouterDelegate = MockAppRouterDelegate();
+  final mockMapViewModel = MockMapViewModel();
 
   var id = Utils.randomId();
   var name = "SIMONE";
@@ -51,6 +53,8 @@ void main() {
     profilePhoto: profilePhoto,
   );
 
+  when(mockMapViewModel.currentExpert.value).thenAnswer((_) => expert);
+
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(FirestoreService(FakeFirebaseFirestore()));
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(MockFirebaseAuth()));
@@ -68,10 +72,11 @@ void main() {
           providers: [
             ChangeNotifierProvider<AppRouterDelegate>(create: (_) => mockRouterDelegate),
             ChangeNotifierProvider<ChatViewModel>(create: (_) => mockChatViewModel),
+            ChangeNotifierProvider<MapViewModel>(create: (_) => mockMapViewModel),
           ],
           child: Sizer(builder: (context, orientation, deviceType) {
             /// Create the expert profile screen page widget passing the expert's info
-            return MaterialApp(home: ExpertProfileScreen(expert: expert));
+            return MaterialApp(home: ExpertProfileScreen());
           }),
         ));
       });

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Views/Utils/constants.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -21,6 +22,7 @@ class ChatTopBar extends StatelessWidget {
   final String text;
   final CircleAvatar? circleAvatar;
   final NetworkAvatar? networkAvatar;
+  final bool isAnonymous;
 
   /// Top bar of the chat page.
   ///
@@ -30,6 +32,7 @@ class ChatTopBar extends StatelessWidget {
   /// the current chat and the `chatting with` field of the DB before popping the page.
   const ChatTopBar.circleAvatar({Key? key, required this.text, required this.circleAvatar})
       : networkAvatar = null,
+        isAnonymous = true,
         super(key: key);
 
   /// Top bar of the chat page.
@@ -40,12 +43,14 @@ class ChatTopBar extends StatelessWidget {
   /// the current chat and the `chatting with` field of the DB before popping the page.
   const ChatTopBar.networkAvatar({Key? key, required this.text, required this.networkAvatar})
       : circleAvatar = null,
+        isAnonymous = false,
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // View Models
     ChatViewModel chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    MapViewModel mapViewModel = Provider.of<MapViewModel>(context, listen: false);
 
     // Router Delegate
     AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
@@ -99,8 +104,9 @@ class ChatTopBar extends StatelessWidget {
                   ),
                   onTap: () {
                     // If the network avatar is not null (the user is an Expert) push the EpertProfileScreen
-                    if (networkAvatar != null) {
-                      routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: chatViewModel.currentChat.value!.peerUser as Expert);
+                    if (!isAnonymous) {
+                      mapViewModel.setCurrentExpert(chatViewModel.currentChat.value!.peerUser! as Expert);
+                      routerDelegate.pushPage(name: ExpertProfileScreen.route);
                     }
                   },
                 ),

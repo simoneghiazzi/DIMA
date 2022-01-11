@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/Views/Settings/components/user_settings_body.dart';
-import 'package:sApport/Views/components/info_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:open_mail_app/open_mail_app.dart';
-import 'package:sApport/Views/Utils/custom_sizer.dart';
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Model/Chat/expert_chat.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/Model/DBItems/Expert/expert.dart';
+import 'package:sApport/Views/components/info_dialog.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
 import 'package:sApport/Views/components/rounded_button.dart';
 import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Views/Settings/components/user_settings_body.dart';
 import 'package:sApport/Views/Chat/ChatList/components/expert_chat_list_body.dart';
 
 /// Body of the [ExpertProfileScreen].
@@ -25,8 +26,6 @@ import 'package:sApport/Views/Chat/ChatList/components/expert_chat_list_body.dar
 /// It manages the opening of the navigator, the phone and the email
 /// apps when the user clicks the relative information.
 class ExpertProfileBody extends StatefulWidget {
-  final Expert expert;
-
   /// Body of the [ExpertProfileScreen].
   ///
   /// It contains all the base information of the [expert] and the
@@ -34,7 +33,7 @@ class ExpertProfileBody extends StatefulWidget {
   ///
   /// It manages the opening of the navigator, the phone and the email
   /// apps when the user clicks the relative information.
-  const ExpertProfileBody({Key? key, required this.expert}) : super(key: key);
+  const ExpertProfileBody({Key? key}) : super(key: key);
 
   @override
   _ExpertProfileBodyState createState() => _ExpertProfileBodyState();
@@ -43,14 +42,20 @@ class ExpertProfileBody extends StatefulWidget {
 class _ExpertProfileBodyState extends State<ExpertProfileBody> {
   // View Models
   late ChatViewModel chatViewModel;
+  late MapViewModel mapViewModel;
 
   // Router Delegate
   late AppRouterDelegate routerDelegate;
 
   @override
   void initState() {
+    mapViewModel = Provider.of<MapViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+
+    // Add a back button interceptor for listening to the OS back button
+    BackButtonInterceptor.add(backButtonInterceptor);
+
     super.initState();
   }
 
@@ -76,7 +81,13 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                           padding: EdgeInsets.only(top: 15.0, left: 10.0),
                           child: IconButton(
                             icon: Icon(Icons.close, size: 35.0, color: Colors.white),
-                            onPressed: () => routerDelegate.pop(),
+                            onPressed: () {
+                              mapViewModel.resetCurrentExpert();
+                              if (MediaQuery.of(context).orientation == Orientation.portrait ||
+                                  routerDelegate.getLastRoute().name == ExpertProfileScreen.route) {
+                                routerDelegate.pop();
+                              }
+                            },
                           ),
                         ),
                       ],
@@ -90,7 +101,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
         // Profile photo
         Container(
           transform: Matrix4.translationValues(0.0, -10.h, 0.0),
-          child: NetworkAvatar(img: widget.expert.profilePhoto, radius: 10.h),
+          child: NetworkAvatar(img: mapViewModel.currentExpert.value!.profilePhoto, radius: 10.h),
         ),
         // Full Name
         Container(
@@ -98,7 +109,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
           padding: EdgeInsets.only(left: 12.5.w, right: 12.5.w, top: 2),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: kPrimaryLightColor),
           child: Text(
-            widget.expert.fullName.toUpperCase(),
+            mapViewModel.currentExpert.value!.fullName.toUpperCase(),
             style: TextStyle(color: kPrimaryColor, fontSize: 17.sp, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
@@ -119,9 +130,10 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                       SizedBox(width: 5.w),
                       Flexible(
                         child: GestureDetector(
-                          child: Text(widget.expert.email, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
+                          child: Text(mapViewModel.currentExpert.value!.email,
+                              style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
                           onTap: () async {
-                            EmailContent email = EmailContent(to: [widget.expert.email]);
+                            EmailContent email = EmailContent(to: [mapViewModel.currentExpert.value!.email]);
                             // Android: Will open mail app or show native picker.
                             // iOS: Will open mail app if single mail app found.
                             OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(
@@ -152,9 +164,10 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                       Icon(Icons.phone, color: kPrimaryColor, size: 30),
                       SizedBox(width: 5.w),
                       GestureDetector(
-                        child: Text(widget.expert.phoneNumber, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
+                        child: Text(mapViewModel.currentExpert.value!.phoneNumber,
+                            style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
                         onTap: () {
-                          launch("tel:// + ${widget.expert.phoneNumber}");
+                          launch("tel:// + ${mapViewModel.currentExpert.value!.phoneNumber}");
                         },
                       ),
                     ],
@@ -167,7 +180,8 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                       SizedBox(width: 5.w),
                       Flexible(
                         child: GestureDetector(
-                          child: Text(widget.expert.address, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
+                          child: Text(mapViewModel.currentExpert.value!.address,
+                              style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
                           onTap: () => openMaps(),
                         ),
                       ),
@@ -187,7 +201,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                   RoundedButton(
                     text: "Get In Touch",
                     onTap: () {
-                      chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
+                      chatViewModel.addNewChat(ExpertChat(peerUser: mapViewModel.currentExpert.value!));
                       if (MediaQuery.of(context).orientation == Orientation.portrait) {
                         // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
                         routerDelegate.replaceAllButNumber(2, routeSettingsList: [
@@ -215,7 +229,8 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                     child: RoundedButton(
                       text: "Get In Touch",
                       onTap: () {
-                        chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));
+                        chatViewModel.setCurrentChat(ExpertChat(peerUser: mapViewModel.currentExpert.value!));
+                        mapViewModel.resetCurrentExpert();
                         if (MediaQuery.of(context).orientation == Orientation.portrait) {
                           // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
                           routerDelegate.replaceAllButNumber(2, routeSettingsList: [
@@ -242,13 +257,30 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
 
   /// Open the map with the information of the destination address.
   void openMaps() async {
-    var lat = widget.expert.latitude;
-    var lng = widget.expert.longitude;
+    var lat = mapViewModel.currentExpert.value!.latitude;
+    var lng = mapViewModel.currentExpert.value!.longitude;
     var uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
     if (await canLaunch(uri.toString())) {
       await launch(uri.toString());
     } else {
       throw "Could not launch ${uri.toString()}";
     }
+  }
+
+  /// Function called by the back button interceptor.
+  ///
+  /// It resets the current expert and then pops the page.
+  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    mapViewModel.resetCurrentExpert();
+    if (MediaQuery.of(context).orientation == Orientation.portrait) {
+      routerDelegate.pop();
+    }
+    return true;
+  }
+
+  @override
+  void dispose() {
+    BackButtonInterceptor.remove(backButtonInterceptor);
+    super.dispose();
   }
 }

@@ -95,10 +95,10 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<AppRouterDelegate>(create: (_) => routerDelegate),
         ChangeNotifierProvider<ChatViewModel>(create: (_) => ChatViewModel()),
         ChangeNotifierProvider<DiaryViewModel>(create: (_) => DiaryViewModel()),
+        ChangeNotifierProvider<MapViewModel>(create: (_) => MapViewModel()),
         Provider(create: (context) => ReportViewModel()),
         Provider(create: (context) => AuthViewModel()),
         Provider(create: (context) => UserViewModel()),
-        Provider(create: (context) => MapViewModel(), lazy: false),
       ],
       child: Sizer(
         builder: (context, orientation, deviceType) {

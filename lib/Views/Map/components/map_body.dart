@@ -8,10 +8,10 @@ import 'package:custom_info_window/custom_info_window.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sApport/Model/Map/place.dart';
-import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/Map/components/map_info_window.dart';
 import 'package:sizer/sizer.dart';
@@ -62,6 +62,9 @@ class _MapBodyState extends State<MapBody> {
   // Map Controller
   late GoogleMapController mapController;
 
+  // Position Permission
+  PermissionStatus? positionPermission;
+
   late StreamSubscription<Place?> subscriber;
   var isPositionSearched = false;
   var _loadCurrentPositionFuture;
@@ -78,37 +81,20 @@ class _MapBodyState extends State<MapBody> {
     // Load the experts and add the relative marker
     getMarkers();
 
-    // Permission Handler
-    if (!mapViewModel.positionPermission.isGranted) {
-      // If the position permission is not granted, ask the permission
-      mapViewModel.askPermission().then((permission) {
-        if (permission) {
-          // If permission granted, load the current position and recreate the map
-          setState(() => _loadCurrentPositionFuture = mapViewModel.loadCurrentPosition());
-        } else {
-          // Otherwise, show the snack bar with the information based on if the permission is
-          // permanently denied or not
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(mapViewModel.positionPermission.isPermanentlyDenied
-                ? "You cannot access your current position. Enable the location permission in the device settings."
-                : "You cannot access your current position."),
-            duration: const Duration(seconds: 5),
-          ));
-        }
-      });
-    } else {
-      // If the position permission is granted, load the current position of the user device
-      _loadCurrentPositionFuture = mapViewModel.loadCurrentPosition();
-    }
+    // Handle position permission
+    handlePositionPermission();
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_customInfoWindowController.hideInfoWindow != null) {
+      _customInfoWindowController.hideInfoWindow!();
+    }
     return Stack(
       children: <Widget>[
-        if (mapViewModel.positionPermission.isGranted) ...[
+        if (positionPermission != null && positionPermission!.isGranted) ...[
           // If position is granted, build the map with initial position equals to device position and
           // create the GPS button
           Center(
@@ -210,6 +196,36 @@ class _MapBodyState extends State<MapBody> {
     );
   }
 
+  /// Check the permissions for the position.
+  ///
+  /// If the permission is granted, load the current position, otherwise ask the permission
+  /// to the user.
+  void handlePositionPermission() async {
+    positionPermission = await Permission.location.status;
+    // Permission Handler
+    if (!positionPermission!.isGranted) {
+      // If the position permission is not granted, ask the permission
+      positionPermission = await Permission.location.request();
+      if (positionPermission!.isGranted) {
+        // If permission granted, load the current position and recreate the map
+        _loadCurrentPositionFuture = mapViewModel.loadCurrentPosition();
+        setState(() {});
+      } else {
+        // Otherwise, show the snack bar with the information based on if the permission is
+        // permanently denied or not
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(positionPermission!.isPermanentlyDenied
+              ? "You cannot access your current position. Enable the location permission in the device settings."
+              : "You cannot access your current position."),
+          duration: const Duration(seconds: 5),
+        ));
+      }
+    } else {
+      // If the position permission is granted, load the current position of the user device
+      _loadCurrentPositionFuture = mapViewModel.loadCurrentPosition();
+    }
+  }
+
   /// Retrieve the list of experts from the map view model and adds a new marker for each expert
   /// present in the list.
   ///
@@ -225,7 +241,7 @@ class _MapBodyState extends State<MapBody> {
           icon: pinLocationIcon,
           onTap: () {
             _customInfoWindowController.addInfoWindow!(
-              MapInfoWindow(expert: expert),
+              MapInfoWindow(expert: expert, infoWindowController: _customInfoWindowController),
               LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
             );
           },
@@ -317,11 +333,12 @@ class _MapBodyState extends State<MapBody> {
                 IconButton(
                   icon: Icon(Icons.arrow_back_ios_new_rounded, color: kPrimaryColor),
                   onPressed: () {
+                    mapViewModel.resetCurrentExpert();
                     FocusScopeNode currentFocus = FocusScope.of(context);
                     if (!currentFocus.hasPrimaryFocus) {
                       currentFocus.unfocus();
                     }
-                    routerDelegate.pop();
+                    Future.delayed(Duration.zero, () => routerDelegate.pop());
                   },
                 ),
                 Expanded(

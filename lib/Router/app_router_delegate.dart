@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
-import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
@@ -83,7 +82,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
         child = CreateReportScreen();
         break;
       case ExpertProfileScreen.route:
-        child = ExpertProfileScreen(expert: routeSettings.arguments as Expert);
+        child = ExpertProfileScreen();
         break;
       case MapScreen.route:
         child = MapScreen();

@@ -5,6 +5,7 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Profile/expert_profile_screen.dart';
@@ -37,6 +38,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
   late ChatViewModel chatViewModel;
   late ReportViewModel reportViewModel;
   late DiaryViewModel diaryViewModel;
+  late MapViewModel mapViewModel;
 
   late double _width;
 
@@ -46,6 +48,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
     diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+    mapViewModel = Provider.of<MapViewModel>(context, listen: false);
 
     // Add a the interceptor for listening to the did change metrics
     WidgetsBinding.instance!.addObserver(this);
@@ -75,14 +78,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
     log("handleOrientationChanges");
     String lastRoute = routerDelegate.getLastRoute().name!;
     if (MediaQuery.of(context).orientation == Orientation.portrait) {
-      if (lastRoute == ChatPageScreen.route ||
+      if (lastRoute == ExpertProfileScreen.route && routerDelegate.stack[routerDelegate.stack.length - 2].name == ChatPageScreen.route) {
+        routerDelegate.replaceAllButNumber(3);
+      } else if (lastRoute == ChatPageScreen.route ||
           lastRoute == ReportDetailsScreen.route ||
-          lastRoute == DiaryPageScreen.route && !diaryViewModel.isEditing) {
+          lastRoute == DiaryPageScreen.route && !diaryViewModel.isEditing ||
+          lastRoute == ExpertProfileScreen.route) {
         routerDelegate.pop();
       }
     } else {
-      if (chatViewModel.currentChat.value != null && lastRoute != ExpertProfileScreen.route) {
-        routerDelegate.pushPage(name: ChatPageScreen.route);
+      if (chatViewModel.currentChat.value != null) {
+        if (lastRoute != ExpertProfileScreen.route) {
+          routerDelegate.pushPage(name: ChatPageScreen.route);
+        } else {
+          chatViewModel.resetCurrentChat();
+          routerDelegate.pop();
+        }
+      } else if (mapViewModel.currentExpert.value != null) {
+        routerDelegate.pushPage(name: ExpertProfileScreen.route);
       } else if (reportViewModel.currentReport.value != null) {
         routerDelegate.pushPage(name: ReportDetailsScreen.route);
       } else if (diaryViewModel.currentDiaryPage.value != null) {

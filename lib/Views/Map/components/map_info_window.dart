@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:custom_info_window/custom_info_window.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -16,98 +18,114 @@ import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 class MapInfoWindow extends StatelessWidget {
   final Expert expert;
 
+  // Info Window
+  final CustomInfoWindowController infoWindowController;
+
   /// Custom info window used inside the [MapBody] when the user press the pin marker.
   ///
   /// It is associated with an [expert] and it contains his/her profile photo and email.
   ///
   /// When it is pressed, it opens the [ExpertProfileScreen].
-  const MapInfoWindow({required this.expert});
+  const MapInfoWindow({required this.expert, required this.infoWindowController});
 
   @override
   Widget build(BuildContext context) {
-    AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    /// View Model
+    final mapViewModel = Provider.of<MapViewModel>(context, listen: false);
+
+    /// Router Delegate
+    final routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
 
     return GestureDetector(
-      child: Column(
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.white),
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(14), topRight: Radius.circular(14)),
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Profile Photo
-                  NetworkAvatar(img: expert.profilePhoto, radius: 20.0),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 15),
-                      child: Column(
-                        children: [
-                          // Full Name
-                          Row(
-                            children: <Widget>[
-                              Flexible(
-                                child: Text(
-                                  "${expert.surname} ${expert.name}",
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: kPrimaryColor, fontSize: 14.5.sp, fontWeight: FontWeight.bold),
+        child: Column(
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.white),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(14), topRight: Radius.circular(14)),
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Profile Photo
+                    NetworkAvatar(img: expert.profilePhoto, radius: 20.0),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 15),
+                        child: Column(
+                          children: [
+                            // Full Name
+                            Row(
+                              children: <Widget>[
+                                Flexible(
+                                  child: Text(
+                                    "${expert.surname} ${expert.name}",
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(color: kPrimaryColor, fontSize: 14.5.sp, fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 0.2.h),
-                          // Email
-                          Row(
-                            children: <Widget>[
-                              Flexible(
-                                child: Text(
-                                  expert.email,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: kPrimaryColor, fontSize: 10.sp),
+                              ],
+                            ),
+                            SizedBox(height: 0.2.h),
+                            // Email
+                            Row(
+                              children: <Widget>[
+                                Flexible(
+                                  child: Text(
+                                    expert.email,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(color: kPrimaryColor, fontSize: 10.sp),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            height: 10.0,
-            decoration: BoxDecoration(
-              color: kPrimaryDarkColor,
-              border: Border.all(color: kPrimaryDarkColor),
-              borderRadius: BorderRadius.only(bottomRight: Radius.circular(14), bottomLeft: Radius.circular(14)),
-            ),
-          ),
-          // Bottom Triangle
-          Flexible(
-            child: ClipPath(
-              clipper: CustomClipPath(),
-              child: Container(
-                height: 20.0,
-                decoration: BoxDecoration(
-                  color: kPrimaryDarkColor,
-                  border: Border.all(color: kPrimaryDarkColor),
+                  ],
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-      onTap: () => routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: expert),
-    );
+            Container(
+              height: 10.0,
+              decoration: BoxDecoration(
+                color: kPrimaryDarkColor,
+                border: Border.all(color: kPrimaryDarkColor),
+                borderRadius: BorderRadius.only(bottomRight: Radius.circular(14), bottomLeft: Radius.circular(14)),
+              ),
+            ),
+            // Bottom Triangle
+            Flexible(
+              child: ClipPath(
+                clipper: CustomClipPath(),
+                child: Container(
+                  height: 20.0,
+                  decoration: BoxDecoration(
+                    color: kPrimaryDarkColor,
+                    border: Border.all(color: kPrimaryDarkColor),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        onTap: () {
+          infoWindowController.hideInfoWindow!();
+          // If the expert is different from the current expert, set the new current expert
+          if (mapViewModel.currentExpert.value?.id != expert.id) {
+            mapViewModel.setCurrentExpert(expert);
+            // If the orientation of the device is portrait, push the ChatPageScreen
+            if (MediaQuery.of(context).orientation == Orientation.portrait) {
+              routerDelegate.pushPage(name: ExpertProfileScreen.route, arguments: expert);
+            }
+          }
+        });
   }
 }
 

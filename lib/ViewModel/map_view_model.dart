@@ -4,13 +4,12 @@ import 'dart:collection';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/Map/place.dart';
 import 'package:sApport/Model/Services/map_service.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 
-class MapViewModel {
+class MapViewModel with ChangeNotifier {
   /// Services
   final FirestoreService _firestoreService = GetIt.I<FirestoreService>();
   final MapService _mapService = GetIt.I<MapService>();
@@ -22,34 +21,11 @@ class MapViewModel {
   var _autocompletedPlacesCtrl = StreamController<List<Place>?>.broadcast();
   var _selectedPlaceCtrl = StreamController<Place?>.broadcast();
 
+  // Current opened expert in the map
+  ValueNotifier<Expert?> _currentExpert = ValueNotifier(null);
+
   // List of the reports of the user saved as Linked Hash Map
   LinkedHashMap<String, Expert> _experts = LinkedHashMap<String, Expert>();
-
-  late PermissionStatus positionPermission;
-
-  MapViewModel({@visibleForTesting bool isTesting = false}) {
-    if (!isTesting) {
-      // Set the position permission status on the location of the device
-      try {
-        Permission.location.status.then((status) {
-          positionPermission = status;
-        });
-      } catch (error) {
-        log("Error in getting the position permission status: $error");
-      }
-    }
-  }
-
-  /// Request the user for access to the location [Permission].
-  ///
-  /// It returns `true` if the permission is granted, `false` otherwise.
-  Future<bool> askPermission() async {
-    positionPermission = await Permission.location.request();
-    if (positionPermission.isGranted) {
-      return true;
-    }
-    return false;
-  }
 
   /// Autocomplete the input of the user with the most probable places.
   ///
@@ -115,6 +91,23 @@ class MapViewModel {
 
   /// Stream of the autocompleted places controller
   Stream<List<Place>?> get autocompletedPlaces => _autocompletedPlacesCtrl.stream;
+
+  /// Set the [expert] as the [_currentExpert].
+  void setCurrentExpert(Expert expert) {
+    _currentExpert.value = expert;
+    log("Current expert setted");
+  }
+
+  /// Reset the [_currentExpert].
+  ///
+  /// It must be called after all the other reset methods.
+  void resetCurrentExpert() {
+    _currentExpert.value = null;
+    log("Current expert resetted");
+  }
+
+  /// Get the [_currentExpert] instance.
+  ValueNotifier<Expert?> get currentExpert => _currentExpert;
 
   /// Get the [_experts] list.
   ///

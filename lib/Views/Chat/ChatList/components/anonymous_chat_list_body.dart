@@ -7,10 +7,8 @@ import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/components/top_bar.dart';
 import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
-import 'package:sApport/Model/Chat/anonymous_chat.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Views/components/loading_dialog.dart';
-import 'package:sApport/Views/Chat/ChatList/components/chat_list_body.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
 import 'package:sApport/Views/Chat/ChatList/components/chat_list_constructor.dart';
@@ -18,10 +16,7 @@ import 'package:sApport/Views/Chat/ChatList/components/pending_chat_list_body.da
 
 /// It contains the [TopBar] with the [ValueListenableBuilder] in order to listen for new requests,
 /// the [ChatListConstructor] of the anonymous chats and the button for searching new random users.
-class AnonymousChatListBody extends StatefulWidget implements ChatListBody {
-  /// The type of chat that it contains
-  Type get chatType => AnonymousChat;
-
+class AnonymousChatListBody extends StatefulWidget {
   /// It contains the [TopBar] with the [ValueListenableBuilder] in order to listen for new requests,
   /// the [ChatListConstructor] of the anonymous chats and the button for searching new random users.
   const AnonymousChatListBody({Key? key}) : super(key: key);

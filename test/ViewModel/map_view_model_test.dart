@@ -30,7 +30,7 @@ void main() async {
   final testHelper = TestHelper();
   testHelper.attachDB(fakeFirebase);
 
-  final mapViewModel = MapViewModel(isTesting: true);
+  final mapViewModel = MapViewModel();
 
   /// Mock User Service responses
   when(mockUserService.loggedUser).thenAnswer((_) => testHelper.loggedUser);
