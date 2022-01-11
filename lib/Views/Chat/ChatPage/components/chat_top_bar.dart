@@ -103,10 +103,11 @@ class ChatTopBar extends StatelessWidget {
                     ],
                   ),
                   onTap: () {
-                    // If the network avatar is not null (the user is an Expert) push the EpertProfileScreen
                     if (!isAnonymous) {
                       mapViewModel.setCurrentExpert(chatViewModel.currentChat.value!.peerUser! as Expert);
-                      routerDelegate.pushPage(name: ExpertProfileScreen.route);
+                      if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                        routerDelegate.pushPage(name: ExpertProfileScreen.route);
+                      }
                     }
                   },
                 ),

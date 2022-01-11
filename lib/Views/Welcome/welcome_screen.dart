@@ -87,15 +87,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
         routerDelegate.pop();
       }
     } else {
-      if (chatViewModel.currentChat.value != null) {
-        if (lastRoute != ExpertProfileScreen.route) {
-          routerDelegate.pushPage(name: ChatPageScreen.route);
+      if (mapViewModel.currentExpert.value != null) {
+        if (chatViewModel.currentChat.value != null) {
+          routerDelegate.replaceAllButNumber(-1, routeSettingsList: [
+            RouteSettings(name: ChatPageScreen.route),
+            RouteSettings(name: ExpertProfileScreen.route),
+          ]);
         } else {
-          chatViewModel.resetCurrentChat();
-          routerDelegate.pop();
+          routerDelegate.pushPage(name: ExpertProfileScreen.route);
         }
-      } else if (mapViewModel.currentExpert.value != null) {
-        routerDelegate.pushPage(name: ExpertProfileScreen.route);
+      } else if (chatViewModel.currentChat.value != null) {
+        routerDelegate.pushPage(name: ChatPageScreen.route);
       } else if (reportViewModel.currentReport.value != null) {
         routerDelegate.pushPage(name: ReportDetailsScreen.route);
       } else if (diaryViewModel.currentDiaryPage.value != null) {

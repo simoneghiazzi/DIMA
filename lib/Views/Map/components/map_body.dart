@@ -333,12 +333,15 @@ class _MapBodyState extends State<MapBody> {
                 IconButton(
                   icon: Icon(Icons.arrow_back_ios_new_rounded, color: kPrimaryColor),
                   onPressed: () {
-                    mapViewModel.resetCurrentExpert();
                     FocusScopeNode currentFocus = FocusScope.of(context);
                     if (!currentFocus.hasPrimaryFocus) {
                       currentFocus.unfocus();
                     }
-                    routerDelegate.pop();
+                    if (mapViewModel.currentExpert.value != null) {
+                      mapViewModel.resetCurrentExpert();
+                    } else {
+                      routerDelegate.pop();
+                    }
                   },
                 ),
                 Expanded(

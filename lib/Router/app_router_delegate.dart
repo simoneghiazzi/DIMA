@@ -163,14 +163,13 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
     }
   }
 
-  /// Replace the navigator stack pages from [start] to the top with the pages specified by the [routeSettingsList].
+  /// Replace the navigator stack pages from [start] to the top with
+  /// the pages specified by the [routeSettingsList].
   ///
-  /// The provided [start] must be valid. [start] is valid if 0 < start ≤ [length].
+  /// If the provided [start] is not valid, it only adds the pages of the [routeSettingsList]
+  /// without removing any page ([start] is valid if 0 < start ≤ [length]).
   void replaceAllButNumber(int start, {List<RouteSettings> routeSettingsList = const []}) {
-    if (start <= 0 || start > _pages.length) {
-      return;
-    }
-    if (_pages.isNotEmpty) {
+    if (start > 0 && start <= _pages.length && _pages.isNotEmpty) {
       _pages.removeRange(start, _pages.length);
     }
     for (var item in routeSettingsList) {

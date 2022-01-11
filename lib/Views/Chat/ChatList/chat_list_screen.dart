@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
+import 'package:sApport/Model/DBItems/Expert/expert.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
+import 'package:sApport/Views/Profile/components/expert_profile_body.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/components/vertical_split_view.dart';
@@ -51,10 +54,12 @@ class ChatListScreen extends StatefulWidget {
 class _ChatListScreenState extends State<ChatListScreen> {
   // View Models
   late ChatViewModel chatViewModel;
+  late MapViewModel mapViewModel;
 
   @override
   void initState() {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    mapViewModel = Provider.of<MapViewModel>(context, listen: false);
     super.initState();
   }
 
@@ -75,12 +80,22 @@ class _ChatListScreenState extends State<ChatListScreen> {
               right: ValueListenableBuilder(
                 valueListenable: chatViewModel.currentChat,
                 builder: (context, Chat? chat, child) {
-                  // Check if the current chat is null or if it is the same chat of the chatListBody or it is a request
-                  if (chat != null && !(chat is PendingChat && widget.chatListBody is AnonymousChatListBody)) {
-                    return ChatPageBody(key: ValueKey(chat.peerUser!.id));
-                  } else {
-                    return EmptyLandscapeBody();
-                  }
+                  return ValueListenableBuilder(
+                    valueListenable: mapViewModel.currentExpert,
+                    builder: (context, Expert? expert, child) {
+                      // If the current expert is not null, show the ExpertProfileBody on the right
+                      if (expert != null && expert == chatViewModel.currentChat.value!.peerUser) {
+                        return ExpertProfileBody();
+                      }
+                      // Check if the current chat is null or if it is the same chat of the chatListBody or it is a request
+                      else if (chat != null && !(chat is PendingChat && widget.chatListBody is AnonymousChatListBody)) {
+                        mapViewModel.resetCurrentExpert();
+                        return ChatPageBody(key: ValueKey(chat.peerUser!.id));
+                      } else {
+                        return EmptyLandscapeBody();
+                      }
+                    },
+                  );
                 },
               ),
               ratio: 0.35,

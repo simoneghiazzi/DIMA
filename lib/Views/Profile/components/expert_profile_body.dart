@@ -194,63 +194,35 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
             ),
           ),
         ),
-        (MediaQuery.of(context).orientation == Orientation.landscape)
-            // Get In Touch Button
-            ? Column(
-                children: [
-                  RoundedButton(
-                    text: "Get In Touch",
-                    onTap: () {
-                      chatViewModel.addNewChat(ExpertChat(peerUser: mapViewModel.currentExpert.value!));
-                      if (MediaQuery.of(context).orientation == Orientation.portrait) {
-                        // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
-                        routerDelegate.replaceAllButNumber(2, routeSettingsList: [
-                          RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
-                          RouteSettings(name: ChatPageScreen.route),
-                        ]);
-                      } else {
-                        // Otherwise, above the home page push only the ChatListScreen with the experts
-                        routerDelegate.replaceAllButNumber(2, routeSettingsList: [
-                          RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
-                        ]);
-                      }
-                    },
-                    suffixIcon: Icon(Icons.chat, color: Colors.white, size: 20),
-                  ),
-                  SizedBox(height: 5.h),
-                ],
-              )
-            : Container(),
-        (MediaQuery.of(context).orientation == Orientation.portrait)
-            // Get In Touch Button
-            ? Column(
-                children: [
-                  Container(
-                    child: RoundedButton(
-                      text: "Get In Touch",
-                      onTap: () {
-                        chatViewModel.setCurrentChat(ExpertChat(peerUser: mapViewModel.currentExpert.value!));
-                        mapViewModel.resetCurrentExpert();
-                        if (MediaQuery.of(context).orientation == Orientation.portrait) {
-                          // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
-                          routerDelegate.replaceAllButNumber(2, routeSettingsList: [
-                            RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
-                            RouteSettings(name: ChatPageScreen.route),
-                          ]);
-                        } else {
-                          // Otherwise, above the home page push only the ChatListScreen with the experts
-                          routerDelegate.replaceAllButNumber(2, routeSettingsList: [
-                            RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
-                          ]);
-                        }
-                      },
-                      suffixIcon: Icon(Icons.chat, color: Colors.white, size: 20),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                ],
-              )
-            : Container(),
+        if (MediaQuery.of(context).orientation == Orientation.portrait ||
+            (chatViewModel.currentChat.value == null && MediaQuery.of(context).orientation == Orientation.landscape)) ...[
+          // Get In Touch Button
+          Column(
+            children: [
+              RoundedButton(
+                text: "Get In Touch",
+                onTap: () {
+                  chatViewModel.addNewChat(ExpertChat(peerUser: mapViewModel.currentExpert.value!));
+                  mapViewModel.resetCurrentExpert();
+                  if (MediaQuery.of(context).orientation == Orientation.portrait) {
+                    // If orientation is portrait, above the home page push the ChatListScreen with the experts and the ChatPageScreen
+                    routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                      RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                      RouteSettings(name: ChatPageScreen.route),
+                    ]);
+                  } else {
+                    // Otherwise, above the home page push only the ChatListScreen with the experts
+                    routerDelegate.replaceAllButNumber(2, routeSettingsList: [
+                      RouteSettings(name: ChatListScreen.route, arguments: ExpertChatListBody()),
+                    ]);
+                  }
+                },
+                suffixIcon: Icon(Icons.chat, color: Colors.white, size: 20),
+              ),
+              MediaQuery.of(context).orientation == Orientation.portrait ? SizedBox(height: 10.h) : SizedBox(height: 5.h),
+            ],
+          ),
+        ],
       ],
     );
   }
@@ -272,8 +244,10 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
   /// It resets the current expert and then pops the page.
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     mapViewModel.resetCurrentExpert();
-    if (MediaQuery.of(context).orientation == Orientation.portrait) {
-      routerDelegate.pop();
+    if (chatViewModel.currentChat.value == null) {
+      if (MediaQuery.of(context).orientation == Orientation.portrait) {
+        routerDelegate.pop();
+      }
     }
     return true;
   }
