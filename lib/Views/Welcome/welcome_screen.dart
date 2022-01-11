@@ -73,7 +73,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
   /// the view models is not null, it pushes the relative page.
   void handleOrientationChanges() {
     log("handleOrientationChanges");
-    String lastRoute = routerDelegate.getLastRoute();
+    String lastRoute = routerDelegate.getLastRoute().name!;
     if (MediaQuery.of(context).orientation == Orientation.portrait) {
       if (lastRoute == ChatPageScreen.route ||
           lastRoute == ReportDetailsScreen.route ||
@@ -81,7 +81,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
         routerDelegate.pop();
       }
     } else {
-      if (chatViewModel.currentChat.value != null && routerDelegate.getLastRoute() != ExpertProfileScreen.route) {
+      if (chatViewModel.currentChat.value != null && lastRoute != ExpertProfileScreen.route) {
         routerDelegate.pushPage(name: ChatPageScreen.route);
       } else if (reportViewModel.currentReport.value != null) {
         routerDelegate.pushPage(name: ReportDetailsScreen.route);

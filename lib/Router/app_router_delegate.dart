@@ -140,8 +140,8 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
   }
 
   /// Get the top-most route of the navigator stack.
-  String getLastRoute() {
-    return _pages.last.name!;
+  Page getLastRoute() {
+    return _pages.last;
   }
 
   /// Remove the top-most page of the navigator stack and the push the page specified by the [name] of the route.

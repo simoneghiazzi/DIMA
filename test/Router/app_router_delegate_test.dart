@@ -1,3 +1,4 @@
+import 'package:mockito/annotations.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/Chat/ChatList/components/expert_chat_list_body.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
@@ -21,6 +22,7 @@ import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:sApport/Views/Chat/ChatList/components/pending_chat_list_body.dart';
 import 'package:sApport/Views/Chat/ChatList/components/anonymous_chat_list_body.dart';
 
+@GenerateMocks([AppRouterDelegate])
 void main() async {
   final routerDelegate = AppRouterDelegate();
   int callbackCounter = 0;
@@ -134,15 +136,17 @@ void main() async {
     });
 
     group("Get last route:", () {
-      test("Get last route should return the name of the top-most route of the stack", () {
+      test("Get last route should return the top-most page of the stack", () {
+        var anonymousChatListBody = AnonymousChatListBody();
         routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
-        routerDelegate.pushPage(name: ChatListScreen.route, arguments: AnonymousChatListBody());
+        routerDelegate.pushPage(name: ChatListScreen.route, arguments: anonymousChatListBody);
 
-        expect(routerDelegate.getLastRoute(), ChatListScreen.route);
+        expect(routerDelegate.getLastRoute().name, ChatListScreen.route);
+        expect(routerDelegate.getLastRoute().arguments, anonymousChatListBody);
 
         routerDelegate.pop();
 
-        expect(routerDelegate.getLastRoute(), BaseUserHomePageScreen.route);
+        expect(routerDelegate.getLastRoute().name, BaseUserHomePageScreen.route);
       });
     });
 

@@ -136,15 +136,28 @@ class ChatViewModel extends ChangeNotifier {
     _pendingChatsSubscriber = _firestoreService.getChatsStreamFromDB(_userService.loggedUser!, PendingChat.COLLECTION).listen(
       (snapshot) async {
         for (var docChange in snapshot.docChanges) {
+          var chat = PendingChat.fromDocument(docChange.doc);
           // If oldIndex == -1, the document is added, so its new and it has to retrieve the peer user from the DB
           if (docChange.oldIndex == -1) {
-            var chat = PendingChat.fromDocument(docChange.doc);
             _getPeerUserDoc(chat.peerUser!.collection, chat.peerUser!.id).then((value) {
               chat.peerUser!.setFromDocument(value.docs[0]);
               chat.loadMessages();
               _pendingChats.value[docChange.doc.id] = chat;
               _pendingChats.notifyListeners();
             });
+          } else {
+            // If newIndex == -1, the document is deleted, so it has to remove the chat from the list
+            if (docChange.newIndex == -1) {
+              _pendingChats.value.remove(docChange.doc.id);
+            } else {
+              // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields
+              var removedChat = _pendingChats.value.remove(docChange.doc.id);
+              removedChat?.lastMessage = chat.lastMessage;
+              removedChat?.lastMessageDateTime = chat.lastMessageDateTime;
+              removedChat?.notReadMessages = chat.notReadMessages;
+              _pendingChats.value[docChange.doc.id] = removedChat!;
+            }
+            _pendingChats.notifyListeners();
           }
         }
       },
@@ -255,7 +268,6 @@ class ChatViewModel extends ChangeNotifier {
   /// Accept a new pending chat request.
   Future<void> acceptPendingChat() async {
     return _firestoreService.upgradePendingToActiveChatIntoDB(_userService.loggedUser!, _currentChat.value! as PendingChat).then((_) {
-      _pendingChats.value.remove(_currentChat.value!.peerUser!.id);
       addNewChat(AnonymousChat(peerUser: _currentChat.value!.peerUser as BaseUser));
     }).catchError((error) {
       log("Error in accepting the pending chat: $error");
@@ -266,7 +278,6 @@ class ChatViewModel extends ChangeNotifier {
   ///
   /// It deletes the chat between the 2 users and all the messages.
   Future<void> denyPendingChat() async {
-    _pendingChats.value.remove(_currentChat.value!.peerUser!.id);
     _firestoreService.removeChatFromDB(_userService.loggedUser!, _currentChat.value!);
     _firestoreService.removeMessagesFromDB(Utils.pairChatId(_userService.loggedUser!.id, _currentChat.value!.peerUser!.id));
     resetCurrentChat();

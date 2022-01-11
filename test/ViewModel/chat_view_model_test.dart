@@ -24,7 +24,7 @@ import '../Views/Chat/ChatPage/chat_page_screen_test.mocks.dart';
 
 class MockDocumentChange<T extends Object?> extends Mock implements DocumentChange {
   var oldIndex = -1;
-  var newIndex = -1;
+  var newIndex = 0;
   late DocumentSnapshot doc;
 }
 
@@ -264,39 +264,18 @@ void main() async {
     });
 
     group("Accept pending chat:", () {
-      int counter = 0;
-      chatViewModel.pendingChats.addListener(() {
-        counter++;
-      });
-
-      setUp(() async {
-        counter = 0;
-        chatViewModel.pendingChats.value.clear();
-
-        var pendingHashMap = LinkedHashMap<String, PendingChat>();
-        pendingHashMap["${testHelper.pendingChat_5.peerUser!.id}"] = testHelper.pendingChat_5;
-        pendingHashMap["${testHelper.pendingChat2_6.peerUser!.id}"] = testHelper.pendingChat2_6;
-        chatViewModel.pendingChats.value = pendingHashMap;
-        chatViewModel.currentChat.value = testHelper.pendingChat_5;
-
-        await chatViewModel.acceptPendingChat();
-      });
-
-      test("Check that accept pending chat removes the chat from the pending chat list", () async {
-        expect(chatViewModel.pendingChats.value, isNot(contains(testHelper.pendingChat_5)));
-      });
-
+      setUp(() => chatViewModel.currentChat.value = testHelper.pendingChat_5);
       test("Accept pending chat should call the accept pending chat method of the firestore service with the correct parameters", () async {
+        await chatViewModel.acceptPendingChat();
+
         verify(mockFirestoreService.upgradePendingToActiveChatIntoDB(testHelper.loggedUser, testHelper.pendingChat_5)).called(1);
       });
 
       test("Check that accept pending chat sets the current chat with the anonymous chat", () async {
+        await chatViewModel.acceptPendingChat();
+
         expect(chatViewModel.currentChat.value, isA<AnonymousChat>());
         expect(chatViewModel.currentChat.value!.peerUser!.id, testHelper.baseUser5.id);
-      });
-
-      test("Check that the value notifier notify the listeners when the chat is accepted", () async {
-        expect(counter, 1);
       });
 
       test("Check that if an error occurs when accepting the pending chat it catches the error", () async {
@@ -311,43 +290,25 @@ void main() async {
     });
 
     group("Deny pending chat:", () {
-      int counter = 0;
-      chatViewModel.pendingChats.addListener(() {
-        counter++;
-      });
-
-      setUp(() async {
-        counter = 0;
-        chatViewModel.pendingChats.value.clear();
-
-        var pendingHashMap = LinkedHashMap<String, PendingChat>();
-        pendingHashMap["${testHelper.pendingChat_5.peerUser!.id}"] = testHelper.pendingChat_5;
-        pendingHashMap["${testHelper.pendingChat2_6.peerUser!.id}"] = testHelper.pendingChat2_6;
-        chatViewModel.pendingChats.value = pendingHashMap;
-        chatViewModel.currentChat.value = testHelper.pendingChat_5;
-
-        await chatViewModel.denyPendingChat();
-      });
-
-      test("Check that deny pending chat removes the chat from the pending chat list", () async {
-        expect(chatViewModel.pendingChats.value, isNot(contains(testHelper.pendingChat_5)));
-      });
+      setUp(() => chatViewModel.currentChat.value = testHelper.pendingChat_5);
 
       test("Deny pending chat should call the remove chat method of the firestore service with the correct parameters", () async {
+        await chatViewModel.denyPendingChat();
+
         verify(mockFirestoreService.removeChatFromDB(testHelper.loggedUser, testHelper.pendingChat_5)).called(1);
       });
 
       test("Deny pending chat should call the remove messages method of the firestore service with the correct parameters", () async {
+        await chatViewModel.denyPendingChat();
+
         verify(mockFirestoreService.removeMessagesFromDB(Utils.pairChatId(testHelper.loggedUser.id, testHelper.pendingChat_5.peerUser!.id)))
             .called(1);
       });
 
       test("Check that deny pending chat sets the current chat value to null", () async {
-        expect(chatViewModel.currentChat.value, isNull);
-      });
+        await chatViewModel.denyPendingChat();
 
-      test("Check that the value notifier notify the listeners when the chat is denied", () async {
-        expect(counter, 1);
+        expect(chatViewModel.currentChat.value, isNull);
       });
     });
 
@@ -558,6 +519,11 @@ void main() async {
         lastMessageDateTime: DateTime(2022, 1, 10, 21, 10, 50),
         peerUser: testHelper.baseUser4,
       );
+      var modifiedPendingChat = PendingChat(
+        lastMessage: "Message modified 1",
+        lastMessageDateTime: DateTime(2021, 10, 19, 21, 10, 50),
+        peerUser: testHelper.baseUser5,
+      );
 
       setUp(() async {
         chatViewModel.resetViewModel();
@@ -569,6 +535,7 @@ void main() async {
             .collection(PendingChat.COLLECTION)
             .doc(pendingChat3.peerUser!.id)
             .delete();
+        await fakeFirebase.collection("support").doc("${modifiedPendingChat.peerUser!.id}").delete();
       });
 
       test("Check the subscription of the pending chats subscriber to the get chats stream of the firestore service", () async {
@@ -604,6 +571,116 @@ void main() async {
           expect(chatViewModel.pendingChats.value.values.elementAt(i).lastMessageDateTime, testHelper.pendingChats[i].lastMessageDateTime);
           expect(chatViewModel.pendingChats.value.values.elementAt(i).notReadMessages, testHelper.pendingChats[i].notReadMessages);
         }
+      });
+
+      test("Modifying an old pending chat (when a new message arrives) will trigger the listener that should change the order of the HashMap",
+          () async {
+        var pendingHashMap = LinkedHashMap<String, PendingChat>();
+        pendingHashMap["${modifiedPendingChat.peerUser!.id}"] = modifiedPendingChat;
+        pendingHashMap["${testHelper.pendingChat2_6.peerUser!.id}"] = testHelper.pendingChat2_6;
+        chatViewModel.pendingChats.value = pendingHashMap;
+
+        modifiedPendingChat.lastMessageDateTime = DateTime(2022, 1, 10, 15, 12, 00);
+        modifiedPendingChat.lastMessage = "Chat modified";
+        modifiedPendingChat.notReadMessages = 1;
+
+        /// Add the chat in a support collection of the DB
+        await fakeFirebase.collection("support").doc("${modifiedPendingChat.peerUser!.id}").set({
+          "lastMessageTimestamp": modifiedPendingChat.lastMessageDateTime!.millisecondsSinceEpoch,
+          "notReadMessages": modifiedPendingChat.notReadMessages,
+          "lastMessage": modifiedPendingChat.lastMessage
+        });
+
+        var listener;
+        var callback = expectAsync1((int lastPos) {
+          for (int i = 0; i < lastPos - 1; i++) {
+            /// The old chats should be "moved down" of one position
+            expect(chatViewModel.pendingChats.value.keys.elementAt(i), testHelper.pendingChats[i + 1].peerUser!.id);
+          }
+
+          /// The last modified element should be moved in the last position of the HashMap
+          expect(chatViewModel.pendingChats.value.values.elementAt(lastPos).peerUser!.id, modifiedPendingChat.peerUser!.id);
+          expect(chatViewModel.pendingChats.value.values.elementAt(lastPos).lastMessage, modifiedPendingChat.lastMessage);
+          expect(chatViewModel.pendingChats.value.values.elementAt(lastPos).lastMessageDateTime, modifiedPendingChat.lastMessageDateTime);
+          expect(chatViewModel.pendingChats.value.values.elementAt(lastPos).notReadMessages, modifiedPendingChat.notReadMessages);
+
+          chatViewModel.pendingChats.removeListener(listener);
+        }, count: 1);
+
+        listener = () => callback(chatViewModel.pendingChats.value.length - 1);
+        chatViewModel.pendingChats.addListener(listener);
+
+        /// The fake firestore doc changes doesn't work properly, so we need to manually simulate the response
+        /// with docChanges
+        when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedUser, PendingChat.COLLECTION)).thenAnswer((_) async* {
+          var snapshot = await testHelper.pendingChatsStream.first;
+          var mockSnapshot = MockQuerySnapshot();
+          var newDocChanges = <MockDocumentChange>[];
+
+          /// We need to manually change the old index of the old chat that has been modified
+          for (var docChange in snapshot.docChanges) {
+            /// We simulate that chat that is modified was in position 0 is modified
+            if (docChange.doc.id == modifiedPendingChat.peerUser!.id) {
+              var newDocChange = MockDocumentChange();
+              newDocChange.oldIndex = 0;
+              newDocChange.doc = await fakeFirebase.collection("support").doc("${modifiedPendingChat.peerUser!.id}").get();
+              newDocChanges.add(newDocChange);
+            }
+          }
+          mockSnapshot.docChanges.clear();
+          mockSnapshot.docChanges = newDocChanges;
+          yield mockSnapshot;
+        });
+
+        /// Load the pending chats
+        chatViewModel.loadPendingChats();
+      });
+
+      test("Denying an old pending chat will trigger the listener that should remove the chat from the HashMap", () async {
+        var pendingHashMap = LinkedHashMap<String, PendingChat>();
+        pendingHashMap["${testHelper.pendingChat_5.peerUser!.id}"] = testHelper.pendingChat_5;
+        pendingHashMap["${testHelper.pendingChat2_6.peerUser!.id}"] = testHelper.pendingChat2_6;
+        chatViewModel.pendingChats.value = pendingHashMap;
+
+        var listener;
+        var callback = expectAsync0(() {
+          /// The other chat should remain in the list
+          expect(chatViewModel.pendingChats.value.values, contains(testHelper.pendingChat2_6));
+
+          /// The removed chat should not be in the list
+          expect(chatViewModel.pendingChats.value.values, isNot(contains(testHelper.pendingChat_5)));
+
+          chatViewModel.pendingChats.removeListener(listener);
+        }, count: 1);
+
+        listener = () => callback();
+        chatViewModel.pendingChats.addListener(listener);
+
+        /// The fake firestore doc changes doesn't work properly, so we need to manually simulate the response
+        /// with docChanges
+        when(mockFirestoreService.getChatsStreamFromDB(testHelper.loggedUser, PendingChat.COLLECTION)).thenAnswer((_) async* {
+          var snapshot = await testHelper.pendingChatsStream.first;
+          var mockSnapshot = MockQuerySnapshot();
+          var newDocChanges = <MockDocumentChange>[];
+
+          /// We need to manually change the old index of the old chat that has been modified
+          for (var docChange in snapshot.docChanges) {
+            /// We simulate that chat that is modified was in position 0 is modified
+            if (docChange.doc.id == testHelper.pendingChat_5.peerUser!.id) {
+              var newDocChange = MockDocumentChange();
+              newDocChange.oldIndex = 0;
+              newDocChange.newIndex = -1;
+              newDocChange.doc = docChange.doc;
+              newDocChanges.add(newDocChange);
+            }
+          }
+          mockSnapshot.docChanges.clear();
+          mockSnapshot.docChanges = newDocChanges;
+          yield mockSnapshot;
+        });
+
+        /// Load the pending chats
+        chatViewModel.loadPendingChats();
       });
 
       test("Add a new pending chat into the DB will trigger the listener that should add this new chat into the pending chats HashMap", () async {

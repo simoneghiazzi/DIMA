@@ -124,6 +124,8 @@ void main() {
         home: new ChatPageScreen(),
       )));
 
+      await tester.pump(Duration.zero);
+
       final topBarAnonymous = find.widgetWithText(ChatTopBar, randomUser.name);
       final dateFinder = find.byType(DateItem);
       final newMessageItemFinder = find.byType(NewMessagesItem);
@@ -153,6 +155,8 @@ void main() {
           child: new MaterialApp(
         home: new ChatPageScreen(),
       )));
+
+      await tester.pump(Duration.zero);
 
       final pendingFinder = find.byType(ChatAcceptDenyInput);
 

@@ -143,10 +143,13 @@ class FirestoreService {
 
   /// It takes the [increment] amount and increments the user's counter into the DB
   Future<void> _incrementBaseUsersCounter(int increment) async {
-    return _firestore
-        .collection(BaseUser.COLLECTION)
-        .doc("utils")
-        .update({"userCounter": FieldValue.increment(increment)}).then((value) => log("Base user counter incremented"));
+    var utilReference = _firestore.collection(BaseUser.COLLECTION).doc("utils");
+    var doc = await utilReference.get();
+    if (!doc.exists) {
+      return utilReference.set({"userCounter": 1}).then((value) => log("Base user counter incremented"));
+    } else {
+      return utilReference.update({"userCounter": FieldValue.increment(increment)}).then((value) => log("Base user counter incremented"));
+    }
   }
 
   /// Get the counter of the intances of base users from the DB
@@ -178,14 +181,12 @@ class FirestoreService {
 
   /// It takes the [pairChatId] and removes the messages between the 2 users from the DB.
   Future<void> removeMessagesFromDB(String pairChatId) async {
-    var messages = _firestore.collection(Message.COLLECTION).doc(pairChatId).collection(pairChatId).get();
+    var snapshot = await _firestore.collection(Message.COLLECTION).doc(pairChatId).collection(pairChatId).get();
     WriteBatch batch = _firestore.batch();
-    messages.then((documentSnapshot) {
-      documentSnapshot.docs.forEach((doc) {
-        batch.delete(doc.reference);
-      });
-      batch.commit().then((value) => log("Messages removed")).catchError((error) => log("Failed to remove the messages: $error"));
-    });
+    for (var doc in snapshot.docs) {
+      batch.delete(doc.reference);
+    }
+    batch.commit().then((value) => log("Messages removed")).catchError((error) => log("Failed to remove the messages: $error"));
   }
 
   /// It sets the `notReadMessages` field of the chat of the [user] with the peerUser specified
@@ -264,8 +265,13 @@ class FirestoreService {
     }
     WriteBatch batch = _firestore.batch();
     // The notReadMessages field is setted to 0 for the sender user and to the increment of 1 for the peer user
-    batch.set(senderUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
-    batch.set(peerUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": FieldValue.increment(1), "lastMessage": chat.lastMessage});
+    if (!doc.exists) {
+      batch.set(senderUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
+      batch.set(peerUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": 1, "lastMessage": chat.lastMessage});
+    } else {
+      batch.update(senderUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": 0, "lastMessage": chat.lastMessage});
+      batch.update(peerUserRef, {"lastMessageTimestamp": timestamp, "notReadMessages": FieldValue.increment(1), "lastMessage": chat.lastMessage});
+    }
     batch.commit().then((value) => log("Chat info updated")).catchError((error) => log("Failed to update the chat info: $error"));
   }
 
@@ -286,8 +292,25 @@ class FirestoreService {
   Future<void> _incrementConversationCounter(User senderUser, Chat chat, int increment) async {
     var utilsSenderReference = _firestore.collection(senderUser.collection).doc(senderUser.id).collection("utils").doc("utils");
     var utilsPeerReference = _firestore.collection(chat.peerUser!.collection).doc(chat.peerUser!.id).collection("utils").doc("utils");
-    utilsSenderReference.update({"anonymousChatCounter": FieldValue.increment(increment)}).then((value) => log("Conversation counters incremented"));
-    utilsPeerReference.update({"anonymousChatCounter": FieldValue.increment(increment)}).then((value) => log("Conversation counters incremented"));
+
+    var docSender = await utilsSenderReference.get();
+    var docPeer = await utilsPeerReference.get();
+
+    WriteBatch batch = _firestore.batch();
+    if (!docSender.exists) {
+      batch.set(utilsSenderReference, {"anonymousChatCounter": 1});
+    } else {
+      batch.update(utilsSenderReference, {"anonymousChatCounter": FieldValue.increment(increment)});
+    }
+    if (!docPeer.exists) {
+      batch.set(utilsPeerReference, {"anonymousChatCounter": 1});
+    } else {
+      batch.update(utilsPeerReference, {"anonymousChatCounter": FieldValue.increment(increment)});
+    }
+    batch
+        .commit()
+        .then((value) => log("Conversation counters incremented"))
+        .catchError((error) => log("Failed to increment the conversation counters info: $error"));
   }
 
   /// It takes the [user] and returns the anonymous chat's counter from the DB
