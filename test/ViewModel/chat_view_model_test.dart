@@ -107,30 +107,6 @@ void main() async {
   group("ChatViewModel interaction with services:", () {
     setUp(() => clearInteractions(mockFirestoreService));
 
-    group("Chatting with:", () {
-      test("Update chatting with should call the update user field method of the firestore service with the id of the peer user", () async {
-        chatViewModel.currentChat.value = testHelper.anonymousChat;
-        await chatViewModel.updateChattingWith();
-
-        var verification = verify(mockFirestoreService.updateUserFieldIntoDB(testHelper.loggedUser, "chattingWith", captureAny));
-        verification.called(1);
-
-        /// Parameter Verification
-        expect(verification.captured[0], testHelper.anonymousChat.peerUser!.id);
-      });
-
-      test("Reset chatting with should call the update user field method of the firestore service with null", () async {
-        chatViewModel.currentChat.value = testHelper.anonymousChat;
-        await chatViewModel.resetChattingWith();
-
-        var verification = verify(mockFirestoreService.updateUserFieldIntoDB(testHelper.loggedUser, "chattingWith", captureAny));
-        verification.called(1);
-
-        /// Parameter Verification
-        expect(verification.captured[0], isNull);
-      });
-    });
-
     group("Send message:", () {
       var anonymousChat;
       var text;
@@ -1174,6 +1150,17 @@ void main() async {
 
           expect(chatViewModel.currentChat.value, testHelper.anonymousChat);
         });
+
+        test("Set current chat should call the update user field method of the firestore service with the id of the peer user", () async {
+          chatViewModel.currentChat.value = testHelper.anonymousChat;
+          chatViewModel.setCurrentChat(testHelper.anonymousChat);
+
+          var verification = verify(mockFirestoreService.updateUserFieldIntoDB(testHelper.loggedUser, "chattingWith", captureAny));
+          verification.called(1);
+
+          /// Parameter Verification
+          expect(verification.captured[0], testHelper.anonymousChat.peerUser!.id);
+        });
       });
 
       group("Reset current chat:", () {
@@ -1187,6 +1174,17 @@ void main() async {
           chatViewModel.contentTextCtrl.text = "Prova";
           chatViewModel.resetCurrentChat();
           expect(chatViewModel.contentTextCtrl.text, isEmpty);
+        });
+
+        test("Reset current chat should call the update user field method of the firestore service with null", () async {
+          chatViewModel.currentChat.value = testHelper.anonymousChat;
+          chatViewModel.resetCurrentChat();
+
+          var verification = verify(mockFirestoreService.updateUserFieldIntoDB(testHelper.loggedUser, "chattingWith", captureAny));
+          verification.called(1);
+
+          /// Parameter Verification
+          expect(verification.captured[0], isNull);
         });
       });
 

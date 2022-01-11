@@ -84,7 +84,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     valueListenable: mapViewModel.currentExpert,
                     builder: (context, Expert? expert, child) {
                       // If the current expert is not null, show the ExpertProfileBody on the right
-                      if (expert != null && expert == chatViewModel.currentChat.value!.peerUser) {
+                      if (expert != null && expert == chatViewModel.currentChat.value?.peerUser) {
                         return ExpertProfileBody();
                       }
                       // Check if the current chat is null or if it is the same chat of the chatListBody or it is a request

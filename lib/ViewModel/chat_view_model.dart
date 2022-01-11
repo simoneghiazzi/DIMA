@@ -42,20 +42,6 @@ class ChatViewModel extends ChangeNotifier {
   var _expertsChats = ValueNotifier<LinkedHashMap<String, ExpertChat>>(LinkedHashMap<String, ExpertChat>());
   var _activeChats = ValueNotifier<LinkedHashMap<String, ActiveChat>>(LinkedHashMap<String, ActiveChat>());
 
-  /// Update the ChattingWith field of the [senderUser] inside the DB.
-  ///
-  /// It is used in order to show or not the notification on new messages.
-  Future<void> updateChattingWith() {
-    return _firestoreService.updateUserFieldIntoDB(_userService.loggedUser!, "chattingWith", _currentChat.value!.peerUser?.id);
-  }
-
-  /// Reset the ChattingWith field of the [senderUser] inside the DB.
-  ///
-  /// It is used in order to show or not the notification on new messages.
-  Future<void> resetChattingWith() {
-    return _firestoreService.updateUserFieldIntoDB(_userService.loggedUser!, "chattingWith", null);
-  }
-
   /// Send a message to the [peerUser] of the [_currentChat].
   Future<void> sendMessage() async {
     if (contentTextCtrl.text.trim().isNotEmpty) {
@@ -289,19 +275,37 @@ class ChatViewModel extends ChangeNotifier {
     setCurrentChat(chat);
   }
 
-  /// Set the [chat] as the [_currentChat].
+  /// Set the [chat] as the [_currentChat] and calls the [_updateChattingWith]
+  /// method that updates the value into the DB.
   void setCurrentChat(Chat chat) {
     _currentChat.value = chat;
+    _updateChattingWith();
     log("Current chat setted");
   }
 
-  /// Reset the [_currentChat] and clear the [contentTextCtrl].
+  /// Reset the [_currentChat], clear the [contentTextCtrl] and calls the
+  /// [_resetChattingWith] method that resets the value into the DB.
   ///
   /// It must be called after all the other reset methods.
   void resetCurrentChat() {
     _currentChat.value = null;
     contentTextCtrl.clear();
+    _resetChattingWith();
     log("Current chat resetted");
+  }
+
+  /// Update the ChattingWith field of the [senderUser] inside the DB.
+  ///
+  /// It is used in order to show or not the notification on new messages.
+  Future<void> _updateChattingWith() {
+    return _firestoreService.updateUserFieldIntoDB(_userService.loggedUser!, "chattingWith", _currentChat.value!.peerUser?.id);
+  }
+
+  /// Reset the ChattingWith field of the [senderUser] inside the DB.
+  ///
+  /// It is used in order to show or not the notification on new messages.
+  Future<void> _resetChattingWith() {
+    return _firestoreService.updateUserFieldIntoDB(_userService.loggedUser!, "chattingWith", null);
   }
 
   /// Cancel all the value listeners and clear their contents.

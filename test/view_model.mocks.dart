@@ -315,12 +315,12 @@ class MockChatViewModel extends _i1.Mock implements _i14.ChatViewModel {
       (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
           as bool);
   @override
-  _i8.Future<void> updateChattingWith() =>
+  _i8.Future<void> _updateChattingWith() =>
       (super.noSuchMethod(Invocation.method(#updateChattingWith, []),
           returnValue: Future<void>.value(),
           returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
   @override
-  _i8.Future<void> resetChattingWith() =>
+  _i8.Future<void> _resetChattingWith() =>
       (super.noSuchMethod(Invocation.method(#resetChattingWith, []),
           returnValue: Future<void>.value(),
           returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);

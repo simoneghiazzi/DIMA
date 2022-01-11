@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
-import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/Model/Chat/chat.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Views/Utils/custom_sizer.dart';
@@ -11,7 +11,7 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
-import 'package:sApport/Views/Profile/expert_profile_screen.dart';
+import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_top_bar.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_text_input.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_accept_deny.dart';
@@ -41,14 +41,13 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
   // Scroll Controller
   final ScrollController scrollController = ScrollController();
 
+  Chat? currentChat;
+
   @override
   void initState() {
     userViewModel = Provider.of<UserViewModel>(context, listen: false);
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
-
-    // Update the `chatting with` field into the DB
-    chatViewModel.updateChattingWith();
 
     // Add an observer to this class for listening to the app lifecycle
     WidgetsBinding.instance!.addObserver(this);
@@ -114,7 +113,6 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
   /// and finally pop the page.
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     if (routerDelegate.getLastRoute().name == ChatPageScreen.route) {
-      chatViewModel.resetChattingWith();
       chatViewModel.resetCurrentChat();
     }
     routerDelegate.pop();
@@ -124,11 +122,13 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
+
     // When the app is resumed, update the `chatting with` field into the DB, otherwise reset it
     if (state == AppLifecycleState.resumed) {
-      chatViewModel.updateChattingWith();
+      chatViewModel.setCurrentChat(currentChat!);
     } else {
-      chatViewModel.resetChattingWith();
+      currentChat = chatViewModel.currentChat.value;
+      chatViewModel.resetCurrentChat();
     }
   }
 

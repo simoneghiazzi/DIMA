@@ -53,7 +53,11 @@ class _ExpertChatListBodyState extends State<ExpertChatListBody> {
         Align(
           alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1)!,
           child: FloatingActionButton(
-            onPressed: () => routerDelegate.pushPage(name: MapScreen.route),
+            onPressed: () {
+              chatViewModel.resetCurrentChat();
+              mapViewModel.resetCurrentExpert();
+              routerDelegate.replace(name: MapScreen.route);
+            },
             materialTapTargetSize: MaterialTapTargetSize.padded,
             backgroundColor: kPrimaryColor,
             child: const Icon(Icons.add, size: 40.0, color: Colors.white),
