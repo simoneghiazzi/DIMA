@@ -95,6 +95,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                                 textCapitalization: TextCapitalization.none,
                                 keyboardType: TextInputType.emailAddress,
                               ),
+                              SizedBox(height: 1.h),
                               FormTextField(
                                 textFieldBloc: credentialForm.passwordText,
                                 hintText: "Password",
@@ -107,6 +108,7 @@ class _CredentialBodyState extends State<CredentialBody> {
                                   }
                                 },
                               ),
+                              SizedBox(height: 1.h),
                               FormTextField(
                                 textFieldBloc: credentialForm.confirmPasswordText,
                                 hintText: "Confirm Password",
@@ -160,8 +162,8 @@ class _CredentialBodyState extends State<CredentialBody> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Already have an account? ", style: TextStyle(color: kPrimaryColor, fontSize: 12.sp)),
-                  Text("Sign In", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 12.5.sp)),
+                  Text("Already have an account? ", style: TextStyle(color: kPrimaryColor, fontSize: 13.sp)),
+                  Text("Sign In", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 13.5.sp)),
                 ],
               ),
               onTap: () {

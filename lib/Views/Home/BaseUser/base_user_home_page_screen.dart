@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Views/Utils/custom_sizer.dart';
-import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Views/Diary/diary_screen.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -99,7 +99,7 @@ class _BaseUserHomePageScreenState extends State<BaseUserHomePageScreen> {
       resizeToAvoidBottomInset: false,
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
-        iconSize: 20.sp,
+        iconSize: 3.5.h,
         selectedFontSize: 11.sp,
         currentIndex: _currentIndex,
         showSelectedLabels: true,

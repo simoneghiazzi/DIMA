@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Utils/constants.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 
 /// Button component used in the entire application.
 ///
@@ -12,7 +12,6 @@ class RoundedButton extends StatelessWidget {
   final Icon? prefixIcon, suffixIcon;
   final Color color, textColor;
   final bool enabled;
-  final double? width;
 
   /// Button component used in the entire application.
   ///
@@ -27,7 +26,6 @@ class RoundedButton extends StatelessWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.enabled = true,
-    this.width,
   }) : super(key: key);
 
   @override
@@ -35,7 +33,7 @@ class RoundedButton extends StatelessWidget {
     return Container(
       child: ElevatedButton(
         style: ButtonStyle(
-          fixedSize: MaterialStateProperty.all<Size>(Size(width ?? 50.w, 6.h)),
+          minimumSize: MaterialStateProperty.all<Size>(Size(40.w, 6.h)),
           backgroundColor: MaterialStateProperty.all<Color>(enabled ? color : Color(0xFFD3D3D3)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
           shadowColor: MaterialStateProperty.all<Color>(enabled ? kPrimaryLightColor : Color(0xFFD3D3D3)),

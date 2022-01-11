@@ -115,10 +115,11 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                     textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
                                     selectFieldBloc: reportForm.reportCategory,
                                     decoration: InputDecoration(
+                                      errorStyle: TextStyle(fontSize: 11.sp),
                                       filled: true,
                                       fillColor: kPrimaryLightColor.withAlpha(100),
                                       labelText: "Report category",
-                                      labelStyle: TextStyle(color: kPrimaryColor),
+                                      labelStyle: TextStyle(color: kPrimaryColor, fontSize: 13.5.sp),
                                       prefixIcon: Icon(Icons.security, color: kPrimaryColor),
                                     ),
                                     itemBuilder: (context, value) => FieldItem(child: Text(value, style: TextStyle(color: kPrimaryColor))),
@@ -126,15 +127,17 @@ class _CreateReportBodyState extends State<CreateReportBody> {
                                   SizedBox(height: 1.h),
                                   // Report Description
                                   TextFieldBlocBuilder(
+                                    textStyle: TextStyle(fontSize: 13.5.sp),
                                     textCapitalization: TextCapitalization.sentences,
                                     textFieldBloc: reportForm.reportText,
                                     maxLines: 5,
                                     minLines: 1,
                                     decoration: InputDecoration(
+                                      errorStyle: TextStyle(fontSize: 11.sp),
                                       filled: true,
                                       fillColor: kPrimaryLightColor.withAlpha(100),
                                       labelText: "Report description",
-                                      labelStyle: TextStyle(color: kPrimaryColor),
+                                      labelStyle: TextStyle(color: kPrimaryColor, fontSize: 13.5.sp),
                                       prefixIcon: Icon(Icons.text_fields, color: kPrimaryColor),
                                     ),
                                   ),

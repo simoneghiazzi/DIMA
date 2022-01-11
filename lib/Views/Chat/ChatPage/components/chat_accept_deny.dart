@@ -33,7 +33,6 @@ class ChatAcceptDenyInput extends StatelessWidget {
                 text: "Accept",
                 prefixIcon: Icon(Icons.check, color: Colors.white, size: 25),
                 color: Colors.green,
-                width: 35.w,
                 onTap: () {
                   chatViewModel.acceptPendingChat();
                   if (MediaQuery.of(context).orientation == Orientation.portrait) {
@@ -51,7 +50,6 @@ class ChatAcceptDenyInput extends StatelessWidget {
                 text: "Deny",
                 prefixIcon: Icon(Icons.delete, color: Colors.white, size: 25),
                 color: Colors.red,
-                width: 35.w,
                 onTap: () {
                   chatViewModel.denyPendingChat();
                   // If deny, returns to the PendingChatListScreen

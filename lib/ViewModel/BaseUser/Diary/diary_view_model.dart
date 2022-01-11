@@ -114,9 +114,19 @@ class DiaryViewModel with ChangeNotifier {
     );
   }
 
-  /// Modify the [_currentDiaryPage] or edit a new [DiaryPage].
+  /// Modify the [_currentDiaryPage].
   void editPage() {
     _isEditing = true;
+  }
+
+  /// Set the current diary page to `null` and isEditing flag to `true`.
+  /// 
+  /// It also clear the text controllers.
+  void addNewPage() {
+    _currentDiaryPage.value = null;
+    _isEditing = true;
+    titleTextCtrl.clear();
+    contentTextCtrl.clear();
   }
 
   /// Set the [diaryPage] as the [_currentDiaryPage].

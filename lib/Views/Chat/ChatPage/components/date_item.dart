@@ -9,11 +9,12 @@ import 'package:sApport/Views/Chat/ChatPage/components/message_list_constructor.
 /// It takes the [date] from the ListView builder and builds the date item of the message list.
 class DateItem extends StatelessWidget {
   final DateTime date;
+  final bool sameNextIdFrom;
 
   /// Date item of the [MessageListConstructor].
   ///
   /// It takes the [date] from the ListView builder and builds the date item of the message list.
-  const DateItem({Key? key, required this.date}) : super(key: key);
+  const DateItem({Key? key, required this.date, required this.sameNextIdFrom}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class DateItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          margin: EdgeInsets.only(bottom: 5.0, top: 25.0),
+          margin: EdgeInsets.only(bottom: sameNextIdFrom ? 20.0 : 5.0, top: sameNextIdFrom ? 20.0 : 5.0),
           padding: EdgeInsets.only(right: 10, bottom: 5, top: 5, left: 10),
           child: Text(
             DateFormat().add_yMMMd().format(date),

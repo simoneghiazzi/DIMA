@@ -78,16 +78,17 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                 color: kPrimaryColor,
                 child: SafeArea(
                   child: Container(
-                    padding: EdgeInsets.only(top: 10, bottom: 10),
+                    height: 20.h,
+                    padding: EdgeInsets.only(top: 1.5.h, bottom: 1.5.h),
                     alignment: Alignment.center,
                     color: kPrimaryColor,
                     child: userViewModel.loggedUser!.data["profilePhoto"] != null
                         ?
                         // If the profile photo is not null, show the image
-                        NetworkAvatar(img: userViewModel.loggedUser!.data["profilePhoto"] as String, radius: 50.0)
+                        NetworkAvatar(img: userViewModel.loggedUser!.data["profilePhoto"] as String, radius: 11.h)
                         :
                         // Otherwise show the circle avatar with the person icon
-                        CircleAvatar(radius: 50, backgroundColor: Colors.white, child: Icon(Icons.person, size: 70, color: kPrimaryColor)),
+                        CircleAvatar(radius: 11.h, backgroundColor: Colors.white, child: Icon(Icons.person, size: 100, color: kPrimaryColor)),
                   ),
                 ),
               ),
@@ -97,8 +98,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
         SizedBox(height: 3.h),
         // Full Name
         Container(
-          width: 70.w,
-          padding: EdgeInsets.only(top: 2.5, bottom: 2.5),
+          padding: EdgeInsets.only(left: 12.5.w, right: 12.5.w, top: 2, bottom: 2),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: kPrimaryLightColor),
           child: Text(
             userViewModel.loggedUser!.fullName.toUpperCase(),
@@ -106,7 +106,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
             textAlign: TextAlign.center,
           ),
         ),
-        SizedBox(height: 5.h),
+        SizedBox(height: 2.h),
         Expanded(
           child: Container(
             padding: EdgeInsets.only(left: 10.w, right: 10.w),
@@ -119,7 +119,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                   if (userViewModel.loggedUser!.data["address"] != null) ...[
                     Row(
                       children: <Widget>[
-                        Icon(Icons.house, color: kPrimaryColor),
+                        Icon(Icons.house, color: kPrimaryColor, size: 30),
                         SizedBox(width: 5.w),
                         Flexible(
                             child:
@@ -132,7 +132,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                   if (userViewModel.loggedUser!.data["phoneNumber"] != null) ...[
                     Row(
                       children: <Widget>[
-                        Icon(Icons.phone, color: kPrimaryColor),
+                        Icon(Icons.phone, color: kPrimaryColor, size: 30),
                         SizedBox(width: 5.w),
                         Text(userViewModel.loggedUser!.data["phoneNumber"].toString(), style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))
                       ],
@@ -142,7 +142,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                   // Email
                   Row(
                     children: [
-                      Icon(Icons.mail, color: kPrimaryColor),
+                      Icon(Icons.mail, color: kPrimaryColor, size: 30),
                       SizedBox(width: 5.w),
                       Flexible(child: Text(userViewModel.loggedUser!.email, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))),
                     ],
@@ -157,7 +157,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                           children: [
                             Row(
                               children: <Widget>[
-                                Icon(Icons.lock, color: kPrimaryColor),
+                                Icon(Icons.lock, color: kPrimaryColor, size: 30),
                                 SizedBox(width: 5.w),
                                 GestureDetector(
                                   child: Text(
@@ -187,7 +187,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                   if (authViewModel.authProvider().contains("google.com")) ...[
                     Row(
                       children: [
-                        Image.asset("assets/icons/google.png", height: 25, width: 25),
+                        Image.asset("assets/icons/google.png", height: 30, width: 30),
                         SizedBox(width: 5.w),
                         Flexible(
                             child: Text("Your Google account is linked with this profile", style: TextStyle(color: kPrimaryColor, fontSize: 13.sp))),
@@ -199,7 +199,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                   if (authViewModel.authProvider().contains("facebook.com")) ...[
                     Row(
                       children: [
-                        Image.asset("assets/icons/facebook.png", height: 25, width: 25),
+                        Image.asset("assets/icons/facebook.png", height: 30, width: 30),
                         SizedBox(width: 5.w),
                         Flexible(
                             child:
@@ -245,8 +245,8 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                   Divider(color: kPrimaryColor, height: 1.5),
                   SizedBox(height: 5.h),
                   (MediaQuery.of(context).orientation == Orientation.landscape)
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             // Logout Button
                             RoundedButton(

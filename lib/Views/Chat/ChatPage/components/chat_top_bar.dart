@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Views/Utils/constants.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
@@ -54,24 +54,29 @@ class ChatTopBar extends StatelessWidget {
       color: kPrimaryColor,
       child: SafeArea(
         child: Container(
-          height: 10.h,
+          height: 9.5.h,
           decoration: BoxDecoration(color: kPrimaryColor),
           child: Row(
             children: <Widget>[
               // If the orientation is portrait, show the back button
               if (MediaQuery.of(context).orientation == Orientation.portrait) ...[
-                SizedBox(width: 1.w),
-                IconButton(
-                  icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-                  onPressed: () async {
-                    FocusScope.of(context).unfocus();
-                    chatViewModel.resetChattingWith();
-                    chatViewModel.resetCurrentChat();
-                    routerDelegate.pop();
-                  },
+                Container(
+                  child: InkWell(
+                    child: InkResponse(
+                      onTap: () async {
+                        FocusScope.of(context).unfocus();
+                        chatViewModel.resetChattingWith();
+                        chatViewModel.resetCurrentChat();
+                        routerDelegate.pop();
+                      },
+                      child: Container(
+                          padding: EdgeInsets.only(left: 2.5.w, right: 2.5.w),
+                          child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 25)),
+                    ),
+                  ),
                 ),
               ] else
-                SizedBox(width: 4.w),
+                SizedBox(width: 3.w),
               Flexible(
                 child: GestureDetector(
                   child: Row(
@@ -79,13 +84,14 @@ class ChatTopBar extends StatelessWidget {
                       // Show the circle avatar if it is not null, else show the network avatar
                       if (circleAvatar != null) ...[
                         circleAvatar!,
-                        SizedBox(width: 3.w),
+                        SizedBox(width: 2.5.w),
                       ] else ...[
                         networkAvatar!,
-                        SizedBox(width: 3.w),
+                        SizedBox(width: 2.5.w),
                       ],
                       Text(
                         text,
+                        textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 18.5.sp, fontWeight: FontWeight.bold, color: Colors.white),
                         overflow: TextOverflow.ellipsis,
                       ),

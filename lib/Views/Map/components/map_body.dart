@@ -53,9 +53,6 @@ class _MapBodyState extends State<MapBody> {
   // Map Markers
   Set<Marker> _markers = Set<Marker>();
 
-  // Markers pin
-  BitmapDescriptor? pinLocationIcon;
-
   // Info Window
   CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
 
@@ -77,11 +74,6 @@ class _MapBodyState extends State<MapBody> {
 
     // Set the map style
     rootBundle.loadString("assets/map_style.txt").then((string) => _mapStyle = string);
-
-    // Load the icon used for custom markers
-    BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 1, size: Size(2, 2)), "assets/icons/pin.png").then((onValue) {
-      pinLocationIcon = onValue;
-    });
 
     // Load the experts and add the relative marker
     getMarkers();
@@ -222,13 +214,15 @@ class _MapBodyState extends State<MapBody> {
   /// present in the list.
   ///
   /// After inserting all the experts, it calls setState.
-  void getMarkers() {
+  void getMarkers() async {
+    // Load the icon used for custom markers
+    var pinLocationIcon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 1, size: Size(2, 2)), "assets/icons/pin.png");
     for (var expert in mapViewModel.experts.values) {
       _markers.add(
         Marker(
           markerId: MarkerId(expert.data["surname"].toString() + expert.data["lat"].toString() + expert.data["lng"].toString()),
           position: LatLng(expert.data["lat"] as double, expert.data["lng"] as double),
-          icon: pinLocationIcon ?? BitmapDescriptor.defaultMarker,
+          icon: pinLocationIcon,
           onTap: () {
             _customInfoWindowController.addInfoWindow!(
               MapInfoWindow(expert: expert),

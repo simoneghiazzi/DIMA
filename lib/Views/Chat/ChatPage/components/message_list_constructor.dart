@@ -95,10 +95,10 @@ class _MessageListConstructorState extends State<MessageListConstructor> {
                     // First message: it has the DateTime, the optional NewMessageItem and the MessageListItem
                     return Column(
                       children: [
-                        DateItem(date: _messageItem.timestamp),
+                        DateItem(sameNextIdFrom: false, date: _messageItem.timestamp),
                         // If it is the index of _notReadMessages, show the NewMessageItem
                         if (index == _notReadMessages - 1) ...[
-                          NewMessagesItem(counter: _notReadMessages, key: !_datakeyUsed ? dataKey : GlobalKey()),
+                          NewMessagesItem(sameNextIdFrom: false, counter: _notReadMessages, key: !_datakeyUsed ? dataKey : GlobalKey()),
                         ],
                         MessageListItem(messageItem: _messageItem),
                       ],
@@ -109,14 +109,20 @@ class _MessageListConstructorState extends State<MessageListConstructor> {
                       children: [
                         // If previuous date is different from the current message, show the DateItem
                         if (previousDate.day != _messageItem.timestamp.day) ...[
-                          DateItem(date: _messageItem.timestamp),
+                          DateItem(sameNextIdFrom: messages[messages.length - 2 - index].idFrom == _messageItem.idFrom, date: _messageItem.timestamp),
                         ],
                         // If it is the index of _notReadMessages, show the NewMessageItem
                         if (index == _notReadMessages - 1) ...[
-                          NewMessagesItem(counter: _notReadMessages, key: !_datakeyUsed ? dataKey : GlobalKey()),
+                          NewMessagesItem(
+                            counter: _notReadMessages,
+                            key: !_datakeyUsed ? dataKey : GlobalKey(),
+                            sameNextIdFrom: messages[messages.length - 2 - index].idFrom == _messageItem.idFrom,
+                          ),
                         ],
                         MessageListItem(
-                            messageItem: _messageItem, sameNextIdFrom: messages[messages.length - 2 - index].idFrom == _messageItem.idFrom)
+                          messageItem: _messageItem,
+                          sameNextIdFrom: messages[messages.length - 2 - index].idFrom == _messageItem.idFrom,
+                        )
                       ],
                     );
                   }

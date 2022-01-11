@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -72,13 +73,14 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
                     :
                     // If the logged user is a BaseUser, show only the name of the peer BaseUser
                     "${chatViewModel.currentChat.value!.peerUser!.name}",
-                circleAvatar: CircleAvatar(backgroundColor: Colors.transparent, child: Icon(Icons.account_circle, size: 40, color: Colors.white)),
+                circleAvatar: CircleAvatar(
+                    radius: 3.1.h, backgroundColor: Colors.transparent, child: Icon(Icons.account_circle, size: 45, color: Colors.white)),
               )
             :
             // If the peer user is an Expert, show his/her profile photo as a network avatar and the full name
             ChatTopBar.networkAvatar(
                 text: "${chatViewModel.currentChat.value!.peerUser!.fullName}",
-                networkAvatar: NetworkAvatar(img: chatViewModel.currentChat.value!.peerUser!.data["profilePhoto"] as String, radius: 20.0),
+                networkAvatar: NetworkAvatar(img: chatViewModel.currentChat.value!.peerUser!.data["profilePhoto"] as String, radius: 3.2.h),
               ),
         Expanded(
           child: Container(

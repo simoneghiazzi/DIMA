@@ -20,13 +20,7 @@ class BaseUserHomePageBody extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Header(),
-          Expanded(
-            child: Background(
-              child: Column(
-                children: [Spacer(), HomePageGrid(), Spacer()],
-              ),
-            ),
-          ),
+          Expanded(child: Background(child: HomePageGrid()) ),
         ],
       ),
     );

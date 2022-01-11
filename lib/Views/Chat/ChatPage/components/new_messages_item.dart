@@ -8,11 +8,12 @@ import 'package:sApport/Views/Chat/ChatPage/components/message_list_constructor.
 /// It takes the [counter] from the ListView builder that represents the number of new messages.
 class NewMessagesItem extends StatelessWidget {
   final int counter;
+  final bool sameNextIdFrom;
 
   /// New messages item of the [MessageListConstructor].
   ///
   /// It takes the [counter] from the ListView builder that represents the number of new messages.
-  const NewMessagesItem({Key? key, required this.counter}) : super(key: key);
+  const NewMessagesItem({Key? key, required this.counter, required this.sameNextIdFrom}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class NewMessagesItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          margin: EdgeInsets.only(top: 20.0),
+          margin: EdgeInsets.only(bottom: sameNextIdFrom ? 20.0 : 5.0, top: 20.0),
           padding: EdgeInsets.only(left: 15, right: 15),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

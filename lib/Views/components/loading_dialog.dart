@@ -2,6 +2,7 @@ import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Views/Utils/constants.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 
 /// It is used during loading and it shows and hide a dialog with a circular progress indicator and
@@ -20,18 +21,18 @@ class LoadingDialog {
             backgroundColor: Colors.white,
             children: <Widget>[
               Center(
-                child: Column(
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(
-                      height: 20,
-                      width: 20,
-                    ),
-                    Text(
-                      text,
-                      style: TextStyle(color: kPrimaryColor),
-                    )
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 3.h),
+                      Text(
+                        text,
+                        style: TextStyle(color: kPrimaryColor, fontSize: 13.5.sp),
+                      )
+                    ],
+                  ),
                 ),
               )
             ],

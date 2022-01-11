@@ -77,9 +77,10 @@ class _LoginBodyState extends State<LoginBody> {
                           inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder(borderRadius: BorderRadius.circular(25))),
                         ),
                         child: FormBlocListener<LoginForm, String, String>(
-                          onSuccess: (context, state) {
+                          onSuccess: (context, state) async {
                             LoadingDialog.show(context);
-                            authViewModel.logIn(loginForm.emailText.value, loginForm.passwordText.value);
+                            await authViewModel.logIn(loginForm.emailText.value, loginForm.passwordText.value);
+                            LoadingDialog.hide(context);
                           },
                           child: Column(
                             children: <Widget>[
@@ -90,6 +91,7 @@ class _LoginBodyState extends State<LoginBody> {
                                 textCapitalization: TextCapitalization.none,
                                 keyboardType: TextInputType.emailAddress,
                               ),
+                              SizedBox(height: 2.h),
                               FormTextField(
                                 textFieldBloc: loginForm.passwordText,
                                 hintText: "Password",
@@ -97,14 +99,14 @@ class _LoginBodyState extends State<LoginBody> {
                                 suffixButton: SuffixButton.obscureText,
                                 textCapitalization: TextCapitalization.none,
                               ),
-                              SizedBox(height: 2.h),
+                              SizedBox(height: 3.h),
                               // Forgot Password Button
                               GestureDetector(
                                 onTap: () {
                                   FocusScope.of(context).unfocus();
                                   routerDelegate.pushPage(name: ForgotPasswordScreen.route);
                                 },
-                                child: Text("Forgot Password?", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 10.sp)),
+                                child: Text("Forgot Password?", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 12.sp)),
                               ),
                               SizedBox(height: 5.h),
                               // Login Button
@@ -151,8 +153,8 @@ class _LoginBodyState extends State<LoginBody> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don't have an account? ", style: TextStyle(color: kPrimaryColor, fontSize: 12.sp)),
-                    Text("Sign Up", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 12.5.sp)),
+                    Text("Don't have an account? ", style: TextStyle(color: kPrimaryColor, fontSize: 13.sp)),
+                    Text("Sign Up", style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 13.5.sp)),
                   ],
                 ),
                 onTap: () {
@@ -172,7 +174,9 @@ class _LoginBodyState extends State<LoginBody> {
   /// It remove the current auth message if it is present and then pop the page.
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     authViewModel.clearAuthMessage();
-    routerDelegate.pop();
+    if (!routerDelegate.hasDialog) {
+      routerDelegate.pop();
+    }
     return true;
   }
 

@@ -43,29 +43,28 @@ class TopBar extends StatelessWidget {
       child: SafeArea(
         child: Container(
           decoration: BoxDecoration(color: kPrimaryColor),
-          height: 10.h,
+          height: 9.5.h,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               if (back) ...[
-                Card(
-                  color: kPrimaryColor,
-                  shadowColor: Colors.transparent,
-                  child: IconButton(
-                    icon: Icon(backIcon, color: Colors.white),
-                    onPressed: () {
-                      FocusScope.of(context).unfocus();
-                      routerDelegate.pop();
-                      if (onBack != null) {
-                        onBack!();
-                      }
-                    },
+                Container(
+                  child: InkWell(
+                    child: InkResponse(
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                        routerDelegate.pop();
+                        if (onBack != null) {
+                          onBack!();
+                        }
+                      },
+                      child: Container(padding: EdgeInsets.only(left: 2.5.w, right: 2.5.w), child: Icon(backIcon, color: Colors.white, size: 25)),
+                    ),
                   ),
                 ),
               ] else ...[
                 SizedBox(width: 4.w),
               ],
-              SizedBox(width: 1.w),
               Container(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -76,7 +75,7 @@ class TopBar extends StatelessWidget {
               ),
               Spacer(),
               Container(
-                padding: EdgeInsets.only(right: 10),
+                padding: EdgeInsets.only(right: 15),
                 child: Row(
                   children: [
                     if (buttons != null) ...[for (int i = 0; i < buttons!.length; i++) buttons![i]]

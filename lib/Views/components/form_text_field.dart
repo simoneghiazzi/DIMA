@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:sApport/Views/Utils/constants.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 
 /// Text field used inside the forms.
 ///
@@ -34,12 +35,14 @@ class FormTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: TextFieldBlocBuilder(
+        textStyle: TextStyle(fontSize: 13.5.sp),
         textFieldBloc: textFieldBloc,
         suffixButton: suffixButton,
         textCapitalization: textCapitalization,
         keyboardType: keyboardType,
         onChanged: onChanged,
         decoration: InputDecoration(
+          errorStyle: TextStyle(fontSize: 11.sp),
           filled: true,
           fillColor: kPrimaryLightColor.withAlpha(100),
           labelText: hintText,

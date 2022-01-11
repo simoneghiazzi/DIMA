@@ -66,7 +66,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                 color: kPrimaryColor,
                 child: SafeArea(
                   child: Container(
-                    height: 18.h,
+                    height: 20.h,
                     color: kPrimaryColor,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,13 +89,13 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
         ),
         // Profile photo
         Container(
-          transform: Matrix4.translationValues(0.0, -75.0, 0.0),
-          child: NetworkAvatar(img: widget.expert.profilePhoto, radius: 75.0),
+          transform: Matrix4.translationValues(0.0, -12.h, 0.0),
+          child: NetworkAvatar(img: widget.expert.profilePhoto, radius: 12.h),
         ),
         // Full Name
         Container(
-          transform: Matrix4.translationValues(0.0, -50.0, 0.0),
-          width: 70.w,
+          transform: Matrix4.translationValues(0.0, -9.h, 0.0),
+          padding: EdgeInsets.only(left: 12.5.w, right: 12.5.w, top: 2, bottom: 2),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: kPrimaryLightColor),
           child: Text(
             widget.expert.fullName.toUpperCase(),
@@ -105,7 +105,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
         ),
         Expanded(
           child: Container(
-            transform: Matrix4.translationValues(0.0, -40.0, 0.0),
+            transform: Matrix4.translationValues(0.0, -7.h, 0.0),
             padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 1.w),
             child: ScrollConfiguration(
               behavior: MyBehavior(),
@@ -115,7 +115,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                   // Email
                   Row(
                     children: [
-                      Icon(Icons.mail, color: kPrimaryColor),
+                      Icon(Icons.mail, color: kPrimaryColor, size: 30),
                       SizedBox(width: 5.w),
                       Flexible(
                         child: GestureDetector(
@@ -149,7 +149,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                   // Phone Number
                   Row(
                     children: <Widget>[
-                      Icon(Icons.phone, color: kPrimaryColor),
+                      Icon(Icons.phone, color: kPrimaryColor, size: 30),
                       SizedBox(width: 5.w),
                       GestureDetector(
                         child: Text(widget.expert.phoneNumber, style: TextStyle(color: kPrimaryColor, fontSize: 13.sp, fontWeight: FontWeight.bold)),
@@ -163,7 +163,7 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                   // Address
                   Row(
                     children: <Widget>[
-                      Icon(Icons.house, color: kPrimaryColor),
+                      Icon(Icons.house, color: kPrimaryColor, size: 30),
                       SizedBox(width: 5.w),
                       Flexible(
                         child: GestureDetector(
@@ -185,7 +185,6 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
             ? Column(
                 children: [
                   RoundedButton(
-                    width: 40.w,
                     text: "Get In Touch",
                     onTap: () {
                       chatViewModel.addNewChat(ExpertChat(peerUser: widget.expert));

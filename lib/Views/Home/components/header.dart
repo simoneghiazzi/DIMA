@@ -18,12 +18,13 @@ class Header extends StatelessWidget {
         child: SafeArea(
           child: Container(
             color: kPrimaryColor,
-            height: 10.h,
+            height: 9.5.h,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 3.0.w),
+                  padding: EdgeInsets.only(left: 5.0.w),
                   child: Text(
                     "sApport",
                     textAlign: TextAlign.center,

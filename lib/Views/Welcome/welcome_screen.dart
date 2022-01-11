@@ -7,6 +7,7 @@ import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
+import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/Views/Welcome/components/welcome_body.dart';
 
@@ -80,7 +81,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with WidgetsBindingObserv
         routerDelegate.pop();
       }
     } else {
-      if (chatViewModel.currentChat.value != null) {
+      if (chatViewModel.currentChat.value != null && routerDelegate.getLastRoute() != ExpertProfileScreen.route) {
         routerDelegate.pushPage(name: ChatPageScreen.route);
       } else if (reportViewModel.currentReport.value != null) {
         routerDelegate.pushPage(name: ReportDetailsScreen.route);

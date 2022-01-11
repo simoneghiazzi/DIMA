@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Views/Utils/constants.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/Settings/user_settings_screen.dart';
@@ -64,6 +65,8 @@ class _ExpertHomePageScreenState extends State<ExpertHomePageScreen> {
       resizeToAvoidBottomInset: false,
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
+        iconSize: 3.5.h,
+        selectedFontSize: 11.sp,
         currentIndex: _currentIndex,
         showSelectedLabels: true,
         showUnselectedLabels: false,

@@ -24,7 +24,7 @@ class SocialIcon extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 20),
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(border: Border.all(width: 1, color: kPrimaryLightColor), shape: BoxShape.circle),
-        child: Image.asset(iconSrc, height: 40, width: 40),
+        child: Image.asset(iconSrc, height: 45, width: 45),
       ),
     );
   }

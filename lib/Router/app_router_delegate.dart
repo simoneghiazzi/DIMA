@@ -157,9 +157,9 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
   void replaceAll(List<RouteSettings> routeSettingsList) {
     if (routeSettingsList.isNotEmpty) {
       _pages.clear();
-      routeSettingsList.forEach((item) {
+      for (var item in routeSettingsList) {
         _addPage(name: item.name!, arguments: item.arguments);
-      });
+      }
       notifyListeners();
     }
   }
@@ -168,15 +168,15 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
   ///
   /// The provided [start] must be valid. [start] is valid if 0 < start ≤ [length].
   void replaceAllButNumber(int start, {List<RouteSettings> routeSettingsList = const []}) {
-    if (start <= 0 || start >= _pages.length) {
+    if (start <= 0 || start > _pages.length) {
       return;
     }
     if (_pages.isNotEmpty) {
       _pages.removeRange(start, _pages.length);
     }
-    routeSettingsList.forEach((item) {
+    for (var item in routeSettingsList) {
       _addPage(name: item.name!, arguments: item.arguments);
-    });
+    }
     notifyListeners();
   }
 

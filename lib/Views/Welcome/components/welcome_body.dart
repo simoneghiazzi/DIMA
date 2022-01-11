@@ -145,7 +145,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                     ],
                   );
                 } else {
-                  return SizedBox(height: 5.h);
+                  return Container();
                 }
               },
             ),

@@ -71,107 +71,110 @@ class _DiaryBodyState extends State<DiaryBody> {
         valueListenable: diaryViewModel.diaryPages,
         builder: (context, List<DiaryPage> diaryPages, child) {
           return Stack(
-            children: <Widget>[
-              Header(),
-              Padding(
-                padding: EdgeInsets.only(top: 13.h),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(topRight: Radius.circular(10), topLeft: Radius.circular(10)),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Column(
-                      children: [
-                        // Calendar
-                        Expanded(
-                          child: SfCalendar(
-                            monthCellBuilder: monthCellBuilder,
-                            controller: _controller,
-                            initialSelectedDate: _selectedDayDetails?.date,
-                            todayHighlightColor: kPrimaryDarkColorTrasparent,
-                            dataSource: DiaryPageDataSource(diaryPages),
-                            headerStyle: CalendarHeaderStyle(
-                              textStyle: TextStyle(color: kPrimaryColor, fontSize: 22.sp, fontWeight: FontWeight.bold),
-                            ),
-                            headerHeight: 7.5.h,
-                            headerDateFormat: " MMM yyyy",
-                            showDatePickerButton: true,
-                            viewHeaderStyle: ViewHeaderStyle(dayTextStyle: TextStyle(color: kPrimaryColor)),
-                            view: CalendarView.month,
-                            onTap: (details) => setState(() => _selectedDayDetails = details),
-                            monthViewSettings: MonthViewSettings(appointmentDisplayMode: MonthAppointmentDisplayMode.none),
-                          ),
-                        ),
-                        // If the _selected day details is not null, show the Agenda
-                        if (_selectedDayDetails != null) ...[
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border(top: BorderSide(color: kPrimaryDarkColorTrasparent, width: 0.5)),
-                              color: kBackgroundColor,
-                            ),
-                            padding: EdgeInsets.only(left: 10, right: 10, top: 5),
-                            height: 14.h,
-                            child: Container(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 10.w,
-                                    padding: EdgeInsets.only(top: 5),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          DateFormat("EEE").format(_selectedDayDetails!.date!).toUpperCase(),
-                                          style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 8.sp),
-                                        ),
-                                        Text(
-                                          DateFormat("dd").format(_selectedDayDetails!.date!),
-                                          style: TextStyle(color: kPrimaryColor, fontSize: 18.sp),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // If the selected day has a diary page, show the appointment builder
-                                  if (diaryPages.isNotEmpty && _selectedDayDetails!.appointments!.isNotEmpty) ...[
-                                    // If today there is a note, the "+" button is not shown and so expand the
-                                    // appointment builder
-                                    if (Utils.isToday(diaryPages.last.dateTime)) ...[
-                                      Expanded(
-                                        child: appointmentBuilder(),
-                                      ),
-                                    ] else ...[
-                                      // Otherwise sets a max width in order to have the space for showing the "+" button
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(right: 80),
-                                          child: appointmentBuilder(),
-                                        ),
-                                      )
-                                    ]
-                                  ] else ...[
-                                    // Otherwise show the "No diary page" text
-                                    Expanded(
-                                      child: Container(
-                                        padding: EdgeInsets.only(left: 15, top: 5),
-                                        child: Text(
-                                          "No diary page.",
-                                          style: TextStyle(color: kPrimaryGreyColor, fontSize: 13.sp),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ],
+            children: [
+              Column(
+                children: <Widget>[
+                  Header(),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(topRight: Radius.circular(10), topLeft: Radius.circular(10)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Column(
+                          children: [
+                            // Calendar
+                            Expanded(
+                              child: SfCalendar(
+                                monthCellBuilder: monthCellBuilder,
+                                controller: _controller,
+                                initialSelectedDate: _selectedDayDetails?.date,
+                                todayHighlightColor: kPrimaryDarkColorTrasparent,
+                                dataSource: DiaryPageDataSource(diaryPages),
+                                headerStyle: CalendarHeaderStyle(
+                                  textStyle: TextStyle(color: kPrimaryColor, fontSize: 22.sp, fontWeight: FontWeight.bold),
+                                ),
+                                headerHeight: 7.5.h,
+                                headerDateFormat: " MMM yyyy",
+                                showDatePickerButton: true,
+                                viewHeaderStyle: ViewHeaderStyle(dayTextStyle: TextStyle(color: kPrimaryColor)),
+                                view: CalendarView.month,
+                                onTap: (details) => setState(() => _selectedDayDetails = details),
+                                monthViewSettings: MonthViewSettings(appointmentDisplayMode: MonthAppointmentDisplayMode.none),
                               ),
                             ),
-                          ),
-                        ],
-                      ],
+                            // If the _selected day details is not null, show the Agenda
+                            if (_selectedDayDetails != null) ...[
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border(top: BorderSide(color: kPrimaryDarkColorTrasparent, width: 0.5)),
+                                  color: kBackgroundColor,
+                                ),
+                                padding: EdgeInsets.only(left: 2.w, right: 2.w, top: 5),
+                                height: 13.h,
+                                child: Container(
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 10.w,
+                                        padding: EdgeInsets.only(top: 5),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              DateFormat("EEE").format(_selectedDayDetails!.date!).toUpperCase(),
+                                              style: TextStyle(color: kPrimaryDarkColorTrasparent, fontSize: 8.sp),
+                                            ),
+                                            Text(
+                                              DateFormat("dd").format(_selectedDayDetails!.date!),
+                                              style: TextStyle(color: kPrimaryColor, fontSize: 18.sp),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      // If the selected day has a diary page, show the appointment builder
+                                      if (diaryPages.isNotEmpty && _selectedDayDetails!.appointments!.isNotEmpty) ...[
+                                        // If today there is a note, the "+" button is not shown and so expand the
+                                        // appointment builder
+                                        if (Utils.isToday(diaryPages.last.dateTime)) ...[
+                                          Expanded(
+                                            child: appointmentBuilder(),
+                                          ),
+                                        ] else ...[
+                                          // Otherwise sets a max width in order to have the space for showing the "+" button
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(right: 80),
+                                              child: appointmentBuilder(),
+                                            ),
+                                          )
+                                        ]
+                                      ] else ...[
+                                        // Otherwise show the "No diary page" text
+                                        Expanded(
+                                          child: Container(
+                                            padding: EdgeInsets.only(left: 15, top: 5),
+                                            child: Text(
+                                              "No diary page.",
+                                              style: TextStyle(color: kPrimaryGreyColor, fontSize: 13.sp),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
               // If today there isn't a diary page, show the '+' button
               if (diaryPages.isEmpty || !Utils.isToday(diaryPages.last.dateTime)) ...[
@@ -179,7 +182,7 @@ class _DiaryBodyState extends State<DiaryBody> {
                   alignment: Alignment.lerp(Alignment.bottomRight, Alignment.center, 0.1)!,
                   child: FloatingActionButton(
                     onPressed: () {
-                      diaryViewModel.editPage();
+                      diaryViewModel.addNewPage();
                       routerDelegate.pushPage(name: DiaryPageScreen.route);
                     },
                     materialTapTargetSize: MaterialTapTargetSize.padded,
@@ -209,8 +212,8 @@ class _DiaryBodyState extends State<DiaryBody> {
       },
       child: Container(
         height: 7.h,
-        margin: EdgeInsets.only(left: 10),
-        padding: EdgeInsets.only(left: 10, right: 10),
+        margin: EdgeInsets.only(left: 2.w),
+        padding: EdgeInsets.only(left: 3.w, right: 3.w),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: _selectedDayDetails!.appointments?.first.favourite ? kPrimaryGoldenColor : kPrimaryColor,

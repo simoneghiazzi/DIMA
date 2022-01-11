@@ -71,8 +71,11 @@ class BaseUserInfoBody extends StatelessWidget {
                           child: Column(
                             children: <Widget>[
                               FormTextField(textFieldBloc: baseUserSignUpForm.nameText, hintText: "First name", prefixIconData: Icons.text_fields),
+                              SizedBox(height: 1.h),
                               FormTextField(textFieldBloc: baseUserSignUpForm.surnameText, hintText: "Last name", prefixIconData: Icons.text_fields),
+                              SizedBox(height: 1.h),
                               DateTimeFieldBlocBuilder(
+                                textStyle: TextStyle(fontSize: 13.5.sp),
                                 dateTimeFieldBloc: baseUserSignUpForm.birthDate,
                                 format: DateFormat.yMEd(),
                                 initialDate: DateTime.now(),
@@ -82,8 +85,9 @@ class BaseUserInfoBody extends StatelessWidget {
                                   filled: true,
                                   fillColor: kPrimaryLightColor.withAlpha(100),
                                   labelText: "Birth date",
-                                  labelStyle: TextStyle(color: kPrimaryColor),
+                                  labelStyle: TextStyle(color: kPrimaryColor, fontSize: 13.5.sp),
                                   prefixIcon: Icon(Icons.date_range, color: kPrimaryColor),
+                                  errorStyle: TextStyle(fontSize: 11.sp),
                                 ),
                               ),
                               SizedBox(height: 4.h),

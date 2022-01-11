@@ -28,7 +28,7 @@ class ChatTextInput extends StatelessWidget {
 
     return Container(
       color: Colors.transparent,
-      padding: EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 5.0),
+      padding: EdgeInsets.only(bottom: 1.1.h, left: 3.5.w, right: 3.5.w, top: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -44,15 +44,17 @@ class ChatTextInput extends StatelessWidget {
               ),
               padding: EdgeInsets.only(left: 20, right: 10),
               child: TextField(
+                style: TextStyle(fontSize: 13.5.sp),
                 textCapitalization: TextCapitalization.sentences,
                 textAlignVertical: TextAlignVertical.top,
                 maxLines: 5,
                 minLines: 1,
                 controller: chatViewModel.contentTextCtrl,
                 decoration: InputDecoration(
+                  hintText: "Type your message...",
+                  hintStyle: TextStyle(fontSize: 13.5.sp),
                   fillColor: kPrimaryColor,
                   border: InputBorder.none,
-                  hintText: "Type your message...",
                 ),
               ),
             ),
