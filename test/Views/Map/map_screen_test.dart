@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/Map/place.dart';
@@ -13,7 +13,12 @@ import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
+import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
+import 'package:sApport/ViewModel/auth_view_model.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
+import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sizer/sizer.dart';
 
@@ -23,6 +28,7 @@ import '../../test_helper.dart';
 import '../../view_model.mocks.dart';
 import '../widget_test_helper.dart';
 
+@GenerateMocks([ChatViewModel, MapViewModel, DiaryViewModel, ReportViewModel, AuthViewModel, UserViewModel])
 void main() {
   final mockMapviewModel = MockMapViewModel();
   final mockRouterDelegate = MockAppRouterDelegate();
@@ -41,7 +47,7 @@ void main() {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AppRouterDelegate>(create: (_) => mockRouterDelegate),
-        Provider<MapViewModel>(create: (context) => mockMapviewModel, lazy: false),
+        ChangeNotifierProvider<MapViewModel>(create: (_) => mockMapviewModel),
       ],
       child: Sizer(builder: (context, orientation, deviceType) {
         return child;
@@ -83,13 +89,7 @@ void main() {
 
   when(mockMapviewModel.experts).thenAnswer((_) => testHelper.expertsLinkedHashMap);
 
-  when(mockMapviewModel.positionPermission).thenAnswer((_) => PermissionStatus.denied);
-
-  when(mockMapviewModel.askPermission()).thenAnswer((_) => Future<bool>.value(false));
-
   when(mockMapviewModel.autocompletedPlaces).thenAnswer((_) => Stream<List<Place>?>.value([]));
-
-  //when(BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 1, size: Size(2, 2)), "assets/icons/pin.png")).thenAnswer((realInvocation) => null)
 
   final TextEditingController mockSearchTextCtrl = TextEditingController();
   when(mockMapviewModel.searchTextCtrl).thenAnswer((_) => mockSearchTextCtrl);

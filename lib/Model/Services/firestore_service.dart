@@ -62,7 +62,10 @@ class FirestoreService {
   /// It takes a [user] and updates the specified [field] with the [newValue] into the DB
   Future<void> updateUserFieldIntoDB(User user, String field, newValue) async {
     var userReference = _firestore.collection(user.collection).doc(user.id);
-    return userReference.update({field: newValue}).then((value) => log("User updated")).catchError((error) => log("User updated"));
+    return userReference
+        .update({field: newValue})
+        .then((value) => log("User field $field updated"))
+        .catchError((error) => log("Error in updating the user field $field"));
   }
 
   /// Get the list of all the docs in the [Expert] collection from the DB

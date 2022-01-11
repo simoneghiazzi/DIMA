@@ -10,6 +10,7 @@ import 'package:sApport/Model/Chat/expert_chat.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
+import 'package:sApport/Model/Services/map_service.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
@@ -53,12 +54,13 @@ void main() {
     profilePhoto: profilePhoto,
   );
 
-  when(mockMapViewModel.currentExpert.value).thenAnswer((_) => expert);
+  when(mockMapViewModel.currentExpert).thenAnswer((_) => ValueNotifier(expert));
 
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(FirestoreService(FakeFirebaseFirestore()));
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(MockFirebaseAuth()));
   getIt.registerSingleton<UserService>(UserService());
+  getIt.registerSingleton<MapService>(MapService());
 
   group("Correct rendering: ", () {
     testWidgets("Testing the correct render of an expert's profile page", (WidgetTester tester) async {

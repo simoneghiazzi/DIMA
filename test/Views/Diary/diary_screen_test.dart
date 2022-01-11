@@ -176,6 +176,7 @@ void main() {
       /// Mock User Service responses
       when(mockDiaryViewModel.diaryPages).thenAnswer((_) => ValueNotifier([]));
       when(mockDiaryViewModel.currentDiaryPage).thenAnswer((_) => ValueNotifier(null));
+      when(mockDiaryViewModel.addNewPage()).thenAnswer((_) {});
       when(mockDiaryViewModel.isEditing).thenAnswer((_) => true);
 
       await tester.pumpWidget(getMultiProvider(child: MaterialApp(home: DiaryBody())));

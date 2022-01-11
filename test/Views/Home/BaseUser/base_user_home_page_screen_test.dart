@@ -63,11 +63,9 @@ void main() async {
       await tester.pumpWidget(getMultiProvider(child: MaterialApp(home: BaseUserHomePageBody())));
 
       /// Verify that the main elements of the user's home page are found
-      final spacerFinder = find.byType(Spacer);
       final gridFinder = find.byType(Table);
       final dashCardFinder = find.byType(DashCard);
 
-      expect(spacerFinder, findsNWidgets(2));
       expect(gridFinder, findsOneWidget);
       expect(dashCardFinder, findsNWidgets(4));
     });

@@ -3,28 +3,27 @@
 // Do not manually edit this file.
 
 import 'dart:async' as _i8;
-import 'dart:collection' as _i4;
+import 'dart:collection' as _i3;
 import 'dart:ui' as _i9;
 
-import 'package:flutter/widgets.dart' as _i3;
-import 'package:geolocator/geolocator.dart' as _i19;
+import 'package:flutter/material.dart' as _i2;
+import 'package:geolocator/geolocator.dart' as _i12;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:permission_handler/permission_handler.dart' as _i17;
-import 'package:sApport/Model/Chat/chat.dart' as _i15;
-import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart' as _i7;
-import 'package:sApport/Model/DBItems/BaseUser/report.dart' as _i11;
-import 'package:sApport/Model/DBItems/Expert/expert.dart' as _i18;
-import 'package:sApport/Model/DBItems/user.dart' as _i13;
-import 'package:sApport/Model/Map/place.dart' as _i5;
-import 'package:sApport/ViewModel/auth_view_model.dart' as _i12;
-import 'package:sApport/ViewModel/BaseUser/Diary/diary_form.dart' as _i2;
-import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart' as _i6;
-import 'package:sApport/ViewModel/BaseUser/report_view_model.dart' as _i10;
-import 'package:sApport/ViewModel/chat_view_model.dart' as _i14;
-import 'package:sApport/ViewModel/map_view_model.dart' as _i16;
-import 'package:sApport/ViewModel/user_view_model.dart' as _i20;
+import 'package:sApport/Model/Chat/chat.dart' as _i7;
+import 'package:sApport/Model/DBItems/BaseUser/diary_page.dart' as _i14;
+import 'package:sApport/Model/DBItems/BaseUser/report.dart' as _i16;
+import 'package:sApport/Model/DBItems/Expert/expert.dart' as _i11;
+import 'package:sApport/Model/DBItems/user.dart' as _i18;
+import 'package:sApport/Model/Map/place.dart' as _i4;
+import 'package:sApport/ViewModel/auth_view_model.dart' as _i17;
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_form.dart' as _i5;
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart' as _i13;
+import 'package:sApport/ViewModel/BaseUser/report_view_model.dart' as _i15;
+import 'package:sApport/ViewModel/chat_view_model.dart' as _i6;
+import 'package:sApport/ViewModel/map_view_model.dart' as _i10;
+import 'package:sApport/ViewModel/user_view_model.dart' as _i19;
 import 'package:sApport/Views/Signup/BaseUser/components/form/base_user_signup_form.dart'
-    as _i21;
+    as _i20;
 
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: avoid_setters_without_getters
@@ -35,277 +34,61 @@ import 'package:sApport/Views/Signup/BaseUser/components/form/base_user_signup_f
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 
-class _FakeDiaryForm_0 extends _i1.Fake implements _i2.DiaryForm {}
+class _FakeTextEditingController_0 extends _i1.Fake
+    implements _i2.TextEditingController {}
 
-class _FakeTextEditingController_1 extends _i1.Fake
-    implements _i3.TextEditingController {}
-
-class _FakeValueNotifier_2<T> extends _i1.Fake implements _i3.ValueNotifier<T> {
+class _FakeValueNotifier_1<T> extends _i1.Fake implements _i2.ValueNotifier<T> {
 }
 
-class _FakeLinkedHashMap_3<K, V> extends _i1.Fake
-    implements _i4.LinkedHashMap<K, V> {}
+class _FakeLinkedHashMap_2<K, V> extends _i1.Fake
+    implements _i3.LinkedHashMap<K, V> {}
 
-class _FakePlace_4 extends _i1.Fake implements _i5.Place {}
+class _FakePlace_3 extends _i1.Fake implements _i4.Place {}
 
-/// A class which mocks [DiaryViewModel].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockDiaryViewModel extends _i1.Mock implements _i6.DiaryViewModel {
-  MockDiaryViewModel() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i2.DiaryForm get diaryForm =>
-      (super.noSuchMethod(Invocation.getter(#diaryForm),
-          returnValue: _FakeDiaryForm_0()) as _i2.DiaryForm);
-  @override
-  set diaryForm(_i2.DiaryForm? _diaryForm) =>
-      super.noSuchMethod(Invocation.setter(#diaryForm, _diaryForm),
-          returnValueForMissingStub: null);
-  @override
-  _i3.TextEditingController get titleTextCtrl =>
-      (super.noSuchMethod(Invocation.getter(#titleTextCtrl),
-              returnValue: _FakeTextEditingController_1())
-          as _i3.TextEditingController);
-  @override
-  _i3.TextEditingController get contentTextCtrl =>
-      (super.noSuchMethod(Invocation.getter(#contentTextCtrl),
-              returnValue: _FakeTextEditingController_1())
-          as _i3.TextEditingController);
-  @override
-  _i3.ValueNotifier<_i7.DiaryPage?> get currentDiaryPage =>
-      (super.noSuchMethod(Invocation.getter(#currentDiaryPage),
-              returnValue: _FakeValueNotifier_2<_i7.DiaryPage?>())
-          as _i3.ValueNotifier<_i7.DiaryPage?>);
-  @override
-  _i3.ValueNotifier<List<_i7.DiaryPage>> get diaryPages =>
-      (super.noSuchMethod(Invocation.getter(#diaryPages),
-              returnValue: _FakeValueNotifier_2<List<_i7.DiaryPage>>())
-          as _i3.ValueNotifier<List<_i7.DiaryPage>>);
-  @override
-  bool get isEditing =>
-      (super.noSuchMethod(Invocation.getter(#isEditing), returnValue: false)
-          as bool);
-  @override
-  _i8.Stream<bool> get isPageAdded =>
-      (super.noSuchMethod(Invocation.getter(#isPageAdded),
-          returnValue: Stream<bool>.empty()) as _i8.Stream<bool>);
-  @override
-  bool get hasListeners =>
-      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
-          as bool);
-  @override
-  _i8.Future<void> submitPage() =>
-      (super.noSuchMethod(Invocation.method(#submitPage, []),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  _i8.Future<void> updatePage() =>
-      (super.noSuchMethod(Invocation.method(#updatePage, []),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  _i8.Future<void> setFavourite(bool? isFavourite) =>
-      (super.noSuchMethod(Invocation.method(#setFavourite, [isFavourite]),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  _i8.Future<void> loadDiaryPages() =>
-      (super.noSuchMethod(Invocation.method(#loadDiaryPages, []),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  void editPage() => super.noSuchMethod(Invocation.method(#editPage, []),
-      returnValueForMissingStub: null);
-  @override
-  void setCurrentDiaryPage(_i7.DiaryPage? diaryPage) =>
-      super.noSuchMethod(Invocation.method(#setCurrentDiaryPage, [diaryPage]),
-          returnValueForMissingStub: null);
-  @override
-  void resetCurrentDiaryPage() =>
-      super.noSuchMethod(Invocation.method(#resetCurrentDiaryPage, []),
-          returnValueForMissingStub: null);
-  @override
-  void resetViewModel() =>
-      super.noSuchMethod(Invocation.method(#resetViewModel, []),
-          returnValueForMissingStub: null);
-  @override
-  void addListener(_i9.VoidCallback? listener) =>
-      super.noSuchMethod(Invocation.method(#addListener, [listener]),
-          returnValueForMissingStub: null);
-  @override
-  void removeListener(_i9.VoidCallback? listener) =>
-      super.noSuchMethod(Invocation.method(#removeListener, [listener]),
-          returnValueForMissingStub: null);
-  @override
-  void dispose() => super.noSuchMethod(Invocation.method(#dispose, []),
-      returnValueForMissingStub: null);
-  @override
-  void notifyListeners() =>
-      super.noSuchMethod(Invocation.method(#notifyListeners, []),
-          returnValueForMissingStub: null);
-}
-
-/// A class which mocks [ReportViewModel].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockReportViewModel extends _i1.Mock implements _i10.ReportViewModel {
-  MockReportViewModel() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i3.ValueNotifier<_i11.Report?> get currentReport =>
-      (super.noSuchMethod(Invocation.getter(#currentReport),
-              returnValue: _FakeValueNotifier_2<_i11.Report?>())
-          as _i3.ValueNotifier<_i11.Report?>);
-  @override
-  _i4.LinkedHashMap<String, _i11.Report> get reports =>
-      (super.noSuchMethod(Invocation.getter(#reports),
-              returnValue: _FakeLinkedHashMap_3<String, _i11.Report>())
-          as _i4.LinkedHashMap<String, _i11.Report>);
-  @override
-  _i8.Future<void> submitReport(String? category, String? description) => (super
-      .noSuchMethod(Invocation.method(#submitReport, [category, description]),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  _i8.Future<void> loadReports() =>
-      (super.noSuchMethod(Invocation.method(#loadReports, []),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  void setCurrentReport(_i11.Report? report) =>
-      super.noSuchMethod(Invocation.method(#setCurrentReport, [report]),
-          returnValueForMissingStub: null);
-  @override
-  void resetCurrentReport() =>
-      super.noSuchMethod(Invocation.method(#resetCurrentReport, []),
-          returnValueForMissingStub: null);
-  @override
-  void resetViewModel() =>
-      super.noSuchMethod(Invocation.method(#resetViewModel, []),
-          returnValueForMissingStub: null);
-}
-
-/// A class which mocks [AuthViewModel].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockAuthViewModel extends _i1.Mock implements _i12.AuthViewModel {
-  MockAuthViewModel() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i8.Stream<bool> get isUserLogged =>
-      (super.noSuchMethod(Invocation.getter(#isUserLogged),
-          returnValue: Stream<bool>.empty()) as _i8.Stream<bool>);
-  @override
-  _i8.Stream<bool> get isUserCreated =>
-      (super.noSuchMethod(Invocation.getter(#isUserCreated),
-          returnValue: Stream<bool>.empty()) as _i8.Stream<bool>);
-  @override
-  _i8.Stream<String?> get authMessage =>
-      (super.noSuchMethod(Invocation.getter(#authMessage),
-          returnValue: Stream<String?>.empty()) as _i8.Stream<String?>);
-  @override
-  _i8.Future<void> logIn(String? email, String? password) =>
-      (super.noSuchMethod(Invocation.method(#logIn, [email, password]),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  _i8.Future<void> signUpUser(
-          String? email, String? password, _i13.User? newUser) =>
-      (super.noSuchMethod(
-          Invocation.method(#signUpUser, [email, password, newUser]),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  _i8.Future<void> logInWithGoogle({bool? link = false}) => (super.noSuchMethod(
-      Invocation.method(#logInWithGoogle, [], {#link: link}),
-      returnValue: Future<void>.value(),
-      returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  _i8.Future<void> logInWithFacebook({bool? link = false}) => (super
-      .noSuchMethod(Invocation.method(#logInWithFacebook, [], {#link: link}),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  void resetPassword(String? email) =>
-      super.noSuchMethod(Invocation.method(#resetPassword, [email]),
-          returnValueForMissingStub: null);
-  @override
-  String authProvider() =>
-      (super.noSuchMethod(Invocation.method(#authProvider, []), returnValue: '')
-          as String);
-  @override
-  _i8.Future<bool> hasPasswordAuthentication(String? email) => (super
-      .noSuchMethod(Invocation.method(#hasPasswordAuthentication, [email]),
-          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
-  @override
-  _i8.Future<void> logOut() =>
-      (super.noSuchMethod(Invocation.method(#logOut, []),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  void setNotification(_i13.User? loggedUser) =>
-      super.noSuchMethod(Invocation.method(#setNotification, [loggedUser]),
-          returnValueForMissingStub: null);
-  @override
-  _i8.Future<void> deleteUser(_i13.User? loggedUser) =>
-      (super.noSuchMethod(Invocation.method(#deleteUser, [loggedUser]),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  void clearAuthMessage() =>
-      super.noSuchMethod(Invocation.method(#clearAuthMessage, []),
-          returnValueForMissingStub: null);
-}
+class _FakeDiaryForm_4 extends _i1.Fake implements _i5.DiaryForm {}
 
 /// A class which mocks [ChatViewModel].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockChatViewModel extends _i1.Mock implements _i14.ChatViewModel {
+class MockChatViewModel extends _i1.Mock implements _i6.ChatViewModel {
   MockChatViewModel() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.TextEditingController get contentTextCtrl =>
+  _i2.TextEditingController get contentTextCtrl =>
       (super.noSuchMethod(Invocation.getter(#contentTextCtrl),
-              returnValue: _FakeTextEditingController_1())
-          as _i3.TextEditingController);
+              returnValue: _FakeTextEditingController_0())
+          as _i2.TextEditingController);
   @override
-  _i3.ValueNotifier<_i15.Chat?> get currentChat =>
+  _i2.ValueNotifier<_i7.Chat?> get currentChat =>
       (super.noSuchMethod(Invocation.getter(#currentChat),
-              returnValue: _FakeValueNotifier_2<_i15.Chat?>())
-          as _i3.ValueNotifier<_i15.Chat?>);
+              returnValue: _FakeValueNotifier_1<_i7.Chat?>())
+          as _i2.ValueNotifier<_i7.Chat?>);
   @override
-  _i3.ValueNotifier<_i4.LinkedHashMap<String, _i15.Chat>> get anonymousChats =>
+  _i2.ValueNotifier<_i3.LinkedHashMap<String, _i7.Chat>> get anonymousChats =>
       (super.noSuchMethod(Invocation.getter(#anonymousChats),
               returnValue:
-                  _FakeValueNotifier_2<_i4.LinkedHashMap<String, _i15.Chat>>())
-          as _i3.ValueNotifier<_i4.LinkedHashMap<String, _i15.Chat>>);
+                  _FakeValueNotifier_1<_i3.LinkedHashMap<String, _i7.Chat>>())
+          as _i2.ValueNotifier<_i3.LinkedHashMap<String, _i7.Chat>>);
   @override
-  _i3.ValueNotifier<_i4.LinkedHashMap<String, _i15.Chat>> get pendingChats =>
+  _i2.ValueNotifier<_i3.LinkedHashMap<String, _i7.Chat>> get pendingChats =>
       (super.noSuchMethod(Invocation.getter(#pendingChats),
               returnValue:
-                  _FakeValueNotifier_2<_i4.LinkedHashMap<String, _i15.Chat>>())
-          as _i3.ValueNotifier<_i4.LinkedHashMap<String, _i15.Chat>>);
+                  _FakeValueNotifier_1<_i3.LinkedHashMap<String, _i7.Chat>>())
+          as _i2.ValueNotifier<_i3.LinkedHashMap<String, _i7.Chat>>);
   @override
-  _i3.ValueNotifier<_i4.LinkedHashMap<String, _i15.Chat>> get expertsChats =>
+  _i2.ValueNotifier<_i3.LinkedHashMap<String, _i7.Chat>> get expertsChats =>
       (super.noSuchMethod(Invocation.getter(#expertsChats),
               returnValue:
-                  _FakeValueNotifier_2<_i4.LinkedHashMap<String, _i15.Chat>>())
-          as _i3.ValueNotifier<_i4.LinkedHashMap<String, _i15.Chat>>);
+                  _FakeValueNotifier_1<_i3.LinkedHashMap<String, _i7.Chat>>())
+          as _i2.ValueNotifier<_i3.LinkedHashMap<String, _i7.Chat>>);
   @override
-  _i3.ValueNotifier<_i4.LinkedHashMap<String, _i15.Chat>> get activeChats =>
+  _i2.ValueNotifier<_i3.LinkedHashMap<String, _i7.Chat>> get activeChats =>
       (super.noSuchMethod(Invocation.getter(#activeChats),
               returnValue:
-                  _FakeValueNotifier_2<_i4.LinkedHashMap<String, _i15.Chat>>())
-          as _i3.ValueNotifier<_i4.LinkedHashMap<String, _i15.Chat>>);
+                  _FakeValueNotifier_1<_i3.LinkedHashMap<String, _i7.Chat>>())
+          as _i2.ValueNotifier<_i3.LinkedHashMap<String, _i7.Chat>>);
   @override
   _i8.Stream<bool> get newRandomUser =>
       (super.noSuchMethod(Invocation.getter(#newRandomUser),
@@ -314,16 +97,6 @@ class MockChatViewModel extends _i1.Mock implements _i14.ChatViewModel {
   bool get hasListeners =>
       (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
           as bool);
-  @override
-  _i8.Future<void> _updateChattingWith() =>
-      (super.noSuchMethod(Invocation.method(#updateChattingWith, []),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
-  @override
-  _i8.Future<void> _resetChattingWith() =>
-      (super.noSuchMethod(Invocation.method(#resetChattingWith, []),
-          returnValue: Future<void>.value(),
-          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
   @override
   _i8.Future<void> sendMessage() =>
       (super.noSuchMethod(Invocation.method(#sendMessage, []),
@@ -367,11 +140,11 @@ class MockChatViewModel extends _i1.Mock implements _i14.ChatViewModel {
           returnValue: Future<void>.value(),
           returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
   @override
-  void addNewChat(_i15.Chat? chat) =>
+  void addNewChat(_i7.Chat? chat) =>
       super.noSuchMethod(Invocation.method(#addNewChat, [chat]),
           returnValueForMissingStub: null);
   @override
-  void setCurrentChat(_i15.Chat? chat) =>
+  void setCurrentChat(_i7.Chat? chat) =>
       super.noSuchMethod(Invocation.method(#setCurrentChat, [chat]),
           returnValueForMissingStub: null);
   @override
@@ -402,62 +175,59 @@ class MockChatViewModel extends _i1.Mock implements _i14.ChatViewModel {
 /// A class which mocks [MapViewModel].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockMapViewModel extends _i1.Mock implements _i16.MapViewModel {
+class MockMapViewModel extends _i1.Mock implements _i10.MapViewModel {
   MockMapViewModel() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.TextEditingController get searchTextCtrl =>
+  _i2.TextEditingController get searchTextCtrl =>
       (super.noSuchMethod(Invocation.getter(#searchTextCtrl),
-              returnValue: _FakeTextEditingController_1())
-          as _i3.TextEditingController);
+              returnValue: _FakeTextEditingController_0())
+          as _i2.TextEditingController);
   @override
-  _i17.PermissionStatus get positionPermission =>
-      (super.noSuchMethod(Invocation.getter(#positionPermission),
-          returnValue: _i17.PermissionStatus.denied) as _i17.PermissionStatus);
-  @override
-  set positionPermission(_i17.PermissionStatus? _positionPermission) => super
-      .noSuchMethod(Invocation.setter(#positionPermission, _positionPermission),
-          returnValueForMissingStub: null);
-  @override
-  _i8.Stream<_i5.Place?> get selectedPlace =>
+  _i8.Stream<_i4.Place?> get selectedPlace =>
       (super.noSuchMethod(Invocation.getter(#selectedPlace),
-          returnValue: Stream<_i5.Place?>.empty()) as _i8.Stream<_i5.Place?>);
+          returnValue: Stream<_i4.Place?>.empty()) as _i8.Stream<_i4.Place?>);
   @override
-  _i8.Stream<List<_i5.Place>?> get autocompletedPlaces =>
+  _i8.Stream<List<_i4.Place>?> get autocompletedPlaces =>
       (super.noSuchMethod(Invocation.getter(#autocompletedPlaces),
-              returnValue: Stream<List<_i5.Place>?>.empty())
-          as _i8.Stream<List<_i5.Place>?>);
+              returnValue: Stream<List<_i4.Place>?>.empty())
+          as _i8.Stream<List<_i4.Place>?>);
   @override
-  _i4.LinkedHashMap<String, _i18.Expert> get experts =>
+  _i2.ValueNotifier<_i11.Expert?> get currentExpert =>
+      (super.noSuchMethod(Invocation.getter(#currentExpert),
+              returnValue: _FakeValueNotifier_1<_i11.Expert?>())
+          as _i2.ValueNotifier<_i11.Expert?>);
+  @override
+  _i3.LinkedHashMap<String, _i11.Expert> get experts =>
       (super.noSuchMethod(Invocation.getter(#experts),
-              returnValue: _FakeLinkedHashMap_3<String, _i18.Expert>())
-          as _i4.LinkedHashMap<String, _i18.Expert>);
+              returnValue: _FakeLinkedHashMap_2<String, _i11.Expert>())
+          as _i3.LinkedHashMap<String, _i11.Expert>);
   @override
-  _i8.Future<bool> askPermission() =>
-      (super.noSuchMethod(Invocation.method(#askPermission, []),
-          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
+  bool get hasListeners =>
+      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
+          as bool);
   @override
   _i8.Future<void> autocompleteSearchedPlace() =>
       (super.noSuchMethod(Invocation.method(#autocompleteSearchedPlace, []),
           returnValue: Future<void>.value(),
           returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
   @override
-  _i8.Future<_i5.Place> firstSimilarPlace(String? input) =>
+  _i8.Future<_i4.Place> firstSimilarPlace(String? input) =>
       (super.noSuchMethod(Invocation.method(#firstSimilarPlace, [input]),
-              returnValue: Future<_i5.Place>.value(_FakePlace_4()))
-          as _i8.Future<_i5.Place>);
+              returnValue: Future<_i4.Place>.value(_FakePlace_3()))
+          as _i8.Future<_i4.Place>);
   @override
   _i8.Future<void> searchPlace(String? placeId) =>
       (super.noSuchMethod(Invocation.method(#searchPlace, [placeId]),
           returnValue: Future<void>.value(),
           returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
   @override
-  _i8.Future<_i19.Position?> loadCurrentPosition() =>
+  _i8.Future<_i12.Position?> loadCurrentPosition() =>
       (super.noSuchMethod(Invocation.method(#loadCurrentPosition, []),
-              returnValue: Future<_i19.Position?>.value())
-          as _i8.Future<_i19.Position?>);
+              returnValue: Future<_i12.Position?>.value())
+          as _i8.Future<_i12.Position?>);
   @override
   _i8.Future<void> loadExperts() =>
       (super.noSuchMethod(Invocation.method(#loadExperts, []),
@@ -471,12 +241,255 @@ class MockMapViewModel extends _i1.Mock implements _i16.MapViewModel {
   void resetViewModel() =>
       super.noSuchMethod(Invocation.method(#resetViewModel, []),
           returnValueForMissingStub: null);
+  @override
+  void setCurrentExpert(_i11.Expert? expert) =>
+      super.noSuchMethod(Invocation.method(#setCurrentExpert, [expert]),
+          returnValueForMissingStub: null);
+  @override
+  void resetCurrentExpert() =>
+      super.noSuchMethod(Invocation.method(#resetCurrentExpert, []),
+          returnValueForMissingStub: null);
+  @override
+  void addListener(_i9.VoidCallback? listener) =>
+      super.noSuchMethod(Invocation.method(#addListener, [listener]),
+          returnValueForMissingStub: null);
+  @override
+  void removeListener(_i9.VoidCallback? listener) =>
+      super.noSuchMethod(Invocation.method(#removeListener, [listener]),
+          returnValueForMissingStub: null);
+  @override
+  void dispose() => super.noSuchMethod(Invocation.method(#dispose, []),
+      returnValueForMissingStub: null);
+  @override
+  void notifyListeners() =>
+      super.noSuchMethod(Invocation.method(#notifyListeners, []),
+          returnValueForMissingStub: null);
+}
+
+/// A class which mocks [DiaryViewModel].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDiaryViewModel extends _i1.Mock implements _i13.DiaryViewModel {
+  MockDiaryViewModel() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.DiaryForm get diaryForm =>
+      (super.noSuchMethod(Invocation.getter(#diaryForm),
+          returnValue: _FakeDiaryForm_4()) as _i5.DiaryForm);
+  @override
+  set diaryForm(_i5.DiaryForm? _diaryForm) =>
+      super.noSuchMethod(Invocation.setter(#diaryForm, _diaryForm),
+          returnValueForMissingStub: null);
+  @override
+  _i2.TextEditingController get titleTextCtrl =>
+      (super.noSuchMethod(Invocation.getter(#titleTextCtrl),
+              returnValue: _FakeTextEditingController_0())
+          as _i2.TextEditingController);
+  @override
+  _i2.TextEditingController get contentTextCtrl =>
+      (super.noSuchMethod(Invocation.getter(#contentTextCtrl),
+              returnValue: _FakeTextEditingController_0())
+          as _i2.TextEditingController);
+  @override
+  _i2.ValueNotifier<_i14.DiaryPage?> get currentDiaryPage =>
+      (super.noSuchMethod(Invocation.getter(#currentDiaryPage),
+              returnValue: _FakeValueNotifier_1<_i14.DiaryPage?>())
+          as _i2.ValueNotifier<_i14.DiaryPage?>);
+  @override
+  _i2.ValueNotifier<List<_i14.DiaryPage>> get diaryPages =>
+      (super.noSuchMethod(Invocation.getter(#diaryPages),
+              returnValue: _FakeValueNotifier_1<List<_i14.DiaryPage>>())
+          as _i2.ValueNotifier<List<_i14.DiaryPage>>);
+  @override
+  bool get isEditing =>
+      (super.noSuchMethod(Invocation.getter(#isEditing), returnValue: false)
+          as bool);
+  @override
+  _i8.Stream<bool> get isPageAdded =>
+      (super.noSuchMethod(Invocation.getter(#isPageAdded),
+          returnValue: Stream<bool>.empty()) as _i8.Stream<bool>);
+  @override
+  bool get hasListeners =>
+      (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
+          as bool);
+  @override
+  _i8.Future<void> submitPage() =>
+      (super.noSuchMethod(Invocation.method(#submitPage, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  _i8.Future<void> updatePage() =>
+      (super.noSuchMethod(Invocation.method(#updatePage, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  _i8.Future<void> setFavourite(bool? isFavourite) =>
+      (super.noSuchMethod(Invocation.method(#setFavourite, [isFavourite]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  _i8.Future<void> loadDiaryPages() =>
+      (super.noSuchMethod(Invocation.method(#loadDiaryPages, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  void editPage() => super.noSuchMethod(Invocation.method(#editPage, []),
+      returnValueForMissingStub: null);
+  @override
+  void addNewPage() => super.noSuchMethod(Invocation.method(#addNewPage, []),
+      returnValueForMissingStub: null);
+  @override
+  void setCurrentDiaryPage(_i14.DiaryPage? diaryPage) =>
+      super.noSuchMethod(Invocation.method(#setCurrentDiaryPage, [diaryPage]),
+          returnValueForMissingStub: null);
+  @override
+  void resetCurrentDiaryPage() =>
+      super.noSuchMethod(Invocation.method(#resetCurrentDiaryPage, []),
+          returnValueForMissingStub: null);
+  @override
+  void resetViewModel() =>
+      super.noSuchMethod(Invocation.method(#resetViewModel, []),
+          returnValueForMissingStub: null);
+  @override
+  void addListener(_i9.VoidCallback? listener) =>
+      super.noSuchMethod(Invocation.method(#addListener, [listener]),
+          returnValueForMissingStub: null);
+  @override
+  void removeListener(_i9.VoidCallback? listener) =>
+      super.noSuchMethod(Invocation.method(#removeListener, [listener]),
+          returnValueForMissingStub: null);
+  @override
+  void dispose() => super.noSuchMethod(Invocation.method(#dispose, []),
+      returnValueForMissingStub: null);
+  @override
+  void notifyListeners() =>
+      super.noSuchMethod(Invocation.method(#notifyListeners, []),
+          returnValueForMissingStub: null);
+}
+
+/// A class which mocks [ReportViewModel].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockReportViewModel extends _i1.Mock implements _i15.ReportViewModel {
+  MockReportViewModel() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.ValueNotifier<_i16.Report?> get currentReport =>
+      (super.noSuchMethod(Invocation.getter(#currentReport),
+              returnValue: _FakeValueNotifier_1<_i16.Report?>())
+          as _i2.ValueNotifier<_i16.Report?>);
+  @override
+  _i3.LinkedHashMap<String, _i16.Report> get reports =>
+      (super.noSuchMethod(Invocation.getter(#reports),
+              returnValue: _FakeLinkedHashMap_2<String, _i16.Report>())
+          as _i3.LinkedHashMap<String, _i16.Report>);
+  @override
+  _i8.Future<void> submitReport(String? category, String? description) => (super
+      .noSuchMethod(Invocation.method(#submitReport, [category, description]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  _i8.Future<void> loadReports() =>
+      (super.noSuchMethod(Invocation.method(#loadReports, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  void setCurrentReport(_i16.Report? report) =>
+      super.noSuchMethod(Invocation.method(#setCurrentReport, [report]),
+          returnValueForMissingStub: null);
+  @override
+  void resetCurrentReport() =>
+      super.noSuchMethod(Invocation.method(#resetCurrentReport, []),
+          returnValueForMissingStub: null);
+  @override
+  void resetViewModel() =>
+      super.noSuchMethod(Invocation.method(#resetViewModel, []),
+          returnValueForMissingStub: null);
+}
+
+/// A class which mocks [AuthViewModel].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockAuthViewModel extends _i1.Mock implements _i17.AuthViewModel {
+  MockAuthViewModel() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i8.Stream<bool> get isUserLogged =>
+      (super.noSuchMethod(Invocation.getter(#isUserLogged),
+          returnValue: Stream<bool>.empty()) as _i8.Stream<bool>);
+  @override
+  _i8.Stream<bool> get isUserCreated =>
+      (super.noSuchMethod(Invocation.getter(#isUserCreated),
+          returnValue: Stream<bool>.empty()) as _i8.Stream<bool>);
+  @override
+  _i8.Stream<String?> get authMessage =>
+      (super.noSuchMethod(Invocation.getter(#authMessage),
+          returnValue: Stream<String?>.empty()) as _i8.Stream<String?>);
+  @override
+  _i8.Future<void> logIn(String? email, String? password) =>
+      (super.noSuchMethod(Invocation.method(#logIn, [email, password]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  _i8.Future<void> signUpUser(
+          String? email, String? password, _i18.User? newUser) =>
+      (super.noSuchMethod(
+          Invocation.method(#signUpUser, [email, password, newUser]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  _i8.Future<void> logInWithGoogle({bool? link = false}) => (super.noSuchMethod(
+      Invocation.method(#logInWithGoogle, [], {#link: link}),
+      returnValue: Future<void>.value(),
+      returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  _i8.Future<void> logInWithFacebook({bool? link = false}) => (super
+      .noSuchMethod(Invocation.method(#logInWithFacebook, [], {#link: link}),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  void resetPassword(String? email) =>
+      super.noSuchMethod(Invocation.method(#resetPassword, [email]),
+          returnValueForMissingStub: null);
+  @override
+  String authProvider() =>
+      (super.noSuchMethod(Invocation.method(#authProvider, []), returnValue: '')
+          as String);
+  @override
+  _i8.Future<bool> hasPasswordAuthentication(String? email) => (super
+      .noSuchMethod(Invocation.method(#hasPasswordAuthentication, [email]),
+          returnValue: Future<bool>.value(false)) as _i8.Future<bool>);
+  @override
+  _i8.Future<void> logOut() =>
+      (super.noSuchMethod(Invocation.method(#logOut, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  _i8.Future<void> setNotification(_i18.User? loggedUser) =>
+      (super.noSuchMethod(Invocation.method(#setNotification, [loggedUser]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  _i8.Future<void> deleteUser(_i18.User? loggedUser) =>
+      (super.noSuchMethod(Invocation.method(#deleteUser, [loggedUser]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
+  @override
+  void clearAuthMessage() =>
+      super.noSuchMethod(Invocation.method(#clearAuthMessage, []),
+          returnValueForMissingStub: null);
 }
 
 /// A class which mocks [UserViewModel].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserViewModel extends _i1.Mock implements _i20.UserViewModel {
+class MockUserViewModel extends _i1.Mock implements _i19.UserViewModel {
   MockUserViewModel() {
     _i1.throwOnMissingStub(this);
   }
@@ -487,7 +500,7 @@ class MockUserViewModel extends _i1.Mock implements _i20.UserViewModel {
           returnValue: Future<void>.value(),
           returnValueForMissingStub: Future<void>.value()) as _i8.Future<void>);
   @override
-  void createUser(_i21.BaseUserSignUpForm? baseUserSignUpForm) =>
+  void createUser(_i20.BaseUserSignUpForm? baseUserSignUpForm) =>
       super.noSuchMethod(Invocation.method(#createUser, [baseUserSignUpForm]),
           returnValueForMissingStub: null);
 }

@@ -1143,7 +1143,10 @@ void main() async {
 
     group("ChatViewModel internal managment:", () {
       group("Set current chat:", () {
-        setUp(() => chatViewModel.resetCurrentChat());
+        setUp(() {
+          chatViewModel.resetCurrentChat();
+          clearInteractions(mockFirestoreService);
+        });
 
         test("Check that set current chat sets the correct field of the value notifier", () {
           chatViewModel.setCurrentChat(testHelper.anonymousChat);
@@ -1192,6 +1195,7 @@ void main() async {
         setUp(() => chatViewModel.resetCurrentChat());
         test("Check that add new chat calls the load messages method of the chat", () {
           var mockAnonymousChat = MockAnonymousChat();
+          when(mockAnonymousChat.peerUser).thenAnswer((_) => testHelper.baseUser);
           chatViewModel.addNewChat(mockAnonymousChat);
 
           verify(mockAnonymousChat.loadMessages()).called(1);

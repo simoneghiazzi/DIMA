@@ -12,7 +12,7 @@ class AuthViewModel {
   // Services
   final FirebaseAuthService _firebaseAuthService = GetIt.I();
   final FirestoreService _firestoreService = GetIt.I();
-  final NotificationService _notificationService = NotificationService();
+  final NotificationService _notificationService = GetIt.I();
 
   // Stream Controllers
   var _isUserLoggedCtrl = StreamController<bool>.broadcast();
@@ -190,13 +190,10 @@ class AuthViewModel {
   }
 
   /// Register the notification service for the device of the [loggedUser].
-  void setNotification(User loggedUser) {
+  Future<void> setNotification(User loggedUser) async {
     _notificationService.configNotification();
-    _notificationService.getDeviceToken().then((token) {
-      _firestoreService.updateUserFieldIntoDB(loggedUser, "pushToken", token);
-    }).catchError((e) {
-      log("Error in getting the device token: $e");
-    });
+    var deviceToken = await _notificationService.getDeviceToken();
+    return _firestoreService.updateUserFieldIntoDB(loggedUser, "pushToken", deviceToken);
   }
 
   /// Delete the [loggedUser] account both from the authentication FirebaseService and from the Firebase DB

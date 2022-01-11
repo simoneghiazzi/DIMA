@@ -437,6 +437,8 @@ void main() async {
         await firestoreService.addUserIntoDB(testHelper.baseUser4);
         await firestoreService.addMessageIntoDB(testHelper.loggedUser, testHelper.request_4, message);
 
+        await Future.delayed(Duration.zero);
+
         /// Get the data from the fakeFirebase
         var resUtilsUser = await fakeFirebase.collection(BaseUser.COLLECTION).doc(testHelper.loggedUser.id).collection("utils").doc("utils").get();
         var resUtilsUser4 = await fakeFirebase.collection(BaseUser.COLLECTION).doc(testHelper.baseUser4.id).collection("utils").doc("utils").get();
@@ -620,6 +622,8 @@ void main() async {
         await firestoreService.addUserIntoDB(testHelper.baseUser4);
         await firestoreService.addMessageIntoDB(testHelper.loggedUser, testHelper.request_4, message);
 
+        await Future.value(Duration.zero);
+
         await firestoreService.upgradePendingToActiveChatIntoDB(testHelper.baseUser4, pendingChatOfUser4);
 
         /// Get the data from the fakeFirebase
@@ -654,7 +658,11 @@ void main() async {
         await firestoreService.addUserIntoDB(testHelper.baseUser4);
         await firestoreService.addMessageIntoDB(testHelper.loggedUser, testHelper.request_4, message);
 
+        await Future.delayed(Duration.zero);
+
         await firestoreService.removeChatFromDB(testHelper.baseUser4, pendingChatOfUser4);
+
+        await Future.delayed(Duration.zero);
 
         /// Get the data from the fakeFirebase
         var resUtilsUser = await fakeFirebase.collection(BaseUser.COLLECTION).doc(testHelper.loggedUser.id).collection("utils").doc("utils").get();

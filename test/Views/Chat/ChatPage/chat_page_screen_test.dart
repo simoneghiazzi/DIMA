@@ -13,10 +13,12 @@ import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/DBItems/message.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
+import 'package:sApport/Model/Services/map_service.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_accept_deny.dart';
@@ -46,6 +48,7 @@ void main() {
   getIt.registerSingleton<FirestoreService>(FirestoreService(FakeFirebaseFirestore()));
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(MockFirebaseAuth()));
   getIt.registerSingleton<UserService>(UserService());
+  getIt.registerSingleton<MapService>(MapService());
 
   /// Get MultiProvider Widget for creating the test
   Widget getMultiProvider({required Widget child}) {
@@ -53,6 +56,7 @@ void main() {
       providers: [
         ChangeNotifierProvider<AppRouterDelegate>(create: (_) => mockRouterDelegate),
         ChangeNotifierProvider<ChatViewModel>(create: (_) => mockChatViewModel),
+        ChangeNotifierProvider<MapViewModel>(create: (_) => MapViewModel()),
         Provider<UserViewModel>(create: (context) => mockUserViewModel),
       ],
       child: Sizer(builder: (context, orientation, deviceType) {
