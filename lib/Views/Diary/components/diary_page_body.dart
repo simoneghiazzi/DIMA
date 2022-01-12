@@ -58,9 +58,6 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     // Subscribe to on submitting form of the view model
     subscription = subscribeToOnSubmittingViewModel();
 
-    // Add a back button interceptor for listening to the OS back button
-    BackButtonInterceptor.add(backButtonInterceptor);
-
     super.initState();
   }
 
@@ -79,7 +76,6 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
           text: DateFormat("dd MMM yyyy").format(diaryViewModel.currentDiaryPage.value?.dateTime ?? DateTime.now()),
           textSize: 16.sp,
           backIcon: Icons.close_rounded,
-          onBack: diaryViewModel.resetCurrentDiaryPage,
           buttons: [
             if (!diaryViewModel.isEditing) ...[
               if (Utils.isToday(diaryViewModel.currentDiaryPage.value!.dateTime)) ...[
@@ -236,20 +232,8 @@ class _DiaryPageBodyState extends State<DiaryPageBody> {
     });
   }
 
-  /// Function called by the back button interceptor.
-  ///
-  /// It resets the current diary page and the controllers and then pops the page.
-  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    if (!routerDelegate.hasDialog) {
-      diaryViewModel.resetCurrentDiaryPage();
-      routerDelegate.pop();
-    }
-    return true;
-  }
-
   @override
   void dispose() {
-    BackButtonInterceptor.remove(backButtonInterceptor);
     subscription.cancel();
     super.dispose();
   }

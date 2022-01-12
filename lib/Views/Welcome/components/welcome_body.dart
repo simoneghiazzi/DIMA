@@ -20,7 +20,6 @@ import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
-import 'package:sApport/Views/Utils/custom_sizer.dart';
 
 /// Body of the [WelcomeScreen].
 ///

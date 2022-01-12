@@ -15,7 +15,6 @@ class TopBar extends StatelessWidget {
   final double? textSize;
   final IconData backIcon;
   final List<Widget>? buttons;
-  final Function? onBack;
   final bool back;
 
   /// Top bar of the base pages.
@@ -30,7 +29,6 @@ class TopBar extends StatelessWidget {
     this.textSize,
     this.backIcon = Icons.arrow_back_ios_new_rounded,
     this.buttons,
-    this.onBack,
     this.back = true,
   }) : super(key: key);
 
@@ -54,9 +52,6 @@ class TopBar extends StatelessWidget {
                       onTap: () {
                         FocusScope.of(context).unfocus();
                         routerDelegate.pop();
-                        if (onBack != null) {
-                          onBack!();
-                        }
                       },
                       child: Container(padding: EdgeInsets.only(left: 2.5.w, right: 2.5.w), child: Icon(backIcon, color: Colors.white, size: 25)),
                     ),

@@ -40,12 +40,7 @@ class _ExpertChatListBodyState extends State<ExpertChatListBody> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            TopBar(
-                onBack: () {
-                  chatViewModel.resetCurrentChat();
-                  mapViewModel.resetCurrentExpert();
-                },
-                text: "Experts"),
+            TopBar(text: "Experts"),
             ChatListConstructor(valueNotifier: chatViewModel.expertsChats),
           ],
         ),

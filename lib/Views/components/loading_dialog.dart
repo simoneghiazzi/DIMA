@@ -44,6 +44,8 @@ class LoadingDialog {
 
   /// Hide the previously opened loading dialog.
   static void hide(BuildContext context) {
+    AppRouterDelegate routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
+    routerDelegate.hasDialog = false;
     BackButtonInterceptor.remove(backButtonInterceptor);
     Navigator.of(context, rootNavigator: true).pop();
   }

@@ -42,7 +42,7 @@ class _ReportListBodyState extends State<ReportListBody> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        TopBar(onBack: reportViewModel.resetCurrentReport, text: "Old reports"),
+        TopBar(text: "Old reports"),
         Flexible(
           child: ListView.builder(
             physics: BouncingScrollPhysics(),
@@ -79,10 +79,13 @@ class _ReportListBodyState extends State<ReportListBody> {
                     reportViewModel.setCurrentReport(_reportItem);
                     if (MediaQuery.of(context).orientation == Orientation.portrait) {
                       routerDelegate.pushPage(name: ReportDetailsScreen.route);
+                    } else {
+                      setState(() {});
                     }
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(kPrimaryLightColor),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        _reportItem == reportViewModel.currentReport.value ? kPrimaryButtonColor : kPrimaryLightColor),
                     shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25)))),
                   ),
                 ),

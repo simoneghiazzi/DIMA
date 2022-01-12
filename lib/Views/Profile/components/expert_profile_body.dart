@@ -53,9 +53,6 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
     chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
 
-    // Add a back button interceptor for listening to the OS back button
-    BackButtonInterceptor.add(backButtonInterceptor);
-
     super.initState();
   }
 
@@ -82,11 +79,12 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
                           child: IconButton(
                             icon: Icon(Icons.close, size: 35.0, color: Colors.white),
                             onPressed: () {
-                              mapViewModel.resetCurrentExpert();
-                              if (MediaQuery.of(context).orientation == Orientation.portrait ||
-                                  routerDelegate.getLastRoute().name == ExpertProfileScreen.route) {
-                                routerDelegate.pop();
-                              }
+                              // mapViewModel.resetCurrentExpert();
+                              // if (MediaQuery.of(context).orientation == Orientation.portrait ||
+                              //     routerDelegate.getLastRoute().name == ExpertProfileScreen.route) {
+
+                              //}
+                              routerDelegate.pop();
                             },
                           ),
                         ),
@@ -237,22 +235,5 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
     } else {
       throw "Could not launch ${uri.toString()}";
     }
-  }
-
-  /// Function called by the back button interceptor.
-  ///
-  /// It resets the current expert and then pops the page.
-  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    mapViewModel.resetCurrentExpert();
-    if (MediaQuery.of(context).orientation == Orientation.portrait) {
-      routerDelegate.pop();
-    }
-    return true;
-  }
-
-  @override
-  void dispose() {
-    BackButtonInterceptor.remove(backButtonInterceptor);
-    super.dispose();
   }
 }

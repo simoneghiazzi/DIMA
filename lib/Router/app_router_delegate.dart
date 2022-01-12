@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sApport/Views/Login/login_screen.dart';
+import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Views/Diary/diary_page_screen.dart';
 import 'package:sApport/Views/Signup/credential_screen.dart';
@@ -10,9 +13,11 @@ import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/Views/Login/forgot_password_screen.dart';
 import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
+import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Views/Chat/ChatList/chat_list_screen.dart';
 import 'package:sApport/Views/Home/Expert/expert_home_page_screen.dart';
 import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
 import 'package:sApport/Views/Home/BaseUser/base_user_home_page_screen.dart';
 
@@ -20,17 +25,27 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
   // Stack of pages
   final _pages = <Page>[];
 
-  // Last removed route
-  Page? _lastRemovedRoute;
-
   // Flag that indicates if a dialog is open
   bool hasDialog = false;
 
   @override
   final navigatorKey = GlobalKey<NavigatorState>();
 
+  late BuildContext buildContext;
+
+  late ChatViewModel chatViewModel;
+  late MapViewModel mapViewModel;
+  late ReportViewModel reportViewModel;
+  late DiaryViewModel diaryViewModel;
+
   @override
   Widget build(BuildContext context) {
+    buildContext = context;
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    mapViewModel = Provider.of<MapViewModel>(context, listen: false);
+    reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
+    diaryViewModel = Provider.of<DiaryViewModel>(context, listen: false);
+
     return Navigator(
       key: navigatorKey,
       pages: List.of(_pages),
@@ -49,12 +64,41 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
 
   @override
   Future<bool> popRoute() {
-    if (_pages.length > 1 && _pages.last.name != BaseUserHomePageScreen.route && _pages.last.name != ExpertHomePageScreen.route) {
-      _lastRemovedRoute = _pages.removeLast();
-      notifyListeners();
-      return Future.value(true);
+    if (_pages.length <= 1 ||
+        (_pages.last.name == BaseUserHomePageScreen.route && diaryViewModel.currentDiaryPage.value == null) ||
+        _pages.last.name == ExpertHomePageScreen.route) {
+      return Future.value(false);
     }
-    return Future.value(false);
+    if (mapViewModel.currentExpert.value != null && _pages.last.name != ExpertProfileScreen.route) {
+      mapViewModel.resetCurrentExpert();
+    } else if (mapViewModel.currentExpert.value == null && chatViewModel.currentChat.value != null && _pages.last.name != ChatPageScreen.route) {
+      chatViewModel.resetCurrentChat();
+      if (MediaQuery.of(buildContext).orientation == Orientation.landscape) {
+        _pages.removeLast();
+        notifyListeners();
+      }
+    } else if (reportViewModel.currentReport.value != null && _pages.last.name != ReportDetailsScreen.route) {
+      reportViewModel.resetCurrentReport();
+      if (MediaQuery.of(buildContext).orientation == Orientation.landscape) {
+        _pages.removeLast();
+        notifyListeners();
+      }
+    } else if (diaryViewModel.currentDiaryPage.value != null && _pages.last.name != DiaryPageScreen.route) {
+      diaryViewModel.resetCurrentDiaryPage();
+    } else {
+      if (mapViewModel.currentExpert.value != null) {
+        mapViewModel.resetCurrentExpert();
+      } else if (chatViewModel.currentChat.value != null) {
+        chatViewModel.resetCurrentChat();
+      } else if (reportViewModel.currentReport.value != null) {
+        reportViewModel.resetCurrentReport();
+      } else if (diaryViewModel.currentDiaryPage.value != null) {
+        diaryViewModel.resetCurrentDiaryPage();
+      }
+      _pages.removeLast();
+      notifyListeners();
+    }
+    return Future.value(true);
   }
 
   /// Returns the material page based on the [routeSettings.name].
@@ -144,13 +188,6 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
   /// Get the top-most route of the navigator stack.
   Page getLastRoute() {
     return _pages.last;
-  }
-
-  /// Get the last route removed from the navigator stack.
-  Page? getLastRemovedRoute() {
-    var route = _lastRemovedRoute;
-    _lastRemovedRoute = null;
-    return route;
   }
 
   /// Remove the top-most page of the navigator stack and the push the page specified by the [name] of the route.

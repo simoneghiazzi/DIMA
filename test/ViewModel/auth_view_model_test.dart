@@ -8,7 +8,6 @@ import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:sApport/Model/Services/notification_service.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import '../service.mocks.dart';
 import '../test_helper.dart';
@@ -20,13 +19,11 @@ void main() async {
   /// Mock Services
   final mockFirestoreService = MockFirestoreService();
   final mockAuthService = MockFirebaseAuthService();
-  final mockNotificationService = MockNotificationService();
   final mockUserService = MockUserService();
 
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(mockFirestoreService);
   getIt.registerSingleton<FirebaseAuthService>(mockAuthService);
-  getIt.registerSingleton<NotificationService>(mockNotificationService);
   getIt.registerSingleton<UserService>(mockUserService);
 
   /// Test Helper
@@ -37,13 +34,9 @@ void main() async {
   var email = "prova@sApport.it";
   var password = "password";
   var userId = "New_random_id";
-  var token = "Fake_token";
 
   /// Mock User Service responses
   when(mockUserService.loggedUser).thenAnswer((_) => testHelper.loggedUser);
-
-  /// Mock Notification Service response
-  when(mockNotificationService.getDeviceToken()).thenAnswer((_) => Future.value(token));
 
   final authViewModel = AuthViewModel();
 
@@ -517,22 +510,6 @@ void main() async {
         expect(authViewModel.isUserLogged, emits(isFalse));
 
         await authViewModel.deleteUser(testHelper.loggedUser);
-      });
-    });
-
-    group("Set notification:", () {
-      test("Set notification should call the configNotification method of the notification service", () async {
-        await authViewModel.setNotification(testHelper.loggedUser);
-
-        verify(mockNotificationService.configNotification()).called(1);
-      });
-
-      test(
-          "Set notification should call the getDeviceToken method of the notification service and add call the updateUserField of the firestore service in order to add the token into the DB",
-          () async {
-        await authViewModel.setNotification(testHelper.loggedUser);
-
-        verify(mockFirestoreService.updateUserFieldIntoDB(testHelper.loggedUser, "pushToken", token)).called(1);
       });
     });
 

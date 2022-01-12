@@ -12,12 +12,10 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Views/components/network_avatar.dart';
 import 'package:sApport/Model/DBItems/BaseUser/base_user.dart';
-import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_top_bar.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_text_input.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_accept_deny.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/message_list_constructor.dart';
-import 'package:sApport/Views/Utils/custom_sizer.dart';
 
 /// It contains the [ChatTopBar] that differs based on the type of the peer user ([BaseUser] or [Expert]),
 /// the [MessageListConstructor] of the messages between the 2 users and the [ChatTextInput] or the
@@ -53,9 +51,6 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
 
     // Add an observer to this class for listening to the app lifecycle
     WidgetsBinding.instance!.addObserver(this);
-
-    // Add a back button interceptor for listening to the OS back button
-    BackButtonInterceptor.add(backButtonInterceptor);
 
     super.initState();
   }
@@ -113,19 +108,6 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
     );
   }
 
-  /// Function called by the back button interceptor.
-  ///
-  /// It resets the `chatting with` field into the DB and the current chat of the [ChatViewModel]
-  /// and finally pop the page.
-  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    var lastRemovedRoute = routerDelegate.getLastRemovedRoute()?.name;
-    if (lastRemovedRoute == null || lastRemovedRoute != ExpertProfileScreen.route) {
-      chatViewModel.resetCurrentChat();
-      routerDelegate.pop();
-    }
-    return true;
-  }
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
@@ -141,7 +123,6 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
 
   @override
   void dispose() {
-    BackButtonInterceptor.remove(backButtonInterceptor);
     WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }

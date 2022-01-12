@@ -12,7 +12,7 @@ class AuthViewModel {
   // Services
   final FirebaseAuthService _firebaseAuthService = GetIt.I();
   final FirestoreService _firestoreService = GetIt.I();
-  final NotificationService _notificationService = GetIt.I();
+  final NotificationService _notificationService = NotificationService();
 
   // Stream Controllers
   var _isUserLoggedCtrl = StreamController<bool>.broadcast();

@@ -48,7 +48,6 @@ void main() {
       /// Trigger a frame.
       await tester.pumpAndSettle();
 
-      expect(find.text("Loading"), findsOneWidget);
       expect(find.byType(DashCard), findsNWidgets(4));
     });
   });

@@ -98,10 +98,14 @@ class ChatViewModel extends ChangeNotifier {
           } else {
             // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields
             var removedChat = _anonymousChats.value.remove(docChange.doc.id);
-            removedChat?.lastMessage = chat.lastMessage;
-            removedChat?.lastMessageDateTime = chat.lastMessageDateTime;
-            removedChat?.notReadMessages = chat.notReadMessages;
-            _anonymousChats.value[docChange.doc.id] = removedChat!;
+            if (removedChat != null) {
+              removedChat.lastMessage = chat.lastMessage;
+              removedChat.lastMessageDateTime = chat.lastMessageDateTime;
+              removedChat.notReadMessages = chat.notReadMessages;
+              _anonymousChats.value[docChange.doc.id] = removedChat;
+            } else {
+              _anonymousChats.value[docChange.doc.id] = chat;
+            }
             _anonymousChats.notifyListeners();
           }
         }
@@ -138,10 +142,14 @@ class ChatViewModel extends ChangeNotifier {
             } else {
               // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields
               var removedChat = _pendingChats.value.remove(docChange.doc.id);
-              removedChat?.lastMessage = chat.lastMessage;
-              removedChat?.lastMessageDateTime = chat.lastMessageDateTime;
-              removedChat?.notReadMessages = chat.notReadMessages;
-              _pendingChats.value[docChange.doc.id] = removedChat!;
+              if (removedChat != null) {
+                removedChat.lastMessage = chat.lastMessage;
+                removedChat.lastMessageDateTime = chat.lastMessageDateTime;
+                removedChat.notReadMessages = chat.notReadMessages;
+                _pendingChats.value[docChange.doc.id] = removedChat;
+              } else {
+                _pendingChats.value[docChange.doc.id] = chat;
+              }
             }
             _pendingChats.notifyListeners();
           }
@@ -175,10 +183,14 @@ class ChatViewModel extends ChangeNotifier {
           } else {
             // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields
             var removedChat = _expertsChats.value.remove(docChange.doc.id);
-            removedChat?.lastMessage = chat.lastMessage;
-            removedChat?.lastMessageDateTime = chat.lastMessageDateTime;
-            removedChat?.notReadMessages = chat.notReadMessages;
-            _expertsChats.value[docChange.doc.id] = removedChat!;
+            if (removedChat != null) {
+              removedChat.lastMessage = chat.lastMessage;
+              removedChat.lastMessageDateTime = chat.lastMessageDateTime;
+              removedChat.notReadMessages = chat.notReadMessages;
+              _expertsChats.value[docChange.doc.id] = removedChat;
+            } else {
+              _expertsChats.value[docChange.doc.id] = chat;
+            }
             _expertsChats.notifyListeners();
           }
         }
@@ -211,10 +223,14 @@ class ChatViewModel extends ChangeNotifier {
           } else {
             // Otherwise, update the lastMessage, lastMessageDateTime and notReadmessages fields
             var removedChat = _activeChats.value.remove(docChange.doc.id);
-            removedChat?.lastMessage = chat.lastMessage;
-            removedChat?.lastMessageDateTime = chat.lastMessageDateTime;
-            removedChat?.notReadMessages = chat.notReadMessages;
-            _activeChats.value[docChange.doc.id] = removedChat!;
+            if (removedChat != null) {
+              removedChat.lastMessage = chat.lastMessage;
+              removedChat.lastMessageDateTime = chat.lastMessageDateTime;
+              removedChat.notReadMessages = chat.notReadMessages;
+              _activeChats.value[docChange.doc.id] = removedChat;
+            } else {
+              _activeChats.value[docChange.doc.id] = chat;
+            }
             _activeChats.notifyListeners();
           }
         }

@@ -8,7 +8,6 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Profile/components/expert_profile_body.dart';
-import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/Views/components/vertical_split_view.dart';
@@ -72,9 +71,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
     mapViewModel = Provider.of<MapViewModel>(context, listen: false);
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
 
-    // Add a back button interceptor for listening to the OS back button
-    BackButtonInterceptor.add(backButtonInterceptor);
-
     super.initState();
   }
 
@@ -127,30 +123,5 @@ class _ChatListScreenState extends State<ChatListScreen> {
         },
       ),
     );
-  }
-
-  /// Function called by the back button interceptor.
-  ///
-  /// It resets the `chatting with` field into the DB and the current chat of the [ChatViewModel]
-  /// and finally pop the page if the right widget of the split screen is not the ExpertProfileBody.
-  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    if (MediaQuery.of(context).orientation == Orientation.landscape) {
-      if (splitRightWidget != null && splitRightWidget is! ExpertProfileBody) {
-        chatViewModel.resetCurrentChat();
-        routerDelegate.pop();
-      }
-    } else {
-      var lastRemovedRoute = routerDelegate.getLastRemovedRoute()?.name;
-      if (lastRemovedRoute == null && routerDelegate.getLastRoute().name != ChatPageScreen.route) {
-        routerDelegate.pop();
-      }
-    }
-    return true;
-  }
-
-  @override
-  void dispose() {
-    BackButtonInterceptor.remove(backButtonInterceptor);
-    super.dispose();
   }
 }

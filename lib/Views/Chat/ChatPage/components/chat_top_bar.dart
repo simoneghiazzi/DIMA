@@ -70,7 +70,6 @@ class ChatTopBar extends StatelessWidget {
                     child: InkResponse(
                       onTap: () async {
                         FocusScope.of(context).unfocus();
-                        chatViewModel.resetCurrentChat();
                         routerDelegate.pop();
                       },
                       child: Container(

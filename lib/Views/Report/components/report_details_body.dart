@@ -37,9 +37,6 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> with WidgetsBindi
     routerDelegate = Provider.of<AppRouterDelegate>(context, listen: false);
     reportViewModel = Provider.of<ReportViewModel>(context, listen: false);
 
-    // Add a back button interceptor for listening to the OS back button
-    BackButtonInterceptor.add(backButtonInterceptor);
-
     super.initState();
   }
 
@@ -49,7 +46,6 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> with WidgetsBindi
       children: <Widget>[
         // Category
         TopBar(
-          onBack: reportViewModel.resetCurrentReport,
           text: reportViewModel.currentReport.value!.category,
           textSize: 17.sp,
           backIcon: Icons.close,
@@ -95,18 +91,8 @@ class _ReportDetailsBodyState extends State<ReportDetailsBody> with WidgetsBindi
     );
   }
 
-  /// Function called by the back button interceptor.
-  ///
-  /// It resets the current report of the [ReportViewModel] and then pop the page.
-  bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
-    reportViewModel.resetCurrentReport();
-    routerDelegate.pop();
-    return true;
-  }
-
   @override
   void dispose() {
-    BackButtonInterceptor.remove(backButtonInterceptor);
     WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }

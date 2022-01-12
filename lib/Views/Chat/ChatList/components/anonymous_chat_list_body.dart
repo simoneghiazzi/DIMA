@@ -51,10 +51,6 @@ class _AnonymousChatListBodyState extends State<AnonymousChatListBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TopBar(
-              onBack: () {
-                chatViewModel.resetCurrentChat();
-                ScaffoldMessenger.of(context).removeCurrentSnackBar();
-              },
               text: "Anonymous",
               buttons: [
                 // Listener for new pending chats
