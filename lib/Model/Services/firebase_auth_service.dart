@@ -135,12 +135,11 @@ class FirebaseAuthService {
 
         // Format the user birthdate info from the Facebook account
         var birthDate = userData["birthday"].split("/");
-        var month = birthDate[2] < 10 ? ('0${birthDate[2]}') : birthDate[2];
         return {
           "name": userData["name"].split(" ")[0],
           "surname": userData["name"].split(" ")[1],
           "email": _firebaseAuth.currentUser?.email,
-          "birthDate": DateTime.parse("${birthDate[2]}-$month-${birthDate[1]}")
+          "birthDate": DateTime.parse("${birthDate[2]}-${birthDate[0]}-${birthDate[1]}")
         };
       }
     }
