@@ -25,7 +25,10 @@ import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 
-const bool USE_FIRESTORE_EMULATOR = true;
+/// Used to set set the emulator for Firebase during Testing
+/// 
+/// ** SET FALSE FOR DURING DEPLOYMENT **
+const bool USE_FIRESTORE_EMULATOR = false;
 
 Future<void> main() async {
   // Flutter initialization
