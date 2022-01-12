@@ -20,6 +20,7 @@ import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 import 'package:sApport/Views/Signup/Expert/experts_signup_screen.dart';
 import 'package:sApport/Views/Signup/BaseUser/base_users_signup_screen.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 
 /// Body of the [WelcomeScreen].
 ///
@@ -75,17 +76,18 @@ class _WelcomeBodyState extends State<WelcomeBody> {
   @override
   Widget build(BuildContext context) {
     return Background(
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            // Title
-            Text(
-              "sApport",
-              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 50.sp, fontFamily: "Gabriola"),
-            ),
-            Image.asset("assets/icons/logo.png", scale: 6),
-            SizedBox(height: 5.h),
-            // Login Button
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          SizedBox(height: 4.h),
+          // Title
+          Text(
+            "sApport",
+            style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 50.sp, fontFamily: "Gabriola"),
+          ),
+          Image.asset("assets/icons/logo.png", scale: 6),
+          SizedBox(height: 5.h),
+          Column(children: [
             RoundedButton(
               onTap: () {
                 authViewModel.clearAuthMessage();
@@ -104,66 +106,69 @@ class _WelcomeBodyState extends State<WelcomeBody> {
               color: kPrimaryLightColor,
               textColor: kPrimaryColor,
             ),
-            SizedBox(height: 2.h),
-            OrDivider(),
-            // Social Icons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SocialIcon(
-                  iconSrc: "assets/icons/facebook.png",
-                  onTap: () {
-                    LoadingDialog.show(context);
-                    authViewModel.logInWithFacebook();
-                  },
-                ),
-                SocialIcon(
-                  iconSrc: "assets/icons/google.png",
-                  onTap: () {
-                    LoadingDialog.show(context);
-                    authViewModel.logInWithGoogle();
-                  },
-                ),
-              ],
-            ),
-            SizedBox(height: 5.h),
-            // Stream of the authMessage
-            StreamBuilder<String?>(
-              stream: authViewModel.authMessage,
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  LoadingDialog.hide(context);
-                  return Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(right: 10, left: 10),
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(text: snapshot.data, style: TextStyle(color: Colors.red, fontSize: 14.5.sp, fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                      SizedBox(height: 5.h),
-                    ],
-                  );
-                } else {
-                  return Container();
-                }
-              },
-            ),
-            // Expert SignUp Button
-            GestureDetector(
-              child: Text(
-                "Are you a registered psychologist?\nJoin us",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 14.sp),
+          ]),
+          // Login Button
+
+          SizedBox(height: 2.h),
+          OrDivider(),
+          // Social Icons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SocialIcon(
+                iconSrc: "assets/icons/facebook.png",
+                onTap: () {
+                  LoadingDialog.show(context);
+                  authViewModel.logInWithFacebook();
+                },
               ),
-              onTap: () {
-                authViewModel.clearAuthMessage();
-                routerDelegate.pushPage(name: ExpertsSignUpScreen.route);
-              },
+              SocialIcon(
+                iconSrc: "assets/icons/google.png",
+                onTap: () {
+                  LoadingDialog.show(context);
+                  authViewModel.logInWithGoogle();
+                },
+              ),
+            ],
+          ),
+          SizedBox(height: 5.h),
+          // Stream of the authMessage
+          StreamBuilder<String?>(
+            stream: authViewModel.authMessage,
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                LoadingDialog.hide(context);
+                return Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(right: 10, left: 10),
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(text: snapshot.data, style: TextStyle(color: Colors.red, fontSize: 14.5.sp, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    SizedBox(height: 5.h),
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
+          // Expert SignUp Button
+          GestureDetector(
+            child: Text(
+              "Are you a registered psychologist?\nJoin us",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 14.sp),
             ),
-          ],
-        ),
+            onTap: () {
+              authViewModel.clearAuthMessage();
+              routerDelegate.pushPage(name: ExpertsSignUpScreen.route);
+            },
+          ),
+          SizedBox(height: 1.h),
+        ],
       ),
     );
   }
