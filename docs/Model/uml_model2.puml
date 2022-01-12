@@ -1,0 +1,78 @@
+@startuml db_item
+package DBItems {
+
+  class "Message" {
+    {static} +String COLLECTION
+    +String idFrom
+    +String idTo
+    +DateTime timestamp
+    +String content
+    +Map<String, Object> data
+  }
+
+  "DbItem" <|-- "Message"
+
+  abstract class "DbItem" {
+    +String collection
+    +String id
+    +Map<String, Object> data
+  }
+
+  abstract class "User" {
+    +String homePageRoute
+    +String name
+    +String surname
+    +DateTime? birthDate
+    +String email
+    +String fullName
+    +void setFromDocument()
+  }
+  "DbItem" <|-- "User"
+
+  package Expert {
+    class "Expert" {
+      {static} +String COLLECTION
+      {static} +String HOMEPAGE_ROUTE
+      +String address
+      +String phoneNumber
+      +String profilePhoto
+      +double latitude
+      +double longitude
+      +Map<String, Object> data
+      +void setFromDocument()
+    }
+    "User" <|-- "Expert"
+  }
+
+  package BaseUser {
+    class "Report" {
+      {static} +String COLLECTION
+      +String category
+      +String description
+      +DateTime? dateTime
+      +Map<String, Object> data
+    }
+    "DbItem" <|-- "Report"
+
+    class "DiaryPage" {
+      {static} +String COLLECTION
+      +String title
+      +String content
+      +DateTime dateTime
+      +bool favourite
+      +Map<String, Object> data
+    }
+
+    "DbItem" <|-- "DiaryPage"
+
+
+    class "BaseUser" {
+      {static} +String COLLECTION
+      {static} +String HOMEPAGE_ROUTE
+      +Map<String, Object> data
+      +void setFromDocument()
+    }
+    "User" <|-- "BaseUser"
+  }
+}
+@enduml

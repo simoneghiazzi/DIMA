@@ -1,0 +1,62 @@
+@startuml ViwesUML
+package Views {
+    package Map {
+        class "MapScreen" {
+            {static} +String route
+            +void initState()
+            +Widget build()
+        }
+        "MapScreen" --> "MapViewModel"
+        "MapScreen" --> "ChatViewModel"
+
+        class "MapBody" {
+            -Set<Marker> _markers
+            -CustomInfoWindowController _customInfoWindowController
+            -String _mapStyle
+            +GoogleMapController mapController
+            +PermissionStatus? positionPermission
+            +StreamSubscription<Place?> subscriber
+            +bool isPositionSearched
+            -dynamic _loadCurrentPositionFuture
+            +void initState()
+            +Widget build()
+            +void handlePositionPermission()
+            +void getMarkers()
+            +StreamSubscription<Place?> subscribeToSelectedPlace()
+            -Future<void> _goToPlace()
+            +Widget buildMap()
+            +Widget buildSearchBar()
+            +void dispose()
+        }
+        "MapBody" --* "MapScreen"
+        "MapBody" --> "google_maps_flutter::GoogleMapController"
+
+        class "MapInfoWindow" {
+            +Expert expert
+            +CustomInfoWindowController infoWindowController
+            +Widget build()
+        }
+        "MapInfoWindow" --* "MapBody"
+        "MapInfoWindow" --> "Expert"
+    }
+
+    package Report {
+        class "CreateReportScreen" {
+            +BaseUserViewModel* baseUserViewModel
+            +ReportViewModel* reportViewModel
+            -dynamic _onReportSubmitted()
+            -dynamic _onReportError()
+        }
+        "CreateReportScreen" --> "BaseUserViewModel"
+        "CreateReportScreen" --> "ReportViewModel"
+
+        class "ReportListScreen" {
+            +ReportViewModel* reportViewModel
+            +Widget* buildItem()
+            +void scrollListener()
+            -dynamic _onReportPressed()
+        }
+        "ReportListScreen" --> "ReportViewModel"
+    }
+}
+@enduml

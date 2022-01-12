@@ -1,0 +1,48 @@
+@startuml ViwesUML
+package Views {
+    package Home {
+        class "DashCard" {
+            +String imagePath
+            +String text
+            +Function onTap
+            +int row
+            +Widget build()
+        }
+        "DashCard" --* "HomePageGrid"
+
+        class "Header" {
+            +Widget build()
+        }
+        "Header" --* "BaseUserHomeScreen"
+
+        package BaseUser {
+            class "BaseUserHomeScreen" {
+                {static} +String route
+                +int? pageIndex
+                -List<Widget> _pages
+                -int _currentIndex
+                +void initState()
+                +Widget build()
+                -void _onBottomNavTapped()
+            }
+            "BaseUserHomeScreen" --> "AuthViewModel"
+            "BaseUserHomeScreen" --> "UserViewModel"
+            "BaseUserHomeScreen" --> "DiaryViewModel"
+            "BaseUserHomeScreen" --> "ChatViewModel"
+            "BaseUserHomeScreen" --> "ReportViewModel"
+            "BaseUserHomeScreen" --> "MapViewModel"
+            "BaseUserHomeScreen" --> "AppRouterDelegate"
+
+            class "BaseUserHomePageBody" {
+                +Widget build()
+            }
+            "BaseUserHomePageBody" --* "BaseUserHomeScreen"
+
+            class "HomePageGrid" {
+                +Widget build()
+            }
+            "HomePageGrid" --* "BaseUserHomePageBody"
+        }
+    }
+}
+@enduml

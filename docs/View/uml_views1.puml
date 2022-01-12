@@ -1,0 +1,88 @@
+@startuml ViwesUML
+package Views {
+    package Chat {
+        package ChatPage {
+            class "MessageListItem" {
+                +Message messageItem
+                +bool sameNextIdFrom
+                +void initState()
+                +Widget build()
+                +Widget buildMessageBubble()
+                +Size calcTextSize()
+            }
+            "MessageListItem" --> "ChatViewModel"
+            "MessageListItem" --> "Message"
+            "MessageListItem" --o "MessagesListConstructor"
+
+
+            class "ChatAcceptDenyInput" {
+                +Widget build()
+            }
+            "ChatAcceptDenyInput" --> "ChatViewModel"
+            "ChatAcceptDenyInput" --o "ChatPageBody"
+
+            class "ChatTextInput" {
+                +Widget build()
+            }
+            "ChatTextInput" --o "ChatPageBody"
+            "ChatTextInput" --> "ChatViewModel"
+
+            class "DateItem" {
+                +DateTime date
+                +bool sameNextIdFrom
+                +Widget build()
+            }
+            "DateItem" --o "MessagesListConstructor"
+
+
+            class "NewMessagesItem" {
+                +int counter
+                +bool sameNextIdFrom
+                +Widget build()
+            }
+            "NewMessagesItem" --o "MessagesListConstructor"
+
+            class "MessagesListConstructor" {
+                +Message* messageItem
+                -bool _scrollToNewMessage
+                -bool _first
+                -dynamic _maxIndex
+                +GlobalKey<State<StatefulWidget>> dataKey
+            }
+            "MessagesListConstructor" --> "ChatViewModel"
+            "MessagesListConstructor" --> "UserViewModel"
+            "MessagesListConstructor" --* "ChatPageBody"
+
+            class "ChatTopBar" {
+                +String text
+                +CircleAvatar? circleAvatar
+                +NetworkAvatar? networkAvatar
+                +bool isAnonymous
+                +Widget build()
+            }
+            "ChatTopBar" --* "ChatPageScreen"
+
+            class "ChatPageBody" {
+                +ScrollController scrollController
+                +Chat? currentChat
+                +void initState()
+                +Widget build()
+                +bool backButtonInterceptor()
+                +void didChangeAppLifecycleState()
+                +void dispose()
+            }
+            "ChatPageBody" --> "ChatViewModel"
+            "ChatPageBody" --> "UserViewModel"
+            "ChatPageBody" --> "AppRouterDelegate"
+            "ChatPageBody" --* "ChatPageScreen"
+
+            class "ChatPageScreen" {
+                {static} +String route
+                +ScrollController scrollController
+                +void initState()
+                +Widget build()
+            }
+        }
+    }
+}
+@enduml

@@ -1,0 +1,94 @@
+@startuml ViewsUML
+set namespaceSeparator ::
+package Views {
+    package components {
+        class "InfoDialog" {
+            {static} +Future<void> show()
+        }
+
+        class "InfoDialogType" {
+            +int index
+            {static} +List<InfoDialogType> values
+            {static} +InfoDialogType success
+            {static} +InfoDialogType error
+            {static} +InfoDialogType warning
+        }
+        "InfoDialogType" o-- "InfoDialog"
+
+        class "ButtonType" {
+            +int index
+            {static} +List<ButtonType> values
+            {static} +ButtonType ok
+            {static} +ButtonType confirm
+        }
+        "ButtonType" o-- "InfoDialog"
+
+        class "FormTextField" {
+            +TextFieldBloc<dynamic> textFieldBloc
+            +String hintText
+            +IconData prefixIconData
+            +SuffixButton? suffixButton
+            +TextCapitalization textCapitalization
+            +TextInputType keyboardType
+            +dynamic Function(String)? onChanged
+            +Widget build()
+        }
+
+        class "VerticalSplitView" {
+            +Widget left
+            +Widget right
+            +double ratio
+            +bool resizable
+            +double dividerWidth
+            +Color dividerColor
+        }
+
+        class "SocialIcon" {
+            +String iconSrc
+            +Function onTap
+            +Widget build()
+        }
+
+
+        class "NetworkAvatar" {
+            +String img
+            +double radius
+            +Widget build()
+        }
+
+
+        class "LoadingDialog" {
+            {static} +bool Function(dynamic, dynamic) backButtonInterceptor
+            {static} +Future<void> show()
+            {static} +void hide()
+        }
+
+
+        class "RoundedButton" {
+            +String text
+            +Function onTap
+            +Icon? prefixIcon
+            +Icon? suffixIcon
+            +Color color
+            +Color textColor
+            +bool enabled
+            +Widget build()
+        }
+
+        class "EmptyLandscapeBody" {
+            +Widget build()
+        }
+
+        class "TopBar" {
+            +String text
+            +double? textSize
+            +IconData backIcon
+            +List<Widget>? buttons
+            +Function? onBack
+            +bool back
+            +Widget build()
+        }
+    }
+}
+
+@enduml

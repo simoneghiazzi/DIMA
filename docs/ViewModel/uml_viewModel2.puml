@@ -1,0 +1,51 @@
+@startuml ViewModelUML
+set namespaceSeparator ::
+package ViewModel {
+    package BaseUser {
+        class "ReportViewModel" {
+            +ValueNotifier<Report?> currentReport
+            +LinkedHashMap<String, Report> reports
+            +Future<void> submitReport()
+            +Future<void> loadReports()
+            +void setCurrentReport()
+            +void resetCurrentReport()
+            +void resetViewModel()
+        }
+        "ReportViewModel" --> "FirestoreService"
+        "ReportViewModel" --> "UserService"
+
+        package BaseUser {
+            class "DiaryForm" {
+                +Sink<dynamic> title
+                +Sink<dynamic> content
+                -Stream<bool> _titleController
+                -Stream<bool> _contentController
+                +Stream<bool> isButtonEnabled
+                +void resetControllers()
+                +void dispose()
+            }
+
+            class "DiaryViewModel" {
+                +TextEditingController titleTextCtrl
+                +TextEditingController contentTextCtrl
+                +ValueNotifier<DiaryPage?> currentDiaryPage
+                +ValueNotifier<List<DiaryPage>> diaryPages
+                +bool isEditing
+                +Stream<bool> isPageAdded
+                +Future<void> submitPage()
+                +Future<void> updatePage()
+                +Future<void> setFavourite()
+                +Future<void> loadDiaryPages()
+                +void editPage()
+                +void addNewPage()
+                +void setCurrentDiaryPage()
+                +void resetCurrentDiaryPage()
+                +void resetViewModel()
+            }
+            "DiaryViewModel" --> "FirestoreService"
+            "DiaryViewModel" --> "UserService"
+            "DiaryViewModel" --> "DiaryForm"
+
+        }
+    }
+    @enduml

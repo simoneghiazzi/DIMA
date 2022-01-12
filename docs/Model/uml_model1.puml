@@ -1,0 +1,56 @@
+@startuml chat
+set namespaceSeparator ::
+package Model {
+  class "Utils" {
+    {static} +String randomId()
+    {static} +String pairChatId()
+    {static} +bool isToday()
+  }
+  package Map {
+    class "Place" {
+      +double? lat
+      +double? lng
+      +String? placeId
+      +String? address
+    }
+  }
+  package Chat {
+    abstract class "Chat" {
+      -FirestoreService _firestoreService
+      -UserService _userService
+      +String collection
+      +String peerCollection
+      +User? peerUser
+      +String lastMessage
+      +DateTime? lastMessageDateTime
+      +int notReadMessages
+      +ValueNotifier<List<Message>> messages
+      +StreamSubscription<dynamic>? messagesSubscriber
+      +Future<void> loadMessages()
+    }
+
+    class "AnonymousChat" {
+    }
+    "Chat" <|-- "AnonymousChat"
+
+    class "Request" {
+    }
+    "Chat" <|-- "Request"
+
+    class "ExpertChat" {
+    }
+    "Chat" <|-- "ExpertChat"
+
+
+    class "PendingChat" {
+    }
+    "Chat" <|-- "PendingChat"
+
+    class "ActiveChat" {
+
+    }
+    "Chat" <|-- "ActiveChat"
+  }
+
+}
+@enduml

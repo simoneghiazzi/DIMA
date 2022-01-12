@@ -21,7 +21,6 @@ import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:sApport/Views/Chat/ChatList/components/anonymous_chat_list_body.dart';
 import 'package:sApport/Views/Chat/ChatList/components/chat_list_item.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../../../navigator.mocks.dart';
 import '../../../../view_model.mocks.dart';
 import '../../../widget_test_helper.dart';

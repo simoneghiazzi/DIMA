@@ -1,0 +1,91 @@
+@startuml ViwesUML
+package Views {
+    package Signup {
+        class "CredentialScreen" {
+            {static} +String route
+            +Widget build()
+        }
+        "CredentialScreen" --> "AuthViewModel"
+        "CredentialScreen" --> "UserViewModel"
+        "CredentialScreen" --> "AppRouterDelegate"
+
+        class "CredentialBody" {
+            +void initState()
+            +Widget build()
+            +bool backButtonInterceptor()
+            +void dispose()
+        }
+        "CredentialBody" --* "LoginScreen"
+        "CredentialBody" --> "CredentialForm"
+
+        class "CredentialForm" {
+            +TextFieldBloc<dynamic> emailText
+            +void onSubmitting()
+        }
+        "LoginForm" <|-- "CredentialForm"
+
+
+        package BaseUser {
+            class "BaseUserSignUpScreen" {
+                {static} +String route
+                +Widget build()
+            }
+            "BaseUserSignUpScreen" --> "AuthViewModel"
+            "BaseUserSignUpScreen" --> "UserViewModel"
+            "BaseUserSignUpScreen" --> "AppRouterDelegate"
+
+
+            class "BaseUserInfoBody" {
+                +Widget build()
+            }
+            "BaseUserInfoBody" --* "BaseUserSignUpScreen"
+            "BaseUserInfoBody" --> "BaseUserSignUpForm"
+
+            class "BaseUserSignUpForm" {
+                +TextFieldBloc<dynamic> nameText
+                +TextFieldBloc<dynamic> surnameText
+                +InputFieldBloc<DateTime?, Object> birthDate
+                +User user
+                +void onSubmitting()
+            }
+            "BaseUserSignUpForm" --> "BaseUser"
+        }
+
+        package Expert {
+            class "ExpertSignUpScreen" {
+                {static} +String route
+                +Widget build()
+            }
+            "ExpertSignUpScreen" --> "AuthViewModel"
+            "ExpertSignUpScreen" --> "UserViewModel"
+            "ExpertSignUpScreen" --> "AppRouterDelegate"
+
+
+            class "ExpertsInfoBody" {
+                +bool nextEnabled
+                +void initState()
+                +Widget build()
+                +Future<dynamic> getImage()
+                -Future<dynamic> _cropImage()
+            }
+            "ExpertsInfoBody" --* "ExpertSignUpScreen"
+            "ExpertsInfoBody" --> "ExpertSignUpForm"
+
+            class "ExpertSignUpForm" {
+                +Place? expertAddress
+                +String? profilePhoto
+                +TextFieldBloc<dynamic> countryText
+                +TextFieldBloc<dynamic> cityText
+                +TextFieldBloc<dynamic> streetText
+                +TextFieldBloc<dynamic> houseNumber
+                +TextFieldBloc<dynamic> phoneNumber
+                +User user
+                +void onSubmitting()
+            }
+            "BaseUserSignUpForm" <|-- "ExpertSignUpForm"
+            "ExpertSignUpForm" --> "MapViewModel"
+            "ExpertSignUpForm" --> "Expert"
+        }
+    }
+}
+@enduml

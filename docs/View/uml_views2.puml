@@ -1,0 +1,62 @@
+@startuml ViwesUML
+package Views {
+    package Chat {
+        package ChatList {
+            class "ChatListItem" {
+                +Chat chatItem
+                +Function selectedItemCallback
+                +bool isSelected
+                +void initState()
+                +Widget build()
+            }
+            "ChatListItem" --> "ChatViewModel"
+            "ChatListItem" --> "UserViewModel"
+            "ChatListItem" --> "AppRouterDelegate"
+            "ChatListItem" --o "ChatsListConstructor"
+
+            class "PendingChatListBody" {
+                +void initState()
+                +Widget build()
+            }
+            "PendingChatListBody" --* "ChatListScreen"
+            
+            class "ActiveChatListBody" {
+                +void initState()
+                +Widget build()
+            }
+            "ActiveChatListBody" --* "ChatListScreen"
+
+            class "AnonymousChatListBody" {
+                +void initState()
+                +Widget build()
+                +StreamSubscription<bool> subscribeToNewRandomUser()
+            }
+            "AnonymousChatListBody" --> "AppRouterDelegate"
+            "AnonymousChatListBody" --* "ChatListScreen"
+
+            class "ExpertChatListBody" {
+                +void initState()
+                +Widget build()
+            }
+            "ExpertChatListBody" --> "AppRouterDelegate"
+            "ExpertChatListBody" --* "ChatListScreen"
+
+            class "ChatListScreen" {
+                {static} +String route
+                +void initState()
+                +Widget build()
+            }
+            "ChatListScreen" --> "ChatViewModel"
+
+            class "ChatsListConstructor" {
+                +void initState()
+                +Widget build()
+            }
+            "ChatsListConstructor" --* "ActiveChatListBody"
+            "ChatsListConstructor" --* "PendingChatListBody"
+            "ChatsListConstructor" --* "ExpertChatListBody"
+            "ChatsListConstructor" --* "AnonymousChatListBody"
+        }
+    }
+}
+@enduml

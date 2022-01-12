@@ -71,6 +71,8 @@ dependencies:
 
 dev_dependencies:
   network_image_mock: ^2.0.1
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
   test: ^1.17.12

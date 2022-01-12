@@ -25,6 +25,8 @@ import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 
+const bool USE_FIRESTORE_EMULATOR = true;
+
 Future<void> main() async {
   // Flutter initialization
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +43,10 @@ Future<void> main() async {
     log("FirebaseAppCheck error $e");
     exit(-1);
   });
+  if (USE_FIRESTORE_EMULATOR) {
+    FirebaseFirestore.instance.settings = const Settings(host: "localhost:8080", sslEnabled: false, persistenceEnabled: false);
+    FirebaseAuth.instance.useAuthEmulator("localhost", 9099);
+  }
 
   // Services initialization
   setupServices();

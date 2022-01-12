@@ -1,0 +1,81 @@
+@startuml ModelUML
+package Model {
+    package Services {
+        class "MapService" {
+            +Future<List<Place>> autocomplete()
+            +Future<Place?> searchPlace()
+            +Future<Position> getCurrentPosition()
+        }
+        class "FirebaseAuthService" {
+            +String? currentUserId
+            +Future<void> signInWithEmailAndPassword()
+            +Future<void> createUserWithEmailAndPassword()
+            +Future<Map<dynamic, dynamic>> signInWithGoogle()
+            +Future<Map<dynamic, dynamic>> signInWithFacebook()
+            +Future<void> resetPassword()
+            +Future<void> signOut()
+            +String? getAuthProvider()
+            +Future<List<String>?> fetchSignInMethods()
+            +Future<void> deleteUser()
+            +bool isUserEmailVerified()
+            +Future<void> sendVerificationEmail()
+        }
+        "FirebaseAuthService" --> "FirestoreService"
+        "FirebaseAuthService" --> "fireauth::FirebaseAuth"
+
+        class "FirestoreService" {
+            +Future<void> addUserIntoDB()
+            +Future<void> removeUserFromDB()
+            +Future<void> updateUserFieldIntoDB()
+            +Future<QuerySnapshot<Object?>> getExpertCollectionFromDB()
+            +Future<QuerySnapshot<Object?>> getUserByIdFromDB()
+            +Future<QueryDocumentSnapshot<Object?>?> getRandomUserFromDB()
+            +Future<User?> findUserType()
+            +Future<void> uploadProfilePhoto()
+            -Future<void> _incrementBaseUsersCounter()
+            -Future<DocumentSnapshot<Object?>> _getBaseUsersCounter()
+            +Future<void> addMessageIntoDB()
+            +Stream<QuerySnapshot<Object?>> getMessagesStreamFromDB()
+            +Future<void> removeMessagesFromDB()
+            +Future<void> setMessagesAsRead()
+            +Future<void> upgradePendingToActiveChatIntoDB()
+            +Future<void> removeChatFromDB()
+            +Stream<QuerySnapshot<Object?>> getChatsStreamFromDB()
+            -Future<void> _updateChatInfo()
+            -Future<HashSet<String>> _getChatIdsSet()
+            -Future<void> _incrementConversationCounter()
+            -Future<DocumentSnapshot<Object?>> _getChatsCounterFromDB()
+            +Future<void> addReportIntoDB()
+            +Future<QuerySnapshot<Object?>> getReportsFromDB()
+            +Future<void> addDiaryPageIntoDB()
+            +Future<void> updateDiaryPageIntoDB()
+            +Future<void> setDiaryPageAsFavouriteIntoDB()
+            +Stream<QuerySnapshot<Object?>> getDiaryPagesStreamFromDB()
+        }
+        "FirestoreService" --> "cloud_firestore::FirebaseFirestore"
+        "FirestoreService" --> "firebase_storage::FirebaseStorage"
+
+
+        class "UserService" {
+            +User? loggedUser
+            +Future<void> loadLoggedUser()
+            +void createUserFromSignUpForm()
+        }
+
+        "UserService" --> "FirestoreService"
+        "UserService" --> "FirebaseAuthService"
+        "UserService" --> "User"
+
+        class "NotificationService" {
+            +StreamSubscription<dynamic>? onMessageSubscriber
+            +StreamSubscription<dynamic>? onMessageOpenedSubscriber
+            +Future<String?> getDeviceToken()
+            +void configNotification()
+            -void _registerNotificationListeners()
+            -void _showNotification()
+        }
+        "NotificationService" --> "firemessaging::FirebaseMessaging"
+
+    }
+}
+@enduml

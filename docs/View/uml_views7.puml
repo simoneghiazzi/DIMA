@@ -1,0 +1,75 @@
+@startuml ViwesUML
+package Views {
+    package Login {
+        class "LoginScreen" {
+            {static} +String route
+            +Widget build()
+        }
+        "LoginScreen" --> "AuthViewModel"
+        "LoginScreen" --> "AppRouterDelegate"
+
+        class "LoginBody" {
+            +void initState()
+            +Widget build()
+            +bool backButtonInterceptor()
+            +void dispose()
+        }
+        "LoginBody" --* "LoginScreen"
+        "LoginBody" --> "LoginForm"
+
+        class "LoginForm" {
+            +TextFieldBloc<dynamic> passwordText
+            +void onSubmitting()
+        }
+        "ForgotPasswordForm" <|-- "LoginForm"
+
+        class "ForgotPasswordScreen" {
+            {static} +String route
+            +Widget build()
+        }
+        "ForgotPasswordScreen" --> "AuthViewModel"
+        "ForgotPasswordScreen" --> "AppRouterDelegate"
+
+        class "ForgotPasswordBody" {
+            +Stream<String?> errorText
+            +void initState()
+            +Widget build()
+        }
+        "ForgotPasswordBody" --* "ForgotPasswordScreen"
+        "ForgotPasswordBody" --> "ForgotPasswordForm"
+
+        class "ForgotPasswordForm" {
+            +TextFieldBloc<dynamic> emailText
+            +void onSubmitting()
+        }
+    }
+
+    package Welcome {
+        class "WelcomeScreen" {
+            {static} +String route
+            +void navigateToHome()
+            +void initState()
+            +Widget build()
+            +void handleOrientationChanges()
+            +void didChangeMetrics()
+            +void dispose()
+        }
+        "WelcomeScreen" --> "AuthViewModel"
+        "WelcomeScreen" --> "UserViewModel"
+        "WelcomeScreen" --> "DiaryViewModel"
+        "WelcomeScreen" --> "ChatViewModel"
+        "WelcomeScreen" --> "ReportViewModel"
+        "WelcomeScreen" --> "MapViewModel"
+        "WelcomeScreen" --> "AppRouterDelegate"
+
+        class "WelcomeBody" {
+            +StreamSubscription<dynamic> subscriber
+            +void initState()
+            +Widget build()
+            +StreamSubscription<bool> subscribeToUserLoggedStream()
+            +void dispose()
+        }
+        "WelcomeBody" --* "WelcomeScreen"
+    }
+}
+@enduml

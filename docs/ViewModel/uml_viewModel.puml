@@ -1,0 +1,78 @@
+@startuml ViewModelUML
+set namespaceSeparator ::
+package ViewModel {
+    class "ChatViewModel" {
+        +ValueNotifier<Chat?> currentChat
+        +ValueNotifier<LinkedHashMap<String, Chat>> anonymousChats
+        +ValueNotifier<LinkedHashMap<String, Chat>> pendingChats
+        +ValueNotifier<LinkedHashMap<String, Chat>> expertsChats
+        +ValueNotifier<LinkedHashMap<String, Chat>> activeChats
+        +Stream<bool> newRandomUser
+        +Future<void> sendMessage()
+        +Future<void> setMessagesAsRead()
+        +Future<void> loadAnonymousChats()
+        +void loadPendingChats()
+        +void loadExpertsChats()
+        +void loadActiveChats()
+        -Future<QuerySnapshot<Object?>> _getPeerUserDoc()
+        +Future<void> getNewRandomUser()
+        +Future<void> acceptPendingChat()
+        +Future<void> denyPendingChat()
+        +void addNewChat()
+        +void setCurrentChat()
+        +void resetCurrentChat()
+        -Future<void> _updateChattingWith()
+        -Future<void> _resetChattingWith()
+        +void resetViewModel()
+    }
+    "ChatViewModel" --> "FirestoreService"
+    "ChatViewModel" --> "UserService"
+
+    class "AuthViewModel" {
+        +Stream<bool> isUserLogged
+        +Stream<bool> isUserCreated
+        +Stream<String?> authMessage
+        +Future<void> logIn()
+        +Future<void> signUpUser()
+        +Future<void> logInWithGoogle()
+        +Future<void> logInWithFacebook()
+        +Future<void> resetPassword()
+        +String authProvider()
+        +Future<bool> hasPasswordAuthentication()
+        +Future<void> logOut()
+        +Future<void> setNotification()
+        +Future<void> deleteUser()
+        +void clearAuthMessage()
+    }
+    "AuthViewModel" --> "FirebaseAuthService"
+    "AuthViewModel" --> "FirestoreService"
+    "AuthViewModel" --> "NotificationService"
+
+    abstract class "UserViewModel" {
+        +User? loggedUser
+        +Future<void> loadLoggedUser()
+        +void createUser()
+    }
+    "UserViewModel" --> "UserService"
+    "UserViewModel" --> "User"
+
+    class "MapViewModel" {
+        +ValueNotifier<Expert?> currentExpert
+        +LinkedHashMap<String, Expert> experts
+        +Stream<Place?> selectedPlace
+        +Stream<List<Place>?> autocompletedPlaces
+        +Future<void> autocompleteSearchedPlace()
+        +Future<Place> firstSimilarPlace()
+        +Future<void> searchPlace()
+        +Future<Position?> loadCurrentPosition()
+        +Future<void> loadExperts()
+        +void clearControllers()
+        +void setCurrentExpert()
+        +void resetCurrentExpert()
+        +void resetViewModel()
+    }
+    "MapViewModel" --> "FirestoreService"
+    "MapViewModel" --> "MapService"
+    "MapViewModel" --> "Place"
+}
+@enduml

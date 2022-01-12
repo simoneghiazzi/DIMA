@@ -1,0 +1,51 @@
+@startuml ViewsUML
+set namespaceSeparator ::
+package Views {
+    package Diary {
+        class "DiaryScreen" {
+            {static} +String route
+            +void initState()
+            +Widget build()
+        }
+        "DiaryScreen" --> "DiaryViewModel"
+
+        class "DiaryPageDataSource" {
+            +DateTime getStartTime()
+            +DateTime getEndTime()
+        }
+
+        class "DiaryBody" {
+            -CalendarController _controller
+            -CalendarTapDetails? _selectedDayDetails
+            +void initState()
+            +Widget build()
+            +Widget appointmentBuilder()
+            +Widget monthCellBuilder()
+        }
+        "DiaryBody" --> "DiaryViewModel"
+        "DiaryBody" --> "UserViewModel"
+        "DiaryBody" --> "AppRouterDelegate"
+        "DiaryBody" --* "DiaryScreen"
+        "DiaryBody" --> "DiaryPageDataSource"
+
+        class "DiaryPageBody" {
+            +FocusNode titleFocusNode
+            +void initState()
+            +Widget build()
+            +StreamSubscription<bool> subscribeToOnSubmittingViewModel()
+            +bool backButtonInterceptor()
+            +void dispose()
+        }
+        "DiaryPageBody" --> "DiaryViewModel"
+        "DiaryPageBody" --> "UserViewModel"
+        "DiaryPageBody" --> "AppRouterDelegate"
+        "DiaryPageBody" --* "DiaryPageScreen"
+
+        class "DiaryPageScreen" {
+            {static} +String route
+            +Widget build()
+        }
+    }
+}
+
+@enduml

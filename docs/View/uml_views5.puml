@@ -1,0 +1,44 @@
+@startuml ViwesUML
+package Views {
+    package Home {
+        class "DashCard" {
+            +String imagePath
+            +String text
+            +Function onTap
+            +int row
+            +Widget build()
+        }
+        "DashCard" --* "ExpertGrid"
+
+        class "Header" {
+            +Widget build()
+        }
+        "Header" --* "ExpertHomeScreen"
+
+        package Expert {
+            class "ExpertHomeScreen" {
+                {static} +String route
+                +int? pageIndex
+                -List<Widget> _pages
+                -int _currentIndex
+                +void initState()
+                +Widget build()
+                -void _onBottomNavTapped()
+            }
+            "ExpertGrid" --> "ExpertViewModel"
+            "ExpertGrid" --> "ChatViewModel"
+
+            class "ExpertHomePageBody" {
+                +Widget build()
+            }
+            "ExpertHomePageBody" --* "ExpertHomeScreen"
+
+            class "ExpertGrid" {
+                +ExpertViewModel* expertViewModel
+                +ChatViewModel* chatViewModel
+            }
+            "ExpertGrid" --* "ExpertHomePageBody"
+        }
+    }
+}
+@enduml
