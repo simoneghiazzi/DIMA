@@ -27,7 +27,7 @@ import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 
 /// Used to set set the emulator for Firebase during Testing
 /// 
-/// ** SET FALSE FOR DURING DEPLOYMENT **
+/// ** SET FALSE DURING DEPLOYMENT **
 const bool USE_FIRESTORE_EMULATOR = false;
 
 Future<void> main() async {
