@@ -84,13 +84,14 @@ class FirebaseAuthService {
               headers: {"Authorization": (await googleUser.authHeaders)["Authorization"]!},
             );
             final birthDate = jsonDecode(res.body)["birthdays"][0]["date"];
+            var month = birthDate["month"] < 10 ? ('0${birthDate["month"]}') : birthDate["month"];
 
             // Return the information retrieved from the Google account
             return {
               "name": googleUser.displayName!.split(" ")[0],
               "surname": googleUser.displayName!.split(" ")[1],
               "email": googleUser.email,
-              "birthDate": DateTime.parse("${birthDate["year"]}-${birthDate["month"]}-${birthDate["day"]}"),
+              "birthDate": DateTime.parse("${birthDate["year"]}-$month-${birthDate["day"]}"),
             };
           } else {
             throw (FirebaseAuthException(code: "account-exists-with-different-credential"));
@@ -134,11 +135,12 @@ class FirebaseAuthService {
 
         // Format the user birthdate info from the Facebook account
         var birthDate = userData["birthday"].split("/");
+        var month = birthDate[2] < 10 ? ('0${birthDate[2]}') : birthDate[2];
         return {
           "name": userData["name"].split(" ")[0],
           "surname": userData["name"].split(" ")[1],
           "email": _firebaseAuth.currentUser?.email,
-          "birthDate": DateTime.parse("${birthDate[2]}-${birthDate[0]}-${birthDate[1]}")
+          "birthDate": DateTime.parse("${birthDate[2]}-$month-${birthDate[1]}")
         };
       }
     }
