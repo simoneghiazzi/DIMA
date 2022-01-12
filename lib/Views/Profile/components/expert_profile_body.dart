@@ -244,10 +244,8 @@ class _ExpertProfileBodyState extends State<ExpertProfileBody> {
   /// It resets the current expert and then pops the page.
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     mapViewModel.resetCurrentExpert();
-    if (chatViewModel.currentChat.value == null) {
-      if (MediaQuery.of(context).orientation == Orientation.portrait) {
-        routerDelegate.pop();
-      }
+    if (MediaQuery.of(context).orientation == Orientation.portrait) {
+      routerDelegate.pop();
     }
     return true;
   }

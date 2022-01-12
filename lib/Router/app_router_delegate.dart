@@ -20,6 +20,9 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
   // Stack of pages
   final _pages = <Page>[];
 
+  // Last removed route
+  Page? _lastRemovedRoute;
+
   // Flag that indicates if a dialog is open
   bool hasDialog = false;
 
@@ -47,7 +50,7 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
   @override
   Future<bool> popRoute() {
     if (_pages.length > 1 && _pages.last.name != BaseUserHomePageScreen.route && _pages.last.name != ExpertHomePageScreen.route) {
-      _pages.removeLast();
+      _lastRemovedRoute = _pages.removeLast();
       notifyListeners();
       return Future.value(true);
     }
@@ -141,6 +144,13 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
   /// Get the top-most route of the navigator stack.
   Page getLastRoute() {
     return _pages.last;
+  }
+
+  /// Get the last route removed from the navigator stack.
+  Page? getLastRemovedRoute() {
+    var route = _lastRemovedRoute;
+    _lastRemovedRoute = null;
+    return route;
   }
 
   /// Remove the top-most page of the navigator stack and the push the page specified by the [name] of the route.

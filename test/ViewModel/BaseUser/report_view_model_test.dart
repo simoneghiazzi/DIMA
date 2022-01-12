@@ -82,21 +82,6 @@ void main() async {
     });
 
     group("Submit report:", () {
-      test("Check that submit report sets the current report with the correct values", () async {
-        /// Test Fields
-        var category = "Category";
-        var description = "Description";
-
-        await reportViewModel.submitReport(category, description);
-
-        expect(reportViewModel.currentReport.value, isNotNull);
-        expect(reportViewModel.currentReport.value!.category, category);
-        expect(reportViewModel.currentReport.value!.description, description);
-        expect(reportViewModel.currentReport.value!.dateTime!.day, now.day);
-        expect(reportViewModel.currentReport.value!.dateTime!.month, now.month);
-        expect(reportViewModel.currentReport.value!.dateTime!.year, now.year);
-      });
-
       test("Submit report should call the submit report method of the firestore service", () async {
         /// Test Fields
         var category = "Category";

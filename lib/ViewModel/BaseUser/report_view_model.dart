@@ -20,14 +20,15 @@ class ReportViewModel {
 
   Future<void> submitReport(String category, String description) async {
     var now = DateTime.now();
-    currentReport.value = Report(
-      id: now.millisecondsSinceEpoch.toString(),
-      category: category,
-      description: description,
-      dateTime: now,
-    );
     return _firestoreService
-        .addReportIntoDB(_userService.loggedUser!.id, currentReport.value!)
+        .addReportIntoDB(
+            _userService.loggedUser!.id,
+            Report(
+              id: now.millisecondsSinceEpoch.toString(),
+              category: category,
+              description: description,
+              dateTime: now,
+            ))
         .then((value) => log("Report added"))
         .catchError((error) => log("Failed to add the report: $error"));
   }
