@@ -1,4 +1,4 @@
-@startuml db_item
+@startuml ModelUML
 package DBItems {
 
   class "Message" {

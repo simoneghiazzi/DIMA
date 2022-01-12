@@ -8,6 +8,7 @@ package Views {
         }
         "MapScreen" --> "MapViewModel"
         "MapScreen" --> "ChatViewModel"
+        "ExpertProfileScreen" --> "AppRouterDelegate"
 
         class "MapBody" {
             -Set<Marker> _markers
@@ -38,6 +39,25 @@ package Views {
         }
         "MapInfoWindow" --* "MapBody"
         "MapInfoWindow" --> "Expert"
+    }
+
+    package Profile {
+        class "ExpertProfileScreen" {
+            {static} +String route
+            +Widget build()
+        }
+        "ExpertProfileScreen" --> "MapViewModel"
+        "ExpertProfileScreen" --> "ChatViewModel"
+        "ExpertProfileScreen" --> "AppRouterDelegate"
+
+        class "ExpertProfileBody" {
+            +void initState()
+            +Widget build()
+            +void openMaps()
+            +bool backButtonInterceptor()
+            +void dispose()
+        }
+        "ExpertProfileBody" --> "ExpertProfileScreen"
     }
 
     package Report {

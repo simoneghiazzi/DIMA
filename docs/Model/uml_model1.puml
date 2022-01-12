@@ -1,4 +1,4 @@
-@startuml chat
+@startuml ModelUML
 set namespaceSeparator ::
 package Model {
   class "Utils" {
