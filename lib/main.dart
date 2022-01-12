@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:developer';
-import 'package:sApport/Model/Services/notification_service.dart';
 import 'package:sizer/sizer.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
 import 'package:sApport/ViewModel/user_view_model.dart';
@@ -20,9 +20,10 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Views/Welcome/welcome_screen.dart';
 import 'package:sApport/Model/Services/firestore_service.dart';
-import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
+import 'package:sApport/Model/Services/notification_service.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
+import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 
 Future<void> main() async {
   // Flutter initialization
@@ -63,7 +64,7 @@ void setupServices() {
   var getIt = GetIt.I;
   getIt.registerSingleton<FirestoreService>(FirestoreService(FirebaseFirestore.instance));
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService(FirebaseAuth.instance));
-  getIt.registerSingleton<NotificationService>(NotificationService());
+  getIt.registerSingleton<NotificationService>(NotificationService(FirebaseMessaging.instance));
   getIt.registerSingleton<UserService>(UserService());
   getIt.registerSingleton<MapService>(MapService());
 }

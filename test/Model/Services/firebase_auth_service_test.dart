@@ -43,7 +43,7 @@ void main() async {
     final mockUser = MockUser();
 
     setUp(() {
-      clearInteractions(mockUser);
+      reset(mockUser);
 
       /// Mock FirebaseAuth responses
       when(mockFirebaseAuth.currentUser).thenAnswer((_) => mockUser);
@@ -81,7 +81,7 @@ void main() async {
       test("Check that if an exception occurs in sending the reset password email it catches the error", () async {
         /// Mock FirebaseAuth exception
         when(mockUser.sendEmailVerification()).thenAnswer((_) async {
-          return Future.error(FirebaseAuthException(code: "code", message: "test"));
+          return Future.error(FirebaseAuthException(code: "generic-exception"));
         });
         await firebaseAuthService.resetPassword(email);
       });
@@ -120,12 +120,20 @@ void main() async {
       test("Check that if an exception occurs when fetching the sign in methods it catches the error and returns null", () async {
         /// Mock FirebaseAuth exception
         when(mockFirebaseAuth.fetchSignInMethodsForEmail(email)).thenAnswer((_) async {
-          return Future.error(FirebaseAuthException(code: "code", message: "test"));
+          return Future.error(FirebaseAuthException(code: "generic-exception"));
         });
 
         var signInMethods = await firebaseAuthService.fetchSignInMethods(email);
 
         expect(signInMethods, isNull);
+      });
+    });
+
+    group("Send email verification:", () {
+      test("Check that send email verification calls the sendEmailVerification method of the firebase auth current user", () async {
+        await firebaseAuthService.sendVerificationEmail();
+
+        verify(mockUser.sendEmailVerification()).called(1);
       });
     });
 

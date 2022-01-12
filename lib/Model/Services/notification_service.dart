@@ -1,14 +1,20 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
   // Services
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final FirebaseMessaging _firebaseMessaging;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  NotificationService() {
+  /// Stream Subscriptions
+  StreamSubscription? _onMessageSubscriber;
+  StreamSubscription? _onMessageOpenedSubscriber;
+
+  NotificationService(this._firebaseMessaging) {
     // Setup of the firebase messaging service
     _firebaseMessaging.requestPermission();
   }
@@ -19,28 +25,32 @@ class NotificationService {
   }
 
   /// Configuration of the notification for Android and IOS and register the notification listeners.
-  void configNotification() {
-    AndroidInitializationSettings initializationSettingsAndroid = new AndroidInitializationSettings("@drawable/ic_notification");
-    IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
-    InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  void configNotification({@visibleForTesting bool testing = false}) {
+    if (!testing) {
+      AndroidInitializationSettings initializationSettingsAndroid = new AndroidInitializationSettings("@drawable/ic_notification");
+      IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
+      InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+      _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    }
     _registerNotificationListeners();
   }
 
   /// Register the listeners for new notifications
   void _registerNotificationListeners() {
     // Handle notification messages
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    _onMessageSubscriber = FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
         _showNotification(message.notification!);
         FlutterAppBadger.updateBadgeCount(1);
       }
+      _onMessageSubscriber?.cancel();
       return;
     });
 
     // Handle notification open
-    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+    _onMessageOpenedSubscriber = FirebaseMessaging.onMessageOpenedApp.listen((event) {
       FlutterAppBadger.removeBadge();
+      _onMessageOpenedSubscriber?.cancel();
     });
   }
 
@@ -66,4 +76,10 @@ class NotificationService {
       payload: null,
     );
   }
+
+  /// Get the [_onMessageSubscriber].
+  StreamSubscription? get onMessageSubscriber => _onMessageSubscriber;
+
+  /// Get the [_onMessageOpenedSubscriber].
+  StreamSubscription? get onMessageOpenedSubscriber => _onMessageOpenedSubscriber;
 }

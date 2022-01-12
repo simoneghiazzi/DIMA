@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
@@ -13,12 +12,7 @@ import 'package:sApport/Model/Services/firestore_service.dart';
 import 'package:sApport/Model/Services/user_service.dart';
 import 'package:sApport/Model/utils.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
-import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
-import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
-import 'package:sApport/ViewModel/auth_view_model.dart';
-import 'package:sApport/ViewModel/chat_view_model.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
-import 'package:sApport/ViewModel/user_view_model.dart';
 import 'package:sApport/Views/Map/map_screen.dart';
 import 'package:sizer/sizer.dart';
 
@@ -28,7 +22,6 @@ import '../../test_helper.dart';
 import '../../view_model.mocks.dart';
 import '../widget_test_helper.dart';
 
-@GenerateMocks([ChatViewModel, MapViewModel, DiaryViewModel, ReportViewModel, AuthViewModel, UserViewModel])
 void main() {
   final mockMapviewModel = MockMapViewModel();
   final mockRouterDelegate = MockAppRouterDelegate();
