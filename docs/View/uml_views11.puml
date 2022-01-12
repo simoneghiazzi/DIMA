@@ -1,0 +1,55 @@
+@startuml ViwesUML
+package Views {
+    package Report {
+        class "CreateReportScreen" {
+            {static} +String route
+            +Widget build()
+        }
+        "CreateReportScreen" --> "AppRouterDelegate"
+        "CreateReportScreen" --> "ReportViewModel"
+
+        class "CreateReportBody" {
+            +void initState()
+            +Widget build()
+        }
+        "CreateReportBody" --* "CreateReportScreen"
+        "CreateReportBody" --> "ReportForm"
+
+        class "ReportForm" {
+            +SelectFieldBloc<String, dynamic> reportCategory
+            +TextFieldBloc<dynamic> reportText
+            +void onSubmitting()
+        }
+
+        class "ReportListScreen" {
+            {static} +String route
+            +State<ReportsListScreen> createState()
+            +void initState()
+            +Widget build()
+        }
+        "ReportListScreen" --> "AppRouterDelegate"
+        "ReportListScreen" --> "ReportViewModel"
+
+        class "ReportListBody" {
+            +void initState()
+            +Widget build()
+        }
+        "ReportListBody" --* "ReportListScreen"
+
+        class "ReportDetailsScreen" {
+            {static} +String route
+            +Widget build()
+        }
+        "ReportDetailsScreen" --> "AppRouterDelegate"
+        "ReportDetailsScreen" --> "ReportViewModel"
+
+        class "ReportDetailsBody" {
+            +void initState()
+            +Widget build()
+            +bool backButtonInterceptor()
+            +void dispose()
+        }
+        "ReportDetailsBody" --* "ReportDetailsScreen"
+    }
+}
+@enduml

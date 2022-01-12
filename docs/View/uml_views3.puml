@@ -13,7 +13,7 @@ package Views {
             {static} +InfoDialogType error
             {static} +InfoDialogType warning
         }
-        "InfoDialogType" o-- "InfoDialog"
+        "InfoDialogType" --o "InfoDialog"
 
         class "ButtonType" {
             +int index
@@ -21,7 +21,7 @@ package Views {
             {static} +ButtonType ok
             {static} +ButtonType confirm
         }
-        "ButtonType" o-- "InfoDialog"
+        "ButtonType" --o "InfoDialog"
 
         class "FormTextField" {
             +TextFieldBloc<dynamic> textFieldBloc
@@ -32,6 +32,12 @@ package Views {
             +TextInputType keyboardType
             +dynamic Function(String)? onChanged
             +Widget build()
+        }
+        "FormTextField" --> "BlocValidators"
+
+        class "BlocValidators" {
+            {static} +String? underage()
+            {static} +String? phoneCorrect()
         }
 
         class "VerticalSplitView" {

@@ -1,0 +1,42 @@
+@startuml ViwesUML
+package Views {
+
+    package Profile {
+        class "ExpertProfileScreen" {
+            {static} +String route
+            +Widget build()
+        }
+        "ExpertProfileScreen" --> "MapViewModel"
+        "ExpertProfileScreen" --> "ChatViewModel"
+        "ExpertProfileScreen" --> "AppRouterDelegate"
+
+        class "ExpertProfileBody" {
+            +void initState()
+            +Widget build()
+            +void openMaps()
+            +bool backButtonInterceptor()
+            +void dispose()
+        }
+        "ExpertProfileBody" --* "ExpertProfileScreen"
+    }
+
+    package Settings {
+        class "UserSettingsScreen" {
+            {static} +String route
+            +Widget build()
+        }
+        "UserSettingsScreen" --> "AppRouterDelegate"
+        "UserSettingsScreen" --> "UserViewModel"
+        "UserSettingsScreen" --> "AuthViewModel"
+
+        class "UserSettingsBody" {
+            -dynamic _hasPasswordAuthenticationFuture
+            +void initState()
+            +Widget build()
+            +StreamSubscription<String?> subscribeToAuthMessage()
+            +void dispose()
+        }
+        "UserSettingsBody" --* "UserSettingsScreen"
+    }
+}
+@enduml
