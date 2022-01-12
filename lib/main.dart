@@ -25,6 +25,11 @@ import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
 import 'package:sApport/Model/Services/firebase_auth_service.dart';
 import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 
+/// sApport project authors: @lucacolombo97 and @simoneghiazzi
+/// 
+/// Copyright 2021. All rights reserved. 
+/// The sApport authors.
+
 /// Used to set set the emulator for Firebase during Testing
 /// 
 /// ** SET FALSE DURING DEPLOYMENT **
