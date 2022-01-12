@@ -85,7 +85,7 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                     child: userViewModel.loggedUser!.data["profilePhoto"] != null
                         ?
                         // If the profile photo is not null, show the image
-                        NetworkAvatar(img: userViewModel.loggedUser!.data["profilePhoto"] as String, radius: 11.h)
+                        NetworkAvatar(img: userViewModel.loggedUser!.data["profilePhoto"] as String, radius: 8.5.h)
                         :
                         // Otherwise show the circle avatar with the person icon
                         CircleAvatar(radius: 11.h, backgroundColor: Colors.white, child: Icon(Icons.person, size: 100, color: kPrimaryColor)),
@@ -245,34 +245,40 @@ class _UserSettingsBodyState extends State<UserSettingsBody> {
                   Divider(color: kPrimaryColor, height: 1.5),
                   SizedBox(height: 5.h),
                   (MediaQuery.of(context).orientation == Orientation.landscape)
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      ? Column(
                           children: [
-                            // Logout Button
-                            RoundedButton(
-                              text: "Logout ",
-                              onTap: () => authViewModel.logOut(),
-                              suffixIcon: Icon(Icons.logout, color: Colors.white, size: 20),
-                            ),
-                            SizedBox(height: 2.h),
-                            // Delete Account Button
-                            RoundedButton(
-                              text: "Delete Account",
-                              color: Colors.red,
-                              onTap: () => InfoDialog.show(context,
-                                  infoType: InfoDialogType.warning,
-                                  title: "Delete account",
-                                  content: "Insert the password to confirm:",
-                                  buttonType: ButtonType.confirm,
-                                  closeButton: true,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                // Logout Button
+                                RoundedButton(
+                                  text: "Logout ",
                                   onTap: () => authViewModel.logOut(),
-                                  body: TextField(
-                                    obscureText: true,
-                                    decoration: InputDecoration(icon: Icon(Icons.lock, color: kPrimaryColor), hintText: "Password"),
-                                  )),
-                              suffixIcon: Icon(Icons.delete, color: Colors.white, size: 20),
+                                  suffixIcon: Icon(Icons.logout, color: Colors.white, size: 20),
+                                ),
+                                SizedBox(width: 1.w),
+                                // Delete Account Button
+                                RoundedButton(
+                                  text: "Delete Account",
+                                  color: Colors.red,
+                                  onTap: () => InfoDialog.show(context,
+                                      infoType: InfoDialogType.warning,
+                                      title: "Delete account",
+                                      content: "Insert the password to confirm:",
+                                      buttonType: ButtonType.confirm,
+                                      closeButton: true,
+                                      onTap: () => authViewModel.logOut(),
+                                      body: TextField(
+                                        obscureText: true,
+                                        decoration: InputDecoration(icon: Icon(Icons.lock, color: kPrimaryColor), hintText: "Password"),
+                                      )),
+                                  suffixIcon: Icon(Icons.delete, color: Colors.white, size: 20),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 3.h),
+                            SizedBox(
+                              height: 5.h,
+                            )
                           ],
                         )
                       : Container(),

@@ -16,6 +16,7 @@ import 'package:sApport/Views/Chat/ChatPage/components/chat_top_bar.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_text_input.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/chat_accept_deny.dart';
 import 'package:sApport/Views/Chat/ChatPage/components/message_list_constructor.dart';
+import 'package:sApport/Views/Utils/custom_sizer.dart';
 
 /// It contains the [ChatTopBar] that differs based on the type of the peer user ([BaseUser] or [Expert]),
 /// the [MessageListConstructor] of the messages between the 2 users and the [ChatTextInput] or the
@@ -90,7 +91,11 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
             child: Column(
               children: [
                 // List of messages
-                Flexible(child: MessageListConstructor(scrollController: scrollController)),
+                Flexible(
+                    child: Padding(
+                  padding: EdgeInsets.only(left: 1.w, right: 1.w),
+                  child: MessageListConstructor(scrollController: scrollController),
+                )),
                 // Input content
                 chatViewModel.currentChat.value is PendingChat
                     ?
@@ -114,8 +119,8 @@ class _ChatPageBodyState extends State<ChatPageBody> with WidgetsBindingObserver
   bool backButtonInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     if (routerDelegate.getLastRoute().name == ChatPageScreen.route) {
       chatViewModel.resetCurrentChat();
+      routerDelegate.pop();
     }
-    routerDelegate.pop();
     return true;
   }
 
