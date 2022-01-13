@@ -84,13 +84,14 @@ class FirebaseAuthService {
               headers: {"Authorization": (await googleUser.authHeaders)["Authorization"]!},
             );
             final birthDate = jsonDecode(res.body)["birthdays"][0]["date"];
+            var month = birthDate["month"] < 10 ? ('0${birthDate["month"]}') : birthDate["month"];
 
             // Return the information retrieved from the Google account
             return {
               "name": googleUser.displayName!.split(" ")[0],
               "surname": googleUser.displayName!.split(" ")[1],
               "email": googleUser.email,
-              "birthDate": DateTime.parse("${birthDate["year"]}-${birthDate["month"]}-${birthDate["day"]}"),
+              "birthDate": DateTime.parse("${birthDate["year"]}-$month-${birthDate["day"]}"),
             };
           } else {
             throw (FirebaseAuthException(code: "account-exists-with-different-credential"));

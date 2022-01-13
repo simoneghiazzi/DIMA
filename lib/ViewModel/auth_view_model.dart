@@ -115,7 +115,7 @@ class AuthViewModel {
       }
     } catch (error) {
       _authMessageCtrl.add("Error in signing in with the Google account. Please try again later.");
-      log("Error in signing in with the Google account");
+      log("Error in signing in with the Google account $error");
     }
   }
 
