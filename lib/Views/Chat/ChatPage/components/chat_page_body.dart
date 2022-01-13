@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:sApport/Model/Chat/chat.dart';
-import 'package:sApport/Views/Profile/expert_profile_screen.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Views/Utils/custom_sizer.dart';

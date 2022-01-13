@@ -8,7 +8,6 @@ import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/Model/DBItems/BaseUser/report.dart';
 import 'package:sApport/Views/Report/report_details_screen.dart';
 import 'package:sApport/ViewModel/BaseUser/report_view_model.dart';
-import 'package:back_button_interceptor/back_button_interceptor.dart';
 
 /// Body of the [ReportDetailsScreen].
 ///

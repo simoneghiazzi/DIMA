@@ -95,8 +95,10 @@ class AppRouterDelegate extends RouterDelegate<List<RouteSettings>> with ChangeN
       } else if (diaryViewModel.currentDiaryPage.value != null) {
         diaryViewModel.resetCurrentDiaryPage();
       }
-      _pages.removeLast();
-      notifyListeners();
+      if (!hasDialog) {
+        _pages.removeLast();
+        notifyListeners();
+      }
     }
     return Future.value(true);
   }

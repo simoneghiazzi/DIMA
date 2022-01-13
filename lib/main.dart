@@ -30,8 +30,9 @@ import 'package:sApport/ViewModel/BaseUser/Diary/diary_view_model.dart';
 
 /// Used to set set the emulator for Firebase during Testing
 ///
-/// ** SET FALSE DURING DEPLOYMENT **
+/// ** SET FALSE DURING PRODUCTION **
 const bool USE_FIRESTORE_EMULATOR = false;
+const String LOCAL_HOST = "192.168.1.13";
 
 Future<void> main() async {
   // Flutter initialization
@@ -50,8 +51,8 @@ Future<void> main() async {
     exit(-1);
   });
   if (USE_FIRESTORE_EMULATOR) {
-    FirebaseFirestore.instance.settings = const Settings(host: "localhost:8080", sslEnabled: false, persistenceEnabled: false);
-    FirebaseAuth.instance.useAuthEmulator("localhost", 9099);
+    FirebaseAuth.instance.useAuthEmulator(LOCAL_HOST, 9099);
+    FirebaseFirestore.instance.settings = const Settings(host: "$LOCAL_HOST:8080", sslEnabled: false, persistenceEnabled: false);
   }
 
   // Services initialization

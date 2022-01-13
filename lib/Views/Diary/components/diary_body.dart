@@ -258,6 +258,7 @@ class _DiaryBodyState extends State<DiaryBody> {
     var mid = details.visibleDates.length ~/ 2.toInt();
     var midDate = details.visibleDates[0].add(Duration(days: mid));
     return Container(
+      key: Utils.isToday(details.date) ? Key("TodayDate") : Key(""),
       decoration: BoxDecoration(
         border: Border.all(color: kPrimaryDarkColorTrasparent.withOpacity(0.6), width: 0.1),
         color: details.date.month != midDate.month ? kPrimaryLightColor : Colors.transparent,

@@ -1,4 +1,3 @@
-import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sApport/Model/Chat/chat.dart';
@@ -6,7 +5,6 @@ import 'package:sApport/Model/Chat/pending_chat.dart';
 import 'package:sApport/Model/DBItems/Expert/expert.dart';
 import 'package:sApport/Router/app_router_delegate.dart';
 import 'package:sApport/ViewModel/map_view_model.dart';
-import 'package:sApport/Views/Chat/ChatPage/chat_page_screen.dart';
 import 'package:sApport/Views/Profile/components/expert_profile_body.dart';
 import 'package:sApport/Views/Utils/constants.dart';
 import 'package:sApport/ViewModel/chat_view_model.dart';
