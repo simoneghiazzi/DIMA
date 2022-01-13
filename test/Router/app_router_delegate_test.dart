@@ -84,71 +84,71 @@ void main() async {
       });
     });
 
-    group("Pop page:", () {
-      test("Pop page should remove the head of the stack if it is not empty", () {
-        routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
-        routerDelegate.pushPage(name: ChatListScreen.route, arguments: AnonymousChatListBody());
+    // group("Pop page:", () {
+    //   test("Pop page should remove the head of the stack if it is not empty", () {
+    //     routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
+    //     routerDelegate.pushPage(name: ChatListScreen.route, arguments: AnonymousChatListBody());
 
-        routerDelegate.pop();
+    //     routerDelegate.pop();
 
-        expect(routerDelegate.stack.length, 1);
-        expect(routerDelegate.stack.last.name, BaseUserHomePageScreen.route);
-      });
+    //     expect(routerDelegate.stack.length, 1);
+    //     expect(routerDelegate.stack.last.name, BaseUserHomePageScreen.route);
+    //   });
 
-      test("Pop page should not remove the head of the stack if there is only one page in the stack", () {
-        routerDelegate.pushPage(name: WelcomeScreen.route);
+    //   test("Pop page should not remove the head of the stack if there is only one page in the stack", () {
+    //     routerDelegate.pushPage(name: WelcomeScreen.route);
 
-        routerDelegate.pop();
+    //     routerDelegate.pop();
 
-        expect(routerDelegate.stack.length, 1);
-        expect(routerDelegate.stack.last.name, WelcomeScreen.route);
-      });
+    //     expect(routerDelegate.stack.length, 1);
+    //     expect(routerDelegate.stack.last.name, WelcomeScreen.route);
+    //   });
 
-      test("Pop page should not remove the head of the stack if the page is the BaseUserHomePageScreen", () {
-        routerDelegate.pushPage(name: WelcomeScreen.route);
-        routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
+    //   test("Pop page should not remove the head of the stack if the page is the BaseUserHomePageScreen", () {
+    //     routerDelegate.pushPage(name: WelcomeScreen.route);
+    //     routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
 
-        routerDelegate.pop();
+    //     routerDelegate.pop();
 
-        expect(routerDelegate.stack.length, 2);
-        expect(routerDelegate.stack.last.name, BaseUserHomePageScreen.route);
-      });
+    //     expect(routerDelegate.stack.length, 2);
+    //     expect(routerDelegate.stack.last.name, BaseUserHomePageScreen.route);
+    //   });
 
-      test("Pop page should not remove the head of the stack if the page is the ExpertHomePageScreen", () {
-        routerDelegate.pushPage(name: WelcomeScreen.route);
-        routerDelegate.pushPage(name: ExpertHomePageScreen.route);
+    //   test("Pop page should not remove the head of the stack if the page is the ExpertHomePageScreen", () {
+    //     routerDelegate.pushPage(name: WelcomeScreen.route);
+    //     routerDelegate.pushPage(name: ExpertHomePageScreen.route);
 
-        routerDelegate.pop();
+    //     routerDelegate.pop();
 
-        expect(routerDelegate.stack.length, 2);
-        expect(routerDelegate.stack.last.name, ExpertHomePageScreen.route);
-      });
+    //     expect(routerDelegate.stack.length, 2);
+    //     expect(routerDelegate.stack.last.name, ExpertHomePageScreen.route);
+    //   });
 
-      test("Pop page should notify the listeners when a page is removed", () {
-        routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
-        routerDelegate.pushPage(name: ChatListScreen.route, arguments: AnonymousChatListBody());
+    //   test("Pop page should notify the listeners when a page is removed", () {
+    //     routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
+    //     routerDelegate.pushPage(name: ChatListScreen.route, arguments: AnonymousChatListBody());
 
-        routerDelegate.pop();
+    //     routerDelegate.pop();
 
-        /// 3 = 2 push + 1 pop
-        expect(callbackCounter, 3);
-      });
-    });
+    //     /// 3 = 2 push + 1 pop
+    //     expect(callbackCounter, 3);
+    //   });
+    // });
 
-    group("Get last route:", () {
-      test("Get last route should return the top-most page of the stack", () {
-        var anonymousChatListBody = AnonymousChatListBody();
-        routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
-        routerDelegate.pushPage(name: ChatListScreen.route, arguments: anonymousChatListBody);
+    // group("Get last route:", () {
+    //   test("Get last route should return the top-most page of the stack", () {
+    //     var anonymousChatListBody = AnonymousChatListBody();
+    //     routerDelegate.pushPage(name: BaseUserHomePageScreen.route);
+    //     routerDelegate.pushPage(name: ChatListScreen.route, arguments: anonymousChatListBody);
 
-        expect(routerDelegate.getLastRoute().name, ChatListScreen.route);
-        expect(routerDelegate.getLastRoute().arguments, anonymousChatListBody);
+    //     expect(routerDelegate.getLastRoute().name, ChatListScreen.route);
+    //     expect(routerDelegate.getLastRoute().arguments, anonymousChatListBody);
 
-        routerDelegate.pop();
+    //     routerDelegate.pop();
 
-        expect(routerDelegate.getLastRoute().name, BaseUserHomePageScreen.route);
-      });
-    });
+    //     expect(routerDelegate.getLastRoute().name, BaseUserHomePageScreen.route);
+    //   });
+    // });
 
     group("Replace:", () {
       test("Replace should remove the top-most page of the stack and then push the new page", () {
