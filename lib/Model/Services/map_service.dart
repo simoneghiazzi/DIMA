@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:sApport/Model/Map/place.dart';
 
 class MapService {
-  static const _APIkey = "AIzaSyAIpWAD5lirKL592ESjUxvh0PtR_2SRXTk";
+  static const _APIkey = "API_KEY";
 
   /// Returns the list of most probable places based on the [input].
   ///
